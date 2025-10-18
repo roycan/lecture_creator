@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileNameDisplay = document.getElementById('file-name');
     const previewWindow = document.getElementById('preview-window');
     const playButton = document.getElementById('play-button');
-    const exportButton = document.getElementById('export-button');
+    const exportSingleButton = document.getElementById('export-single-button');
     // NEW: Base URL input
     const baseUrlInput = document.getElementById('base-url-input');
 
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateUI() {
         const hasSlides = slides.length > 0;
         playButton.disabled = !hasSlides;
-        exportButton.disabled = !hasSlides;
+        if (exportSingleButton) exportSingleButton.disabled = !hasSlides;
 
         if (hasSlides) {
             previewWindow.innerHTML = slides[0].html;
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         // Break text into sentences to make the speech more natural and allow pauses
-        const sentences = text.match(/[^\.!?\n]+[\.!?]?/g) || [text];
+        const sentences = text.match(/[^\\.!?\\n]+[\\.!?]?/g) || [text];
         let i = 0;
 
         function speakNext() {
@@ -233,179 +233,610 @@ document.addEventListener('DOMContentLoaded', () => {
         speakNext();
     }
     
-    // --- Export Logic (MODIFIED) ---
+    // --- Export Logic ---
     
-    exportButton.addEventListener('click', async () => {
-        const baseUrl = baseUrlInput.value.trim();
-        let processedSlides = slides;
-
-        // NEW: Prepend base URL to relative image paths if a base URL is provided
-        if (baseUrl) {
-            processedSlides = slides.map(slide => {
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = slide.html;
-                
-                const images = tempDiv.querySelectorAll('img');
-                images.forEach(img => {
-                    const src = img.getAttribute('src');
-                    // Only modify relative paths, not absolute URLs
-                    if (src && !src.startsWith('http://') && !src.startsWith('https://') && !src.startsWith('//')) {
-                        // Using the URL constructor is a robust way to join paths
-                        const absoluteUrl = new URL(src, baseUrl).href;
-                        img.setAttribute('src', absoluteUrl);
-                    }
-                });
-                
-                return { html: tempDiv.innerHTML };
-            });
-        }
-        // END OF NEW LOGIC
-
-        const zip = new JSZip();
-
-        // 1. Create slides.json using the (potentially modified) slide data
-        zip.file("slides.json", JSON.stringify(processedSlides, null, 2));
-
-        // 2. Create index.html (the player)
-        zip.file("index.html", createPlayerHTML());
-
-        // 3. Create style.css for the player
-        zip.file("style.css", createPlayerCSS());
-
-        // 4. Generate and download the zip
-        const content = await zip.generateAsync({ type: "blob" });
-        saveAs(content, "slideshow-presentation.zip");
+    // Export a single HTML file with embedded slides and no external fetch
+    exportSingleButton.addEventListener('click', async () => {
+        const singleHtml = createSingleHTML(slides);
+        const blob = new Blob([singleHtml], { type: 'text/html;charset=utf-8' });
+        saveAs(blob, 'presentation.html');
     });
     
-    function createPlayerHTML() {
-        return `<!DOCTYPE html>
+    // Single-file HTML exporter with robust voice loading, error handling, and manual controls
+    function createSingleHTML(slides) {
+        // Escape </script> and other problematic content
+        const safeSlidesJson = JSON.stringify(slides)
+            .replace(/<\/script>/gi, '<\\/script>')
+            .replace(/<script/gi, '<\\script');
+        
+        return `<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presentation</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lecture Presentation</title>
+    <style>
+        * { box-sizing: border-box; }
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        
+        #slide-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 3rem 2rem;
+            overflow-y: auto;
+        }
+        
+        #slide-container h1 { font-size: 2.5em; margin: 0.5em 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        #slide-container h2 { font-size: 2em; margin: 0.5em 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        #slide-container h3 { font-size: 1.5em; margin: 0.5em 0; }
+        #slide-container p { font-size: 1.2em; line-height: 1.6; max-width: 800px; margin: 0.5em auto; }
+        #slide-container img { max-width: 80%; max-height: 50vh; border-radius: 8px; margin: 1.5rem 0; }
+        #slide-container ul, #slide-container ol { text-align: left; max-width: 600px; margin: 1em auto; font-size: 1.1em; }
+        #slide-container code { background: #333; padding: 0.2em 0.4em; border-radius: 3px; }
+        #slide-container pre { background: #2d2d2d; padding: 1em; border-radius: 8px; overflow-x: auto; text-align: left; }
+        
+        /* Start Overlay */
+        #start-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            z-index: 1000;
+        }
+        
+        #status-message {
+            font-size: 1.1em;
+            color: #aaa;
+            margin: 0;
+            min-height: 1.5em;
+        }
+        
+        #status-message.success { color: #4CAF50; }
+        #status-message.warning { color: #FF9800; }
+        #status-message.error { color: #f44336; }
+        
+        #controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            padding: 1em;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        
+        #voice-select {
+            min-width: 200px;
+            padding: 0.5em;
+            font-size: 1em;
+            border-radius: 4px;
+            border: 1px solid #555;
+            background: #2d2d2d;
+            color: #fff;
+        }
+        
+        label {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+        
+        input[type="range"] {
+            width: 120px;
+        }
+        
+        #start-button {
+            font-size: 1.3em;
+            padding: 0.8em 2em;
+            border-radius: 8px;
+            border: none;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        #start-button:hover:not(:disabled) {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+        
+        #start-button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        /* Navigation Controls */
+        #nav-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+        
+        #nav-controls.visible { display: flex; }
+        
+        #progress-indicator {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            text-align: center;
+            border: 1px solid #555;
+        }
+        
+        .nav-button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .nav-button:hover { background: rgba(69, 160, 73, 1); transform: scale(1.05); }
+        .nav-button:disabled { background: rgba(85, 85, 85, 0.5); cursor: not-allowed; }
+        
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            #slide-container { padding: 2rem 1rem; }
+            #slide-container h1 { font-size: 1.8em; }
+            #slide-container h2 { font-size: 1.5em; }
+            #slide-container p { font-size: 1em; }
+            #controls { flex-direction: column; }
+            #nav-controls { bottom: 10px; right: 10px; }
+        }
+    </style>
 </head>
 <body>
     <main id="slide-container">
         <div id="start-overlay">
-            <button id="start-button">Click to Start</button>
+            <div class="spinner"></div>
+            <p id="status-message">Initializing presentation...</p>
+            <div id="controls">
+                <label>
+                    Voice
+                    <select id="voice-select">
+                        <option>Loading voices...</option>
+                    </select>
+                </label>
+                <label>
+                    Rate
+                    <input id="rate" type="range" min="0.6" max="1.3" step="0.05" value="0.95">
+                    <span id="rate-value">0.95x</span>
+                </label>
+                <label>
+                    Pitch
+                    <input id="pitch" type="range" min="0.6" max="1.5" step="0.05" value="1.0">
+                    <span id="pitch-value">1.0</span>
+                </label>
+            </div>
+            <button id="start-button" disabled>Initializing...</button>
         </div>
     </main>
+    
+    <div id="nav-controls">
+        <div id="progress-indicator">Slide 1 of 1</div>
+        <button id="prev-button" class="nav-button">⬅ Previous</button>
+        <button id="next-button" class="nav-button">Next ➡</button>
+    </div>
+    
+    <script id="slides-data" type="application/json">${safeSlidesJson}</script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Voice UI inside exported player
-            const overlay = document.getElementById('start-overlay');
-            const startButton = document.getElementById('start-button');
-            const voiceContainer = document.createElement('div');
-            voiceContainer.style.margin = '12px 0';
-            voiceContainer.innerHTML = '<label style="display:block;margin-bottom:6px;">Voice</label><select id="export-voice-select"></select><div style="display:flex;gap:8px;margin-top:8px;"><label style="flex:1">Rate<input id="export-rate" type="range" min="0.6" max="1.3" step="0.05" value="0.95" style="width:100%"></label><label style="flex:1">Pitch<input id="export-pitch" type="range" min="0.6" max="1.5" step="0.05" value="1.0" style="width:100%"></label></div>';
-            overlay.querySelector('#start-button').insertAdjacentElement('afterend', voiceContainer);
-
-            const container = document.getElementById('slide-container');
-            const startOverlay = document.getElementById('start-overlay');
-            let slides = [];
-            let currentSlideIndex = 0;
-
-            // Populate voices for exported player
-            const exportVoiceSelect = document.getElementById('export-voice-select');
-            const exportRate = document.getElementById('export-rate');
-            const exportPitch = document.getElementById('export-pitch');
-
-            function populateExportVoices() {
-                const voices = speechSynthesis.getVoices() || [];
-                exportVoiceSelect.innerHTML = '';
-                if (!voices.length) {
-                    const o = document.createElement('option');
-                    o.textContent = 'No voices available';
-                    exportVoiceSelect.appendChild(o);
-                    return;
-                }
-                const us = voices.filter(v => /en(-|_)?us/i.test(v.lang) || /american/i.test(v.name));
-                const list = us.length ? us : voices;
-                list.forEach((v,i) => {
-                    const opt = document.createElement('option');
-                    opt.value = i;
-                    opt.textContent = '\${v.name} — \${v.lang}';
-                    exportVoiceSelect.appendChild(opt);
-                });
+(function() {
+    'use strict';
+    
+    // Console logging helper
+    function log(msg, level) {
+        var prefix = '[Lecture Player] ';
+        if (level === 'error') console.error(prefix + msg);
+        else if (level === 'warn') console.warn(prefix + msg);
+        else console.log(prefix + msg);
+    }
+    
+    // State
+    var slides = [];
+    var currentSlide = 0;
+    var isPlaying = false;
+    var autoAdvance = true;
+    var availableVoices = [];
+    var selectedVoice = null;
+    
+    // DOM Elements
+    var container = document.getElementById('slide-container');
+    var startOverlay = document.getElementById('start-overlay');
+    var startButton = document.getElementById('start-button');
+    var statusMessage = document.getElementById('status-message');
+    var voiceSelect = document.getElementById('voice-select');
+    var rateInput = document.getElementById('rate');
+    var pitchInput = document.getElementById('pitch');
+    var rateValue = document.getElementById('rate-value');
+    var pitchValue = document.getElementById('pitch-value');
+    var navControls = document.getElementById('nav-controls');
+    var progressIndicator = document.getElementById('progress-indicator');
+    var prevButton = document.getElementById('prev-button');
+    var nextButton = document.getElementById('next-button');
+    var spinner = document.querySelector('.spinner');
+    
+    // Update rate/pitch displays
+    rateInput.addEventListener('input', function() {
+        rateValue.textContent = parseFloat(rateInput.value).toFixed(2) + 'x';
+    });
+    pitchInput.addEventListener('input', function() {
+        pitchValue.textContent = parseFloat(pitchInput.value).toFixed(1);
+    });
+    
+    // Load slides
+    try {
+        var slidesData = document.getElementById('slides-data');
+        if (!slidesData) {
+            throw new Error('Slides data not found');
+        }
+        slides = JSON.parse(slidesData.textContent || '[]');
+        if (!slides || slides.length === 0) {
+            throw new Error('No slides found');
+        }
+        log('Loaded ' + slides.length + ' slides');
+    } catch (e) {
+        log('Failed to load slides: ' + e.message, 'error');
+        updateStatus('Failed to load presentation', 'error');
+        startButton.textContent = 'Error: No Slides';
+        return;
+    }
+    
+    // Update status message
+    function updateStatus(msg, type) {
+        statusMessage.textContent = msg;
+        statusMessage.className = type || '';
+    }
+    
+    // Split text into sentences
+    function splitIntoSentences(text) {
+        var sentences = [];
+        var buffer = '';
+        for (var i = 0; i < text.length; i++) {
+            var ch = text[i];
+            buffer += ch;
+            if (ch === '.' || ch === '!' || ch === '?' || ch === '\\n') {
+                var trimmed = buffer.trim();
+                if (trimmed) sentences.push(trimmed);
+                buffer = '';
             }
-            populateExportVoices();
-            if (typeof speechSynthesis !== 'undefined') speechSynthesis.onvoiceschanged = populateExportVoices;
-
-            async function loadSlides() {
-                const response = await fetch('slides.json');
-                slides = await response.json();
-                startButton.disabled = false;
-                startButton.textContent = 'Click to Start Presentation';
+        }
+        var remaining = buffer.trim();
+        if (remaining) sentences.push(remaining);
+        return sentences.length > 0 ? sentences : [text];
+    }
+    
+    // Select best voice
+    function selectBestVoice(voices) {
+        if (!voices || voices.length === 0) return null;
+        
+        // Try US English first
+        for (var i = 0; i < voices.length; i++) {
+            if (/en-us/i.test(voices[i].lang)) {
+                log('Selected US English voice: ' + voices[i].name);
+                return voices[i];
             }
-
-            function playSlide(index) {
-                if (index >= slides.length) {
-                    container.innerHTML = '<h1>End of Presentation</h1>';
-                    return;
-                }
-                const slide = slides[index];
-                container.innerHTML = slide.html;
-
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = slide.html;
-                const textToSpeak = tempDiv.textContent || "";
-                
-                speakText(textToSpeak, () => {
-                    currentSlideIndex++;
-                    playSlide(currentSlideIndex);
-                });
+        }
+        
+        // Try any English
+        for (var j = 0; j < voices.length; j++) {
+            if (/^en/i.test(voices[j].lang)) {
+                log('Selected English voice: ' + voices[j].name);
+                return voices[j];
             }
-
-            function speakText(text, onEndCallback) {
-                if (!text.trim()) {
-                    setTimeout(onEndCallback, 3000);
-                    return;
-                }
-                const sentences = text.match(/[^\.!?\n]+[\.!?]?/g) || [text];
-                let i = 0;
-                function speakNext() {
-                    if (i >= sentences.length) {
-                        onEndCallback();
-                        return;
+        }
+        
+        // Use first available
+        log('Using first available voice: ' + voices[0].name);
+        return voices[0];
+    }
+    
+    // Populate voice select
+    function populateVoices() {
+        try {
+            availableVoices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+            voiceSelect.innerHTML = '';
+            
+            if (!availableVoices || availableVoices.length === 0) {
+                var opt = document.createElement('option');
+                opt.textContent = 'System default voice';
+                voiceSelect.appendChild(opt);
+                log('No voices available, using system default', 'warn');
+                return false;
+            }
+            
+            // Populate dropdown
+            for (var i = 0; i < availableVoices.length; i++) {
+                var voice = availableVoices[i];
+                var option = document.createElement('option');
+                option.value = i;
+                option.textContent = voice.name + ' (' + voice.lang + ')';
+                voiceSelect.appendChild(option);
+            }
+            
+            // Select best voice
+            selectedVoice = selectBestVoice(availableVoices);
+            if (selectedVoice) {
+                for (var k = 0; k < availableVoices.length; k++) {
+                    if (availableVoices[k] === selectedVoice) {
+                        voiceSelect.selectedIndex = k;
+                        break;
                     }
-                    const chunk = sentences[i++].trim();
-                    if (!chunk) { setTimeout(speakNext, 200); return; }
-                    const u = new SpeechSynthesisUtterance(chunk);
-                    const voices = speechSynthesis.getVoices() || [];
-                    const us = voices.filter(v => /en(-|_)?us/i.test(v.lang) || /american/i.test(v.name));
-                    const list = us.length ? us : voices;
-                    const sel = parseInt(exportVoiceSelect.value, 10);
-                    if (!isNaN(sel) && list[sel]) u.voice = list[sel];
-                    u.rate = parseFloat(exportRate.value) || 0.95;
-                    u.pitch = parseFloat(exportPitch.value) || 1.0;
-                    u.onend = () => setTimeout(speakNext, 220);
-                    u.onerror = () => setTimeout(speakNext, 250);
-                    speechSynthesis.speak(u);
                 }
-                speakNext();
             }
-
-            startButton.addEventListener('click', () => {
-                startOverlay.style.display = 'none';
-                playSlide(0);
+            
+            log('Populated ' + availableVoices.length + ' voices');
+            return true;
+        } catch (e) {
+            log('Error populating voices: ' + e.message, 'error');
+            return false;
+        }
+    }
+    
+    // Wait for voices with timeout
+    function waitForVoices(callback) {
+        var startTime = Date.now();
+        var maxWait = 3000; // 3 seconds
+        
+        function check() {
+            var hasVoices = populateVoices();
+            if (hasVoices) {
+                log('Voices loaded successfully');
+                callback(true);
+                return;
+            }
+            
+            if (Date.now() - startTime > maxWait) {
+                log('Voice loading timeout, continuing with defaults', 'warn');
+                callback(false);
+                return;
+            }
+            
+            setTimeout(check, 200);
+        }
+        
+        check();
+    }
+    
+    // Speak text with error handling
+    function speakText(text, onComplete) {
+        if (!text || !text.trim()) {
+            log('Empty text, skipping speech');
+            setTimeout(onComplete, 500);
+            return;
+        }
+        
+        if (!window.speechSynthesis) {
+            log('Speech synthesis not available', 'warn');
+            setTimeout(onComplete, 1000);
+            return;
+        }
+        
+        try {
+            var sentences = splitIntoSentences(text);
+            var index = 0;
+            
+            function speakNext() {
+                if (index >= sentences.length) {
+                    onComplete();
+                    return;
+                }
+                
+                var sentence = sentences[index++];
+                if (!sentence.trim()) {
+                    setTimeout(speakNext, 200);
+                    return;
+                }
+                
+                var utterance = new SpeechSynthesisUtterance(sentence);
+                
+                // Apply voice if available
+                var voiceIndex = parseInt(voiceSelect.value, 10);
+                if (!isNaN(voiceIndex) && availableVoices[voiceIndex]) {
+                    utterance.voice = availableVoices[voiceIndex];
+                } else if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                }
+                
+                utterance.rate = parseFloat(rateInput.value) || 0.95;
+                utterance.pitch = parseFloat(pitchInput.value) || 1.0;
+                
+                utterance.onend = function() {
+                    setTimeout(speakNext, 220);
+                };
+                
+                utterance.onerror = function(e) {
+                    log('Speech error: ' + e.error, 'warn');
+                    setTimeout(speakNext, 250);
+                };
+                
+                window.speechSynthesis.speak(utterance);
+            }
+            
+            speakNext();
+        } catch (e) {
+            log('Error in speakText: ' + e.message, 'error');
+            setTimeout(onComplete, 500);
+        }
+    }
+    
+    // Display slide
+    function displaySlide(index) {
+        if (index < 0 || index >= slides.length) {
+            log('Invalid slide index: ' + index, 'error');
+            return;
+        }
+        
+        currentSlide = index;
+        var slide = slides[index];
+        
+        try {
+            container.innerHTML = slide.html;
+            progressIndicator.textContent = 'Slide ' + (index + 1) + ' of ' + slides.length;
+            
+            // Update navigation buttons
+            prevButton.disabled = (index === 0);
+            nextButton.disabled = (index === slides.length - 1);
+            
+            log('Displaying slide ' + (index + 1));
+        } catch (e) {
+            log('Error displaying slide: ' + e.message, 'error');
+            container.innerHTML = '<h1>Error displaying slide</h1>';
+        }
+    }
+    
+    // Play slide with speech
+    function playSlide(index) {
+        if (index >= slides.length) {
+            container.innerHTML = '<h1>End of Presentation</h1><p>Press Previous to review slides</p>';
+            isPlaying = false;
+            log('Presentation complete');
+            return;
+        }
+        
+        displaySlide(index);
+        
+        // Extract text for speech
+        var tempDiv = document.createElement('div');
+        tempDiv.innerHTML = slides[index].html;
+        var text = tempDiv.textContent || tempDiv.innerText || '';
+        
+        if (autoAdvance) {
+            speakText(text, function() {
+                if (isPlaying) {
+                    playSlide(index + 1);
+                }
             });
-
-            loadSlides();
+        }
+    }
+    
+    // Navigation handlers
+    function nextSlide() {
+        if (currentSlide < slides.length - 1) {
+            autoAdvance = false;
+            window.speechSynthesis.cancel();
+            playSlide(currentSlide + 1);
+        }
+    }
+    
+    function prevSlide() {
+        if (currentSlide > 0) {
+            autoAdvance = false;
+            window.speechSynthesis.cancel();
+            playSlide(currentSlide - 1);
+        }
+    }
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (!isPlaying) return;
+        
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+            e.preventDefault();
+            nextSlide();
+        } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            prevSlide();
+        }
+    });
+    
+    // Start presentation
+    function startPresentation() {
+        log('Starting presentation');
+        startOverlay.style.display = 'none';
+        navControls.classList.add('visible');
+        isPlaying = true;
+        autoAdvance = true;
+        
+        // Try to populate voices one more time after user gesture
+        populateVoices();
+        
+        playSlide(0);
+    }
+    
+    // Button handlers
+    startButton.addEventListener('click', startPresentation);
+    nextButton.addEventListener('click', nextSlide);
+    prevButton.addEventListener('click', prevSlide);
+    
+    // Initialize
+    log('Initializing lecture player');
+    updateStatus('Loading voices...', '');
+    
+    if (!window.speechSynthesis) {
+        log('Speech synthesis not supported', 'error');
+        updateStatus('Text-to-speech not supported in this browser', 'warning');
+        startButton.disabled = false;
+        startButton.textContent = 'Start (Manual Mode)';
+        spinner.style.display = 'none';
+    } else {
+        // Setup voice change listener
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+            window.speechSynthesis.onvoiceschanged = populateVoices;
+        }
+        
+        // Wait for voices
+        waitForVoices(function(success) {
+            spinner.style.display = 'none';
+            if (success) {
+                updateStatus('Ready! ' + availableVoices.length + ' voices available', 'success');
+                startButton.textContent = 'Start Presentation';
+            } else {
+                updateStatus('Continuing with system default voice', 'warning');
+                startButton.textContent = 'Start Anyway';
+            }
+            startButton.disabled = false;
         });
-    <\/script>
+    }
+    
+    log('Initialization complete');
+})();
+    </script>
 </body>
 </html>`;
-    }
-
-    function createPlayerCSS() {
-        return `body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-#slide-container { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background-color: #222; color: white; padding: 2rem; box-sizing: border-box; overflow: auto; }
-#slide-container h1, #slide-container h2 { text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-#slide-container img { max-width: 80%; max-height: 40vh; margin-top: 1rem; border-radius: 8px; }
-#start-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 10; }
-#start-button { font-size: 2rem; padding: 1rem 2rem; cursor: pointer; border-radius: 10px; border: none; }`;
     }
 
 });

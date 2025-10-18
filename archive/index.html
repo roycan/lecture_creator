@@ -1,88 +1,128 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Markdown Slideshow Creator</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  
-  <section class="section">
-    <div class="container">
-      <h1 class="title">Markdown to Audio Slideshow Creator 🎙️</h1>
-      <p class="subtitle">Paste your Markdown, preview the slideshow, and export it as a self-contained website.</p>
-    </div>
-  </section>
-  
-  <main class="container">
-    <div class="columns">
-      
-      <div class="column is-half">
-        <div class="box">
-          <h2 class="title is-4">1. Input Markdown</h2>
-          <div class="field">
-            <div class="control">
-              <textarea id="markdown-input" class="textarea is-medium" rows="15" placeholder="Paste your Markdown here..."></textarea>
-            </div>
-          </div>
-          <div class="field">
-            <div class="file has-name is-fullwidth">
-              <label class="file-label">
-                <input class="file-input" type="file" id="upload-input" accept=".md,.txt">
-                <span class="file-cta">
-                  <span class="file-icon"><i class="fas fa-upload"></i></span>
-                  <span class="file-label">Upload a .md file…</span>
-                </span>
-                <span id="file-name" class="file-name">No file uploaded</span>
-              </label>
-            </div>
-          </div>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Presentation</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+      /* Minimal layout adjustments for the exported player */
+      body,html{height:100%;margin:0}
+      #slide-container{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:#222;color:#fff;padding:2rem;box-sizing:border-box}
+      #slide-container img{max-width:80%;max-height:40vh;border-radius:8px;margin-top:1rem}
+      #start-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+      #start-button{font-size:1.25rem;padding:.8rem 1.4rem;border-radius:8px}
+      #controls{display:flex;gap:8px;align-items:center}
+      #voice-select{min-width:220px}
+    </style>
+  </head>
+  <body>
+    <main id="slide-container">
+      <div id="start-overlay">
+        <div id="controls">
+          <select id="voice-select"><option>Loading voices…</option></select>
+          <label>Rate <input id="rate" type="range" min="0.6" max="1.3" step="0.05" value="0.95"></label>
+          <label>Pitch <input id="pitch" type="range" min="0.6" max="1.5" step="0.05" value="1.0"></label>
         </div>
+        <button id="start-button">Click to Start Presentation</button>
+      </div>
+    </main>
 
-        <div class="box">
-          <h2 class="title is-4">Settings ⚙️</h2>
-          <div class="field">
-            <label class="label">Image Base URL (Optional)</label>
-            <div class="control has-icons-left">
-              <input id="base-url-input" class="input" type="text" placeholder="https://username.github.io/my-assets/">
-              <span class="icon is-small is-left">
-                <i class="fas fa-link"></i>
-              </span>
-            </div>
-            <p class="help">The URL where your images are hosted. This will be prepended to relative image paths during export.</p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="column is-half">
-        <div class="box">
-          <h2 class="title is-4">2. Preview & Export</h2>
-          <div id="preview-window" class="box has-text-centered">
-            <p class="is-size-5">Your preview will appear here.</p>
-          </div>
-          <div class="buttons is-centered">
-            <button id="play-button" class="button is-primary is-large" disabled>
-              <span class="icon"><i class="fas fa-play"></i></span>
-              <span>Play Preview</span>
-            </button>
-            <button id="export-button" class="button is-link is-large" disabled>
-              <span class="icon"><i class="fas fa-download"></i></span>
-              <span>Export ZIP</span>
-            </button>
-          </div>
-        </div>
-      </div>
-      
-    </div>
-  </main>
-  
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
-  <script src="app.js"></script>
-  
-</body>
+    <script>
+    // Exported player script — robust, avoids regex literals to prevent 'Invalid regular expression' errors
+    (function(){
+      const container = document.getElementById('slide-container');
+      const startOverlay = document.getElementById('start-overlay');
+      const startButton = document.getElementById('start-button');
+      const voiceSelect = document.getElementById('voice-select');
+      const rateInput = document.getElementById('rate');
+      const pitchInput = document.getElementById('pitch');
+      let slides = [];
+      let current = 0;
+
+      function splitIntoSentences(text){
+        // Simple character-based sentence splitter (no regex)
+        const out = [];
+        let buf = '';
+        for(let i=0;i<text.length;i++){
+          const ch = text[i];
+          buf += ch;
+          if(ch === '.' || ch === '!' || ch === '?' || ch === '\n'){
+            const s = buf.trim();
+            if(s) out.push(s);
+            buf = '';
+          }
+        }
+        const rem = buf.trim();
+        if(rem) out.push(rem);
+        return out.length?out:[text];
+      }
+
+      function populateVoices(){
+        const voices = (speechSynthesis.getVoices()||[]);
+        voiceSelect.innerHTML = '';
+        if(!voices.length){
+          const o = document.createElement('option'); o.textContent='No voices available'; voiceSelect.appendChild(o); return;
+        }
+        // Prefer en-US when possible
+        const us = voices.filter(v=>/en(-|_)?us/i.test(v.lang) || /american/i.test(v.name));
+        const list = us.length?us:voices;
+        list.forEach((v,i)=>{
+          const opt = document.createElement('option'); opt.value = i; opt.textContent = v.name + ' - ' + v.lang; voiceSelect.appendChild(opt);
+        });
+      }
+
+      function speakText(text, done){
+        if(!text || !text.trim()){ setTimeout(done,1000); return; }
+        const sentences = splitIntoSentences(text);
+        let i = 0;
+        function next(){
+          if(i>=sentences.length){ done(); return; }
+          const chunk = sentences[i++];
+          const u = new SpeechSynthesisUtterance(chunk);
+          const voices = (speechSynthesis.getVoices()||[]);
+          const us = voices.filter(v=>/en(-|_)?us/i.test(v.lang) || /american/i.test(v.name));
+          const list = us.length?us:voices;
+          const sel = parseInt(voiceSelect.value,10);
+          if(!isNaN(sel) && list[sel]) u.voice = list[sel];
+          u.rate = parseFloat(rateInput.value)||0.95;
+          u.pitch = parseFloat(pitchInput.value)||1.0;
+          u.onend = ()=>setTimeout(next,220);
+          u.onerror = ()=>setTimeout(next,250);
+          speechSynthesis.speak(u);
+        }
+        next();
+      }
+
+      async function loadSlides(){
+        try{
+          const r = await fetch('slides.json');
+          slides = await r.json();
+          startButton.disabled = false;
+        }catch(e){
+          console.error('Failed loading slides.json', e); container.innerHTML = '<h1 style="color:#fff">Failed to load slides.json</h1>';
+        }
+      }
+
+      function play(index){
+        if(index>=slides.length){ container.innerHTML = '<h1>End of Presentation</h1>'; return; }
+        const slide = slides[index];
+        container.innerHTML = slide.html;
+        // Extract plain text
+        const tmp = document.createElement('div'); tmp.innerHTML = slide.html;
+        const text = tmp.textContent || tmp.innerText || '';
+        speakText(text, ()=> play(index+1));
+      }
+
+      startButton.addEventListener('click', ()=>{
+        startOverlay.style.display = 'none';
+        play(0);
+      });
+
+      populateVoices();
+      if(typeof speechSynthesis!=='undefined') speechSynthesis.onvoiceschanged = populateVoices;
+      loadSlides();
+    })();
+    </script>
+  </body>
 </html>
