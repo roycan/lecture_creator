@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown Slideshow Creator</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Markdown to Audio Slideshow Creator 🎙️</h1>
+      <p class="subtitle">Paste your Markdown, preview the slideshow, and export it as a self-contained website.</p>
+    </div>
+  </section>
+  
+  <main class="container">
+    <div class="columns">
+      
+      <div class="column is-half">
+        <div class="box">
+          <h2 class="title is-4">1. Input Markdown</h2>
+          <div class="field">
+            <div class="control">
+              <textarea id="markdown-input" class="textarea is-medium" rows="15" placeholder="Paste your Markdown here..."></textarea>
+            </div>
+          </div>
+          <div class="field">
+            <div class="file has-name is-fullwidth">
+              <label class="file-label">
+                <input class="file-input" type="file" id="upload-input" accept=".md,.txt">
+                <span class="file-cta">
+                  <span class="file-icon"><i class="fas fa-upload"></i></span>
+                  <span class="file-label">Upload a .md file…</span>
+                </span>
+                <span id="file-name" class="file-name">No file uploaded</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="box">
+          <h2 class="title is-4">Settings ⚙️</h2>
+          <div class="field">
+            <label class="label">Image Base URL (Optional)</label>
+            <div class="control has-icons-left">
+              <input id="base-url-input" class="input" type="text" placeholder="https://username.github.io/my-assets/">
+              <span class="icon is-small is-left">
+                <i class="fas fa-link"></i>
+              </span>
+            </div>
+            <p class="help">The URL where your images are hosted. This will be prepended to relative image paths during export.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="column is-half">
+        <div class="box">
+          <h2 class="title is-4">2. Preview & Export</h2>
+          <div id="preview-window" class="box has-text-centered">
+            <p class="is-size-5">Your preview will appear here.</p>
+          </div>
+          <div class="buttons is-centered">
+            <button id="play-button" class="button is-primary is-large" disabled>
+              <span class="icon"><i class="fas fa-play"></i></span>
+              <span>Play Preview</span>
+            </button>
+            <button id="export-button" class="button is-link is-large" disabled>
+              <span class="icon"><i class="fas fa-download"></i></span>
+              <span>Export ZIP</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </main>
+  
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
+  <script src="app.js"></script>
+  
+</body>
+</html>
