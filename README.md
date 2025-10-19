@@ -4,7 +4,13 @@ A simple tool to convert Markdown lectures into self-contained HTML presentation
 
 ## Recent Improvements (October 2025)
 
-### What Changed
+### Latest: Manual Mode Toggle (October 19, 2025)
+- **New Feature**: Choose between auto-play and manual navigation modes
+- **Problem Solved**: Slides advancing too fast on Linux/Chromium when speech fails
+- **User Control**: Students can now select their preferred playback mode before starting
+- **Platform Hint**: Manual mode recommended for Linux + Chrome users
+
+### Previous Updates
 - **Removed ZIP Export**: Simplified to single HTML file export only
 - **Robust Voice Loading**: Better handling of browser voice initialization
 - **Manual Controls**: Students can now navigate slides manually with buttons or keyboard
@@ -52,19 +58,24 @@ The new single HTML export is much simpler:
 2. **Double-click to open** in any modern web browser
    - Chrome, Firefox, Edge, Safari all work
 
-3. **Wait for initialization** (a few seconds)
-   - The page will show "Ready!" when voices are loaded
-   - If voices don't load, you can still use manual mode
+3. **Choose your playback mode**:
+   - **Auto-play with voice**: Slides advance automatically with narration (recommended for Windows/Mac)
+   - **Manual navigation**: You control slide advancement with buttons (recommended for Linux + Chrome)
 
-4. **Click "Start Presentation"**
-   - Slides will advance automatically with narration
-   - Or use the navigation buttons / keyboard
+4. **Customize settings** (auto-play mode only):
+   - Select preferred voice
+   - Adjust speed (rate) and tone (pitch)
 
-5. **Navigation Options**:
-   - **Next button** (bottom-right): Skip to next slide
-   - **Previous button**: Go back to review
-   - **Spacebar** or **→ arrow**: Next slide
-   - **← arrow**: Previous slide
+5. **Click "Start Presentation"** or **"Start (Manual Navigation)"**
+
+6. **Navigation Options**:
+   - **Auto mode**: Listen to narration, slides advance automatically
+     - Use Next/Previous to skip or review
+   - **Manual mode**: Click Next to advance at your own pace
+   - **Keyboard shortcuts** (both modes):
+     - **Spacebar** or **→ arrow**: Next slide
+     - **← arrow**: Previous slide
+     - **Esc**: Stop speech (auto mode)
 
 ## Markdown Format Guide
 
@@ -127,14 +138,24 @@ Students can also adjust these settings before starting the presentation.
 
 ## Troubleshooting
 
+### Slides advancing too fast (Linux + Chrome)
+- **Symptom**: Slides move every 1-2 seconds, no time to read
+- **Cause**: Speech synthesis unavailable on Linux/Chromium from file:/// URLs
+- **Solution**: 
+  1. When opening the lecture, select **"Manual navigation"** mode
+  2. Use Next/Previous buttons to control pace at your own speed
+  3. **Alternative**: Use Firefox instead (has better Linux speech support)
+
 ### "Loading voices..." never completes
 - **Solution**: Wait 3-5 seconds, then click "Start Anyway"
 - The browser will use its default voice
+- **Better option**: Switch to manual navigation mode
 - This is normal on some Linux systems or older browsers
 
 ### Speech doesn't work
 - **Check**: Is your system volume on?
 - **Check**: Does your browser support text-to-speech?
+- **Solution**: Use **manual navigation mode** - no voice needed
 - **Fallback**: Use the Next/Previous buttons for manual navigation
 
 ### Exported file shows blank page
@@ -150,11 +171,11 @@ Modern browsers should work fine with file:/// URLs for this tool. If you encoun
 ## Technical Details
 
 ### Browser Compatibility
-- **Chrome/Chromium**: ✅ Excellent support
-- **Firefox**: ✅ Excellent support
+- **Chrome/Chromium**: ✅ Excellent support (Windows/Mac), ⚠️ Use manual mode on Linux
+- **Firefox**: ✅ Excellent support (all platforms including Linux)
 - **Safari**: ✅ Good support
 - **Edge**: ✅ Excellent support
-- **Mobile browsers**: ⚠️ Limited voice selection
+- **Mobile browsers**: ⚠️ Limited voice selection, manual mode recommended
 
 ### File Size
 - Small lecture (10 slides): ~50-100 KB
@@ -221,6 +242,7 @@ If students or teachers encounter issues:
 
 ---
 
-**Version**: 2.0 (October 2025)  
+**Version**: 2.1.0 (October 2025)  
 **Status**: Production ready  
-**Tested on**: Chrome 119, Firefox 120, Edge 119 (Linux/Windows)
+**Latest Feature**: Manual mode toggle for platform compatibility  
+**Tested on**: Chrome 119, Firefox 120, Edge 119 (Linux/Windows/Mac)

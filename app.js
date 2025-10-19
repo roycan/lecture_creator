@@ -310,6 +310,66 @@ document.addEventListener('DOMContentLoaded', () => {
         #status-message.warning { color: #FF9800; }
         #status-message.error { color: #f44336; }
         
+        /* Mode Selection */
+        #mode-selection {
+            margin: 1.5em 0;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        #mode-selection fieldset {
+            border: 2px solid #555;
+            border-radius: 8px;
+            padding: 1em;
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        #mode-selection legend {
+            padding: 0 0.5em;
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .mode-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .mode-option:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .mode-option input[type="radio"] {
+            margin-top: 4px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .mode-option-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .mode-option strong {
+            font-size: 1.1em;
+            color: #fff;
+        }
+        
+        .mode-option small {
+            font-size: 0.85em;
+            color: #aaa;
+            line-height: 1.3;
+        }
+        
         #controls {
             display: flex;
             flex-wrap: wrap;
@@ -319,6 +379,10 @@ document.addEventListener('DOMContentLoaded', () => {
             padding: 1em;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
+        }
+        
+        #voice-controls-container.hidden {
+            display: none;
         }
         
         #voice-select {
@@ -434,24 +498,48 @@ document.addEventListener('DOMContentLoaded', () => {
         <div id="start-overlay">
             <div class="spinner"></div>
             <p id="status-message">Initializing presentation...</p>
-            <div id="controls">
-                <label>
-                    Voice
-                    <select id="voice-select">
-                        <option>Loading voices...</option>
-                    </select>
-                </label>
-                <label>
-                    Rate
-                    <input id="rate" type="range" min="0.6" max="1.3" step="0.05" value="0.95">
-                    <span id="rate-value">0.95x</span>
-                </label>
-                <label>
-                    Pitch
-                    <input id="pitch" type="range" min="0.6" max="1.5" step="0.05" value="1.0">
-                    <span id="pitch-value">1.0</span>
-                </label>
+            
+            <div id="mode-selection">
+                <fieldset>
+                    <legend>Choose Playback Mode</legend>
+                    <label class="mode-option">
+                        <input type="radio" name="playback-mode" value="auto" checked>
+                        <span class="mode-option-content">
+                            <strong>Auto-play with voice</strong>
+                            <small>Slides advance automatically with narration</small>
+                        </span>
+                    </label>
+                    <label class="mode-option">
+                        <input type="radio" name="playback-mode" value="manual">
+                        <span class="mode-option-content">
+                            <strong>Manual navigation</strong>
+                            <small>Use Next/Previous buttons to control pace (recommended for Linux + Chrome)</small>
+                        </span>
+                    </label>
+                </fieldset>
             </div>
+            
+            <div id="voice-controls-container">
+                <div id="controls">
+                    <label>
+                        Voice
+                        <select id="voice-select">
+                            <option>Loading voices...</option>
+                        </select>
+                    </label>
+                    <label>
+                        Rate
+                        <input id="rate" type="range" min="0.6" max="1.3" step="0.05" value="0.95">
+                        <span id="rate-value">0.95x</span>
+                    </label>
+                    <label>
+                        Pitch
+                        <input id="pitch" type="range" min="0.6" max="1.5" step="0.05" value="1.0">
+                        <span id="pitch-value">1.0</span>
+                    </label>
+                </div>
+            </div>
+            
             <button id="start-button" disabled>Initializing...</button>
         </div>
     </main>
@@ -480,6 +568,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var currentSlide = 0;
     var isPlaying = false;
     var autoAdvance = true;
+    var manualMode = false;
     var availableVoices = [];
     var selectedVoice = null;
     
@@ -498,6 +587,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var prevButton = document.getElementById('prev-button');
     var nextButton = document.getElementById('next-button');
     var spinner = document.querySelector('.spinner');
+    var voiceControlsContainer = document.getElementById('voice-controls-container');
     
     // Update rate/pitch displays
     rateInput.addEventListener('input', function() {
@@ -506,6 +596,52 @@ document.addEventListener('DOMContentLoaded', () => {
     pitchInput.addEventListener('input', function() {
         pitchValue.textContent = parseFloat(pitchInput.value).toFixed(1);
     });
+    
+    // Setup mode selection
+    function setupModeSelection() {
+        var modeRadios = document.querySelectorAll('input[name="playback-mode"]');
+        
+        for (var i = 0; i < modeRadios.length; i++) {
+            modeRadios[i].addEventListener('change', function(e) {
+                manualMode = (e.target.value === 'manual');
+                
+                if (manualMode) {
+                    // Hide voice controls
+                    voiceControlsContainer.classList.add('hidden');
+                    
+                    // Update status and button
+                    updateStatus('Manual mode selected - ready to start', 'success');
+                    startButton.textContent = 'Start (Manual Navigation)';
+                    startButton.disabled = false;
+                    
+                    // Hide spinner
+                    spinner.style.display = 'none';
+                    
+                    log('Manual mode selected by user');
+                } else {
+                    // Show voice controls
+                    voiceControlsContainer.classList.remove('hidden');
+                    
+                    // Check voice status
+                    if (availableVoices.length > 0) {
+                        updateStatus('Auto-play mode - ' + availableVoices.length + ' voices available', 'success');
+                        startButton.textContent = 'Start Presentation';
+                        startButton.disabled = false;
+                        spinner.style.display = 'none';
+                    } else {
+                        updateStatus('Loading voices...', '');
+                        startButton.textContent = 'Initializing...';
+                        startButton.disabled = true;
+                        spinner.style.display = 'block';
+                        // Re-trigger voice loading
+                        initializeVoiceLoading();
+                    }
+                    
+                    log('Auto-play mode selected by user');
+                }
+            });
+        }
+    }
     
     // Load slides
     try {
@@ -739,7 +875,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         displaySlide(index);
         
-        // Extract text for speech
+        // In manual mode, just display slide and wait for user navigation
+        if (manualMode) {
+            log('Manual mode - waiting for user navigation (slide ' + (index + 1) + ')');
+            return;
+        }
+        
+        // Extract text for speech (auto mode only)
         var tempDiv = document.createElement('div');
         tempDiv.innerHTML = slides[index].html;
         var text = tempDiv.textContent || tempDiv.innerText || '';
@@ -756,16 +898,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Navigation handlers
     function nextSlide() {
         if (currentSlide < slides.length - 1) {
-            autoAdvance = false;
-            window.speechSynthesis.cancel();
+            if (!manualMode) {
+                // In auto mode, disable auto-advance when manually overriding
+                autoAdvance = false;
+                window.speechSynthesis.cancel();
+            }
             playSlide(currentSlide + 1);
         }
     }
     
     function prevSlide() {
         if (currentSlide > 0) {
-            autoAdvance = false;
-            window.speechSynthesis.cancel();
+            if (!manualMode) {
+                // In auto mode, disable auto-advance when manually overriding
+                autoAdvance = false;
+                window.speechSynthesis.cancel();
+            }
             playSlide(currentSlide - 1);
         }
     }
@@ -785,14 +933,19 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Start presentation
     function startPresentation() {
-        log('Starting presentation');
+        log('Starting presentation in ' + (manualMode ? 'manual' : 'auto') + ' mode');
         startOverlay.style.display = 'none';
         navControls.classList.add('visible');
         isPlaying = true;
-        autoAdvance = true;
         
-        // Try to populate voices one more time after user gesture
-        populateVoices();
+        if (!manualMode) {
+            // Auto mode: enable auto-advance and try voice one more time
+            autoAdvance = true;
+            populateVoices();
+        } else {
+            // Manual mode: no auto-advance, no voice needed
+            autoAdvance = false;
+        }
         
         playSlide(0);
     }
@@ -802,17 +955,22 @@ document.addEventListener('DOMContentLoaded', () => {
     nextButton.addEventListener('click', nextSlide);
     prevButton.addEventListener('click', prevSlide);
     
-    // Initialize
-    log('Initializing lecture player');
-    updateStatus('Loading voices...', '');
-    
-    if (!window.speechSynthesis) {
-        log('Speech synthesis not supported', 'error');
-        updateStatus('Text-to-speech not supported in this browser', 'warning');
-        startButton.disabled = false;
-        startButton.textContent = 'Start (Manual Mode)';
-        spinner.style.display = 'none';
-    } else {
+    // Voice loading wrapper
+    function initializeVoiceLoading() {
+        if (manualMode) {
+            log('Manual mode - skipping voice initialization');
+            return;
+        }
+        
+        if (!window.speechSynthesis) {
+            log('Speech synthesis not supported', 'error');
+            updateStatus('Text-to-speech not supported in this browser', 'warning');
+            startButton.disabled = false;
+            startButton.textContent = 'Start (Manual Mode)';
+            spinner.style.display = 'none';
+            return;
+        }
+        
         // Setup voice change listener
         if (window.speechSynthesis.onvoiceschanged !== undefined) {
             window.speechSynthesis.onvoiceschanged = populateVoices;
@@ -820,6 +978,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Wait for voices
         waitForVoices(function(success) {
+            if (manualMode) return; // User switched to manual while loading
+            
             spinner.style.display = 'none';
             if (success) {
                 updateStatus('Ready! ' + availableVoices.length + ' voices available', 'success');
@@ -831,6 +991,14 @@ document.addEventListener('DOMContentLoaded', () => {
             startButton.disabled = false;
         });
     }
+    
+    // Initialize
+    log('Initializing lecture player');
+    setupModeSelection();
+    updateStatus('Choose playback mode above', '');
+    
+    // Start voice loading for auto mode (default)
+    initializeVoiceLoading();
     
     log('Initialization complete');
 })();

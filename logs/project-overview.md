@@ -29,7 +29,7 @@ Markdown-to-HTML presentation converter with text-to-speech narration. Teachers 
 
 ## Core Features
 
-### Current (v2.0)
+### Current (v2.1)
 - Markdown parsing (headings create slides)
 - In-app preview with voice
 - **Single HTML export** (October 2025 update)
@@ -37,6 +37,10 @@ Markdown-to-HTML presentation converter with text-to-speech narration. Teachers 
   - Works from file:/// URLs
   - No server required
   - Manual navigation fallback
+- **Manual mode toggle** (October 19, 2025)
+  - Choose between auto-play and manual navigation
+  - Solves Linux/Chromium speed issue
+  - Voice controls hidden in manual mode
 - Voice/rate/pitch controls
 - Progress indicator
 - Keyboard shortcuts
@@ -79,15 +83,17 @@ Markdown-to-HTML presentation converter with text-to-speech narration. Teachers 
 - ✅ Markdown parsing and preview
 - ✅ Voice narration in editor
 - ✅ Single HTML export
+- ✅ Manual mode toggle (October 19, 2025)
 - ✅ Manual navigation
 - ✅ Error handling and logging
 
 **Known Issues:**
-- ⚠️ Linux/Chromium: Poor speech synthesis from file:/// URLs
+- ⚠️ Linux/Chromium: Poor speech synthesis from file:/// URLs (use manual mode)
 - ⚠️ Mobile: Limited voice selection
 - ⚠️ Images: Must use absolute URLs or online hosting
 
 **Workarounds Available:**
+- Use manual mode (new feature - October 19, 2025)
 - Use Firefox on Linux (better TTS)
 - Run local server (fixes speech)
 - Use manual navigation (always works)

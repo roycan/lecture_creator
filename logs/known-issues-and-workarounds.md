@@ -39,11 +39,20 @@ speechSynthesis.getVoices(); // Returns [Voice, Voice, ...]
 
 ### Workarounds (In Priority Order)
 
-**1. Use Firefox (Recommended)**
+**0. Use Manual Mode (NEW - October 19, 2025) ⭐ RECOMMENDED**
+- When opening lecture, select **"Manual navigation"** mode on the start screen
+- Disables auto-play and voice entirely
+- Navigate with Previous/Next buttons at your own pace
+- No voice loading required - instant startup
+- Works perfectly on all platforms
+- **Best option for Linux/Chromium users**
+- **Command:** Just select the "Manual navigation" radio button before clicking Start
+
+**1. Use Firefox (Recommended for Auto Mode)**
 - Firefox on Linux has better speech-dispatcher integration
 - Works from file:/// URLs without configuration
 - Command: `firefox lecture.html`
-- **Best option for students**
+- **Best option for students who want voice narration on Linux**
 
 **2. Run Local HTTP Server**
 - Bypasses file:/// restrictions
