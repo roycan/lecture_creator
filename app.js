@@ -237,7 +237,31 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Export a single HTML file with embedded slides and no external fetch
     exportSingleButton.addEventListener('click', async () => {
-        const singleHtml = createSingleHTML(slides);
+        const baseUrl = baseUrlInput.value.trim();
+        let processedSlides = slides;
+
+        // Prepend base URL to relative image paths if a base URL is provided
+        if (baseUrl) {
+            processedSlides = slides.map(slide => {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = slide.html;
+                
+                const images = tempDiv.querySelectorAll('img');
+                images.forEach(img => {
+                    const src = img.getAttribute('src');
+                    // Only modify relative paths, not absolute URLs
+                    if (src && !src.startsWith('http://') && !src.startsWith('https://') && !src.startsWith('//')) {
+                        // Using the URL constructor is a robust way to join paths
+                        const absoluteUrl = new URL(src, baseUrl).href;
+                        img.setAttribute('src', absoluteUrl);
+                    }
+                });
+                
+                return { html: tempDiv.innerHTML };
+            });
+        }
+
+        const singleHtml = createSingleHTML(processedSlides);
         const blob = new Blob([singleHtml], { type: 'text/html;charset=utf-8' });
         saveAs(blob, 'presentation.html');
     });

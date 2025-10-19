@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.1.1] - October 20, 2025
+
+### Fixed
+- **Critical:** Images not displaying in exported presentations
+- Base URL functionality now properly implemented in export logic
+- Image paths are converted from relative to absolute URLs during export when base URL is provided
+- Exported presentations can now load images from GitHub Pages or any hosted location
+
+### Technical Details
+- Added image path processing in export button click handler
+- Relative paths (e.g., `assets/image.png`) are converted to absolute URLs using the base URL input
+- Absolute URLs and protocol-relative URLs are preserved unchanged
+- Preview window continues to use relative paths (works with local files)
+- Implementation matches the archive version that was previously working
+
+---
+
 ## [2.1.0] - October 19, 2025
 
 ### Added
