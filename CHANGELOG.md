@@ -6,6 +6,90 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.1.4] - October 20, 2025
+
+### Changed
+- **Enhanced Image Display** - Images now display up to 25% larger for improved readability
+- Changed image `max-width` from `80%` to `100%` of slide container (up to 1200px on desktop)
+- Replaced `max-height: 50vh` constraint with `height: auto` for natural aspect ratio preservation
+- Images now benefit from natural vertical flow introduced in v2.1.3
+
+### Improved
+- **Diagram Readability** - Text in educational diagrams (flowcharts, box models, etc.) now significantly more readable
+- **Natural Sizing** - Images display at their natural dimensions without artificial height constraints
+- **Consistent with v2.1.3** - Aligns with natural vertical flow philosophy (no viewport constraints)
+- **Responsive Design** - Images scale appropriately on all devices while maximizing available space
+
+### Technical Details
+- Images can now occupy full slide container width (1200px max on desktop)
+- Aspect ratios maintained perfectly with `height: auto`
+- Border radius (8px) and margins (1.5rem vertical) preserved for professional appearance
+- No breaking changes to existing functionality
+- Recommended image resolution: 1200-1600px wide for optimal display quality
+
+---
+
+## [2.1.3] - October 20, 2025
+
+### Changed
+- **Natural Vertical Flow** - Slides now extend vertically with page-level scrolling instead of being constrained to viewport height
+- Slide container uses `min-height: 100vh` and `height: auto` to allow content to grow naturally
+- Vertical alignment changed from `center` to `flex-start` (top-aligned)
+- Removed internal scrolling (`overflow-y`) from slide container - uses natural page scroll instead
+- Added `max-width: 1200px` to slide container for optimal readability
+- Increased bottom padding to 200px to accommodate fixed navigation buttons
+
+### Fixed
+- **ASCII Art Display (Definitive Fix)** - Code blocks now display ASCII art perfectly without scrolling
+- Changed `white-space` from `pre-wrap` to `pre` (strict spacing preservation)
+- Removed `word-break: break-all` that was destroying ASCII character alignment
+- Changed `overflow-x` from `auto` to `visible` (no internal horizontal scrolling)
+- Reduced font size to 0.8em for better fit while maintaining readability
+- Added `pre code` specific styling to ensure proper inheritance
+
+### Improved
+- **User Experience** - Single scrollbar (page-level) instead of multiple nested scrollbars
+- **Self-Paced Learning** - Students can pause and scroll through long slides at their own pace
+- **Code Readability** - Full code examples visible without internal scrolling
+- **Mobile Friendly** - Natural vertical scroll works perfectly on touch devices
+- **Accessibility** - Natural document flow improves screen reader navigation
+
+### Technical Details
+- Slide container now acts like a webpage section rather than a fixed viewport
+- Works seamlessly with pause/resume feature (v2.1.2)
+- Navigation buttons remain fixed and always visible
+- Short slides still look like traditional presentation slides
+- Long slides with code/ASCII art display fully with page scroll
+- Content constrained to readable width (1200px max)
+
+---
+
+## [2.1.2] - October 20, 2025
+
+### Added
+- **Pause/Resume Button** - Orange pause button appears in auto-play mode navigation controls
+- **Spacebar Pause Shortcut** - In auto mode, spacebar pauses/resumes presentation; in manual mode, spacebar advances slides
+- Pause button changes to green "▶ Resume" when paused
+- Pause button hidden in manual mode (not needed)
+- Visual feedback with color changes (orange = pause, green = resume)
+
+### Fixed
+- **ASCII Art Display** - Code blocks now render correctly with proper monospace fonts
+- Pre-formatted text blocks now use proper font stack: 'Courier New', Consolas, Monaco, etc.
+- Reduced font size to 0.85em for better fit in presentation slides
+- Added `white-space: pre-wrap` to allow wrapping of long code lines while preserving formatting
+- Box-drawing characters (└ ┌ │ ─) now display correctly without horizontal scrolling
+- Maximum width constraint ensures code blocks fit within slide container
+
+### Technical Details
+- Added `isPaused` state variable to track pause status
+- Modified `playSlide()` to check pause state before advancing
+- Speech synthesis canceled when paused, resumed when unpaused
+- Keyboard handler differentiates between auto and manual modes for spacebar behavior
+- CSS improvements for `<pre>` blocks: monospace fonts, line-height 1.4, word-break support
+
+---
+
 ## [2.1.1] - October 20, 2025
 
 ### Fixed

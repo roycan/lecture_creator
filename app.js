@@ -291,24 +291,44 @@ document.addEventListener('DOMContentLoaded', () => {
         
         #slide-container {
             width: 100%;
-            height: 100%;
+            min-height: 100vh;
+            height: auto;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
             text-align: center;
-            padding: 3rem 2rem;
-            overflow-y: auto;
+            padding: 3rem 2rem 200px 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
         #slide-container h1 { font-size: 2.5em; margin: 0.5em 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
         #slide-container h2 { font-size: 2em; margin: 0.5em 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
         #slide-container h3 { font-size: 1.5em; margin: 0.5em 0; }
         #slide-container p { font-size: 1.2em; line-height: 1.6; max-width: 800px; margin: 0.5em auto; }
-        #slide-container img { max-width: 80%; max-height: 50vh; border-radius: 8px; margin: 1.5rem 0; }
+        #slide-container img { max-width: 100%; height: auto; border-radius: 8px; margin: 1.5rem 0; }
         #slide-container ul, #slide-container ol { text-align: left; max-width: 600px; margin: 1em auto; font-size: 1.1em; }
         #slide-container code { background: #333; padding: 0.2em 0.4em; border-radius: 3px; }
-        #slide-container pre { background: #2d2d2d; padding: 1em; border-radius: 8px; overflow-x: auto; text-align: left; }
+        #slide-container pre { 
+            background: #2d2d2d; 
+            padding: 1em; 
+            border-radius: 8px; 
+            overflow-x: visible; 
+            text-align: left;
+            font-family: 'Courier New', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            font-size: 0.8em;
+            line-height: 1.4;
+            max-width: 100%;
+            white-space: pre;
+        }
+        
+        #slide-container pre code {
+            font-family: inherit;
+            font-size: inherit;
+            background: transparent;
+            padding: 0;
+        }
         
         /* Start Overlay */
         #start-overlay {
@@ -491,6 +511,26 @@ document.addEventListener('DOMContentLoaded', () => {
         .nav-button:hover { background: rgba(69, 160, 73, 1); transform: scale(1.05); }
         .nav-button:disabled { background: rgba(85, 85, 85, 0.5); cursor: not-allowed; }
         
+        #pause-button {
+            background: rgba(255, 152, 0, 0.9);
+        }
+        
+        #pause-button:hover:not(:disabled) {
+            background: rgba(245, 124, 0, 1);
+        }
+        
+        #pause-button.paused {
+            background: rgba(76, 175, 80, 0.9);
+        }
+        
+        #pause-button.paused:hover {
+            background: rgba(69, 160, 73, 1);
+        }
+        
+        #pause-button.hidden {
+            display: none;
+        }
+        
         /* Loading Spinner */
         .spinner {
             border: 3px solid rgba(255, 255, 255, 0.3);
@@ -570,6 +610,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     <div id="nav-controls">
         <div id="progress-indicator">Slide 1 of 1</div>
+        <button id="pause-button" class="nav-button hidden">⏸ Pause</button>
         <button id="prev-button" class="nav-button">⬅ Previous</button>
         <button id="next-button" class="nav-button">Next ➡</button>
     </div>
@@ -593,6 +634,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var isPlaying = false;
     var autoAdvance = true;
     var manualMode = false;
+    var isPaused = false;
     var availableVoices = [];
     var selectedVoice = null;
     
@@ -610,6 +652,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var progressIndicator = document.getElementById('progress-indicator');
     var prevButton = document.getElementById('prev-button');
     var nextButton = document.getElementById('next-button');
+    var pauseButton = document.getElementById('pause-button');
     var spinner = document.querySelector('.spinner');
     var voiceControlsContainer = document.getElementById('voice-controls-container');
     
@@ -905,6 +948,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
+        // Check if paused - wait for resume
+        if (isPaused) {
+            log('Paused - waiting for resume (slide ' + (index + 1) + ')');
+            return;
+        }
+        
         // Extract text for speech (auto mode only)
         var tempDiv = document.createElement('div');
         tempDiv.innerHTML = slides[index].html;
@@ -912,7 +961,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (autoAdvance) {
             speakText(text, function() {
-                if (isPlaying) {
+                if (isPlaying && !isPaused) {
                     playSlide(index + 1);
                 }
             });
@@ -946,7 +995,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', function(e) {
         if (!isPlaying) return;
         
-        if (e.key === 'ArrowRight' || e.key === ' ') {
+        if (e.key === ' ') {
+            e.preventDefault();
+            if (manualMode) {
+                // In manual mode, spacebar advances slide
+                nextSlide();
+            } else {
+                // In auto mode, spacebar toggles pause/resume
+                togglePause();
+            }
+        } else if (e.key === 'ArrowRight') {
             e.preventDefault();
             nextSlide();
         } else if (e.key === 'ArrowLeft') {
@@ -961,23 +1019,53 @@ document.addEventListener('DOMContentLoaded', () => {
         startOverlay.style.display = 'none';
         navControls.classList.add('visible');
         isPlaying = true;
+        isPaused = false;
         
         if (!manualMode) {
             // Auto mode: enable auto-advance and try voice one more time
             autoAdvance = true;
             populateVoices();
+            // Show pause button in auto mode
+            pauseButton.classList.remove('hidden');
         } else {
             // Manual mode: no auto-advance, no voice needed
             autoAdvance = false;
+            // Hide pause button in manual mode
+            pauseButton.classList.add('hidden');
         }
         
         playSlide(0);
+    }
+    
+    // Toggle pause/resume
+    function togglePause() {
+        if (manualMode) return; // No pause in manual mode
+        
+        isPaused = !isPaused;
+        
+        if (isPaused) {
+            // Paused state
+            window.speechSynthesis.cancel();
+            pauseButton.textContent = '▶ Resume';
+            pauseButton.classList.add('paused');
+            log('Presentation paused');
+        } else {
+            // Resumed state
+            pauseButton.textContent = '⏸ Pause';
+            pauseButton.classList.remove('paused');
+            log('Presentation resumed');
+            // Resume playing current slide
+            if (autoAdvance && currentSlide < slides.length) {
+                playSlide(currentSlide);
+            }
+        }
     }
     
     // Button handlers
     startButton.addEventListener('click', startPresentation);
     nextButton.addEventListener('click', nextSlide);
     prevButton.addEventListener('click', prevSlide);
+    pauseButton.addEventListener('click', togglePause);
     
     // Voice loading wrapper
     function initializeVoiceLoading() {
