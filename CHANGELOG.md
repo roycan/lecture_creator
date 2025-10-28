@@ -6,6 +6,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.2.0] - October 28, 2025
+
+### Added
+- **Dynamic Speed Control** - Persistent speed slider in navigation controls (auto-play mode only)
+- **Keyboard Shortcuts for Speed** - Press `+` or `-` to adjust playback speed by 0.1x increments
+- **Visual Speed Feedback** - Toast notification appears when using keyboard shortcuts showing current speed
+- **Speed Control Hint** - Small tip in start overlay teaching students about `+`/`-` shortcuts
+- Speed control automatically syncs initial value from start overlay settings
+- Speed control hidden in manual mode (not applicable without TTS)
+
+### Changed
+- Speed (rate) control moved from start overlay to persistent navigation bar
+- Speed changes now apply dynamically during presentation (affects next sentence)
+- Pitch control remains in start overlay for initial setup (rarely needs mid-presentation adjustment)
+
+### Improved
+- **Self-Paced Learning** - Students can adjust speed on-the-fly without restarting
+- **Better Comprehension** - Slow down for complex topics (0.6x), speed up for review (1.3x)
+- **Power User Features** - Keyboard shortcuts provide quick speed adjustments
+- **Smart Visibility** - Speed control only shows when relevant (auto-play mode with TTS)
+- **Discoverable Controls** - Speed slider always visible in nav bar, keyboard hint in overlay
+
+### Technical Details
+- Speed slider: 100px wide on desktop, 150px on mobile (better touch target)
+- Range: 0.6x - 1.3x, step 0.05, default 0.95x
+- Toast notification: 800ms display, center screen, auto-fade
+- Keyboard shortcuts check focus (don't trigger while typing in inputs)
+- Speed value updates in real-time as slider moves
+- ES5 compliant code (browser compatibility)
+
+---
+
 ## [2.1.4] - October 20, 2025
 
 ### Changed

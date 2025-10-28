@@ -531,6 +531,105 @@ document.addEventListener('DOMContentLoaded', () => {
             display: none;
         }
         
+        /* Speed Control */
+        .speed-control {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #555;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+        
+        .speed-control label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+            cursor: default;
+        }
+        
+        #speed-slider {
+            width: 100px;
+            height: 6px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        #speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #4CAF50;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        #speed-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #4CAF50;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+        
+        #speed-value {
+            font-weight: bold;
+            min-width: 45px;
+            text-align: right;
+            color: #4CAF50;
+        }
+        
+        .speed-control.hidden {
+            display: none;
+        }
+        
+        /* Keyboard Hint */
+        .keyboard-hint {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 6px;
+            font-size: 0.85em;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+        
+        .keyboard-hint kbd {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        
+        /* Speed Toast Notification */
+        #speed-toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 1.5rem 3rem;
+            border-radius: 12px;
+            font-size: 1.8em;
+            font-weight: bold;
+            z-index: 10000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border: 2px solid #4CAF50;
+        }
+        
         /* Loading Spinner */
         .spinner {
             border: 3px solid rgba(255, 255, 255, 0.3);
@@ -554,6 +653,20 @@ document.addEventListener('DOMContentLoaded', () => {
             #slide-container p { font-size: 1em; }
             #controls { flex-direction: column; }
             #nav-controls { bottom: 10px; right: 10px; }
+            
+            #speed-slider {
+                width: 150px;
+            }
+            
+            .nav-button {
+                padding: 10px 16px;
+                font-size: 0.9em;
+            }
+            
+            #speed-toast {
+                font-size: 1.5em;
+                padding: 1rem 2rem;
+            }
         }
     </style>
 </head>
@@ -605,11 +718,22 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             
             <button id="start-button" disabled>Initializing...</button>
+            
+            <div class="keyboard-hint">
+                <strong>Tip:</strong> Press <kbd>+</kbd> or <kbd>-</kbd> during playback to adjust speed
+            </div>
         </div>
     </main>
     
     <div id="nav-controls">
         <div id="progress-indicator">Slide 1 of 1</div>
+        <div id="speed-control" class="speed-control hidden">
+            <label>
+                Speed:
+                <input id="speed-slider" type="range" min="0.6" max="1.3" step="0.05" value="0.95">
+                <span id="speed-value">0.95x</span>
+            </label>
+        </div>
         <button id="pause-button" class="nav-button hidden">⏸ Pause</button>
         <button id="prev-button" class="nav-button">⬅ Previous</button>
         <button id="next-button" class="nav-button">Next ➡</button>
@@ -655,6 +779,9 @@ document.addEventListener('DOMContentLoaded', () => {
     var pauseButton = document.getElementById('pause-button');
     var spinner = document.querySelector('.spinner');
     var voiceControlsContainer = document.getElementById('voice-controls-container');
+    var speedControl = document.getElementById('speed-control');
+    var speedSlider = document.getElementById('speed-slider');
+    var speedValue = document.getElementById('speed-value');
     
     // Update rate/pitch displays
     rateInput.addEventListener('input', function() {
@@ -662,6 +789,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     pitchInput.addEventListener('input', function() {
         pitchValue.textContent = parseFloat(pitchInput.value).toFixed(1);
+    });
+    
+    // Update speed display (nav controls)
+    speedSlider.addEventListener('input', function() {
+        speedValue.textContent = parseFloat(speedSlider.value).toFixed(2) + 'x';
     });
     
     // Setup mode selection
@@ -884,7 +1016,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     utterance.voice = selectedVoice;
                 }
                 
-                utterance.rate = parseFloat(rateInput.value) || 0.95;
+                // Use speed slider if available (nav controls), otherwise use rate from overlay
+                utterance.rate = parseFloat(speedSlider ? speedSlider.value : (rateInput ? rateInput.value : 0.95));
                 utterance.pitch = parseFloat(pitchInput.value) || 1.0;
                 
                 utterance.onend = function() {
@@ -991,9 +1124,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+    // Adjust speed with keyboard shortcuts
+    function adjustSpeed(delta) {
+        if (manualMode) return; // No speed control in manual mode
+        
+        var currentSpeed = parseFloat(speedSlider.value);
+        var newSpeed = Math.max(0.6, Math.min(1.3, currentSpeed + delta));
+        
+        speedSlider.value = newSpeed.toFixed(2);
+        speedValue.textContent = newSpeed.toFixed(2) + 'x';
+        
+        log('Speed adjusted to ' + newSpeed.toFixed(2) + 'x');
+        showSpeedToast(newSpeed);
+    }
+    
+    // Show speed toast notification
+    function showSpeedToast(speed) {
+        var toast = document.getElementById('speed-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'speed-toast';
+            document.body.appendChild(toast);
+        }
+        
+        toast.textContent = 'Speed: ' + speed.toFixed(2) + 'x';
+        toast.style.opacity = '1';
+        
+        // Fade out after 800ms
+        setTimeout(function() {
+            toast.style.opacity = '0';
+        }, 800);
+    }
+    
     // Keyboard navigation
     document.addEventListener('keydown', function(e) {
         if (!isPlaying) return;
+        
+        // Don't handle shortcuts while typing in input fields
+        var activeTag = document.activeElement.tagName;
+        if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') {
+            return;
+        }
         
         if (e.key === ' ') {
             e.preventDefault();
@@ -1011,6 +1182,16 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             prevSlide();
         }
+        // Speed shortcuts (only in auto mode)
+        else if (!manualMode) {
+            if (e.key === '+' || e.key === '=') {
+                e.preventDefault();
+                adjustSpeed(0.1);
+            } else if (e.key === '-' || e.key === '_') {
+                e.preventDefault();
+                adjustSpeed(-0.1);
+            }
+        }
     });
     
     // Start presentation
@@ -1025,13 +1206,23 @@ document.addEventListener('DOMContentLoaded', () => {
             // Auto mode: enable auto-advance and try voice one more time
             autoAdvance = true;
             populateVoices();
-            // Show pause button in auto mode
+            
+            // Sync speed slider to start overlay value
+            if (rateInput && speedSlider) {
+                speedSlider.value = rateInput.value;
+                speedValue.textContent = parseFloat(rateInput.value).toFixed(2) + 'x';
+                log('Synced speed: ' + rateInput.value + 'x');
+            }
+            
+            // Show pause button and speed control in auto mode
             pauseButton.classList.remove('hidden');
+            speedControl.classList.remove('hidden');
         } else {
             // Manual mode: no auto-advance, no voice needed
             autoAdvance = false;
-            // Hide pause button in manual mode
+            // Hide pause button and speed control in manual mode
             pauseButton.classList.add('hidden');
+            speedControl.classList.add('hidden');
         }
         
         playSlide(0);
