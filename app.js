@@ -720,7 +720,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <button id="start-button" disabled>Initializing...</button>
             
             <div class="keyboard-hint">
-                <strong>Tip:</strong> Press <kbd>+</kbd> or <kbd>-</kbd> during playback to adjust speed
+                <strong>Tip:</strong> Press <kbd>,</kbd> or <kbd>.</kbd> during playback to adjust speed
             </div>
         </div>
     </main>
@@ -1184,10 +1184,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         // Speed shortcuts (only in auto mode)
         else if (!manualMode) {
-            if (e.key === '+' || e.key === '=') {
+            if (e.key === '.' || e.key === '>') {
                 e.preventDefault();
                 adjustSpeed(0.1);
-            } else if (e.key === '-' || e.key === '_') {
+            } else if (e.key === ',' || e.key === '<') {
                 e.preventDefault();
                 adjustSpeed(-0.1);
             }
