@@ -783,7 +783,7 @@ Student Object:
 }
 ```
 
-    ![Class diagram showing object structure with properties and methods, demonstrating the 'this' keyword binding](diagrams/object-anatomy.png)
+![Class diagram showing object structure with properties and methods, demonstrating the 'this' keyword binding](diagrams/object-anatomy.png)
 
 ### **Accessing Object Properties**
 
