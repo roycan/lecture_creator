@@ -1,0 +1,11 @@
+flowchart TD
+    Start([Function Call:<br/>greet'Maria']) --> Enter[Enter function<br/>parameter name = 'Maria']
+    Enter --> Body[Execute function body:<br/>return 'Hello, ' + name + '!']
+    Body --> Return[Return value:<br/>'Hello, Maria!']
+    Return --> CallSite[Back to call site:<br/>result = 'Hello, Maria!']
+    CallSite --> End([Continue execution])
+    
+    style Enter fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style Body fill:#dbeafe,stroke:#3b82f6,stroke-width:2px
+    style Return fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    style CallSite fill:#e9d5ff,stroke:#a855f7,stroke-width:2px

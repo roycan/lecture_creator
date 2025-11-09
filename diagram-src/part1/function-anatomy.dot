@@ -1,0 +1,17 @@
+digraph FunctionAnatomy {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Arial"];
+    
+    start [label="Function Call:\ngreet('Maria')", shape=ellipse, fillcolor="#e0e7ff"];
+    enter [label="Enter function\nparameter name = 'Maria'", fillcolor="#d1fae5"];
+    body [label="Execute body:\nreturn 'Hello, ' + name + '!'", fillcolor="#dbeafe"];
+    ret [label="Return value:\n'Hello, Maria!'", fillcolor="#fef3c7"];
+    callsite [label="Back to call site:\nresult = 'Hello, Maria!'", fillcolor="#e9d5ff"];
+    end [label="Continue", shape=ellipse, fillcolor="#e0e7ff"];
+    
+    start -> enter;
+    enter -> body;
+    body -> ret;
+    ret -> callsite;
+    callsite -> end;
+}

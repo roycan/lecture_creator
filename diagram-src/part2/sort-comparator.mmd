@@ -1,0 +1,16 @@
+flowchart TD
+    Array["scores = [85, 90, 78, 92]"] --> Compare
+    Compare{Compare a vs b:<br/>a - b} --> Negative["Result < 0<br/>a comes before b"]
+    Compare --> Zero["Result = 0<br/>stay in same order"]
+    Compare --> Positive["Result > 0<br/>b comes before a"]
+    
+    Negative --> Asc["Ascending:<br/>[78, 85, 90, 92]"]
+    Zero --> Asc
+    Positive --> Asc
+    
+    CompareDesc{Reverse:<br/>b - a} --> Desc["Descending:<br/>[92, 90, 85, 78]"]
+    
+    style Compare fill:#fff4e6,stroke:#f59e0b,stroke-width:3px
+    style CompareDesc fill:#fef3c7,stroke:#f59e0b,stroke-width:3px
+    style Asc fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style Desc fill:#dbeafe,stroke:#3b82f6,stroke-width:2px

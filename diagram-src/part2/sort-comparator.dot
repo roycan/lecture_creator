@@ -1,0 +1,25 @@
+digraph SortComparator {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Arial"];
+    
+    array [label="scores = [85, 90, 78, 92]", fillcolor="#e0e7ff"];
+    compare [label="Compare a vs b:\na - b", shape=diamond, fillcolor="#fff4e6"];
+    neg [label="Result < 0\na comes before b", fillcolor="#fee2e2"];
+    zero [label="Result = 0\nstay in same order", fillcolor="#fef3c7"];
+    pos [label="Result > 0\nb comes before a", fillcolor="#dbeafe"];
+    asc [label="Ascending:\n[78, 85, 90, 92]", fillcolor="#d1fae5", penwidth=2];
+    
+    compareDesc [label="Reverse:\nb - a", shape=diamond, fillcolor="#fef3c7"];
+    desc [label="Descending:\n[92, 90, 85, 78]", fillcolor="#dbeafe", penwidth=2];
+    
+    array -> compare;
+    compare -> neg [label="< 0"];
+    compare -> zero [label="= 0"];
+    compare -> pos [label="> 0"];
+    neg -> asc;
+    zero -> asc;
+    pos -> asc;
+    
+    array -> compareDesc [style=dashed];
+    compareDesc -> desc;
+}

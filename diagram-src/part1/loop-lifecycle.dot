@@ -1,0 +1,18 @@
+digraph ForLoop {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Arial"];
+    
+    start [label="Start For Loop", shape=ellipse, fillcolor="#e0e7ff"];
+    init [label="Initialize:\ni = 1", fillcolor="#d1fae5"];
+    check [label="i <= 5?", shape=diamond, fillcolor="#fff4e6"];
+    body [label="Execute body:\nconsole.log('Count: ' + i)", fillcolor="#dbeafe"];
+    increment [label="Increment:\ni++", fillcolor="#e9d5ff"];
+    end [label="Exit Loop", shape=ellipse, fillcolor="#fee2e2"];
+    
+    start -> init;
+    init -> check;
+    check -> body [label="true"];
+    body -> increment;
+    increment -> check [label="repeat"];
+    check -> end [label="false"];
+}

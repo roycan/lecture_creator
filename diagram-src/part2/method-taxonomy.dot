@@ -1,0 +1,30 @@
+digraph MethodTaxonomy {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Arial"];
+    
+    subgraph cluster_essential {
+        label="🟢 Essential Methods - You Need These!";
+        style=filled;
+        color="#10b981";
+        fillcolor="#d1fae5";
+        
+        e1 [label="forEach()\nLoop through each item", fillcolor="#ecfdf5"];
+        e2 [label="map()\nTransform each item", fillcolor="#ecfdf5"];
+        e3 [label="filter()\nKeep some items", fillcolor="#ecfdf5"];
+    }
+    
+    subgraph cluster_advanced {
+        label="🟡 Advanced Methods - Learn When Ready";
+        style=filled;
+        color="#f59e0b";
+        fillcolor="#fef3c7";
+        
+        a1 [label="find() / findIndex()\nGet first match", fillcolor="#fffbeb"];
+        a2 [label="reduce()\nCombine all items", fillcolor="#fffbeb"];
+        a3 [label="includes()\nCheck if exists", fillcolor="#fffbeb"];
+        a4 [label="slice()\nCopy part of array", fillcolor="#fffbeb"];
+        a5 [label="sort()\nReorder items", fillcolor="#fffbeb"];
+    }
+    
+    e1 -> a1 [label="progress", style=dashed];
+}

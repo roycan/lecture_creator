@@ -1,0 +1,16 @@
+digraph IfElse {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Arial"];
+    
+    start [label="Start", shape=ellipse, fillcolor="#e0e7ff"];
+    check [label="score >= 75?", shape=diamond, fillcolor="#fff4e6"];
+    pass [label="Execute:\n'Passed! 🎉'", fillcolor="#d1fae5"];
+    skip [label="Skip\ncode block", fillcolor="#fee2e2"];
+    end [label="Continue", shape=ellipse, fillcolor="#e0e7ff"];
+    
+    start -> check;
+    check -> pass [label="true"];
+    check -> skip [label="false"];
+    pass -> end;
+    skip -> end;
+}

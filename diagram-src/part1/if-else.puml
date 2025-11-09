@@ -1,0 +1,11 @@
+@startuml
+start
+:Start;
+if (score >= 75?) then (true)
+  :Execute: 'Passed! 🎉';
+else (false)
+  :Skip code block;
+endif
+:Continue;
+stop
+@enduml

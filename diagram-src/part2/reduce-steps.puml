@@ -1,0 +1,19 @@
+@startuml
+start
+:prices = [50, 100, 75]
+Start: sum = 0;
+:Step 1:
+sum = 0, price = 50
+return 0 + 50 = 50;
+:sum becomes 50;
+:Step 2:
+sum = 50, price = 100
+return 50 + 100 = 150;
+:sum becomes 150;
+:Step 3:
+sum = 150, price = 75
+return 150 + 75 = 225;
+:Final Result:
+225;
+stop
+@enduml

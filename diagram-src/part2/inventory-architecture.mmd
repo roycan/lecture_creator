@@ -1,0 +1,24 @@
+flowchart TB
+    subgraph Store["Store Object: Aling Maria's Store"]
+        Props["Properties:<br/>name, location, inventory[]"]
+        Methods["Key Methods:<br/>sellProduct(id, qty)<br/>restock(id, qty)<br/>showInventory()<br/>getTotalValue()"]
+    end
+    
+    subgraph Inventory["inventory[] Array"]
+        P1["Product 1:<br/>{id, name, price, stock}"]
+        P2["Product 2:<br/>{id, name, price, stock}"]
+        P3["Product 3:<br/>{id, name, price, stock}"]
+    end
+    
+    Store --> Inventory
+    Methods --> P1
+    Methods --> P2
+    Methods --> P3
+    
+    style Store fill:#dbeafe,stroke:#3b82f6,stroke-width:3px
+    style Props fill:#e0e7ff,stroke:#6366f1,stroke-width:2px
+    style Methods fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    style Inventory fill:#e9d5ff,stroke:#a855f7,stroke-width:2px
+    style P1 fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style P2 fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style P3 fill:#d1fae5,stroke:#10b981,stroke-width:2px

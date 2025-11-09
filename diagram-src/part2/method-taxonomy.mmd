@@ -1,0 +1,27 @@
+flowchart TB
+    subgraph Essential["🟢 Essential Methods - You Need These!"]
+        E1["forEach()<br/>Loop through each item"]
+        E2["map()<br/>Transform each item"]
+        E3["filter()<br/>Keep some items"]
+    end
+    
+    subgraph Advanced["🟡 Advanced Methods - Learn When Ready"]
+        A1["find() / findIndex()<br/>Get first match"]
+        A2["reduce()<br/>Combine all items"]
+        A3["includes()<br/>Check if exists"]
+        A4["slice()<br/>Copy part of array"]
+        A5["sort()<br/>Reorder items"]
+    end
+    
+    Essential --> Advanced
+    
+    style Essential fill:#d1fae5,stroke:#10b981,stroke-width:3px
+    style Advanced fill:#fef3c7,stroke:#f59e0b,stroke-width:3px
+    style E1 fill:#ecfdf5,stroke:#10b981,stroke-width:2px
+    style E2 fill:#ecfdf5,stroke:#10b981,stroke-width:2px
+    style E3 fill:#ecfdf5,stroke:#10b981,stroke-width:2px
+    style A1 fill:#fffbeb,stroke:#f59e0b,stroke-width:2px
+    style A2 fill:#fffbeb,stroke:#f59e0b,stroke-width:2px
+    style A3 fill:#fffbeb,stroke:#f59e0b,stroke-width:2px
+    style A4 fill:#fffbeb,stroke:#f59e0b,stroke-width:2px
+    style A5 fill:#fffbeb,stroke:#f59e0b,stroke-width:2px

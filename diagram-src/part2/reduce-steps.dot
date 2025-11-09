@@ -1,0 +1,19 @@
+digraph ReduceSteps {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Arial"];
+    
+    start [label="prices = [50, 100, 75]\nStart: sum = 0", fillcolor="#e0e7ff"];
+    step1 [label="Step 1:\nsum = 0, price = 50\nreturn 0 + 50 = 50", fillcolor="#fef3c7"];
+    state1 [label="sum becomes 50", fillcolor="#d1fae5"];
+    step2 [label="Step 2:\nsum = 50, price = 100\nreturn 50 + 100 = 150", fillcolor="#fef3c7"];
+    state2 [label="sum becomes 150", fillcolor="#d1fae5"];
+    step3 [label="Step 3:\nsum = 150, price = 75\nreturn 150 + 75 = 225", fillcolor="#fef3c7"];
+    final [label="Final Result:\n225", fillcolor="#d1fae5", penwidth=3];
+    
+    start -> step1;
+    step1 -> state1;
+    state1 -> step2;
+    step2 -> state2;
+    state2 -> step3;
+    step3 -> final;
+}

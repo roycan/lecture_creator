@@ -1,0 +1,27 @@
+digraph ArrayMutation {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Arial"];
+    
+    subgraph cluster_array {
+        label="Array: ['Maria', 'Jose', 'Ana']";
+        style=filled;
+        color=lightgrey;
+        node [style=filled, fillcolor=white];
+        
+        a0 [label="Index 0:\n'Maria'"];
+        a1 [label="Index 1:\n'Jose'"];
+        a2 [label="Index 2:\n'Ana'"];
+        
+        a0 -> a1 -> a2 [style=invis];
+    }
+    
+    push [label="push('Pedro')\nAdd to END", fillcolor="#d1fae5"];
+    pop [label="pop()\nRemove from END", fillcolor="#fee2e2"];
+    unshift [label="unshift('Rosa')\nAdd to START", fillcolor="#dbeafe"];
+    shift [label="shift()\nRemove from START", fillcolor="#fef3c7"];
+    
+    push -> a2 [label="➜", color="#10b981", penwidth=2];
+    a2 -> pop [label="➜", color="#ef4444", penwidth=2];
+    unshift -> a0 [label="➜", color="#3b82f6", penwidth=2];
+    a0 -> shift [label="➜", color="#f59e0b", penwidth=2];
+}

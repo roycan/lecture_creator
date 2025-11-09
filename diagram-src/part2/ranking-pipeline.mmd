@@ -1,0 +1,13 @@
+flowchart LR
+    Input["Student Objects:<br/>[{Maria, 87}, {Jose, 72},<br/>{Ana, 91}, {Pedro, 68}]"] --> AddAvg
+    AddAvg["map: Calculate<br/>average for each"] --> WithAvg["With Averages:<br/>[{Maria, 87}, {Jose, 72},<br/>{Ana, 91}, {Pedro, 68}]"]
+    WithAvg --> Sort["sort: By average<br/>(highest first)"]
+    Sort --> Sorted["Sorted:<br/>[{Ana, 91}, {Maria, 87},<br/>{Jose, 72}, {Pedro, 68}]"]
+    Sorted --> Display["Display ranked list<br/>with medals 🥇🥈🥉"]
+    
+    style Input fill:#e0e7ff,stroke:#6366f1,stroke-width:2px
+    style AddAvg fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    style WithAvg fill:#dbeafe,stroke:#3b82f6,stroke-width:2px
+    style Sort fill:#e9d5ff,stroke:#a855f7,stroke-width:2px
+    style Sorted fill:#dbeafe,stroke:#3b82f6,stroke-width:2px
+    style Display fill:#d1fae5,stroke:#10b981,stroke-width:3px

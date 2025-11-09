@@ -1,0 +1,12 @@
+@startuml
+start
+:Initialize: i = 1;
+repeat
+  :Check: i <= 5?;
+  :Execute body:\nconsole.log('Count: ' + i);
+  :Increment: i++;
+repeat while (i <= 5?) is (true)
+->false;
+:Exit Loop;
+stop
+@enduml

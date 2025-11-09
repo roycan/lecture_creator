@@ -1,0 +1,18 @@
+flowchart TD
+    Start[Purchase Amount] --> Check1{purchase >= 200?}
+    Check1 -->|true| Tier1["10% discount<br/>₱200+"]
+    Check1 -->|false| Check2{purchase >= 100?}
+    Check2 -->|true| Tier2["5% discount<br/>₱100-₱199"]
+    Check2 -->|false| Tier3["No discount<br/>< ₱100"]
+    
+    Tier1 --> Calculate1[finalPrice = purchase × 0.90]
+    Tier2 --> Calculate2[finalPrice = purchase × 0.95]
+    Tier3 --> Calculate3[finalPrice = purchase]
+    
+    Calculate1 --> End[Show final price]
+    Calculate2 --> End
+    Calculate3 --> End
+    
+    style Tier1 fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style Tier2 fill:#dbeafe,stroke:#3b82f6,stroke-width:2px
+    style Tier3 fill:#fee2e2,stroke:#ef4444,stroke-width:2px

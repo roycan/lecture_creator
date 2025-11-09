@@ -1,0 +1,11 @@
+@startuml
+start
+:Input Array:\n[70, 85, 90, 72, 78];
+:filter(score >= 75)\nKeep passing scores;
+:Filtered:\n[85, 90, 78];
+:map(score + 5)\nAdd 5 bonus points;
+:Mapped:\n[90, 95, 83];
+:reduce(sum + score, 0)\nCalculate total;
+:Result:\n268;
+stop
+@enduml

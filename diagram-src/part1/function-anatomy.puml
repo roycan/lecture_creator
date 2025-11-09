@@ -1,0 +1,9 @@
+@startuml
+start
+:Function Call: greet('Maria');
+:Enter function\nparameter name = 'Maria';
+:Execute body:\nreturn 'Hello, ' + name + '!';
+:Return value:\n'Hello, Maria!';
+:Back to call site:\nresult = 'Hello, Maria!';
+stop
+@enduml

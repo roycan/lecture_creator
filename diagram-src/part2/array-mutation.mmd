@@ -1,0 +1,16 @@
+flowchart LR
+    subgraph Array["Array: ['Maria', 'Jose', 'Ana']"]
+        A0[Index 0:<br/>'Maria']
+        A1[Index 1:<br/>'Jose']
+        A2[Index 2:<br/>'Ana']
+    end
+    
+    Push["push('Pedro')<br/>➜ Add to END"] --> Array
+    Pop["pop()<br/>➜ Remove from END"] --> Array
+    Unshift["unshift('Rosa')<br/>➜ Add to START"] --> Array
+    Shift["shift()<br/>➜ Remove from START"] --> Array
+    
+    style Push fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style Pop fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style Unshift fill:#dbeafe,stroke:#3b82f6,stroke-width:2px
+    style Shift fill:#fef3c7,stroke:#f59e0b,stroke-width:2px

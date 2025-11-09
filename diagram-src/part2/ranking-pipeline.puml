@@ -1,0 +1,19 @@
+@startuml
+start
+:Student Objects:
+[{Maria, 87}, {Jose, 72},
+{Ana, 91}, {Pedro, 68}];
+:map: Calculate
+average for each;
+:With Averages:
+[{Maria, 87}, {Jose, 72},
+{Ana, 91}, {Pedro, 68}];
+:sort: By average
+(highest first);
+:Sorted:
+[{Ana, 91}, {Maria, 87},
+{Jose, 72}, {Pedro, 68}];
+:Display ranked list
+with medals 🥇🥈🥉;
+stop
+@enduml

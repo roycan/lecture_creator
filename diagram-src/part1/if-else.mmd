@@ -1,0 +1,10 @@
+flowchart TD
+    Start([Start]) --> Check{score >= 75?}
+    Check -->|Yes / true| Pass[Execute: 'Passed!' 🎉]
+    Check -->|No / false| Skip[Skip code block]
+    Pass --> End([Continue])
+    Skip --> End
+    
+    style Check fill:#fff4e6,stroke:#f59e0b,stroke-width:3px
+    style Pass fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style Skip fill:#fee2e2,stroke:#ef4444,stroke-width:2px

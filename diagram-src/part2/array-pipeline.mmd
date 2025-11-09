@@ -1,0 +1,15 @@
+flowchart LR
+    Input["Input Array:<br/>[70, 85, 90, 72, 78]"] --> Filter
+    Filter["filter(score >= 75)<br/>Keep passing scores"] --> Filtered["Filtered:<br/>[85, 90, 78]"]
+    Filtered --> Map["map(score + 5)<br/>Add 5 bonus points"]
+    Map --> Mapped["Mapped:<br/>[90, 95, 83]"]
+    Mapped --> Reduce["reduce(sum + score, 0)<br/>Calculate total"]
+    Reduce --> Result["Result:<br/>268"]
+    
+    style Input fill:#e0e7ff,stroke:#6366f1,stroke-width:2px
+    style Filter fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    style Filtered fill:#dbeafe,stroke:#3b82f6,stroke-width:2px
+    style Map fill:#e9d5ff,stroke:#a855f7,stroke-width:2px
+    style Mapped fill:#dbeafe,stroke:#3b82f6,stroke-width:2px
+    style Reduce fill:#fecaca,stroke:#ef4444,stroke-width:2px
+    style Result fill:#d1fae5,stroke:#10b981,stroke-width:3px

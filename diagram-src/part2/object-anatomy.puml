@@ -1,0 +1,30 @@
+@startuml
+class Student {
+  +name: string
+  +age: number
+  +scores: number[]
+  +isEnrolled: boolean
+  --
+  +getAverage(): number
+  +greet(): string
+}
+
+note right of Student
+  Properties store data
+  Methods perform actions
+  'this' refers to current object
+end note
+
+object "Example: student" as ex {
+  name = "Maria Santos"
+  age = 15
+  scores = [85, 90, 88]
+  isEnrolled = true
+}
+
+note bottom of ex
+  student.name ➜ "Maria Santos"
+  student.getAverage() ➜ calls method
+  Inside method: this.scores ➜ [85,90,88]
+end note
+@enduml

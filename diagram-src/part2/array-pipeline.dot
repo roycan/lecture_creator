@@ -1,0 +1,19 @@
+digraph ArrayPipeline {
+    rankdir=LR;
+    node [shape=box, style=filled, fontname="Arial"];
+    
+    input [label="Input Array:\n[70, 85, 90, 72, 78]", fillcolor="#e0e7ff"];
+    filter [label="filter(score >= 75)\nKeep passing scores", fillcolor="#fef3c7"];
+    filtered [label="Filtered:\n[85, 90, 78]", fillcolor="#dbeafe"];
+    map [label="map(score + 5)\nAdd 5 bonus points", fillcolor="#e9d5ff"];
+    mapped [label="Mapped:\n[90, 95, 83]", fillcolor="#dbeafe"];
+    reduce [label="reduce(sum + score, 0)\nCalculate total", fillcolor="#fecaca"];
+    result [label="Result:\n268", fillcolor="#d1fae5", penwidth=3];
+    
+    input -> filter;
+    filter -> filtered;
+    filtered -> map;
+    map -> mapped;
+    mapped -> reduce;
+    reduce -> result;
+}

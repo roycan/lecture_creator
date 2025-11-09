@@ -1,0 +1,17 @@
+flowchart TD
+    Array["Array: [65, 85, 90, 72]"] --> Find
+    Array --> Filter
+    Array --> Includes
+    
+    Find["find(score > 80)<br/>Returns FIRST match"] --> FindResult["Result: 85<br/>(single value)"]
+    
+    Filter["filter(score > 80)<br/>Returns ALL matches"] --> FilterResult["Result: [85, 90]<br/>(array)"]
+    
+    Includes["includes(90)<br/>Check if exists"] --> IncludesResult["Result: true<br/>(boolean)"]
+    
+    style Find fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    style Filter fill:#dbeafe,stroke:#3b82f6,stroke-width:2px
+    style Includes fill:#e9d5ff,stroke:#a855f7,stroke-width:2px
+    style FindResult fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style FilterResult fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style IncludesResult fill:#d1fae5,stroke:#10b981,stroke-width:2px

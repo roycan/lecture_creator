@@ -1,0 +1,24 @@
+digraph SearchMethods {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Arial"];
+    
+    array [label="Array: [65, 85, 90, 72]", fillcolor="#e0e7ff"];
+    
+    find [label="find(score > 80)\nReturns FIRST match", fillcolor="#fef3c7"];
+    findResult [label="Result: 85\n(single value)", fillcolor="#d1fae5"];
+    
+    filter [label="filter(score > 80)\nReturns ALL matches", fillcolor="#dbeafe"];
+    filterResult [label="Result: [85, 90]\n(array)", fillcolor="#d1fae5"];
+    
+    includes [label="includes(90)\nCheck if exists", fillcolor="#e9d5ff"];
+    includesResult [label="Result: true\n(boolean)", fillcolor="#d1fae5"];
+    
+    array -> find;
+    find -> findResult;
+    
+    array -> filter;
+    filter -> filterResult;
+    
+    array -> includes;
+    includes -> includesResult;
+}

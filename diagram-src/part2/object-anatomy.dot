@@ -1,0 +1,16 @@
+digraph ObjectAnatomy {
+    rankdir=TB;
+    node [shape=record, style=filled, fontname="Arial"];
+    
+    student [label="{Student Object|Properties:\l  name: \"Maria Santos\"\l  age: 15\l  scores: [85, 90, 88]\l  isEnrolled: true\l|Methods:\l  getAverage()\l  greet()\l}", fillcolor="#dbeafe"];
+    
+    access [label="Accessing:\nstudent.name ➜ \"Maria Santos\"\nstudent.age ➜ 15", shape=box, fillcolor="#fef3c7"];
+    
+    method [label="Calling Method:\nstudent.getAverage()\n➜ calculates from this.scores", shape=box, fillcolor="#e9d5ff"];
+    
+    this [label="Inside method:\nthis = student object\nthis.scores = [85, 90, 88]", shape=box, fillcolor="#d1fae5"];
+    
+    student -> access [label="dot notation"];
+    student -> method [label="call method"];
+    method -> this [label="this binding"];
+}

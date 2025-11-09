@@ -1,0 +1,17 @@
+flowchart TD
+    Start([Start Loop]) --> Init[i = 1]
+    Init --> Check{i <= 10?}
+    Check -->|false| End([Exit Loop])
+    Check -->|true| BreakCheck{i === 5?}
+    BreakCheck -->|true| Break["break;<br/>Exit loop immediately"]
+    Break --> End
+    BreakCheck -->|false| ContinueCheck{i % 2 === 0?}
+    ContinueCheck -->|true| Continue["continue;<br/>Skip to next iteration"]
+    Continue --> Increment
+    ContinueCheck -->|false| Body[Execute body:<br/>console.log i]
+    Body --> Increment[i++]
+    Increment --> Check
+    
+    style Break fill:#fee2e2,stroke:#ef4444,stroke-width:3px
+    style Continue fill:#fef3c7,stroke:#f59e0b,stroke-width:3px
+    style Body fill:#d1fae5,stroke:#10b981,stroke-width:2px

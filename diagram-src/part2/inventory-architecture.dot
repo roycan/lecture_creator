@@ -1,0 +1,30 @@
+digraph InventoryArchitecture {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Arial"];
+    
+    subgraph cluster_store {
+        label="Store Object: Aling Maria's Store";
+        style=filled;
+        color="#3b82f6";
+        fillcolor="#dbeafe";
+        
+        props [label="Properties:\nname, location, inventory[]", fillcolor="#e0e7ff"];
+        methods [label="Key Methods:\nsellProduct(id, qty)\nrestock(id, qty)\nshowInventory()\ngetTotalValue()", fillcolor="#fef3c7"];
+    }
+    
+    subgraph cluster_inventory {
+        label="inventory[] Array";
+        style=filled;
+        color="#a855f7";
+        fillcolor="#e9d5ff";
+        
+        p1 [label="Product 1:\n{id, name, price, stock}", fillcolor="#d1fae5"];
+        p2 [label="Product 2:\n{id, name, price, stock}", fillcolor="#d1fae5"];
+        p3 [label="Product 3:\n{id, name, price, stock}", fillcolor="#d1fae5"];
+    }
+    
+    props -> p1 [label="contains", style=dashed];
+    methods -> p1 [label="operates on"];
+    methods -> p2 [label="operates on"];
+    methods -> p3 [label="operates on"];
+}

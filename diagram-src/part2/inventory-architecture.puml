@@ -1,0 +1,27 @@
+@startuml
+package "Store Object: Aling Maria's Store" {
+    class Store {
+        +name: string
+        +location: string
+        +inventory: Product[]
+        --
+        +sellProduct(id, qty)
+        +restock(id, qty)
+        +showInventory()
+        +getTotalValue()
+    }
+}
+
+package "inventory[] Array" {
+    class Product {
+        +id: number
+        +name: string
+        +price: number
+        +stock: number
+        +category: string
+    }
+}
+
+Store "1" *-- "many" Product : contains
+Store ..> Product : operates on
+@enduml

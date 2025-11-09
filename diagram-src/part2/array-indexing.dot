@@ -1,0 +1,26 @@
+digraph ArrayIndexing {
+    rankdir=LR;
+    node [shape=box, style=filled, fontname="Arial"];
+    
+    subgraph cluster_array {
+        label="Array: ['Maria', 'Jose', 'Ana', 'Pedro']";
+        style=filled;
+        color=lightgrey;
+        node [style=filled];
+        
+        i0 [label="Index 0\n'Maria'", fillcolor="#d1fae5"];
+        i1 [label="Index 1\n'Jose'", fillcolor="#dbeafe"];
+        i2 [label="Index 2\n'Ana'", fillcolor="#fef3c7"];
+        i3 [label="Index 3\n'Pedro'", fillcolor="#e9d5ff"];
+        
+        i0 -> i1 -> i2 -> i3 [style=invis];
+    }
+    
+    length [label="array.length = 4", shape=ellipse, fillcolor="#e0e7ff"];
+    first [label="First: array[0]\n➜ 'Maria'", fillcolor="#d1fae5"];
+    last [label="Last: array[3]\n➜ 'Pedro'", fillcolor="#e9d5ff"];
+    
+    length -> i0 [style=dashed];
+    first -> i0 [color="#10b981", penwidth=2];
+    last -> i3 [color="#a855f7", penwidth=2];
+}

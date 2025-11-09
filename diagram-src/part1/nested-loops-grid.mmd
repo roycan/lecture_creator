@@ -1,0 +1,17 @@
+flowchart TD
+    Start([Nested Loops:<br/>Multiplication Table]) --> OuterInit[Outer: row = 1]
+    OuterInit --> OuterCheck{row <= 3?}
+    OuterCheck -->|false| End([Exit])
+    OuterCheck -->|true| InnerInit[Inner: col = 1]
+    InnerInit --> InnerCheck{col <= 3?}
+    InnerCheck -->|false| OuterIncrement[row++]
+    OuterIncrement --> OuterCheck
+    InnerCheck -->|true| Calculate[Calculate:<br/>row × col]
+    Calculate --> Print[Print result]
+    Print --> InnerIncrement[col++]
+    InnerIncrement --> InnerCheck
+    
+    style OuterCheck fill:#dbeafe,stroke:#3b82f6,stroke-width:2px
+    style InnerCheck fill:#e9d5ff,stroke:#a855f7,stroke-width:2px
+    style Calculate fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    style Print fill:#d1fae5,stroke:#10b981,stroke-width:2px

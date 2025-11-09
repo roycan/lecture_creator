@@ -1,0 +1,17 @@
+digraph RankingPipeline {
+    rankdir=LR;
+    node [shape=box, style=filled, fontname="Arial"];
+    
+    input [label="Student Objects:\n[{Maria, 87}, {Jose, 72},\n{Ana, 91}, {Pedro, 68}]", fillcolor="#e0e7ff"];
+    addavg [label="map: Calculate\naverage for each", fillcolor="#fef3c7"];
+    withavg [label="With Averages:\n[{Maria, 87}, {Jose, 72},\n{Ana, 91}, {Pedro, 68}]", fillcolor="#dbeafe"];
+    sort [label="sort: By average\n(highest first)", fillcolor="#e9d5ff"];
+    sorted [label="Sorted:\n[{Ana, 91}, {Maria, 87},\n{Jose, 72}, {Pedro, 68}]", fillcolor="#dbeafe"];
+    display [label="Display ranked list\nwith medals 🥇🥈🥉", fillcolor="#d1fae5", penwidth=3];
+    
+    input -> addavg;
+    addavg -> withavg;
+    withavg -> sort;
+    sort -> sorted;
+    sorted -> display;
+}

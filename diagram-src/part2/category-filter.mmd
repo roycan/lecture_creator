@@ -1,0 +1,9 @@
+flowchart LR
+    Input["All Products:<br/>Coke, Pepsi,<br/>Sprite, Water"] --> Filter
+    Filter["filter by category:<br/>category === 'drinks'"] --> FilteredList["Filtered:<br/>Coke, Pepsi,<br/>Sprite, Water"]
+    FilteredList --> StockCheck["filter by stock:<br/>stock > 0"]
+    StockCheck --> AvailableList["Available:<br/>Coke, Sprite"]
+    
+    style Filter fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    style StockCheck fill:#e9d5ff,stroke:#a855f7,stroke-width:2px
+    style AvailableList fill:#d1fae5,stroke:#10b981,stroke-width:3px

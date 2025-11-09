@@ -1,0 +1,19 @@
+classDiagram
+    class Student {
+        +string name
+        +number age
+        +number[] scores
+        +boolean isEnrolled
+        +getAverage() number
+        +greet() string
+    }
+    
+    note for Student "Properties store data\nMethods perform actions\n'this' refers to current object"
+    
+    class Example {
+        student.name ➜ "Maria Santos"
+        student.getAverage() ➜ calls method
+        Inside method: this.scores ➜ [85,90,88]
+    }
+    
+    Student --> Example : usage

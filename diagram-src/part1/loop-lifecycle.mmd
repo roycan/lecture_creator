@@ -1,0 +1,12 @@
+flowchart TD
+    Start([Start For Loop]) --> Init[Initialize: i = 1]
+    Init --> Check{i <= 5?}
+    Check -->|Yes / true| Body[Execute loop body:<br/>console.log'Count: ' + i]
+    Body --> Increment[Increment: i++]
+    Increment --> Check
+    Check -->|No / false| End([Exit Loop])
+    
+    style Check fill:#fff4e6,stroke:#f59e0b,stroke-width:3px
+    style Body fill:#dbeafe,stroke:#3b82f6,stroke-width:2px
+    style Increment fill:#e9d5ff,stroke:#a855f7,stroke-width:2px
+    style Init fill:#d1fae5,stroke:#10b981,stroke-width:2px
