@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library System - CRUD with Validation</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+  <nav class="navbar is-link" role="navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">
+        <strong>📚 School Library System</strong>
+      </a>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="container">
+      <!-- Flash Messages -->
+      <% if (success && success.length > 0) { %>
+        <div class="notification is-success is-light">
+          <button class="delete"></button>
+          <%= success[0] %>
+        </div>
+      <% } %>
+      
+      <% if (error && error.length > 0) { %>
+        <div class="notification is-danger is-light">
+          <button class="delete"></button>
+          <ul>
+            <% error.forEach(err => { %>
+              <li><%= err %></li>
+            <% }); %>
+          </ul>
+        </div>
+      <% } %>
+
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <div>
+              <h1 class="title">📚 Book Collection</h1>
+              <p class="subtitle">CRUD with Validation & Flash Messages</p>
+            </div>
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+            <a href="/add" class="button is-primary is-medium">
+              <strong>+ Add Book</strong>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="columns">
+        <div class="column">
+          <div class="box has-background-info-light">
+            <p class="heading">Total Books</p>
+            <p class="title"><%= stats.total %></p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-background-success-light">
+            <p class="heading">Total Copies</p>
+            <p class="title"><%= stats.totalCopies %></p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-background-primary-light">
+            <p class="heading">Available</p>
+            <p class="title"><%= stats.available %></p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-background-warning-light">
+            <p class="heading">Borrowed</p>
+            <p class="title"><%= stats.borrowed %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Books Table -->
+      <div class="box">
+        <table class="table is-fullwidth is-striped is-hoverable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Author</th>
+              <th>ISBN</th>
+              <th>Copies</th>
+              <th>Available</th>
+              <th>Category</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (books.length === 0) { %>
+              <tr>
+                <td colspan="8" class="has-text-centered has-text-grey">
+                  No books in library. Add your first book!
+                </td>
+              </tr>
+            <% } %>
+            
+            <% books.forEach(book => { %>
+              <tr>
+                <td><%= book.id %></td>
+                <td><strong><%= book.title %></strong></td>
+                <td><%= book.author %></td>
+                <td class="is-family-monospace"><%= book.isbn %></td>
+                <td><%= book.copies %></td>
+                <td>
+                  <span class="tag <%= book.available > 0 ? 'is-success' : 'is-danger' %>">
+                    <%= book.available %>
+                  </span>
+                </td>
+                <td><span class="tag is-info"><%= book.category %></span></td>
+                <td>
+                  <div class="buttons">
+                    <a href="/edit/<%= book.id %>" class="button is-small is-info">
+                      ✏️ Edit
+                    </a>
+                    <form method="POST" action="/delete/<%= book.id %>" style="display: inline;" 
+                          onsubmit="return confirm('Delete <%= book.title %>?')">
+                      <button type="submit" class="button is-small is-danger">
+                        🗑️ Delete
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="notification is-info is-light">
+        <p class="heading">✨ New Features in App 09</p>
+        <ul>
+          <li><strong>Server-side validation</strong> - All inputs are checked before saving</li>
+          <li><strong>Flash messages</strong> - Success/error feedback after actions</li>
+          <li><strong>ISBN uniqueness</strong> - Prevents duplicate books</li>
+          <li><strong>Data integrity</strong> - Available copies can't exceed total copies</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Auto-dismiss notification after 5 seconds
+    document.addEventListener('DOMContentLoaded', () => {
+      const deleteButtons = document.querySelectorAll('.notification .delete');
+      deleteButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          button.parentElement.remove();
+        });
+      });
+      
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        document.querySelectorAll('.notification').forEach(notif => {
+          notif.style.display = 'none';
+        });
+      }, 5000);
+    });
+  </script>
+</body>
+</html>

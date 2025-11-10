@@ -41,17 +41,18 @@ lecture_creator/
 │   ├── .gitignore-template
 │   └── package.json-template
 │
-├── diagrams/                           (10 visual learning aids)
-│   ├── 01-request-response-flow.md
-│   ├── 02-folder-structure.md
-│   ├── 03-express-routing.md
-│   ├── 04-ejs-rendering.md
-│   ├── 05-json-vs-database.md
-│   ├── 06-form-submission.md
-│   ├── 07-deployment-flow.md
-│   ├── 08-middleware-concept.md
-│   ├── 09-mvc-pattern.md
-│   └── 10-static-files.md
+├── diagram-src/                        (Organized diagram sources)
+│   └── web-server-basics/             (10 visual learning aids)
+│       ├── 01-request-response-flow.md
+│       ├── 02-folder-structure.md
+│       ├── 03-express-routing.md
+│       ├── 04-ejs-rendering.md
+│       ├── 05-json-vs-database.md
+│       ├── 06-form-submission.md
+│       ├── 07-deployment-flow.md
+│       ├── 08-middleware-concept.md
+│       ├── 09-mvc-pattern.md
+│       └── 10-static-files.md
 │
 └── logs/
     └── web-app-basics-part1-implementation-2025-01-10.md (This file)
@@ -884,7 +885,7 @@ This curriculum represents a **complete, tested, production-ready** resource for
 - .gitignore-template
 - package.json-template
 
-### Diagrams (10 files)
+### Diagrams (10 files in diagram-src/web-server-basics/)
 - 01-request-response-flow.md
 - 02-folder-structure.md
 - 03-express-routing.md

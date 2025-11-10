@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - SQLite Demo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+  <nav class="navbar is-primary" role="navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">
+        <strong>📊 SQLite Demo</strong>
+      </a>
+    </div>
+    <div class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item" href="/">Students</a>
+        <a class="navbar-item" href="/about">About</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="container">
+      <h1 class="title">ℹ️ About This App</h1>
+      <p class="subtitle">SQLite Database Information</p>
+
+      <div class="box">
+        <h2 class="title is-4">Database Details</h2>
+        
+        <div class="content">
+          <p><strong>Database Path:</strong></p>
+          <pre><code><%= dbPath %></code></pre>
+
+          <p><strong>Total Records:</strong> <%= rowCount %> students</p>
+
+          <p><strong>Table Name:</strong> <%= tableInfo.name %></p>
+
+          <p><strong>Table Schema:</strong></p>
+          <pre><code><%= tableInfo.sql %></code></pre>
+        </div>
+      </div>
+
+      <div class="box">
+        <h2 class="title is-4">Why SQLite?</h2>
+        <div class="content">
+          <h3>Advantages over JSON files:</h3>
+          <ul>
+            <li><strong>Speed:</strong> Much faster for large datasets</li>
+            <li><strong>Queries:</strong> Powerful SQL for filtering, sorting, joining</li>
+            <li><strong>Relationships:</strong> Link tables together (foreign keys)</li>
+            <li><strong>Transactions:</strong> Safe concurrent writes</li>
+            <li><strong>Data Integrity:</strong> Enforce rules (unique, not null, etc.)</li>
+          </ul>
+
+          <h3>When to use JSON vs Database:</h3>
+          <ul>
+            <li><strong>JSON:</strong> Small datasets (&lt;100 items), simple structure, learning</li>
+            <li><strong>Database:</strong> Large datasets, complex queries, production apps</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="notification is-warning">
+        <p class="heading">⚠️ Important for Railway Deployment</p>
+        <p>This app uses Railway volumes for persistent storage. Without volumes, the database resets on each deployment.</p>
+        <p>For local development, data persists in <code>students.db</code> file.</p>
+      </div>
+
+      <a href="/" class="button is-primary">← Back to Student List</a>
+    </div>
+  </section>
+</body>
+</html>

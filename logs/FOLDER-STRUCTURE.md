@@ -40,6 +40,17 @@ diagram-src/
 │   ├── promise-states.puml
 │   ├── fetch-lifecycle.mmd
 │   └── ...
+├── web-server-basics/          # Added: Nov 10, 2025
+│   ├── 01-request-response-flow.md
+│   ├── 02-folder-structure.md
+│   ├── 03-express-routing.md
+│   ├── 04-ejs-rendering.md
+│   ├── 05-json-vs-database.md
+│   ├── 06-form-submission.md
+│   ├── 07-deployment-flow.md
+│   ├── 08-middleware-concept.md
+│   ├── 09-mvc-pattern.md
+│   └── 10-static-files.md
 ├── css/
 │   ├── box-model.mmd
 │   └── ...
@@ -52,6 +63,7 @@ diagram-src/
 - `.d2` - D2 diagrams
 - `.puml` - PlantUML
 - `.txt` - Text-based visualizations
+- `.md` - All-in-one markdown (Mermaid + D2 + ASCII + explanations)
 - `.svg` - SVG sources (if any)
 
 **Why Organized by Lecture:**

@@ -20,9 +20,10 @@ Creating **interactive markdown-based lectures** for Grade 9 Filipino students t
 
 ```
 lecture_creator/
-├── diagram-src/          Source files for diagrams (.mmd, .d2, .puml, .txt)
+├── diagram-src/          Source files for diagrams (.mmd, .d2, .puml, .txt, .md)
 │   ├── dom/             Organized by lecture topic
 │   ├── ajax-fetch-async/
+│   ├── web-server-basics/
 │   └── css/
 ├── diagrams/            PNG renders (flat structure)
 │   ├── promise-states.png
@@ -31,6 +32,9 @@ lecture_creator/
 │   ├── styles.css       (shared by ALL lectures)
 │   ├── promise-basics.html
 │   └── provinces.json
+├── practice-apps/       Node.js/Express practice applications (for web-server lectures)
+├── mini-projects/       Complete Express apps (for web-server lectures)
+├── support-materials/   Guides and templates (for web-server lectures)
 ├── archive/             Old planning docs and superseded versions
 └── logs/                Session documentation and patterns
 ```
@@ -269,7 +273,9 @@ Before marking a lecture complete:
 
 ---
 
-## 🎬 Example: AJAX/Fetch Lecture (2025-11-10)
+## 🎬 Examples
+
+### AJAX/Fetch Lecture (2025-11-10)
 
 **Files Created:** 44 total
 - 1 main lecture markdown (762 lines)
@@ -287,6 +293,33 @@ Before marking a lecture complete:
 - All files work offline with local JSON
 
 **See:** `logs/ajax-fetch-implementation-2025-11-10.md` for full details
+
+---
+
+### Web App Basics Part 1 (2025-11-10)
+
+**Files Created:** 121 total
+- 1 main lecture markdown (~5000 lines)
+- 6 practice Express apps (progressive: routing → EJS → Bulma → JSON read/write)
+- 3 mini-projects (barangay-directory, class-list, store-inventory)
+- 4 support files (command line cheat sheet, Railway guide, templates)
+- 10 diagram sources (all-in-one .md format with Mermaid + D2 + ASCII + explanations)
+
+**Key Features:**
+- Command line → Express → EJS → Bulma → JSON → Railway deployment
+- Philippine context (barangay officials, Filipino names, sari-sari store)
+- Read-first, write-later approach (separate apps for JSON read vs write)
+- MVC pattern introduction
+- Complete deployment workflow
+
+**Key Difference from Frontend Lectures:**
+- **Node.js/Express apps** (not static HTML)
+- **Diagram format:** All-in-one .md files (Mermaid + D2 + ASCII + explanations) instead of separate format files
+- **Practice structure:** Multi-file Express apps with package.json, views/, public/, data/
+- **Mini-projects:** Complete web applications with forms and JSON storage
+- **Deployment focus:** Railway platform integration
+
+**See:** `logs/web-app-basics-part1-implementation-2025-01-10.md` for full details
 
 ---
 

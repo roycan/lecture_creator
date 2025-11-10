@@ -1,0 +1,25 @@
+# Ignore SQLite database files
+*.db
+*.db-shm
+*.db-wal
+
+# Ignore node_modules
+node_modules/
+
+# Ignore environment variables
+.env
+.env.local
+
+# Ignore logs
+logs/
+*.log
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.swp
+*.swo

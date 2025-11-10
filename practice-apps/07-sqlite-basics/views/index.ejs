@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student List - SQLite Demo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+  <nav class="navbar is-primary" role="navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">
+        <strong>📊 SQLite Demo</strong>
+      </a>
+    </div>
+    <div class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item" href="/">Students</a>
+        <a class="navbar-item" href="/about">About</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="container">
+      <h1 class="title">👩‍🎓 Student List</h1>
+      <p class="subtitle">Data loaded from SQLite database</p>
+
+      <!-- Stats Cards -->
+      <div class="columns">
+        <div class="column">
+          <div class="box has-background-info-light">
+            <p class="heading">Total Students</p>
+            <p class="title"><%= total %></p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-background-success-light">
+            <p class="heading">Average Grade</p>
+            <p class="title"><%= average %>%</p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-background-warning-light">
+            <p class="heading">Einstein Section</p>
+            <p class="title"><%= einsteinCount %></p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-background-link-light">
+            <p class="heading">Newton Section</p>
+            <p class="title"><%= newtonCount %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Students Table -->
+      <div class="box">
+        <table class="table is-fullwidth is-striped is-hoverable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Section</th>
+              <th>Grade</th>
+              <th>Created</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% students.forEach(student => { %>
+              <tr>
+                <td><%= student.id %></td>
+                <td><strong><%= student.name %></strong></td>
+                <td>
+                  <span class="tag <%= student.section === 'Einstein' ? 'is-warning' : 'is-info' %>">
+                    <%= student.section %>
+                  </span>
+                </td>
+                <td>
+                  <span class="tag <%= student.grade >= 90 ? 'is-success' : student.grade >= 75 ? 'is-primary' : 'is-danger' %>">
+                    <%= student.grade %>%
+                  </span>
+                </td>
+                <td class="has-text-grey-light">
+                  <%= new Date(student.created_at).toLocaleDateString('en-PH') %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="notification is-info is-light">
+        <p class="heading">💡 What You're Seeing</p>
+        <p>This data is stored in a <strong>SQLite database</strong> file (students.db), not a JSON file!</p>
+        <p>The server reads data using <strong>SQL queries</strong> and displays it here.</p>
+        <p>In the next app, we'll add CRUD operations (Create, Read, Update, Delete).</p>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

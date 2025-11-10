@@ -280,6 +280,7 @@ Think of routes like counters at Jollibee:
 Each route handles a different request!
 
 ![Request Response Flow](diagrams/request-response-flow.png)
+![Request Response Flow](diagrams/request-response-flow-1.png)
 
 ---
 

@@ -43,7 +43,7 @@ mw1: Logger Middleware {
   next: "next()"
 }
 
-mw2: Body Parser {
+mw2: Body Parser / urlencoded {
   shape: hexagon
   style.fill: "#E6FFE6"
   

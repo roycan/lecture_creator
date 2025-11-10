@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Product - CRUD Demo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+  <nav class="navbar is-success" role="navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">
+        <strong>🏪 Sari-Sari Store Inventory</strong>
+      </a>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="container" style="max-width: 600px;">
+      <h1 class="title">✏️ Edit Product</h1>
+      <p class="subtitle">ID: <%= product.id %></p>
+      
+      <div class="box">
+        <form method="POST" action="/edit/<%= product.id %>">
+          <div class="field">
+            <label class="label">Product Name *</label>
+            <div class="control">
+              <input class="input" type="text" name="name" value="<%= product.name %>" required>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Price (₱) *</label>
+            <div class="control">
+              <input class="input" type="number" name="price" step="0.01" min="0" value="<%= product.price %>" required>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Stock (units) *</label>
+            <div class="control">
+              <input class="input" type="number" name="stock" min="0" value="<%= product.stock %>" required>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Category *</label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select name="category" required>
+                  <option value="">-- Select Category --</option>
+                  <option value="Beverages" <%= product.category === 'Beverages' ? 'selected' : '' %>>Beverages</option>
+                  <option value="Noodles" <%= product.category === 'Noodles' ? 'selected' : '' %>>Noodles</option>
+                  <option value="Snacks" <%= product.category === 'Snacks' ? 'selected' : '' %>>Snacks</option>
+                  <option value="Household" <%= product.category === 'Household' ? 'selected' : '' %>>Household</option>
+                  <option value="Dairy" <%= product.category === 'Dairy' ? 'selected' : '' %>>Dairy</option>
+                  <option value="Canned Goods" <%= product.category === 'Canned Goods' ? 'selected' : '' %>>Canned Goods</option>
+                  <option value="Personal Care" <%= product.category === 'Personal Care' ? 'selected' : '' %>>Personal Care</option>
+                  <option value="Other" <%= product.category === 'Other' ? 'selected' : '' %>>Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="field is-grouped">
+            <div class="control">
+              <button type="submit" class="button is-primary">
+                <strong>💾 Update Product</strong>
+              </button>
+            </div>
+            <div class="control">
+              <a href="/" class="button is-light">Cancel</a>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="notification is-info is-light">
+        <p class="heading">ℹ️ Product Information</p>
+        <p><strong>Created:</strong> <%= new Date(product.created_at).toLocaleString('en-PH') %></p>
+        <p><strong>Last Updated:</strong> <%= new Date(product.updated_at).toLocaleString('en-PH') %></p>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

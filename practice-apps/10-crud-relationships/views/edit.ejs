@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Student - School Management</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+  <nav class="navbar is-primary" role="navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">
+        <strong>🎓 School Management System</strong>
+      </a>
+    </div>
+    <div class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item" href="/">Students</a>
+        <a class="navbar-item" href="/sections">Sections</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="container" style="max-width: 600px;">
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <h1 class="title">✏️ Edit Student</h1>
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+            <a href="/" class="button">← Back to List</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Validation Errors -->
+      <% if (error && error.length > 0) { %>
+        <div class="notification is-danger is-light">
+          <button class="delete"></button>
+          <p class="heading">⚠️ Please fix the following errors:</p>
+          <ul>
+            <% error.forEach(err => { %>
+              <li><%= err %></li>
+            <% }); %>
+          </ul>
+        </div>
+      <% } %>
+
+      <div class="box">
+        <form method="POST" action="/edit/<%= student.id %>">
+          <div class="field">
+            <label class="label">Student ID *</label>
+            <div class="control">
+              <input 
+                class="input is-family-monospace <%= error && error.some(e => e.includes('Student ID')) ? 'is-danger' : '' %>" 
+                type="text" 
+                name="student_id" 
+                placeholder="2024-0001"
+                pattern="\d{4}-\d{4}"
+                value="<%= student.student_id %>"
+                required>
+            </div>
+            <p class="help">Format: YYYY-NNNN (e.g., 2024-0001)</p>
+          </div>
+
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <label class="label">First Name *</label>
+                <div class="control">
+                  <input 
+                    class="input <%= error && error.some(e => e.includes('First name')) ? 'is-danger' : '' %>" 
+                    type="text" 
+                    name="first_name" 
+                    placeholder="Juan"
+                    value="<%= student.first_name %>"
+                    required>
+                </div>
+              </div>
+            </div>
+
+            <div class="column">
+              <div class="field">
+                <label class="label">Last Name *</label>
+                <div class="control">
+                  <input 
+                    class="input <%= error && error.some(e => e.includes('Last name')) ? 'is-danger' : '' %>" 
+                    type="text" 
+                    name="last_name" 
+                    placeholder="Dela Cruz"
+                    value="<%= student.last_name %>"
+                    required>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Section * (Foreign Key)</label>
+            <div class="control">
+              <div class="select is-fullwidth <%= error && error.some(e => e.includes('section')) ? 'is-danger' : '' %>">
+                <select name="section_id" required>
+                  <option value="">-- Select Section --</option>
+                  <% sections.forEach(section => { %>
+                    <option 
+                      value="<%= section.id %>" 
+                      <%= student.section_id == section.id ? 'selected' : '' %>>
+                      <%= section.name %> (Adviser: <%= section.adviser %>, Room: <%= section.room %>)
+                    </option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+            <p class="help">Change section assignment (updates foreign key)</p>
+          </div>
+
+          <div class="field">
+            <label class="label">Email (Optional)</label>
+            <div class="control">
+              <input 
+                class="input <%= error && error.some(e => e.includes('email')) ? 'is-danger' : '' %>" 
+                type="email" 
+                name="email" 
+                placeholder="juan.delacruz@example.com"
+                value="<%= student.email || '' %>">
+            </div>
+            <p class="help">Optional contact email</p>
+          </div>
+
+          <div class="notification is-light">
+            <p class="heading">📅 Record Information</p>
+            <p><strong>Current Section:</strong> <%= student.section_name %></p>
+            <p><strong>Created:</strong> <%= new Date(student.created_at).toLocaleString() %></p>
+            <p><strong>Last Updated:</strong> <%= new Date(student.updated_at).toLocaleString() %></p>
+          </div>
+
+          <div class="field is-grouped">
+            <div class="control">
+              <button type="submit" class="button is-primary">
+                <strong>💾 Update Student</strong>
+              </button>
+            </div>
+            <div class="control">
+              <a href="/" class="button is-light">Cancel</a>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="box has-background-danger-light">
+        <p class="heading">🗑️ Delete Student</p>
+        <p class="mb-3">Permanently remove this student from the system.</p>
+        <form method="POST" action="/delete/<%= student.id %>" 
+              onsubmit="return confirm('Are you sure you want to delete <%= student.first_name %> <%= student.last_name %>? This action cannot be undone.')">
+          <button type="submit" class="button is-danger">
+            <strong>Delete Student</strong>
+          </button>
+        </form>
+      </div>
+
+      <div class="notification is-info is-light">
+        <p class="heading">🔗 Relationship Updates</p>
+        <ul>
+          <li><strong>Transfer Section:</strong> Change the dropdown to move student to another section</li>
+          <li><strong>Foreign Key Update:</strong> Only the section_id changes, no data duplication</li>
+          <li><strong>JOIN Still Works:</strong> New section details appear immediately</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Auto-dismiss notifications
+    document.addEventListener('DOMContentLoaded', () => {
+      const deleteButtons = document.querySelectorAll('.notification .delete');
+      deleteButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          button.parentElement.remove();
+        });
+      });
+    });
+  </script>
+</body>
+</html>
