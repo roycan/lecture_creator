@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Search with Debounce</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Province Search (Debounced)</h2>
+      <p class="small">Type to search. Notice the search happens 500ms after you stop typing.</p>
+      <input id="searchInput" class="input" placeholder="Search provinces..." style="width:100%;margin-bottom:10px;">
+      <div id="searchCount" class="small"></div>
+      <div id="results" style="margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const searchCount = document.getElementById('searchCount');
+    const results = document.getElementById('results');
+    
+    let provinces = [];
+    let debounceTimer;
+    let searchCallCount = 0;
+
+    // Load provinces on page load
+    async function loadProvinces() {
+      try {
+        const response = await fetch('provinces.json');
+        provinces = await response.json();
+      } catch (error) {
+        console.error('Failed to load provinces:', error);
+      }
+    }
+
+    function searchProvinces(query) {
+      searchCallCount++;
+      searchCount.textContent = `Search calls made: ${searchCallCount}`;
+      
+      if (!query.trim()) {
+        results.innerHTML = '<p class="small">Type to search...</p>';
+        return;
+      }
+
+      const matches = provinces.filter(p => 
+        p.name.toLowerCase().includes(query.toLowerCase()) ||
+        p.capital.toLowerCase().includes(query.toLowerCase())
+      );
+
+      if (matches.length === 0) {
+        results.innerHTML = '<p class="small">No results found.</p>';
+        return;
+      }
+
+      const ul = document.createElement('ul');
+      matches.forEach(province => {
+        const li = document.createElement('li');
+        li.textContent = `${province.name} — Capital: ${province.capital}`;
+        ul.appendChild(li);
+      });
+      
+      results.innerHTML = '';
+      results.appendChild(ul);
+    }
+
+    // Debounced search
+    searchInput.addEventListener('input', function(e) {
+      clearTimeout(debounceTimer);
+      
+      debounceTimer = setTimeout(() => {
+        searchProvinces(e.target.value);
+      }, 500); // Wait 500ms after user stops typing
+    });
+
+    // Load data on page load
+    loadProvinces();
+  </script>
+</body>
+</html>

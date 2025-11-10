@@ -1,0 +1,20 @@
+sequenceDiagram
+    participant Window
+    participant Document
+    participant Div
+    participant Button
+    
+    Note over Window,Button: Phase 1: Capturing (top → target)
+    Window->>Document: capture phase
+    Document->>Div: capture phase
+    Div->>Button: capture phase
+    
+    Note over Button: Phase 2: Target Phase
+    Button->>Button: event.target = button
+    
+    Note over Window,Button: Phase 3: Bubbling (target → top)
+    Button->>Div: bubble phase
+    Div->>Document: bubble phase
+    Document->>Window: bubble phase
+    
+    Note over Window,Button: Most listeners use bubble phase (default)

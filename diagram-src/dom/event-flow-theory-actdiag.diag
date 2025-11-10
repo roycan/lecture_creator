@@ -1,0 +1,22 @@
+actdiag {
+  write -> capture1 -> capture2 -> capture3 -> target -> bubble3 -> bubble2 -> bubble1 -> complete
+
+  lane "Capture Phase" {
+    capture1 [label = "Window\n(capture)"]
+    capture2 [label = "Document\n(capture)"]
+    capture3 [label = "Div\n(capture)"]
+  }
+
+  lane "Target Phase" {
+    target [label = "Button\nevent.target", color = "#dcfce7"]
+  }
+
+  lane "Bubble Phase" {
+    bubble3 [label = "Div\n(bubble)"]
+    bubble2 [label = "Document\n(bubble)"]
+    bubble1 [label = "Window\n(bubble)"]
+  }
+
+  write [label = "User clicks", shape = "beginpoint"]
+  complete [label = "Event done", shape = "endpoint"]
+}

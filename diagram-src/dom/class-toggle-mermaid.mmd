@@ -1,0 +1,22 @@
+flowchart LR
+    subgraph Before["❌ Inline Styles (harder to maintain)"]
+        JS1[JavaScript]
+        Code1["el.style.backgroundColor = 'yellow'<br/>el.style.padding = '10px'<br/>el.style.border = '2px solid red'"]
+        Result1[Mixed concerns:<br/>style + logic together]
+        JS1 --> Code1 --> Result1
+    end
+    
+    subgraph After["✅ CSS Classes (recommended)"]
+        JS2[JavaScript]
+        Code2["el.classList.add('highlight')<br/>el.classList.toggle('hidden')<br/>el.classList.remove('error')"]
+        CSS[CSS File]
+        CSSCode[".highlight {<br/>  background: yellow;<br/>  padding: 10px;<br/>  border: 2px solid red;<br/>}"]
+        Result2[Separation of concerns:<br/>clean & reusable]
+        JS2 --> Code2
+        CSS --> CSSCode
+        Code2 --> Result2
+        CSSCode --> Result2
+    end
+    
+    style Before fill:#fee2e2,stroke:#dc2626
+    style After fill:#dcfce7,stroke:#16a34a

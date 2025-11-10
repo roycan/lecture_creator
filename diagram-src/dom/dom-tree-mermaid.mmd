@@ -1,0 +1,38 @@
+graph TD
+    Document[Document]
+    HTML[html]
+    Head[head]
+    Body[body]
+    Title[title: Sari-Sari Store]
+    Meta[meta charset='utf-8']
+    Div1[div#store-grid .container]
+    H1[h1: Welcome to our Store]
+    Div2[div.product-card]
+    Div3[div.product-card]
+    H3_1[h3: Coke 500ml]
+    P1[p: ₱25]
+    Btn1[button.btn: Add to Cart]
+    H3_2[h3: Lucky Me]
+    P2[p: ₱12]
+    Btn2[button.btn: Add to Cart]
+
+    Document --> HTML
+    HTML --> Head
+    HTML --> Body
+    Head --> Title
+    Head --> Meta
+    Body --> Div1
+    Div1 --> H1
+    Div1 --> Div2
+    Div1 --> Div3
+    Div2 --> H3_1
+    Div2 --> P1
+    Div2 --> Btn1
+    Div3 --> H3_2
+    Div3 --> P2
+    Div3 --> Btn2
+
+    classDef elemNode fill:#e1f5ff,stroke:#0284c7,stroke-width:2px
+    classDef textNode fill:#fff7ed,stroke:#ea580c,stroke-width:1px
+    class Document,HTML,Head,Body,Div1,Div2,Div3 elemNode
+    class Title,Meta,H1,H3_1,P1,Btn1,H3_2,P2,Btn2 textNode

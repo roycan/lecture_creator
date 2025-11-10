@@ -1,0 +1,64 @@
+direction: right
+
+before: Without Event Delegation {
+  shape: rectangle
+  style.fill: "#fee2e2"
+  style.stroke: "#dc2626"
+  
+  container1: Container {
+    btn1: Button 1 → Listener 1 {
+      style.fill: "#fecaca"
+    }
+    btn2: Button 2 → Listener 2 {
+      style.fill: "#fecaca"
+    }
+    btn3: Button 3 → Listener 3 {
+      style.fill: "#fecaca"
+    }
+    btn4: Button 4 → Listener 4 {
+      style.fill: "#fecaca"
+    }
+  }
+  
+  problems: Problems {
+    shape: rectangle
+    label: "• Memory: 4 listeners\n• New buttons need\n  manual attachment\n• Harder to manage"
+    style.fill: "#fff1f2"
+  }
+}
+
+after: With Event Delegation {
+  shape: rectangle
+  style.fill: "#dcfce7"
+  style.stroke: "#16a34a"
+  
+  container2: Container → 1 Listener {
+    style.fill: "#bbf7d0"
+    
+    btn5: Button 1 {
+      style.fill: "#d1fae5"
+    }
+    btn6: Button 2 {
+      style.fill: "#d1fae5"
+    }
+    btn7: Button 3 {
+      style.fill: "#d1fae5"
+    }
+    btn8: Button 4 {
+      style.fill: "#d1fae5"
+    }
+    
+    check: if(e.target.matches('button')) {
+      shape: diamond
+      style.fill: "#f0fdf4"
+    }
+  }
+  
+  benefits: Benefits {
+    shape: rectangle
+    label: "• Memory: 1 listener\n• Auto-handles new buttons\n• Event bubbling does\n  the work!"
+    style.fill: "#f0fdf4"
+  }
+}
+
+before -> after: Refactor to delegation pattern

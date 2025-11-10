@@ -1,0 +1,30 @@
+@startuml
+!theme plain
+skinparam defaultFontName Arial
+
+start
+:Need to select element?;
+
+if (Does element have unique ID?) then (yes)
+  :document.getElementById('myId');
+  :Returns: element or null|
+  stop
+else (no)
+  if (Select single or multiple?) then (single)
+    if (Need complex CSS selector?) then (simple)
+      :document.querySelector('.class');
+      :Returns: first match or null|
+      stop
+    else (complex)
+      :document.querySelector('div > p[name="x"]');
+      :Returns: first match or null|
+      stop
+    endif
+  else (multiple)
+    :document.querySelectorAll('.class');
+    :Returns: NodeList (array-like)|
+    stop
+  endif
+endif
+
+@enduml

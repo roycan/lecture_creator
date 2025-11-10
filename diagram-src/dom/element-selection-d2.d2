@@ -1,0 +1,50 @@
+direction: down
+
+start: Start {
+  shape: oval
+  label: "Need to select element?"
+  style.fill: "#fef3c7"
+}
+
+hasID: Has unique ID? {
+  shape: diamond
+  style.fill: "#fff7ed"
+}
+
+single: Single or Multiple? {
+  shape: diamond
+  style.fill: "#fff7ed"
+}
+
+complex: Complex selector? {
+  shape: diamond
+  style.fill: "#fff7ed"
+}
+
+getById: getElementById {
+  shape: rectangle
+  label: "document.getElementById('myId')\n→ element or null"
+  style.fill: "#dcfce7"
+  style.stroke: "#16a34a"
+}
+
+querySelector: querySelector {
+  shape: rectangle
+  label: "document.querySelector('.class')\n→ first match or null"
+  style.fill: "#dbeafe"
+  style.stroke: "#0284c7"
+}
+
+querySelectorAll: querySelectorAll {
+  shape: rectangle
+  label: "document.querySelectorAll('.class')\n→ NodeList (array-like)"
+  style.fill: "#f3e8ff"
+  style.stroke: "#9333ea"
+}
+
+start -> hasID
+hasID -> getById: Yes
+hasID -> single: No
+single -> querySelectorAll: Multiple
+single -> complex: Single
+complex -> querySelector: Yes/No

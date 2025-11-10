@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>School Statistics Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>📚 School Statistics Dashboard</h2>
+      
+      <div class="form-row">
+        <button id="loadBtn" class="btn">Load Data</button>
+        <button id="refreshBtn" class="btn secondary">↻ Refresh</button>
+      </div>
+      
+      <div id="stats" class="card hidden" style="margin-top:12px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;">
+          <div style="text-align:center;padding:12px;background:#f0f0f0;border-radius:8px;">
+            <div class="small">Total Students</div>
+            <div style="font-size:2rem;font-weight:700;" id="totalStudents">-</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:#f0f0f0;border-radius:8px;">
+            <div class="small">Class Average</div>
+            <div style="font-size:2rem;font-weight:700;" id="classAverage">-</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:#f0f0f0;border-radius:8px;">
+            <div class="small">Attendance Rate</div>
+            <div style="font-size:2rem;font-weight:700;" id="attendanceRate">-</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:#f0f0f0;border-radius:8px;">
+            <div class="small">Honor Students</div>
+            <div style="font-size:2rem;font-weight:700;" id="honorCount">-</div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="details" class="card hidden" style="margin-top:12px;">
+        <h3>Student List</h3>
+        <div id="studentTable"></div>
+      </div>
+      
+      <div id="loading" class="small hidden">Loading... ⏳</div>
+      <div id="error" class="error hidden"></div>
+    </div>
+  </div>
+
+  <script>
+    const loadBtn = document.getElementById('loadBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const stats = document.getElementById('stats');
+    const details = document.getElementById('details');
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    
+    async function loadData() {
+      loading.classList.remove('hidden');
+      error.classList.add('hidden');
+      stats.classList.add('hidden');
+      details.classList.add('hidden');
+      
+      try {
+        const response = await fetch('students.json');
+        if (!response.ok) throw new Error('Failed to load data');
+        
+        const students = await response.json();
+        
+        // Calculate statistics
+        const totalStudents = students.length;
+        const classAverage = (students.reduce((sum, s) => sum + s.average, 0) / totalStudents).toFixed(1);
+        const attendanceRate = (students.reduce((sum, s) => sum + s.attendance, 0) / totalStudents).toFixed(1);
+        const honorCount = students.filter(s => s.average >= 90).length;
+        
+        // Display stats
+        document.getElementById('totalStudents').textContent = totalStudents;
+        document.getElementById('classAverage').textContent = classAverage;
+        document.getElementById('attendanceRate').textContent = attendanceRate + '%';
+        document.getElementById('honorCount').textContent = honorCount;
+        
+        // Build table
+        const table = document.createElement('table');
+        table.className = 'table';
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Section</th>
+              <th>Average</th>
+              <th>Attendance</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${students.map(s => `
+              <tr>
+                <td>${s.name}</td>
+                <td>${s.section}</td>
+                <td>${s.average}</td>
+                <td>${s.attendance}%</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        `;
+        
+        document.getElementById('studentTable').innerHTML = '';
+        document.getElementById('studentTable').appendChild(table);
+        
+        loading.classList.add('hidden');
+        stats.classList.remove('hidden');
+        details.classList.remove('hidden');
+        
+      } catch (err) {
+        loading.classList.add('hidden');
+        error.classList.remove('hidden');
+        error.textContent = `Error: ${err.message}`;
+      }
+    }
+    
+    loadBtn.addEventListener('click', loadData);
+    refreshBtn.addEventListener('click', loadData);
+    
+    loadData();
+  </script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+graph TB
+    subgraph Before["❌ Without Event Delegation"]
+        Container1[Container div]
+        Btn1[Button 1]
+        Btn2[Button 2]
+        Btn3[Button 3]
+        Btn4[Button 4]
+        L1[Listener 1]
+        L2[Listener 2]
+        L3[Listener 3]
+        L4[Listener 4]
+        
+        Btn1 --> L1
+        Btn2 --> L2
+        Btn3 --> L3
+        Btn4 --> L4
+        
+        Problems1[Problems:<br/>• 4 separate listeners<br/>• More memory<br/>• New buttons need<br/>manual attachment]
+    end
+    
+    subgraph After["✅ With Event Delegation"]
+        Container2[Container div<br/>ONE listener]
+        Btn5[Button 1]
+        Btn6[Button 2]
+        Btn7[Button 3]
+        Btn8[Button 4]
+        Handler[Handler checks:<br/>event.target.matches'button'?]
+        
+        Container2 --> Handler
+        Btn5 -.bubbles.-> Container2
+        Btn6 -.bubbles.-> Container2
+        Btn7 -.bubbles.-> Container2
+        Btn8 -.bubbles.-> Container2
+        
+        Benefits1[Benefits:<br/>• 1 listener total<br/>• Less memory<br/>• Auto-handles new buttons<br/>• Cleaner code]
+    end
+    
+    style Before fill:#fee2e2,stroke:#dc2626
+    style After fill:#dcfce7,stroke:#16a34a
+    style Container2 fill:#bbf7d0,stroke:#16a34a,stroke-width:3px

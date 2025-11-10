@@ -1,0 +1,47 @@
+direction: right
+
+start: Start {
+  shape: oval
+  label: "Need new element"
+  style.fill: "#fef3c7"
+}
+
+step1: Create {
+  shape: rectangle
+  label: "const el = document\n.createElement('div')"
+  style.fill: "#dbeafe"
+}
+
+step2: Set Content {
+  shape: rectangle
+  label: "el.textContent = 'Hello'\nor el.innerHTML = '<strong>Hi</strong>'"
+  style.fill: "#e0e7ff"
+}
+
+step3: Set Attributes {
+  shape: rectangle
+  label: "el.className = 'card'\nel.id = 'myCard'"
+  style.fill: "#f3e8ff"
+}
+
+step4: Add Events {
+  shape: rectangle
+  label: "el.addEventListener\n('click', handler)\n(optional)"
+  style.fill: "#fce7f3"
+}
+
+step5: Append {
+  shape: rectangle
+  label: "parent.appendChild(el)"
+  style.fill: "#dcfce7"
+  style.stroke: "#16a34a"
+  style.stroke-width: 3
+}
+
+end: Visible {
+  shape: oval
+  label: "Element now in DOM!"
+  style.fill: "#fef3c7"
+}
+
+start -> step1 -> step2 -> step3 -> step4 -> step5 -> end

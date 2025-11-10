@@ -1,0 +1,20 @@
+actdiag {
+  submit -> prevent -> getValues -> checkEmpty -> checkEmail -> clearError -> process -> success
+
+  submit [label = "User submits\nform", color = "#fef3c7"]
+  prevent [label = "preventDefault()", color = "#e0e7ff"]
+  getValues [label = "Read all\ninput values", color = "#dbeafe"]
+  
+  checkEmpty [label = "Check: all\nfields filled?", shape = "flowchart.condition"]
+  checkEmail [label = "Check: email\nformat valid?", shape = "flowchart.condition"]
+  
+  showError [label = "Show error\nmessage", color = "#fee2e2"]
+  
+  clearError [label = "Clear previous\nerrors", color = "#fff7ed"]
+  process [label = "Process data:\nsave/send/update", color = "#dbeafe"]
+  success [label = "Show success\nmessage", color = "#dcfce7"]
+
+  checkEmpty -> showError [label = "No", style = "dashed"]
+  checkEmail -> showError [label = "Invalid", style = "dashed"]
+  showError -> submit [label = "Retry", style = "dashed"]
+}

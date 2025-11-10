@@ -1,0 +1,22 @@
+sequenceDiagram
+    participant Grid as #store-grid
+    participant Card as .product-card
+    participant Button as button.btn
+    participant Handler as Event Handler
+    
+    Note over Grid,Handler: User clicks "Add to Cart" button
+    
+    Button->>Button: event.target = button
+    Note over Button: textContent: "Add to Cart"
+    
+    Button->>Card: Event bubbles up
+    Note over Card: event.currentTarget could be .product-card<br/>if listener attached here
+    
+    Card->>Grid: Event bubbles up
+    Note over Grid: event.currentTarget could be #store-grid<br/>if using event delegation
+    
+    Grid->>Handler: Event reaches delegated listener
+    Handler->>Handler: Check event.target matches<br/>"button.btn"
+    Handler->>Handler: Find product data<br/>Update cart count<br/>Adjust stock
+    
+    Note over Grid,Handler: Event delegation: 1 listener for many buttons!

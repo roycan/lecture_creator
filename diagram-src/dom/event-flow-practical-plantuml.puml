@@ -1,0 +1,38 @@
+@startuml
+!theme plain
+
+participant "#store-grid" as Grid
+participant ".product-card" as Card
+participant "button.btn\n(Add to Cart)" as Button
+participant "Event Handler" as Handler
+
+== User clicks button ==
+Button -> Button: event.target = button\nevent.type = 'click'
+
+== Bubbling Phase ==
+Button -> Card: Event bubbles
+note right
+  event.currentTarget = .product-card
+  (if listener attached here)
+end note
+
+Card -> Grid: Event bubbles
+note right
+  event.currentTarget = #store-grid
+  (event delegation pattern)
+end note
+
+== Handler Execution ==
+Grid -> Handler: Listener fires
+Handler -> Handler: Check: event.target.matches('button.btn')
+Handler -> Handler: Find closest .product-card\nRead product name/price
+Handler -> Handler: Update cart count\nAdjust stock display
+
+note over Grid, Handler
+  **Event Delegation Benefits:**
+  • One listener handles many buttons
+  • Works for dynamically added products
+  • Less memory, better performance
+end note
+
+@enduml

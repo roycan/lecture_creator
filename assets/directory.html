@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Barangay Directory</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>🏛️ Barangay Directory</h2>
+      
+      <div class="form-row">
+        <input id="searchInput" class="input" placeholder="Search by name..." style="flex:1;">
+        <select id="filterPosition" class="input">
+          <option value="">All Positions</option>
+          <option value="Barangay Captain">Captain</option>
+          <option value="Kagawad">Kagawad</option>
+          <option value="Secretary">Secretary</option>
+          <option value="Treasurer">Treasurer</option>
+          <option value="SK Chairman">SK Chairman</option>
+        </select>
+      </div>
+      
+      <div id="count" class="small" style="margin-top:10px;"></div>
+      <div id="results" style="margin-top:10px;"></div>
+      <div id="pagination" class="form-row" style="margin-top:10px;justify-content:center;"></div>
+    </div>
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const filterPosition = document.getElementById('filterPosition');
+    const count = document.getElementById('count');
+    const results = document.getElementById('results');
+    const pagination = document.getElementById('pagination');
+    
+    let officials = [];
+    let filteredOfficials = [];
+    let currentPage = 1;
+    const perPage = 5;
+    let debounceTimer;
+
+    async function loadOfficials() {
+      try {
+        const response = await fetch('barangay-data.json');
+        officials = await response.json();
+        applyFilters();
+      } catch (error) {
+        results.innerHTML = `<p class="error">Error loading data: ${error.message}</p>`;
+      }
+    }
+
+    function applyFilters() {
+      const query = searchInput.value.toLowerCase().trim();
+      const position = filterPosition.value;
+      
+      filteredOfficials = officials.filter(official => {
+        const matchesSearch = !query || official.name.toLowerCase().includes(query);
+        const matchesPosition = !position || official.position === position;
+        return matchesSearch && matchesPosition;
+      });
+      
+      currentPage = 1;
+      render();
+    }
+
+    function render() {
+      const start = (currentPage - 1) * perPage;
+      const end = start + perPage;
+      const pageOfficials = filteredOfficials.slice(start, end);
+      
+      count.textContent = `Showing ${start + 1}-${Math.min(end, filteredOfficials.length)} of ${filteredOfficials.length} officials`;
+      
+      if (pageOfficials.length === 0) {
+        results.innerHTML = '<p class="small">No officials found.</p>';
+        pagination.innerHTML = '';
+        return;
+      }
+      
+      const table = document.createElement('table');
+      table.className = 'table';
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Contact</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${pageOfficials.map(o => `
+            <tr>
+              <td>${o.name}</td>
+              <td>${o.position}</td>
+              <td>${o.contact}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      `;
+      
+      results.innerHTML = '';
+      results.appendChild(table);
+      
+      // Pagination
+      const totalPages = Math.ceil(filteredOfficials.length / perPage);
+      pagination.innerHTML = '';
+      
+      if (totalPages > 1) {
+        for (let i = 1; i <= totalPages; i++) {
+          const btn = document.createElement('button');
+          btn.className = i === currentPage ? 'btn' : 'btn secondary';
+          btn.textContent = i;
+          btn.addEventListener('click', () => {
+            currentPage = i;
+            render();
+          });
+          pagination.appendChild(btn);
+        }
+      }
+    }
+
+    searchInput.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(applyFilters, 300);
+    });
+
+    filterPosition.addEventListener('change', applyFilters);
+
+    loadOfficials();
+  </script>
+</body>
+</html>

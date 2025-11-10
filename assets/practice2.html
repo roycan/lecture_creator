@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Practice 2 — Reading & Changing Content</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Greet a friend</h2>
+      <form id="greetForm">
+        <div class="form-row">
+          <input id="nameInput" class="input" placeholder="Type a name" />
+          <button class="btn" type="submit">Greet</button>
+        </div>
+      </form>
+      <div id="result" class="card small" style="margin-top:10px;">Your greeting will appear here.</div>
+      <p class="small">Use <code>element.textContent</code> to set safe text.</p>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('greetForm');
+    const nameInput = document.getElementById('nameInput');
+    const result = document.getElementById('result');
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      const name = nameInput.value.trim();
+      if(!name){
+        result.textContent = 'Please enter a name.';
+        result.classList.add('error');
+        return;
+      }
+      result.classList.remove('error');
+      // Safe text insertion
+      result.textContent = `Hello, ${name}! Welcome to the demo.`;
+      // Try changing innerHTML to see the difference (exercise for students)
+    });
+  </script>
+</body>
+</html>

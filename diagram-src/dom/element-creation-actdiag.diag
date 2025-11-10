@@ -1,0 +1,19 @@
+actdiag {
+  start -> create -> setContent -> setClass -> setEvent -> append -> visible -> end
+
+  start [label = "Need new element", shape = "beginpoint"]
+  
+  create [label = "createElement('div')", color = "#dbeafe"]
+  
+  setContent [label = "Set textContent\nor innerHTML", color = "#e0e7ff"]
+  
+  setClass [label = "Set className\nor id", color = "#f3e8ff"]
+  
+  setEvent [label = "addEventListener\n(optional)", color = "#fce7f3"]
+  
+  append [label = "appendChild(element)\nto parent", color = "#dcfce7"]
+  
+  visible [label = "Element visible\nin DOM tree", color = "#fef3c7"]
+  
+  end [label = "Complete", shape = "endpoint"]
+}

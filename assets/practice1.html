@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Practice 1 — Selecting Elements</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1 id="main-heading">Hello, student!</h1>
+    <div class="card">
+      <p>Click the button to change the heading using JavaScript.</p>
+      <button id="changeBtn" class="btn">Change Heading</button>
+      <p class="small">Open the console to inspect the element after clicking.</p>
+    </div>
+
+    <div class="card">
+      <h2>Find Elements</h2>
+      <p>Try the console commands listed below after opening this page.</p>
+      <ul>
+        <li><code>document.getElementById('main-heading')</code></li>
+        <li><code>document.querySelector('#main-heading')</code></li>
+        <li><code>document.querySelectorAll('button')</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // TODO: Hook up the button so it changes the heading text
+    const btn = document.getElementById('changeBtn');
+    const heading = document.getElementById('main-heading');
+
+    btn.addEventListener('click', function(){
+      heading.textContent = 'You clicked the button — great!';
+      console.log('Heading element:', heading);
+    });
+  </script>
+</body>
+</html>

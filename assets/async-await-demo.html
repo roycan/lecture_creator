@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Async/Await Demo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Async/Await Demo</h2>
+      <p class="small">This uses async/await instead of .then() chains.</p>
+      <button id="loadBtn" class="btn">Load Provinces (Async/Await)</button>
+      <div id="loading" class="small hidden" style="margin-top:10px;">Loading... ⏳</div>
+      <div id="error" class="error hidden" style="margin-top:10px;"></div>
+      <div id="results" style="margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <script>
+    const loadBtn = document.getElementById('loadBtn');
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    const results = document.getElementById('results');
+
+    async function loadProvinces() {
+      // Show loading
+      loading.classList.remove('hidden');
+      error.classList.add('hidden');
+      results.innerHTML = '';
+
+      try {
+        const response = await fetch('provinces.json');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const provinces = await response.json();
+        
+        // Hide loading
+        loading.classList.add('hidden');
+        
+        // Display provinces
+        const ul = document.createElement('ul');
+        provinces.forEach(province => {
+          const li = document.createElement('li');
+          li.textContent = `${province.name} — Capital: ${province.capital}`;
+          ul.appendChild(li);
+        });
+        results.appendChild(ul);
+        
+      } catch (err) {
+        // Show error
+        loading.classList.add('hidden');
+        error.classList.remove('hidden');
+        error.textContent = `Error: ${err.message}`;
+      }
+    }
+
+    loadBtn.addEventListener('click', loadProvinces);
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+flowchart TD
+    Start([User submits form])
+    Prevent[event.preventDefault]
+    GetVals[Read input values:<br/>nameInput.value<br/>emailInput.value]
+    CheckEmpty{All fields<br/>filled?}
+    CheckEmail{Email format<br/>valid?}
+    ShowError[Display error message<br/>classList.add'error']
+    ClearError[Clear previous errors<br/>classList.remove'error']
+    Process[Process form data:<br/>• Save to array<br/>• Send to server<br/>• Update UI]
+    Success[Show success message<br/>classList.add'success']
+    
+    Start --> Prevent
+    Prevent --> GetVals
+    GetVals --> CheckEmpty
+    CheckEmpty -->|No| ShowError
+    CheckEmpty -->|Yes| CheckEmail
+    CheckEmail -->|Invalid| ShowError
+    CheckEmail -->|Valid| ClearError
+    ClearError --> Process
+    Process --> Success
+    ShowError --> Start
+    
+    style Start fill:#fef3c7,stroke:#f59e0b
+    style ShowError fill:#fee2e2,stroke:#dc2626
+    style Success fill:#dcfce7,stroke:#16a34a
+    style Process fill:#dbeafe,stroke:#0284c7

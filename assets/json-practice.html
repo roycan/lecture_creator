@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JSON Practice — Student Records</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Student Records</h2>
+      <button id="loadBtn" class="btn">Load Students</button>
+      <div id="stats" class="card small" style="margin-top:10px;"></div>
+      <div id="table" style="margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <script>
+    const loadBtn = document.getElementById('loadBtn');
+    const stats = document.getElementById('stats');
+    const tableDiv = document.getElementById('table');
+
+    async function loadStudents() {
+      try {
+        const response = await fetch('students.json');
+        const data = await response.json();
+        const students = data.students;
+
+        // Calculate class average
+        const avgGrade = (students.reduce((sum, s) => sum + s.average, 0) / students.length).toFixed(2);
+        const avgAttendance = (students.reduce((sum, s) => sum + s.attendance, 0) / students.length).toFixed(2);
+
+        stats.innerHTML = `
+          <strong>Class Statistics</strong><br>
+          Total Students: ${students.length}<br>
+          Average Grade: ${avgGrade}<br>
+          Average Attendance: ${avgAttendance}%
+        `;
+
+        // Build table
+        const table = document.createElement('table');
+        table.className = 'table';
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Section</th>
+              <th>Average</th>
+              <th>Attendance</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${students.map(s => `
+              <tr>
+                <td>${s.name}</td>
+                <td>${s.section}</td>
+                <td>${s.average}</td>
+                <td>${s.attendance}%</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        `;
+        
+        tableDiv.innerHTML = '';
+        tableDiv.appendChild(table);
+
+      } catch (error) {
+        stats.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+      }
+    }
+
+    loadBtn.addEventListener('click', loadStudents);
+  </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard - Starter</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>📊 Data Dashboard</h2>
+      
+      <div class="form-row">
+        <button id="loadBtn" class="btn">Load Data</button>
+        <button id="refreshBtn" class="btn secondary">↻ Refresh</button>
+      </div>
+      
+      <div id="stats" class="card hidden" style="margin-top:12px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;">
+          <!-- TODO: Add stat cards here -->
+        </div>
+      </div>
+      
+      <div id="details" class="card hidden" style="margin-top:12px;">
+        <!-- TODO: Add detailed table/chart here -->
+      </div>
+      
+      <div id="loading" class="small hidden">Loading... ⏳</div>
+      <div id="error" class="error hidden"></div>
+    </div>
+  </div>
+
+  <script>
+    const loadBtn = document.getElementById('loadBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const stats = document.getElementById('stats');
+    const details = document.getElementById('details');
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    
+    // TODO: Create async function to fetch data
+    async function loadData() {
+      // TODO: Show loading state
+      
+      try {
+        // TODO: Fetch data from JSON file
+        
+        // TODO: Process and calculate statistics
+        
+        // TODO: Display results
+        
+      } catch (err) {
+        // TODO: Handle errors
+      }
+    }
+    
+    // TODO: Add event listeners
+    
+    // TODO: Call loadData() on page load
+  </script>
+</body>
+</html>

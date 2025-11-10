@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sari-Sari Store — Product Grid</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Store Inventory</h2>
+      <div id="grid" class="card-grid"></div>
+      <h3>Cart: <span id="cartCount">0</span></h3>
+    </div>
+  </div>
+
+  <script>
+    const products = [
+      {id:1, name:'Canned Corn', price:35, stock:5},
+      {id:2, name:'Instant Noodles', price:12, stock:10},
+      {id:3, name:'Mineral Water', price:20, stock:6}
+    ];
+    const grid = document.getElementById('grid');
+    const cartCount = document.getElementById('cartCount');
+    let cart = 0;
+
+    function render(){
+      grid.innerHTML = '';
+      products.forEach(p=>{
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<h4>${p.name}</h4><p class="small">₱${p.price} | stock: ${p.stock}</p>`;
+        const btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.textContent = 'Add to Cart';
+        btn.disabled = p.stock <= 0;
+        btn.addEventListener('click', ()=>{
+          if(p.stock<=0) return;
+          p.stock--;
+          cart++;
+          render();
+        });
+        card.appendChild(btn);
+        grid.appendChild(card);
+      });
+      cartCount.textContent = cart;
+    }
+
+    render();
+  </script>
+</body>
+</html>

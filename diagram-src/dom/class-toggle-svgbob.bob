@@ -1,0 +1,29 @@
+
+    +---------------------------+          +---------------------------+
+    |  ❌ Inline Styles         |          |  ✅ CSS Classes           |
+    |  (harder to maintain)     |          |  (recommended)            |
+    +---------------------------+          +---------------------------+
+    
+    JavaScript:                            JavaScript:
+    .------------------------.             .------------------------.
+    | el.style.background =  |             | el.classList          |
+    |   'yellow';            |             |   .add('highlight')   |
+    | el.style.padding =     |             |                       |
+    |   '10px';              |             | el.classList          |
+    | el.style.border =      |             |   .toggle('hidden')   |
+    |   '2px solid red';     |             '------------------------'
+    '------------------------'             
+                                           CSS File (styles.css):
+    Problems:                              .------------------------.
+    • Mixed with logic                     | .highlight {           |
+    • Hard to reuse                        |   background: yellow;  |
+    • Repetitive code                      |   padding: 10px;       |
+                                           |   border: 2px solid    |
+                                           |     red;               |
+                                           | }                      |
+                                           '------------------------'
+    
+                                           Benefits:
+                                           • Separation of concerns
+                                           • Reusable across elements
+                                           • Easy theme changes

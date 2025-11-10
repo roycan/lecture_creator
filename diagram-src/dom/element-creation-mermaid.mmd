@@ -1,0 +1,23 @@
+flowchart TD
+    Start([Need to add element])
+    Create[createElement'div']
+    SetProps[Set properties:\n• textContent\n• className\n• id, data attributes]
+    SetStyle[Optional: Set styles\n• style.color\n• classList.add]
+    AddEvent[Optional: Add listeners\naddEventListener'click']
+    Append[appendChild to parent\nor insertBefore]
+    Visible[Element now visible\nin browser!]
+    
+    Start --> Create
+    Create --> SetProps
+    SetProps --> SetStyle
+    SetStyle --> AddEvent
+    AddEvent --> Append
+    Append --> Visible
+    
+    style Start fill:#fef3c7,stroke:#f59e0b
+    style Create fill:#dbeafe,stroke:#0284c7
+    style SetProps fill:#e0e7ff,stroke:#6366f1
+    style SetStyle fill:#f3e8ff,stroke:#9333ea
+    style AddEvent fill:#fce7f3,stroke:#db2777
+    style Append fill:#dcfce7,stroke:#16a34a
+    style Visible fill:#fef3c7,stroke:#f59e0b

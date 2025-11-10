@@ -1,0 +1,10 @@
+[
+  {"id": 1, "route": "Cubao - Fairview", "vehicles": 12, "passengers": 450, "status": "normal"},
+  {"id": 2, "route": "Monumento - Baclaran", "vehicles": 15, "passengers": 680, "status": "busy"},
+  {"id": 3, "route": "SM North - Trinoma", "vehicles": 8, "passengers": 220, "status": "normal"},
+  {"id": 4, "route": "Ayala - Makati CBD", "vehicles": 20, "passengers": 950, "status": "busy"},
+  {"id": 5, "route": "Quiapo - Divisoria", "vehicles": 18, "passengers": 840, "status": "busy"},
+  {"id": 6, "route": "UP Diliman - Katipunan", "vehicles": 6, "passengers": 180, "status": "normal"},
+  {"id": 7, "route": "BGC - Ortigas", "vehicles": 10, "passengers": 420, "status": "normal"},
+  {"id": 8, "route": "EDSA - Taft", "vehicles": 25, "passengers": 1200, "status": "very busy"}
+]

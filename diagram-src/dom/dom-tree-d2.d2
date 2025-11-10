@@ -1,0 +1,98 @@
+direction: down
+
+document: Document {
+  shape: rectangle
+  style.fill: "#fef3c7"
+  style.stroke: "#f59e0b"
+}
+
+html: <html> {
+  shape: rectangle
+  style.fill: "#e1f5ff"
+}
+
+head: <head> {
+  shape: rectangle
+  style.fill: "#e1f5ff"
+}
+
+body: <body> {
+  shape: rectangle
+  style.fill: "#e1f5ff"
+}
+
+title: <title>\nSari-Sari Store {
+  shape: rectangle
+  style.fill: "#fff7ed"
+}
+
+meta: <meta charset> {
+  shape: rectangle
+  style.fill: "#fff7ed"
+}
+
+storeGrid: <div#store-grid> {
+  shape: rectangle
+  style.fill: "#e1f5ff"
+}
+
+h1: <h1>\nWelcome to our Store {
+  shape: rectangle
+  style.fill: "#fff7ed"
+}
+
+card1: <div.product-card> {
+  shape: rectangle
+  style.fill: "#e1f5ff"
+}
+
+card2: <div.product-card> {
+  shape: rectangle
+  style.fill: "#e1f5ff"
+}
+
+h3_1: <h3> Coke 500ml {
+  shape: rectangle
+  style.fill: "#fff7ed"
+}
+
+p1: <p> ₱25 {
+  shape: rectangle
+  style.fill: "#fff7ed"
+}
+
+btn1: <button> Add to Cart {
+  shape: rectangle
+  style.fill: "#fff7ed"
+}
+
+h3_2: <h3> Lucky Me {
+  shape: rectangle
+  style.fill: "#fff7ed"
+}
+
+p2: <p> ₱12 {
+  shape: rectangle
+  style.fill: "#fff7ed"
+}
+
+btn2: <button> Add to Cart {
+  shape: rectangle
+  style.fill: "#fff7ed"
+}
+
+document -> html
+html -> head
+html -> body
+head -> title
+head -> meta
+body -> storeGrid
+storeGrid -> h1
+storeGrid -> card1
+storeGrid -> card2
+card1 -> h3_1
+card1 -> p1
+card1 -> btn1
+card2 -> h3_2
+card2 -> p2
+card2 -> btn2

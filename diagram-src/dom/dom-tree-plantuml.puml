@@ -1,0 +1,41 @@
+@startuml
+!define ELEMENT #E1F5FF
+!define TEXT #FFF7ED
+
+skinparam rectangleBackgroundColor ELEMENT
+skinparam rectangleBorderColor #0284C7
+
+rectangle "Document" as doc #FEF3C7
+rectangle "<html>" as html
+rectangle "<head>" as head
+rectangle "<body>" as body
+rectangle "<title>\nSari-Sari Store" as title TEXT
+rectangle "<meta charset>" as meta TEXT
+rectangle "<div#store-grid>" as grid
+rectangle "<h1>\nWelcome to our Store" as h1 TEXT
+rectangle "<div.product-card>" as card1
+rectangle "<div.product-card>" as card2
+rectangle "<h3> Coke 500ml" as h3_1 TEXT
+rectangle "<p> ₱25" as p1 TEXT
+rectangle "<button> Add to Cart" as btn1 TEXT
+rectangle "<h3> Lucky Me" as h3_2 TEXT
+rectangle "<p> ₱12" as p2 TEXT
+rectangle "<button> Add to Cart" as btn2 TEXT
+
+doc --> html
+html --> head
+html --> body
+head --> title
+head --> meta
+body --> grid
+grid --> h1
+grid --> card1
+grid --> card2
+card1 --> h3_1
+card1 --> p1
+card1 --> btn1
+card2 --> h3_2
+card2 --> p2
+card2 --> btn2
+
+@enduml

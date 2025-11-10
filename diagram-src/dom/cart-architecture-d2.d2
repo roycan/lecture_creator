@@ -1,0 +1,62 @@
+direction: down
+
+ui: UI Layer {
+  grid: Product Grid {
+    shape: rectangle
+    style.fill: "#e1f5ff"
+  }
+  
+  cartDisplay: Cart Display {
+    shape: rectangle
+    label: "Cart Count: 3\nTotal: ₱62"
+    style.fill: "#f0f9ff"
+  }
+  
+  buttons: Add/Remove Buttons {
+    shape: rectangle
+    style.fill: "#dbeafe"
+  }
+}
+
+data: Data Layer {
+  products: Products Array {
+    shape: cylinder
+    label: "[{name, price, stock}]"
+    style.fill: "#fff7ed"
+  }
+  
+  cart: Cart Array {
+    shape: cylinder
+    label: "[{productId, qty}]"
+    style.fill: "#fef3c7"
+  }
+}
+
+logic: Logic Layer {
+  addToCart: addToCart() {
+    shape: rectangle
+    label: "• Validate stock\n• Update cart array\n• Trigger render"
+    style.fill: "#dcfce7"
+  }
+  
+  render: render() {
+    shape: rectangle
+    label: "• Loop products\n• Build cards\n• Show cart total"
+    style.fill: "#e0e7ff"
+  }
+  
+  calcTotal: calcTotal() {
+    shape: rectangle
+    label: "• Reduce cart items\n• Sum prices × qty"
+    style.fill: "#f3e8ff"
+  }
+}
+
+buttons -> addToCart: Click event
+addToCart -> cart: Update
+addToCart -> products: Decrement stock
+addToCart -> render: Call
+render -> grid: Update DOM
+render -> cartDisplay: Update count
+calcTotal -> cart: Read
+calcTotal -> cartDisplay: Display total

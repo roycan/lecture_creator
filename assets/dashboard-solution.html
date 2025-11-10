@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard Solution</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Student Dashboard — Solution</h2>
+      <form id="addForm">
+        <div class="form-row">
+          <input id="name" class="input" placeholder="Student name" />
+          <input id="score" class="input" placeholder="Score" />
+          <button class="btn" type="submit">Add Student</button>
+        </div>
+      </form>
+      <div id="stats" class="card small" style="margin-top:10px;"></div>
+      <div id="table" style="margin-top:12px;"></div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('addForm');
+    const name = document.getElementById('name');
+    const score = document.getElementById('score');
+    const table = document.getElementById('table');
+    const stats = document.getElementById('stats');
+
+    let students = [
+      {name:'Ana', score:88},
+      {name:'Ben', score:72},
+      {name:'Cesar', score:95}
+    ];
+
+    function calcStats(){
+      if(students.length===0){ stats.textContent = 'No students yet.'; return; }
+      const avg = (students.reduce((a,b)=>a+b.score,0)/students.length).toFixed(2);
+      stats.innerHTML = `Count: ${students.length} | Average: <strong>${avg}</strong>`;
+    }
+
+    function render(){
+      table.innerHTML = '';
+      const t = document.createElement('table');
+      t.className = 'table';
+      const thead = document.createElement('thead');
+      thead.innerHTML = '<tr><th>Name</th><th>Score</th><th>Actions</th></tr>';
+      t.appendChild(thead);
+      const tbody = document.createElement('tbody');
+      students.forEach((s,idx)=>{
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${s.name}</td><td>${s.score}</td><td><button class='btn secondary' data-idx='${idx}'>Edit</button> <button class='btn secondary' data-idx='${idx}'>Delete</button></td>`;
+        tbody.appendChild(row);
+      });
+      t.appendChild(tbody);
+      table.appendChild(t);
+      calcStats();
+    }
+
+    table.addEventListener('click', function(e){
+      if(e.target.matches('button')){
+        const idx = Number(e.target.dataset.idx);
+        if(e.target.textContent.trim()==='Delete'){
+          students.splice(idx,1);
+          render();
+        } else if(e.target.textContent.trim()==='Edit'){
+          const s = students[idx];
+          const newName = prompt('New name', s.name);
+          const newScore = prompt('New score', s.score);
+          if(newName) s.name = newName;
+          const ns = Number(newScore);
+          if(!isNaN(ns)) s.score = ns;
+          render();
+        }
+      }
+    });
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      const n = name.value.trim();
+      const s = Number(score.value);
+      if(!n || isNaN(s)) return;
+      students.push({name:n, score:s});
+      name.value=''; score.value='';
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

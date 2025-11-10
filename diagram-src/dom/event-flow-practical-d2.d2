@@ -1,0 +1,47 @@
+direction: down
+
+grid: #store-grid {
+  shape: rectangle
+  style.fill: "#e1f5ff"
+  style.stroke: "#0284c7"
+  
+  card: .product-card {
+    shape: rectangle
+    style.fill: "#f0f9ff"
+    
+    button: button.btn\n"Add to Cart" {
+      shape: rectangle
+      style.fill: "#dbeafe"
+      style.font-color: "#1e3a8a"
+    }
+  }
+}
+
+handler: Event Handler {
+  shape: rectangle
+  style.fill: "#dcfce7"
+  style.stroke: "#16a34a"
+}
+
+click: User Click {
+  shape: oval
+  style.fill: "#fef3c7"
+}
+
+check: Check target {
+  shape: diamond
+  label: "target matches\nbutton.btn?"
+}
+
+update: Update UI {
+  shape: rectangle
+  label: "• Find product data\n• Update cart\n• Adjust stock"
+  style.fill: "#fff7ed"
+}
+
+click -> button: 1. Click event
+button -> card: 2. Bubbles up
+card -> grid: 3. Bubbles to grid
+grid -> handler: 4. Delegated listener
+handler -> check: 5. Validate target
+check -> update: Yes

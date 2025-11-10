@@ -1,0 +1,12 @@
+{
+  "students": [
+    {"id": 1, "name": "Ana Santos", "section": "Einstein", "average": 88, "attendance": 95},
+    {"id": 2, "name": "Ben Reyes", "section": "Einstein", "average": 92, "attendance": 98},
+    {"id": 3, "name": "Carla Mendoza", "section": "Newton", "average": 85, "attendance": 90},
+    {"id": 4, "name": "Daniel Cruz", "section": "Newton", "average": 78, "attendance": 88},
+    {"id": 5, "name": "Elena Garcia", "section": "Einstein", "average": 94, "attendance": 100},
+    {"id": 6, "name": "Francis Tan", "section": "Newton", "average": 81, "attendance": 92},
+    {"id": 7, "name": "Gloria Ramos", "section": "Einstein", "average": 89, "attendance": 96},
+    {"id": 8, "name": "Henry Lim", "section": "Newton", "average": 76, "attendance": 85}
+  ]
+}

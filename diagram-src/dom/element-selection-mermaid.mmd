@@ -1,0 +1,30 @@
+flowchart TD
+    Start([Need to select element?])
+    HasID{Does element\nhave unique ID?}
+    Single{Select single\nor multiple?}
+    Complex{Need complex\nCSS selector?}
+    
+    GetById[document.getElementById\n'myId']
+    QueryOne[document.querySelector\n'.class' or 'tag']
+    QueryAll[document.querySelectorAll\n'.class' or 'tag']
+    
+    Result1[Returns: element or null]
+    Result2[Returns: first match or null]
+    Result3[Returns: NodeList array-like]
+    
+    Start --> HasID
+    HasID -->|Yes| GetById
+    HasID -->|No| Single
+    Single -->|Single| Complex
+    Single -->|Multiple| QueryAll
+    Complex -->|Simple class/tag| QueryOne
+    Complex -->|Complex selector| QueryOne
+    
+    GetById --> Result1
+    QueryOne --> Result2
+    QueryAll --> Result3
+    
+    style Start fill:#fef3c7,stroke:#f59e0b
+    style GetById fill:#dcfce7,stroke:#16a34a
+    style QueryOne fill:#dbeafe,stroke:#0284c7
+    style QueryAll fill:#f3e8ff,stroke:#9333ea

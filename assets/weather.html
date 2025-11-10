@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Philippine Weather Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>🌦️ Philippine Weather Dashboard</h2>
+      <div class="form-row">
+        <button class="btn" data-city="manila">Manila</button>
+        <button class="btn" data-city="cebu">Cebu</button>
+        <button class="btn" data-city="davao">Davao</button>
+        <button id="refreshBtn" class="btn secondary">↻ Refresh</button>
+      </div>
+      
+      <div id="loading" class="small hidden" style="margin-top:12px;">Loading weather... ⏳</div>
+      <div id="error" class="error hidden" style="margin-top:12px;"></div>
+      
+      <div id="weather" class="card hidden" style="margin-top:12px;">
+        <h3 id="cityName"></h3>
+        <div style="font-size:3rem;" id="icon"></div>
+        <div style="font-size:2rem;font-weight:700;" id="temp"></div>
+        <div id="condition"></div>
+        <div class="small" style="margin-top:10px;">
+          <div>Humidity: <span id="humidity"></span></div>
+          <div>Wind: <span id="wind"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    const weather = document.getElementById('weather');
+    
+    let currentCity = 'manila';
+
+    function showLoading() {
+      loading.classList.remove('hidden');
+      error.classList.add('hidden');
+      weather.classList.add('hidden');
+    }
+
+    function showError(msg) {
+      loading.classList.add('hidden');
+      error.classList.remove('hidden');
+      weather.classList.add('hidden');
+      error.textContent = msg;
+    }
+
+    function showWeather(data) {
+      loading.classList.add('hidden');
+      error.classList.add('hidden');
+      weather.classList.remove('hidden');
+      
+      document.getElementById('cityName').textContent = data.city;
+      document.getElementById('icon').textContent = data.icon;
+      document.getElementById('temp').textContent = data.temperature + '°C';
+      document.getElementById('condition').textContent = data.condition;
+      document.getElementById('humidity').textContent = data.humidity + '%';
+      document.getElementById('wind').textContent = data.wind;
+    }
+
+    async function loadWeather(city) {
+      showLoading();
+      currentCity = city;
+
+      try {
+        // Using local mock data (fallback)
+        const response = await fetch('weather-data.json');
+        if (!response.ok) throw new Error('Failed to load weather data');
+        
+        const allData = await response.json();
+        const cityData = allData[city];
+        
+        if (!cityData) throw new Error('City not found');
+        
+        // Simulate network delay
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        showWeather(cityData);
+        
+      } catch (err) {
+        showError(`Error: ${err.message}`);
+      }
+    }
+
+    // City button clicks
+    document.querySelectorAll('[data-city]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const city = e.target.dataset.city;
+        loadWeather(city);
+      });
+    });
+
+    // Refresh button
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      loadWeather(currentCity);
+    });
+
+    // Load Manila by default
+    loadWeather('manila');
+  </script>
+</body>
+</html>

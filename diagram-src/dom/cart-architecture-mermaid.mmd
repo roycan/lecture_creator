@@ -1,0 +1,30 @@
+graph TB
+    subgraph UI["UI Layer (DOM)"]
+        Grid[Product Grid<br/>#store-grid]
+        CartUI[Cart Display<br/>Count & Total]
+        Buttons[Add/Remove Buttons]
+    end
+    
+    subgraph Data["Data Layer (Arrays)"]
+        Products[Products Array<br/>{name, price, stock}]
+        Cart[Cart Array<br/>{productId, qty}]
+    end
+    
+    subgraph Logic["Logic Layer (Functions)"]
+        Add[addToCart<br/>• Check stock<br/>• Update cart<br/>• Call render]
+        Render[render<br/>• Loop products<br/>• Build DOM cards<br/>• Update totals]
+        Calc[calcTotal<br/>• Reduce cart<br/>• Sum price × qty]
+    end
+    
+    Buttons -->|click event| Add
+    Add -->|update| Cart
+    Add -->|decrement| Products
+    Add -->|trigger| Render
+    Render -->|createElement| Grid
+    Render -->|update text| CartUI
+    Calc -->|read| Cart
+    Calc -->|display| CartUI
+    
+    style UI fill:#e1f5ff,stroke:#0284c7
+    style Data fill:#fff7ed,stroke:#ea580c
+    style Logic fill:#dcfce7,stroke:#16a34a
