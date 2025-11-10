@@ -1,0 +1,20 @@
+{
+  "name": "class-list-manager",
+  "version": "1.0.0",
+  "description": "Class List Manager - Complete mini-project for managing student records",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": ["express", "ejs", "students", "education", "bulma"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "ejs": "^3.1.9"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

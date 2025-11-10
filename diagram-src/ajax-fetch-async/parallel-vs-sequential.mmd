@@ -1,0 +1,16 @@
+gantt
+    title Sequential vs Parallel Requests
+    dateFormat X
+    axisFormat %L
+    
+    section Sequential (one after another)
+    Request A   :0, 1000ms
+    Request B   :1000, 2000ms
+    Request C   :2000, 3000ms
+    Total: 3000ms :milestone, 3000, 3000ms
+    
+    section Parallel (all at once)
+    Request A   :0, 1000ms
+    Request B   :0, 1000ms
+    Request C   :0, 1000ms
+    Total: 1000ms :milestone, 1000, 1000ms

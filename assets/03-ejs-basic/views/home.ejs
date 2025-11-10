@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <!-- Use data passed from Express -->
+  <title><%= title %></title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.1);
+      padding: 30px;
+      border-radius: 10px;
+    }
+    .value {
+      color: #FFD700;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Output variables with <%= %> -->
+    <h1>🎨 <%= message %></h1>
+    
+    <div style="margin: 20px 0; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+      <h2>Student Information</h2>
+      <p>Name: <span class="value"><%= student %></span></p>
+      <p>Grade: <span class="value"><%= grade %>%</span></p>
+      <p>Date: <span class="value"><%= date %></span></p>
+    </div>
+    
+    <!-- You can use JavaScript expressions inside <%= %> -->
+    <p>Grade Status: 
+      <% if (grade >= 90) { %>
+        <span class="value">✅ Excellent!</span>
+      <% } else if (grade >= 80) { %>
+        <span class="value">👍 Good</span>
+      <% } else { %>
+        <span class="value">📚 Keep studying!</span>
+      <% } %>
+    </p>
+    
+    <p><a href="/about" style="color: #FFD700;">Visit About Page →</a></p>
+  </div>
+</body>
+</html>

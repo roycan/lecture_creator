@@ -1,0 +1,46 @@
+/* Custom styles for the Student Management System */
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.section {
+  flex: 1;
+}
+
+/* Card hover effect */
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom navbar styling */
+.navbar-item strong {
+  font-size: 1.2em;
+}
+
+/* Footer styling */
+.footer {
+  margin-top: auto;
+  background-color: #f5f5f5;
+  padding: 2rem 1.5rem;
+}
+
+/* Grade tag sizing */
+.tag {
+  font-size: 1.2em;
+  padding: 0.5em 1em;
+}
+
+/* Notification box */
+.notification code {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}

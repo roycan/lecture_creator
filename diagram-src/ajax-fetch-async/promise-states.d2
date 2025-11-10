@@ -1,0 +1,29 @@
+direction: right
+
+pending: Pending {
+  shape: circle
+  style.fill: "#ffeb3b"
+}
+
+fulfilled: Fulfilled {
+  shape: circle
+  style.fill: "#4caf50"
+}
+
+rejected: Rejected {
+  shape: circle
+  style.fill: "#f44336"
+}
+
+start: Start {
+  shape: circle
+  style.fill: "#9e9e9e"
+}
+
+start -> pending: new Promise()
+pending -> fulfilled: resolve()
+pending -> rejected: reject()
+
+pending.note: "Waiting for result\nLike waiting for your order"
+fulfilled.note: "Success! ✓\nGot the result"
+rejected.note: "Failed! ✗\nGot an error"

@@ -1,0 +1,35 @@
+direction: right
+
+call_stack: Call Stack {
+  shape: rectangle
+  style.fill: "#2196f3"
+  style.font-color: "#fff"
+}
+
+task_queue: Task Queue {
+  shape: queue
+  style.fill: "#ffeb3b"
+}
+
+async: Async Operations\n(setTimeout, fetch) {
+  shape: rectangle
+  style.fill: "#ff9800"
+  style.font-color: "#fff"
+}
+
+check: Check if\nstack empty? {
+  shape: diamond
+}
+
+has_tasks: Has\ntasks? {
+  shape: diamond
+}
+
+call_stack -> check
+check -> call_stack: "No, keep executing"
+check -> task_queue: "Yes, check queue"
+task_queue -> has_tasks
+has_tasks -> call_stack: "Yes, move task"
+has_tasks -> task_queue: "No, wait"
+
+async -> task_queue: "Add callback"

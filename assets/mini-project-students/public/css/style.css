@@ -1,0 +1,94 @@
+/* Class List Manager Custom Styles */
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.section {
+  flex: 1;
+}
+
+.footer {
+  margin-top: auto;
+  background-color: #f5f5f5;
+  padding: 2rem 1.5rem;
+}
+
+/* Statistics boxes */
+.stat-box {
+  border-left: 4px solid #3298dc;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.stat-success {
+  border-left-color: #48c774;
+}
+
+.stat-danger {
+  border-left-color: #f14668;
+}
+
+.stat-primary {
+  border-left-color: #00d1b2;
+}
+
+.stat-warning {
+  border-left-color: #ffdd57;
+}
+
+.stat-box .heading {
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #7a7a7a;
+  margin-bottom: 0.5rem;
+}
+
+/* Table styling */
+.table-container {
+  background: white;
+  border-radius: 6px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.table code {
+  background-color: #f5f5f5;
+  padding: 0.25em 0.5em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+/* Grade distribution */
+.box .heading {
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #7a7a7a;
+  margin-bottom: 0.5rem;
+}
+
+/* Form styling */
+.field .help {
+  color: #7a7a7a;
+}
+
+/* Responsive improvements */
+@media screen and (max-width: 768px) {
+  .hero-body h1 {
+    font-size: 2rem;
+  }
+  
+  .hero-body p {
+    font-size: 1.2rem;
+  }
+  
+  .stat-box .title {
+    font-size: 2rem;
+  }
+}

@@ -1,0 +1,46 @@
+direction: down
+
+then_chain: "With .then() chains" {
+  fetch1: fetch() {
+    shape: rectangle
+    style.fill: "#ff9800"
+  }
+  then1: .then(r => r.json()) {
+    shape: rectangle
+  }
+  then2: .then(data => ...) {
+    shape: rectangle
+  }
+  catch1: .catch(err => ...) {
+    shape: rectangle
+  }
+  
+  fetch1 -> then1 -> then2 -> catch1
+  
+  note: "More nested, harder to read" {
+    shape: text
+  }
+}
+
+async_await: "With async/await" {
+  fetch2: await fetch() {
+    shape: rectangle
+    style.fill: "#4caf50"
+  }
+  json: await response.json() {
+    shape: rectangle
+    style.fill: "#4caf50"
+  }
+  use: use data {
+    shape: rectangle
+  }
+  trycatch: try/catch {
+    shape: rectangle
+  }
+  
+  fetch2 -> json -> use -> trycatch
+  
+  note: "Linear flow, easier to read" {
+    shape: text
+  }
+}

@@ -1,0 +1,47 @@
+direction: down
+
+browser: Browser {
+  shape: rectangle
+}
+
+network: Network {
+  shape: cloud
+}
+
+server: Server {
+  shape: cylinder
+}
+
+browser -> network: "fetch('data.json')" {
+  style.animated: true
+}
+
+network -> server: HTTP GET Request {
+  style.stroke-dash: 3
+}
+
+server -> network: Response (headers + body) {
+  style.stroke: "#4caf50"
+}
+
+network -> browser: Response object {
+  style.stroke: "#4caf50"
+}
+
+step1: Step 1: Check response.ok {
+  shape: text
+  near: browser
+}
+
+browser -> browser: response.json() {
+  style.stroke: "#2196f3"
+}
+
+step2: Step 2: Parse JSON body {
+  shape: text
+  near: browser
+}
+
+browser -> browser: Got actual data! {
+  style.stroke: "#4caf50"
+}

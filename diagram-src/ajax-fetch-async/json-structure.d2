@@ -1,0 +1,29 @@
+direction: right
+
+js_object: JavaScript Object {
+  shape: rectangle
+  style.fill: "#4caf50"
+  style.font-color: "#fff"
+}
+
+json_string: JSON String {
+  shape: rectangle
+  style.fill: "#2196f3"
+  style.font-color: "#fff"
+}
+
+example_obj: "{ name: 'Juan', age: 15 }" {
+  shape: code
+  style.fill: "#4caf50"
+}
+
+example_json: "'{ \"name\": \"Juan\", \"age\": 15 }'" {
+  shape: code
+  style.fill: "#2196f3"
+}
+
+js_object -> json_string: JSON.stringify()
+json_string -> js_object: JSON.parse()
+
+example_obj -> example_json: stringify
+example_json -> example_obj: parse

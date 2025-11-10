@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - Sari-Sari Store Inventory</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <section class="section">
+    <div class="container">
+      <div class="box">
+        <h1 class="title is-1">🏪 Sari-Sari Store Inventory Manager</h1>
+        <p class="subtitle is-3">Digital Inventory Management System</p>
+        
+        <hr>
+
+        <div class="content">
+          <h2 class="title is-3">About This System</h2>
+          <p class="is-size-5">
+            The Sari-Sari Store Inventory Manager is a web-based application designed specifically 
+            for Filipino neighborhood stores (sari-sari stores). It helps store owners track products, 
+            monitor stock levels, calculate inventory value, and manage their business more efficiently.
+          </p>
+
+          <h3 class="title is-4">🎯 Key Features</h3>
+          <div class="columns">
+            <div class="column">
+              <div class="box has-background-success-light">
+                <h4 class="subtitle is-5">📦 Inventory Tracking</h4>
+                <p>Complete product list with stock levels, pricing, categories, and suppliers. 
+                   Real-time calculation of total inventory value.</p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="box has-background-warning-light">
+                <h4 class="subtitle is-5">⚠️ Stock Alerts</h4>
+                <p>Visual indicators for low stock (≤10 units), critical stock (≤5 units), 
+                   and out-of-stock items to prevent stockouts.</p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="box has-background-info-light">
+                <h4 class="subtitle is-5">📊 Analytics</h4>
+                <p>Dashboard showing total products, items in stock, inventory value, 
+                   and category breakdowns for better business insights.</p>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="title is-4">📈 Inventory Metrics</h3>
+          <p>The system automatically calculates and displays:</p>
+          <ul>
+            <li><strong>Total Products:</strong> Number of different product types</li>
+            <li><strong>Total Items:</strong> Sum of all units across all products</li>
+            <li><strong>Total Value:</strong> Current worth of entire inventory (price × stock)</li>
+            <li><strong>Low Stock Count:</strong> Products with 10 or fewer units</li>
+            <li><strong>Out of Stock:</strong> Products with zero stock (need immediate reorder)</li>
+            <li><strong>Category Analysis:</strong> Products, stock, and value per category</li>
+          </ul>
+
+          <h3 class="title is-4">🚦 Stock Status Indicators</h3>
+          <table class="table is-fullwidth is-striped">
+            <thead>
+              <tr>
+                <th>Stock Level</th>
+                <th>Status</th>
+                <th>Action Required</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="has-background-danger-light">
+                <td><strong>0 units</strong></td>
+                <td>🚨 Out of Stock</td>
+                <td>Urgent reorder needed</td>
+              </tr>
+              <tr class="has-background-danger-light">
+                <td><strong>1-5 units</strong></td>
+                <td>⚠️ Critical</td>
+                <td>Immediate reorder</td>
+              </tr>
+              <tr class="has-background-warning-light">
+                <td><strong>6-10 units</strong></td>
+                <td>📉 Low Stock</td>
+                <td>Plan to reorder soon</td>
+              </tr>
+              <tr class="has-background-info-light">
+                <td><strong>11-30 units</strong></td>
+                <td>✓ Adequate</td>
+                <td>Monitor regularly</td>
+              </tr>
+              <tr class="has-background-success-light">
+                <td><strong>31+ units</strong></td>
+                <td>✓ In Stock</td>
+                <td>Well stocked</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 class="title is-4">🛒 Common Product Categories</h3>
+          <div class="columns is-mobile is-multiline">
+            <div class="column is-half">
+              <strong>Food & Beverages:</strong>
+              <ul>
+                <li>Noodles (Lucky Me, Nissin)</li>
+                <li>Canned Goods (Tuna, Corned Beef)</li>
+                <li>Beverages (Soft drinks, Coffee)</li>
+                <li>Snacks (Crackers, Chips)</li>
+                <li>Condiments (Soy sauce, Vinegar)</li>
+                <li>Dairy (Evaporada, Milk)</li>
+              </ul>
+            </div>
+            <div class="column is-half">
+              <strong>Non-Food Items:</strong>
+              <ul>
+                <li>Household (Detergent, Bleach)</li>
+                <li>Personal Care (Soap, Toothpaste)</li>
+                <li>School Supplies (Notebooks, Pens)</li>
+                <li>Cigarettes & Tobacco</li>
+                <li>Load Cards & E-load</li>
+              </ul>
+            </div>
+          </div>
+
+          <h3 class="title is-4">🛠️ Technologies Used</h3>
+          <div class="columns">
+            <div class="column">
+              <strong>Backend:</strong>
+              <ul>
+                <li>Node.js - Runtime environment</li>
+                <li>Express.js - Web framework</li>
+                <li>File System (fs) - Data storage</li>
+              </ul>
+            </div>
+            <div class="column">
+              <strong>Frontend:</strong>
+              <ul>
+                <li>EJS - Template engine</li>
+                <li>Bulma CSS - UI framework</li>
+                <li>HTML5 - Forms & structure</li>
+              </ul>
+            </div>
+            <div class="column">
+              <strong>Data:</strong>
+              <ul>
+                <li>JSON Files - Product records</li>
+                <li>Real-time calculations</li>
+                <li>Category grouping</li>
+              </ul>
+            </div>
+          </div>
+
+          <h3 class="title is-4">🎓 Learning Objectives</h3>
+          <p>This mini-project demonstrates:</p>
+          <ul>
+            <li><strong>Inventory Management:</strong> Stock tracking and alerts</li>
+            <li><strong>Financial Calculations:</strong> Price × Quantity calculations</li>
+            <li><strong>Data Aggregation:</strong> Grouping by category, summing totals</li>
+            <li><strong>Conditional Rendering:</strong> Stock-based styling and alerts</li>
+            <li><strong>Business Logic:</strong> Real-world store management scenarios</li>
+            <li><strong>Philippine Context:</strong> Local products and business model</li>
+          </ul>
+
+          <div class="notification is-warning is-light mt-5">
+            <p><strong>⚠️ Learning Project Notice:</strong></p>
+            <p>This is an educational project using JSON file storage. For actual business use, 
+            consider upgrading to a proper database system (SQLite, PostgreSQL) with features like:</p>
+            <ul>
+              <li>Transaction history and sales tracking</li>
+              <li>User authentication and multiple store support</li>
+              <li>Barcode scanning and POS integration</li>
+              <li>Automatic reorder suggestions</li>
+              <li>Profit margin calculations</li>
+              <li>Customer credit tracking (utang system)</li>
+            </ul>
+          </div>
+
+          <div class="notification is-primary is-light">
+            <p><strong>💡 Business Tips for Sari-Sari Store Owners:</strong></p>
+            <ul>
+              <li>Keep track of fast-moving items (e.g., candies, cigarettes, load)</li>
+              <li>Set reorder points to avoid running out of popular products</li>
+              <li>Monitor expiration dates on dairy and canned goods</li>
+              <li>Calculate profit margins: (Selling Price - Cost) / Cost × 100%</li>
+              <li>Maintain good relationships with suppliers for better credit terms</li>
+              <li>Track customer utang (credit) separately to manage cash flow</li>
+            </ul>
+          </div>
+
+          <div class="buttons mt-5">
+            <a href="/" class="button is-success is-medium">
+              <strong>View Inventory</strong>
+            </a>
+            <a href="/add" class="button is-primary is-medium">
+              <strong>Add New Product</strong>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

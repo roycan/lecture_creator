@@ -1,0 +1,18 @@
+graph LR
+    subgraph "With .then() chains"
+    A1[fetch] --> B1[.then]
+    B1 --> C1[.then]
+    C1 --> D1[.catch]
+    end
+    
+    subgraph "With async/await"
+    A2[await fetch] --> B2[await .json]
+    B2 --> C2[use data]
+    C2 --> D2[try/catch]
+    end
+    
+    style A1 fill:#ff9800
+    style A2 fill:#4caf50
+    
+    Note1[More nested,\nharder to read]
+    Note2[Linear flow,\neasier to read]

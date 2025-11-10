@@ -1,0 +1,22 @@
+gantt
+    title Debouncing: Wait for User to Stop Typing
+    dateFormat X
+    axisFormat %L
+    
+    section Without Debounce
+    Type 'M' - API Call     :milestone, 0, 0ms
+    Type 'a' - API Call     :milestone, 100, 100ms
+    Type 'n' - API Call     :milestone, 200, 200ms
+    Type 'i' - API Call     :milestone, 300, 300ms
+    Type 'l' - API Call     :milestone, 400, 400ms
+    Type 'a' - API Call     :milestone, 500, 500ms
+    
+    section With Debounce (500ms)
+    Type 'M'                :0, 100ms
+    Type 'a'                :100, 200ms
+    Type 'n'                :200, 300ms
+    Type 'i'                :300, 400ms
+    Type 'l'                :400, 500ms
+    Type 'a'                :500, 600ms
+    Wait 500ms              :600, 1100ms
+    API Call                :milestone, 1100, 1100ms

@@ -1,0 +1,44 @@
+direction: down
+
+browser: Browser {
+  shape: rectangle
+}
+
+your_server: your-site.com {
+  shape: cloud
+}
+
+other_server: api.example.com {
+  shape: cloud
+}
+
+step1: "1. User loads page from your-site.com" {
+  shape: text
+  near: browser
+}
+
+browser -> other_server: "fetch('api.example.com/data')\n(Cross-Origin Request!)" {
+  style.stroke: "#ff9800"
+  style.animated: true
+}
+
+allowed: Server allows CORS {
+  shape: rectangle
+  style.fill: "#4caf50"
+  style.font-color: "#fff"
+}
+
+blocked: Server blocks CORS {
+  shape: rectangle
+  style.fill: "#f44336"
+  style.font-color: "#fff"
+}
+
+allowed -> browser: "Response + CORS headers\nAccess-Control-Allow-Origin: *" {
+  style.stroke: "#4caf50"
+}
+
+blocked -> browser: "Response without CORS headers\nBrowser blocks it!" {
+  style.stroke: "#f44336"
+  style.stroke-dash: 3
+}

@@ -1,0 +1,18 @@
+graph TD
+    A[Start fetch] --> B{Network OK?}
+    B -->|Yes| C{response.ok?}
+    B -->|No| D[Network Error]
+    C -->|Yes| E{JSON valid?}
+    C -->|No| F[HTTP Error<br/>404, 500, etc]
+    E -->|Yes| G[Success! ✓]
+    E -->|No| H[JSON Parse Error]
+    
+    D --> I[.catch<br/>or<br/>catch block]
+    F --> I
+    H --> I
+    G --> J[Use data]
+    
+    style G fill:#4caf50,color:#fff
+    style D fill:#f44336,color:#fff
+    style F fill:#f44336,color:#fff
+    style H fill:#f44336,color:#fff

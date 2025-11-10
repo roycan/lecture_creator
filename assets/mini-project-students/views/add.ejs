@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Student - Class List Manager</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <section class="section">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-two-thirds">
+          <!-- Header -->
+          <div class="box has-background-info-light">
+            <h1 class="title is-2">➕ Enroll New Student</h1>
+            <p class="subtitle">Add a student to the class list</p>
+          </div>
+
+          <!-- Form -->
+          <div class="box">
+            <form action="/add" method="POST">
+              <!-- Full Name -->
+              <div class="field">
+                <label class="label">Full Name *</label>
+                <div class="control">
+                  <input class="input is-medium" type="text" name="name" 
+                         placeholder="e.g. Maria Santos" required>
+                </div>
+              </div>
+
+              <!-- Student ID -->
+              <div class="field">
+                <label class="label">Student ID *</label>
+                <div class="control">
+                  <input class="input is-medium" type="text" name="studentId" 
+                         placeholder="e.g. 2023-00123" 
+                         pattern="[0-9]{4}-[0-9]{5}" required>
+                </div>
+                <p class="help">Format: YYYY-NNNNN (e.g., 2023-00123)</p>
+              </div>
+
+              <!-- Course and Year -->
+              <div class="columns">
+                <div class="column">
+                  <div class="field">
+                    <label class="label">Course *</label>
+                    <div class="control">
+                      <div class="select is-medium is-fullwidth">
+                        <select name="course" required>
+                          <option value="">Select a course...</option>
+                          <option value="BSIT">BSIT - Information Technology</option>
+                          <option value="BSCS">BSCS - Computer Science</option>
+                          <option value="BSIS">BSIS - Information Systems</option>
+                          <option value="BSCpE">BSCpE - Computer Engineering</option>
+                          <option value="BSEMC">BSEMC - Entertainment & Multimedia</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="column">
+                  <div class="field">
+                    <label class="label">Year Level *</label>
+                    <div class="control">
+                      <div class="select is-medium is-fullwidth">
+                        <select name="year" required>
+                          <option value="">Select year...</option>
+                          <option value="1">1st Year</option>
+                          <option value="2">2nd Year</option>
+                          <option value="3">3rd Year</option>
+                          <option value="4">4th Year</option>
+                          <option value="5">5th Year (Irregular)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Grade -->
+              <div class="field">
+                <label class="label">Final Grade *</label>
+                <div class="control">
+                  <input class="input is-medium" type="number" name="grade" 
+                         min="0" max="100" step="0.01" 
+                         placeholder="e.g. 95.50" required>
+                </div>
+                <p class="help">Enter a grade between 0 and 100 (passing grade is 75)</p>
+              </div>
+
+              <!-- Email -->
+              <div class="field">
+                <label class="label">Email Address *</label>
+                <div class="control">
+                  <input class="input is-medium" type="email" name="email" 
+                         placeholder="e.g. student@university.edu.ph" required>
+                </div>
+              </div>
+
+              <!-- Submit Buttons -->
+              <div class="field is-grouped is-grouped-right mt-5">
+                <div class="control">
+                  <a href="/" class="button is-light is-medium">Cancel</a>
+                </div>
+                <div class="control">
+                  <button type="submit" class="button is-info is-medium">
+                    <strong>Enroll Student</strong>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Help Box -->
+          <div class="notification is-info is-light">
+            <p class="mb-3"><strong>💡 Grading Scale:</strong></p>
+            <ul>
+              <li><strong>95-100:</strong> ⭐ Excellent</li>
+              <li><strong>90-94:</strong> 👍 Very Good</li>
+              <li><strong>80-89:</strong> ✓ Good</li>
+              <li><strong>75-79:</strong> 📚 Passed</li>
+              <li><strong>Below 75:</strong> ❌ Failed</li>
+            </ul>
+            <p class="mt-3">
+              <strong>Note:</strong> All fields are required. Student ID must be in YYYY-NNNNN format.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

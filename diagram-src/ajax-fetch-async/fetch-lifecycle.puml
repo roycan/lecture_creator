@@ -1,0 +1,17 @@
+@startuml
+participant Browser
+participant Network
+participant Server
+
+Browser -> Network: fetch('data.json')
+note right: Returns Promise<Response>
+Network -> Server: HTTP GET Request
+Server -> Network: Response (headers + body)
+Network -> Browser: Response object
+note right: Step 1: Check response.ok
+Browser -> Browser: response.json()
+note right: Returns Promise<Data>
+note right: Step 2: Parse JSON body
+Browser -> Browser: Got actual data!
+note right: Use the data
+@enduml

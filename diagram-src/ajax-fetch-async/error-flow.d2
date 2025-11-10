@@ -1,0 +1,63 @@
+direction: down
+
+start: Start fetch {
+  shape: oval
+}
+
+network_ok: Network OK? {
+  shape: diamond
+}
+
+response_ok: response.ok? {
+  shape: diamond
+}
+
+json_valid: JSON valid? {
+  shape: diamond
+}
+
+success: Success! ✓ {
+  shape: rectangle
+  style.fill: "#4caf50"
+  style.font-color: "#fff"
+}
+
+network_err: Network Error {
+  shape: rectangle
+  style.fill: "#f44336"
+  style.font-color: "#fff"
+}
+
+http_err: HTTP Error\n(404, 500, etc) {
+  shape: rectangle
+  style.fill: "#f44336"
+  style.font-color: "#fff"
+}
+
+json_err: JSON Parse Error {
+  shape: rectangle
+  style.fill: "#f44336"
+  style.font-color: "#fff"
+}
+
+catch_block: .catch or catch block {
+  shape: rectangle
+  style.fill: "#ff9800"
+}
+
+use_data: Use data {
+  shape: rectangle
+}
+
+start -> network_ok
+network_ok -> response_ok: Yes
+network_ok -> network_err: No
+response_ok -> json_valid: Yes
+response_ok -> http_err: No
+json_valid -> success: Yes
+json_valid -> json_err: No
+
+network_err -> catch_block
+http_err -> catch_block
+json_err -> catch_block
+success -> use_data

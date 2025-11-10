@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "name": "Roberto Santos",
+    "position": "Barangay Captain",
+    "contact": "0917-123-4567",
+    "term": "2023-2026"
+  },
+  {
+    "id": 2,
+    "name": "Elena Cruz",
+    "position": "Barangay Kagawad",
+    "contact": "0918-234-5678",
+    "term": "2023-2026"
+  },
+  {
+    "id": 3,
+    "name": "Pedro Ramos",
+    "position": "Barangay Kagawad",
+    "contact": "0919-345-6789",
+    "term": "2023-2026"
+  },
+  {
+    "id": 4,
+    "name": "Luz Mercado",
+    "position": "Barangay Secretary",
+    "contact": "0920-456-7890",
+    "term": "2023-2026"
+  },
+  {
+    "id": 5,
+    "name": "Jose Tan",
+    "position": "Barangay Treasurer",
+    "contact": "0921-567-8901",
+    "term": "2023-2026"
+  },
+  {
+    "id": 6,
+    "name": "Carmen Lopez",
+    "position": "SK Chairperson",
+    "contact": "0922-678-9012",
+    "term": "2023-2026"
+  }
+]

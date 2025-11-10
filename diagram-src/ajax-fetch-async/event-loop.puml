@@ -1,0 +1,18 @@
+@startuml
+!define STACK #2196F3
+!define QUEUE #FFEB3B
+!define ASYNC #FF9800
+
+rectangle "Call Stack" STACK as stack
+rectangle "Task Queue" QUEUE as queue
+rectangle "Async Operations\n(setTimeout, fetch)" ASYNC as async
+
+stack --> stack : Execute code
+note right: If stack has code,\nkeep executing
+
+stack --> queue : Stack empty?\nCheck queue
+queue --> stack : Move task\nto stack
+note right: Execute the\ncallback
+
+async --> queue : Add callback\nwhen done
+@enduml

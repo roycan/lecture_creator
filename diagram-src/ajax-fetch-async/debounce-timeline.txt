@@ -1,0 +1,31 @@
+Debouncing Timeline - Text Version
+===================================
+
+WITHOUT DEBOUNCE:
+-----------------
+Time  | Event        | Action
+------|--------------|------------------
+0ms   | Type 'M'     | → API Call #1
+100ms | Type 'a'     | → API Call #2
+200ms | Type 'n'     | → API Call #3
+300ms | Type 'i'     | → API Call #4
+400ms | Type 'l'     | → API Call #5
+500ms | Type 'a'     | → API Call #6
+      | Total Calls  | 6 calls!
+
+
+WITH DEBOUNCE (500ms delay):
+----------------------------
+Time   | Event           | Action
+-------|-----------------|------------------
+0ms    | Type 'M'        | Start timer
+100ms  | Type 'a'        | Reset timer
+200ms  | Type 'n'        | Reset timer
+300ms  | Type 'i'        | Reset timer
+400ms  | Type 'l'        | Reset timer
+500ms  | Type 'a'        | Reset timer
+1000ms | (stopped typing)| Wait...
+1100ms | Timer finished  | → API Call #1
+       | Total Calls     | 1 call only!
+
+BENEFIT: Saves 5 unnecessary API calls!

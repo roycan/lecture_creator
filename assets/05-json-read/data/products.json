@@ -1,0 +1,66 @@
+[
+  {
+    "id": 1,
+    "name": "Lucky Me Pancit Canton",
+    "category": "Noodles",
+    "price": 15.00,
+    "stock": 48,
+    "unit": "pack"
+  },
+  {
+    "id": 2,
+    "name": "Alaska Evaporada",
+    "category": "Dairy",
+    "price": 32.00,
+    "stock": 24,
+    "unit": "can"
+  },
+  {
+    "id": 3,
+    "name": "Purefoods Hotdog",
+    "category": "Meat",
+    "price": 85.00,
+    "stock": 12,
+    "unit": "pack"
+  },
+  {
+    "id": 4,
+    "name": "Century Tuna",
+    "category": "Canned Goods",
+    "price": 28.00,
+    "stock": 36,
+    "unit": "can"
+  },
+  {
+    "id": 5,
+    "name": "Tide Detergent Powder",
+    "category": "Household",
+    "price": 12.00,
+    "stock": 60,
+    "unit": "sachet"
+  },
+  {
+    "id": 6,
+    "name": "Nescafe 3-in-1",
+    "category": "Beverages",
+    "price": 8.00,
+    "stock": 72,
+    "unit": "sachet"
+  },
+  {
+    "id": 7,
+    "name": "Mang Tomas Lechon Sauce",
+    "category": "Condiments",
+    "price": 45.00,
+    "stock": 18,
+    "unit": "bottle"
+  },
+  {
+    "id": 8,
+    "name": "San Miguel Beer",
+    "category": "Beverages",
+    "price": 55.00,
+    "stock": 30,
+    "unit": "bottle"
+  }
+]

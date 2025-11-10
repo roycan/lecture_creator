@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Class List Manager</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <!-- Hero Section -->
+  <section class="hero is-info">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title is-1">🎓 Class List Manager</h1>
+        <p class="subtitle is-4">Track student performance and manage class records</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistics Dashboard -->
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <div class="column">
+          <div class="box has-text-centered stat-box">
+            <p class="heading">Total Students</p>
+            <p class="title is-2"><%= stats.total %></p>
+            <p class="subtitle is-6">Enrolled</p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-text-centered stat-box stat-success">
+            <p class="heading">Passing</p>
+            <p class="title is-2"><%= stats.passing %></p>
+            <p class="subtitle is-6"><%= stats.total > 0 ? Math.round((stats.passing / stats.total) * 100) : 0 %>% Pass Rate</p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-text-centered stat-box stat-danger">
+            <p class="heading">Failing</p>
+            <p class="title is-2"><%= stats.failing %></p>
+            <p class="subtitle is-6">Below 75</p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-text-centered stat-box stat-primary">
+            <p class="heading">Average Grade</p>
+            <p class="title is-2"><%= stats.average %></p>
+            <p class="subtitle is-6">Overall</p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-text-centered stat-box stat-warning">
+            <p class="heading">Highest Grade</p>
+            <p class="title is-2"><%= stats.highest %></p>
+            <p class="subtitle is-6">Top Score</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Student List -->
+  <section class="section">
+    <div class="container">
+      <div class="level mb-5">
+        <div class="level-left">
+          <div class="level-item">
+            <h2 class="title is-3">Student Roster</h2>
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+            <a href="/add" class="button is-info is-medium">
+              <strong>➕ Add New Student</strong>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <% if (students.length === 0) { %>
+        <div class="notification is-info">
+          <p><strong>No students enrolled yet.</strong></p>
+          <p>Click "Add New Student" to start building your class list.</p>
+        </div>
+      <% } else { %>
+        <div class="table-container">
+          <table class="table is-fullwidth is-striped is-hoverable">
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Course</th>
+                <th>Year</th>
+                <th>Grade</th>
+                <th>Email</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% students.sort((a, b) => b.grade - a.grade).forEach((student, index) => { %>
+                <tr>
+                  <td>
+                    <code><%= student.studentId %></code>
+                  </td>
+                  <td>
+                    <strong><%= student.name %></strong>
+                    <% if (index === 0) { %>
+                      <span class="tag is-warning ml-2">🏆 Top Student</span>
+                    <% } %>
+                  </td>
+                  <td><%= student.course %></td>
+                  <td><%= student.year %></td>
+                  <td>
+                    <span class="tag is-large <%= student.grade >= 95 ? 'is-success' : student.grade >= 90 ? 'is-info' : student.grade >= 80 ? 'is-primary' : student.grade >= 75 ? 'is-warning' : 'is-danger' %>">
+                      <%= student.grade %>
+                    </span>
+                  </td>
+                  <td><%= student.email %></td>
+                  <td>
+                    <% if (student.grade >= 95) { %>
+                      <span class="tag is-success">⭐ Excellent</span>
+                    <% } else if (student.grade >= 90) { %>
+                      <span class="tag is-info">👍 Very Good</span>
+                    <% } else if (student.grade >= 80) { %>
+                      <span class="tag is-primary">✓ Good</span>
+                    <% } else if (student.grade >= 75) { %>
+                      <span class="tag is-warning">📚 Passed</span>
+                    <% } else { %>
+                      <span class="tag is-danger">❌ Failed</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Grade Distribution -->
+        <div class="box mt-6">
+          <h3 class="title is-4">📊 Grade Distribution</h3>
+          <div class="columns">
+            <div class="column">
+              <p class="heading">Excellent (95-100)</p>
+              <p class="title is-4">
+                <%= students.filter(s => s.grade >= 95).length %> students
+              </p>
+            </div>
+            <div class="column">
+              <p class="heading">Very Good (90-94)</p>
+              <p class="title is-4">
+                <%= students.filter(s => s.grade >= 90 && s.grade < 95).length %> students
+              </p>
+            </div>
+            <div class="column">
+              <p class="heading">Good (80-89)</p>
+              <p class="title is-4">
+                <%= students.filter(s => s.grade >= 80 && s.grade < 90).length %> students
+              </p>
+            </div>
+            <div class="column">
+              <p class="heading">Passed (75-79)</p>
+              <p class="title is-4">
+                <%= students.filter(s => s.grade >= 75 && s.grade < 80).length %> students
+              </p>
+            </div>
+            <div class="column">
+              <p class="heading">Failed (Below 75)</p>
+              <p class="title is-4">
+                <%= students.filter(s => s.grade < 75).length %> students
+              </p>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

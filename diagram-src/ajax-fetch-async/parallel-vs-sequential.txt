@@ -1,0 +1,44 @@
+Parallel vs Sequential Requests - Visual Comparison
+====================================================
+
+SEQUENTIAL (one after another):
+--------------------------------
+Time    | Task
+--------|-----------------------------------
+0-1s    | Request A ████████████████████
+1-2s    |           Request B ████████████████████
+2-3s    |                     Request C ████████████████████
+        |
+TOTAL TIME: 3 seconds
+
+Code example:
+```javascript
+const dataA = await fetch('a.json').then(r => r.json());
+const dataB = await fetch('b.json').then(r => r.json());
+const dataC = await fetch('c.json').then(r => r.json());
+```
+
+
+PARALLEL (all at once):
+-----------------------
+Time    | Task
+--------|-----------------------------------
+0-1s    | Request A ████████████████████
+        | Request B ████████████████████
+        | Request C ████████████████████
+        |
+TOTAL TIME: 1 second (3x faster!)
+
+Code example:
+```javascript
+const [dataA, dataB, dataC] = await Promise.all([
+  fetch('a.json').then(r => r.json()),
+  fetch('b.json').then(r => r.json()),
+  fetch('c.json').then(r => r.json())
+]);
+```
+
+WHEN TO USE EACH:
+-----------------
+Sequential: When B needs data from A, C needs data from B
+Parallel:   When A, B, C are independent (faster!)

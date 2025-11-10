@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sari-Sari Store Inventory</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <!-- Hero Section -->
+  <section class="hero is-success">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title is-1">🏪 Sari-Sari Store Inventory</h1>
+        <p class="subtitle is-4">Track your products, stock levels, and inventory value</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistics Dashboard -->
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <div class="column">
+          <div class="box has-text-centered stat-box stat-primary">
+            <p class="heading">Total Products</p>
+            <p class="title is-2"><%= stats.totalProducts %></p>
+            <p class="subtitle is-6">In <%= stats.categories %> categories</p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-text-centered stat-box stat-info">
+            <p class="heading">Total Items</p>
+            <p class="title is-2"><%= stats.totalItems %></p>
+            <p class="subtitle is-6">In stock</p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-text-centered stat-box stat-success">
+            <p class="heading">Total Value</p>
+            <p class="title is-2">₱<%= stats.totalValue %></p>
+            <p class="subtitle is-6">Inventory worth</p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-text-centered stat-box stat-warning">
+            <p class="heading">Low Stock</p>
+            <p class="title is-2"><%= stats.lowStock %></p>
+            <p class="subtitle is-6">Need reorder</p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-text-centered stat-box stat-danger">
+            <p class="heading">Out of Stock</p>
+            <p class="title is-2"><%= stats.outOfStock %></p>
+            <p class="subtitle is-6">Urgent!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Inventory -->
+  <section class="section">
+    <div class="container">
+      <div class="level mb-5">
+        <div class="level-left">
+          <div class="level-item">
+            <h2 class="title is-3">📦 Product Inventory</h2>
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+            <a href="/add" class="button is-success is-medium">
+              <strong>➕ Add New Product</strong>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <% if (products.length === 0) { %>
+        <div class="notification is-info">
+          <p><strong>No products in inventory yet.</strong></p>
+          <p>Click "Add New Product" to start building your inventory.</p>
+        </div>
+      <% } else { %>
+        <div class="table-container">
+          <table class="table is-fullwidth is-striped is-hoverable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Unit</th>
+                <th>Total Value</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% products.forEach(product => { %>
+                <tr class="<%= product.stock === 0 ? 'has-background-danger-light' : product.stock <= 10 ? 'has-background-warning-light' : '' %>">
+                  <td><strong><%= product.id %></strong></td>
+                  <td>
+                    <strong><%= product.name %></strong>
+                    <% if (product.stock === 0) { %>
+                      <span class="tag is-danger ml-2">OUT OF STOCK</span>
+                    <% } %>
+                  </td>
+                  <td><span class="tag is-light"><%= product.category %></span></td>
+                  <td><strong>₱<%= product.price.toFixed(2) %></strong></td>
+                  <td>
+                    <span class="tag is-medium <%= product.stock === 0 ? 'is-danger' : product.stock <= 10 ? 'is-warning' : product.stock <= 30 ? 'is-info' : 'is-success' %>">
+                      <%= product.stock %>
+                    </span>
+                  </td>
+                  <td><%= product.unit %></td>
+                  <td><strong>₱<%= (product.price * product.stock).toFixed(2) %></strong></td>
+                  <td>
+                    <% if (product.stock === 0) { %>
+                      <span class="tag is-danger">🚨 Out of Stock</span>
+                    <% } else if (product.stock <= 5) { %>
+                      <span class="tag is-danger">⚠️ Critical</span>
+                    <% } else if (product.stock <= 10) { %>
+                      <span class="tag is-warning">📉 Low Stock</span>
+                    <% } else if (product.stock <= 30) { %>
+                      <span class="tag is-info">✓ Adequate</span>
+                    <% } else { %>
+                      <span class="tag is-success">✓ In Stock</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Category Breakdown -->
+        <div class="box mt-6">
+          <h3 class="title is-4">📊 Inventory by Category</h3>
+          <div class="columns is-multiline">
+            <% 
+            const categories = [...new Set(products.map(p => p.category))];
+            categories.forEach(category => {
+              const categoryProducts = products.filter(p => p.category === category);
+              const totalValue = categoryProducts.reduce((sum, p) => sum + (p.price * p.stock), 0);
+              const totalStock = categoryProducts.reduce((sum, p) => sum + p.stock, 0);
+            %>
+              <div class="column is-one-third">
+                <div class="box category-box">
+                  <h4 class="subtitle is-5"><strong><%= category %></strong></h4>
+                  <p><strong>Products:</strong> <%= categoryProducts.length %></p>
+                  <p><strong>Total Items:</strong> <%= totalStock %></p>
+                  <p><strong>Total Value:</strong> ₱<%= totalValue.toFixed(2) %></p>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

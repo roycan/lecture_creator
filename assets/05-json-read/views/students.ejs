@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Directory</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Student Directory</h1>
+      <p class="subtitle">Total Students: <%= students.length %></p>
+
+      <div class="table-container">
+        <table class="table is-fullwidth is-striped is-hoverable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Course</th>
+              <th>Year</th>
+              <th>Grade</th>
+              <th>Email</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% students.forEach(student => { %>
+              <tr>
+                <td><%= student.id %></td>
+                <td><strong><%= student.name %></strong></td>
+                <td><%= student.course %></td>
+                <td><%= student.year %></td>
+                <td>
+                  <span class="tag <%= student.grade >= 90 ? 'is-success' : student.grade >= 80 ? 'is-info' : student.grade >= 75 ? 'is-warning' : 'is-danger' %>">
+                    <%= student.grade %>
+                  </span>
+                </td>
+                <td><%= student.email %></td>
+                <td>
+                  <% if (student.grade >= 75) { %>
+                    <span class="tag is-success is-light">Passed</span>
+                  <% } else { %>
+                    <span class="tag is-danger is-light">Failed</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Statistics -->
+      <div class="box mt-5">
+        <h3 class="title is-4">Statistics</h3>
+        <div class="columns">
+          <div class="column">
+            <p class="heading">Total Students</p>
+            <p class="title is-3"><%= students.length %></p>
+          </div>
+          <div class="column">
+            <p class="heading">Passing Rate</p>
+            <p class="title is-3">
+              <%= Math.round((students.filter(s => s.grade >= 75).length / students.length) * 100) %>%
+            </p>
+          </div>
+          <div class="column">
+            <p class="heading">Average Grade</p>
+            <p class="title is-3">
+              <%= (students.reduce((sum, s) => sum + s.grade, 0) / students.length).toFixed(1) %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

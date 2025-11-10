@@ -1,0 +1,24 @@
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Loading: User clicks button
+    Loading --> Success: Data loaded
+    Loading --> Error: Request failed
+    Success --> Loading: Refresh
+    Error --> Loading: Retry
+    Success --> Idle: Reset
+    Error --> Idle: Reset
+    
+    note right of Loading
+        Show spinner
+        Disable buttons
+    end note
+    
+    note right of Success
+        Show data
+        Hide spinner
+    end note
+    
+    note right of Error
+        Show error message
+        Show retry button
+    end note

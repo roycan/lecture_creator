@@ -1,0 +1,19 @@
+sequenceDiagram
+    participant Browser
+    participant YourServer as your-site.com
+    participant OtherServer as api.example.com
+    
+    Note over Browser: User loads page from<br/>your-site.com
+    
+    Browser->>OtherServer: fetch('api.example.com/data')
+    Note over Browser,OtherServer: Cross-Origin Request!
+    
+    alt Server allows CORS
+        OtherServer->>Browser: Response + CORS headers
+        Note right of OtherServer: Access-Control-Allow-Origin: *
+        Browser->>Browser: ✓ Request successful
+    else Server blocks CORS
+        OtherServer->>Browser: Response without CORS headers
+        Browser->>Browser: ✗ CORS Error!
+        Note over Browser: Browser blocks the response
+    end

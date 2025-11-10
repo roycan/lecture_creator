@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - Class List Manager</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <section class="section">
+    <div class="container">
+      <div class="box">
+        <h1 class="title is-1">🎓 Class List Manager</h1>
+        <p class="subtitle is-3">Student Performance Tracking System</p>
+        
+        <hr>
+
+        <div class="content">
+          <h2 class="title is-3">About This System</h2>
+          <p class="is-size-5">
+            The Class List Manager is a web-based application designed to help educators 
+            manage student records, track academic performance, and maintain class rosters 
+            efficiently. Built with modern web technologies, it provides a simple yet powerful 
+            interface for student data management.
+          </p>
+
+          <h3 class="title is-4">🎯 Key Features</h3>
+          <div class="columns">
+            <div class="column">
+              <div class="box has-background-info-light">
+                <h4 class="subtitle is-5">📋 Student Roster</h4>
+                <p>View complete list of enrolled students with their course, year level, grades, and contact information. Students are automatically sorted by grade performance.</p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="box has-background-success-light">
+                <h4 class="subtitle is-5">➕ Enrollment</h4>
+                <p>Add new students through an intuitive form with built-in validation. Student IDs and grades are validated to ensure data accuracy.</p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="box has-background-warning-light">
+                <h4 class="subtitle is-5">📊 Analytics</h4>
+                <p>Real-time statistics including total students, passing rate, average grade, and grade distribution across different performance levels.</p>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="title is-4">📈 Performance Metrics</h3>
+          <p>The system automatically calculates and displays:</p>
+          <ul>
+            <li><strong>Total Students:</strong> Count of all enrolled students</li>
+            <li><strong>Passing Rate:</strong> Percentage of students with grades ≥ 75</li>
+            <li><strong>Average Grade:</strong> Class mean performance</li>
+            <li><strong>Highest Grade:</strong> Top student achievement</li>
+            <li><strong>Grade Distribution:</strong> Breakdown by performance brackets</li>
+          </ul>
+
+          <h3 class="title is-4">🎓 Grading System</h3>
+          <table class="table is-fullwidth is-striped">
+            <thead>
+              <tr>
+                <th>Grade Range</th>
+                <th>Rating</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="has-background-success-light">
+                <td><strong>95-100</strong></td>
+                <td>⭐ Excellent</td>
+                <td>Outstanding performance</td>
+              </tr>
+              <tr class="has-background-info-light">
+                <td><strong>90-94</strong></td>
+                <td>👍 Very Good</td>
+                <td>Above expectations</td>
+              </tr>
+              <tr class="has-background-primary-light">
+                <td><strong>80-89</strong></td>
+                <td>✓ Good</td>
+                <td>Meets expectations</td>
+              </tr>
+              <tr class="has-background-warning-light">
+                <td><strong>75-79</strong></td>
+                <td>📚 Passed</td>
+                <td>Satisfactory</td>
+              </tr>
+              <tr class="has-background-danger-light">
+                <td><strong>Below 75</strong></td>
+                <td>❌ Failed</td>
+                <td>Needs improvement</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 class="title is-4">🛠️ Technologies Used</h3>
+          <div class="columns">
+            <div class="column">
+              <strong>Backend:</strong>
+              <ul>
+                <li>Node.js - Runtime environment</li>
+                <li>Express.js - Web framework</li>
+                <li>File System (fs) - Data persistence</li>
+              </ul>
+            </div>
+            <div class="column">
+              <strong>Frontend:</strong>
+              <ul>
+                <li>EJS - Template engine</li>
+                <li>Bulma CSS - UI framework</li>
+                <li>HTML5 - Forms & validation</li>
+              </ul>
+            </div>
+            <div class="column">
+              <strong>Data:</strong>
+              <ul>
+                <li>JSON Files - Student records</li>
+                <li>Structured data format</li>
+                <li>File-based storage</li>
+              </ul>
+            </div>
+          </div>
+
+          <h3 class="title is-4">🎓 Learning Objectives</h3>
+          <p>This mini-project demonstrates:</p>
+          <ul>
+            <li><strong>Data Management:</strong> CRUD operations (Create and Read)</li>
+            <li><strong>Form Handling:</strong> Input validation and data processing</li>
+            <li><strong>Calculations:</strong> Real-time statistics and aggregations</li>
+            <li><strong>Conditional Rendering:</strong> Dynamic UI based on data</li>
+            <li><strong>Sorting & Filtering:</strong> Data manipulation in JavaScript</li>
+            <li><strong>Responsive Design:</strong> Mobile-friendly interface</li>
+          </ul>
+
+          <div class="notification is-warning is-light mt-5">
+            <p><strong>⚠️ Educational Purpose:</strong></p>
+            <p>This is a learning project demonstrating web application concepts using JSON file storage. 
+            For production use with multiple users and larger datasets, a proper database system 
+            (like SQLite or PostgreSQL) would be required for better performance, concurrency control, 
+            and data integrity.</p>
+          </div>
+
+          <div class="notification is-primary is-light">
+            <p><strong>🚀 Ready for Part 2?</strong></p>
+            <p>In the next lecture, we'll upgrade this system with:</p>
+            <ul>
+              <li>SQLite database for scalable storage</li>
+              <li>Edit and Delete functionality</li>
+              <li>User authentication and authorization</li>
+              <li>File upload for student photos</li>
+              <li>Production deployment to Railway</li>
+            </ul>
+          </div>
+
+          <div class="buttons mt-5">
+            <a href="/" class="button is-info is-medium">
+              <strong>View Student List</strong>
+            </a>
+            <a href="/add" class="button is-success is-medium">
+              <strong>Enroll New Student</strong>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

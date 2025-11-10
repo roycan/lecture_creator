@@ -1,0 +1,16 @@
+sequenceDiagram
+    participant Browser
+    participant Network
+    participant Server
+    
+    Browser->>Network: fetch('data.json')
+    Note over Browser: Returns Promise<Response>
+    Network->>Server: HTTP GET Request
+    Server->>Network: Response (headers + body)
+    Network->>Browser: Response object
+    Note over Browser: Step 1: Check response.ok
+    Browser->>Browser: response.json()
+    Note over Browser: Returns Promise<Data>
+    Note over Browser: Step 2: Parse JSON body
+    Browser->>Browser: Got actual data!
+    Note over Browser: Use the data

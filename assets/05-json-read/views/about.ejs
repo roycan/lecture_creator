@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - JSON Reader App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <section class="section">
+    <div class="container">
+      <div class="box">
+        <h1 class="title is-2">About This App</h1>
+        <p class="subtitle is-4">JSON Data Reader Demo</p>
+        
+        <div class="content">
+          <p>This application demonstrates how to read data from JSON files and display them in different formats:</p>
+          
+          <h3 class="title is-4">Features</h3>
+          <ul>
+            <li><strong>Student Directory</strong> - Table view with statistics and grade tracking</li>
+            <li><strong>Barangay Officials</strong> - Card view with contact information</li>
+            <li><strong>Store Inventory</strong> - Product listing with stock management</li>
+          </ul>
+
+          <h3 class="title is-4">Technologies Used</h3>
+          <ul>
+            <li><strong>Node.js & Express</strong> - Server and routing</li>
+            <li><strong>EJS Templates</strong> - Dynamic HTML generation</li>
+            <li><strong>Bulma CSS</strong> - Modern responsive styling</li>
+            <li><strong>JSON Files</strong> - Data storage (in <code>data/</code> folder)</li>
+            <li><strong>fs Module</strong> - Reading files from the filesystem</li>
+          </ul>
+
+          <h3 class="title is-4">How It Works</h3>
+          <ol>
+            <li>Server reads JSON files using <code>fs.readFileSync()</code></li>
+            <li>JSON data is parsed using <code>JSON.parse()</code></li>
+            <li>Data is passed to EJS templates as variables</li>
+            <li>Templates loop through data and display it with Bulma styling</li>
+          </ol>
+        </div>
+
+        <div class="notification is-info is-light">
+          <p><strong>💡 Key Learning Point:</strong></p>
+          <p>This demo shows how to separate data from code. The JSON files in the <code>data/</code> 
+             folder can be edited independently without touching the application code. This is the 
+             foundation for understanding databases later!</p>
+        </div>
+
+        <div class="buttons">
+          <a href="/" class="button is-primary">View Students</a>
+          <a href="/barangay" class="button is-info">View Barangay</a>
+          <a href="/products" class="button is-success">View Products</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

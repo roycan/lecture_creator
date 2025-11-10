@@ -1,0 +1,22 @@
+@startuml
+[*] --> Pending : new Promise()
+Pending --> Fulfilled : resolve()
+Pending --> Rejected : reject()
+Fulfilled --> [*]
+Rejected --> [*]
+
+note right of Pending
+  Waiting for result
+  Like waiting for your order
+end note
+
+note right of Fulfilled
+  Success! ✓
+  Got the result
+end note
+
+note right of Rejected
+  Failed! ✗
+  Got an error
+end note
+@enduml

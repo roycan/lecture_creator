@@ -1,0 +1,11 @@
+graph TD
+    A[JavaScript Object] -->|JSON.stringify| B[JSON String]
+    B -->|JSON.parse| A
+    
+    C["{ name: 'Juan', age: 15 }"] -->|stringify| D["'{ \"name\": \"Juan\", \"age\": 15 }'"]
+    D -->|parse| C
+    
+    style A fill:#4caf50,color:#fff
+    style B fill:#2196f3,color:#fff
+    style C fill:#4caf50,color:#fff
+    style D fill:#2196f3,color:#fff

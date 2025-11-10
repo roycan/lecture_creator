@@ -1,0 +1,33 @@
+direction: right
+
+idle: Idle {
+  shape: circle
+  style.fill: "#9e9e9e"
+}
+
+loading: Loading {
+  shape: circle
+  style.fill: "#ff9800"
+}
+
+success: Success {
+  shape: circle
+  style.fill: "#4caf50"
+}
+
+error: Error {
+  shape: circle
+  style.fill: "#f44336"
+}
+
+idle -> loading: User clicks button
+loading -> success: Data loaded
+loading -> error: Request failed
+success -> loading: Refresh
+error -> loading: Retry
+success -> idle: Reset
+error -> idle: Reset
+
+loading.note: "Show spinner\nDisable buttons"
+success.note: "Show data\nHide spinner"
+error.note: "Show error message\nShow retry button"
