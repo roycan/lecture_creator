@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= student.name %> - Class List</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .header {
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      color: #667eea;
+      margin-bottom: 10px;
+      font-size: 2.5em;
+    }
+
+    .student-id {
+      font-family: 'Courier New', monospace;
+      color: #718096;
+      font-size: 1.1em;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .info-item {
+      background: #f7fafc;
+      padding: 20px;
+      border-radius: 10px;
+      border-left: 4px solid #667eea;
+    }
+
+    .info-label {
+      font-size: 0.9em;
+      color: #718096;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .info-value {
+      font-size: 1.2em;
+      color: #2d3748;
+      font-weight: 600;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      font-weight: 500;
+      background: #e6f2ff;
+      color: #1e40af;
+    }
+
+    .actions {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+      background: #f7fafc;
+      color: #4a5568;
+      border: 2px solid #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+      background: #edf2f7;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .metadata {
+      background: #f7fafc;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 30px;
+      font-size: 0.9em;
+      color: #718096;
+    }
+
+    @media (max-width: 768px) {
+      .actions {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <h1>👤 <%= student.name %></h1>
+        <p class="student-id">Student ID: <%= student.student_id %></p>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">Age</div>
+          <div class="info-value"><%= student.age %> years old</div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-label">Section</div>
+          <div class="info-value">
+            <span class="badge"><%= student.section_name %></span>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-label">Section Adviser</div>
+          <div class="info-value"><%= student.adviser %></div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-label">Room</div>
+          <div class="info-value"><%= student.room %></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <a href="/edit/<%= student.id %>" class="btn btn-primary">✏️ Edit Student</a>
+        <a href="/" class="btn btn-secondary">← Back to Class List</a>
+        <form action="/delete/<%= student.id %>" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this student?');">
+          <button type="submit" class="btn btn-danger">🗑️ Delete Student</button>
+        </form>
+      </div>
+
+      <div class="metadata">
+        <strong>Record Information:</strong><br>
+        Added: <%= new Date(student.created_at).toLocaleString('en-PH', { dateStyle: 'long', timeStyle: 'short' }) %><br>
+        Last Updated: <%= new Date(student.updated_at).toLocaleString('en-PH', { dateStyle: 'long', timeStyle: 'short' }) %>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,747 @@
+# Database Diagram 08: Migration Strategy (JSON to SQLite)
+
+**Purpose:** Step-by-step guide for migrating from JSON files to SQLite database
+
+**Format:** Migration workflow with code examples at each step
+
+---
+
+## The Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                   MIGRATION STRATEGY: JSON → SQLite                      │
+│              (Upgrading Part 1 Apps to Part 2 with Databases)            │
+└─────────────────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════
+ MIGRATION OVERVIEW
+═══════════════════════════════════════════════════════════════════════════
+
+FROM: JSON File Storage (Part 1)
+  • students.json with array of objects
+  • Read entire file on every request
+  • Write entire file on every update
+  • No validation, no relationships
+
+TO: SQLite Database (Part 2)
+  • students table with typed columns
+  • Query only needed records
+  • Update individual rows
+  • Constraints, relationships, transactions
+
+
+MIGRATION PHASES:
+────────────────────────────────────────────────────────────────
+
+Phase 1: Design schema (tables, columns, constraints)
+Phase 2: Create database and tables
+Phase 3: Import existing JSON data
+Phase 4: Update application code (fs → db queries)
+Phase 5: Test and verify
+Phase 6: Deploy
+
+
+═══════════════════════════════════════════════════════════════════════════
+ PHASE 1: DESIGN SCHEMA
+═══════════════════════════════════════════════════════════════════════════
+
+BEFORE (JSON Structure):
+────────────────────────────────────────────────────────────────
+
+students.json:
+[
+  {
+    "id": 1,
+    "studentId": "2024-0001",
+    "name": "Juan Cruz",
+    "age": 16,
+    "grade": "10-A",
+    "section": "Grade 10-A"
+  },
+  {
+    "id": 2,
+    "studentId": "2024-0002",
+    "name": "Maria Santos",
+    "age": 15,
+    "grade": "10-B",
+    "section": "Grade 10-B"
+  }
+]
+
+
+ANALYZE JSON STRUCTURE:
+────────────────────────────────────────────────────────────────
+
+1. Identify fields and their types
+   • id → INTEGER (primary key)
+   • studentId → TEXT (unique identifier)
+   • name → TEXT (split into first_name, last_name?)
+   • age → INTEGER (add validation)
+   • grade → TEXT
+   • section → TEXT (should be relationship?)
+
+2. Find data duplication
+   • section stored in every student (redundant!)
+   • Should normalize: create sections table
+
+3. Identify relationships
+   • Many students → One section (one-to-many)
+
+4. Add missing features
+   • Timestamps (created_at, updated_at)
+   • Email field (for contact)
+   • Active status flag
+
+
+AFTER (Database Schema):
+────────────────────────────────────────────────────────────────
+
+-- Sections table (normalized)
+CREATE TABLE sections (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL UNIQUE,
+  adviser TEXT NOT NULL,
+  room TEXT NOT NULL,
+  capacity INTEGER DEFAULT 35,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Students table (with foreign key)
+CREATE TABLE students (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  student_id TEXT NOT NULL UNIQUE,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
+  email TEXT UNIQUE,
+  age INTEGER CHECK (age >= 0 AND age <= 120),
+  section_id INTEGER NOT NULL,
+  is_active INTEGER DEFAULT 1,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  
+  FOREIGN KEY (section_id) REFERENCES sections(id) ON DELETE CASCADE
+);
+
+-- Indexes for performance
+CREATE INDEX idx_students_section ON students(section_id);
+CREATE INDEX idx_students_email ON students(email);
+
+
+IMPROVEMENTS:
+────────────────────────────────────────────────────────────────
+
+✅ Normalized data (sections separate from students)
+✅ Foreign key relationship (data integrity)
+✅ Data types and constraints (validation)
+✅ Unique constraints (prevent duplicates)
+✅ Timestamps (audit trail)
+✅ Indexes (performance)
+
+
+═══════════════════════════════════════════════════════════════════════════
+ PHASE 2: CREATE DATABASE AND TABLES
+═══════════════════════════════════════════════════════════════════════════
+
+MIGRATION SCRIPT: setup-database.js
+────────────────────────────────────────────────────────────────
+
+const Database = require('better-sqlite3');
+const path = require('path');
+
+// Create database file
+const db = new Database(path.join(__dirname, 'school.db'));
+
+console.log('Creating database schema...');
+
+// Enable foreign keys (important!)
+db.prepare('PRAGMA foreign_keys = ON').run();
+
+// Create sections table
+db.exec(`
+  CREATE TABLE IF NOT EXISTS sections (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    adviser TEXT NOT NULL,
+    room TEXT NOT NULL,
+    capacity INTEGER DEFAULT 35,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+`);
+
+console.log('✅ sections table created');
+
+// Create students table
+db.exec(`
+  CREATE TABLE IF NOT EXISTS students (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_id TEXT NOT NULL UNIQUE,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    email TEXT UNIQUE,
+    age INTEGER CHECK (age >= 0 AND age <= 120),
+    section_id INTEGER NOT NULL,
+    is_active INTEGER DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (section_id) REFERENCES sections(id) ON DELETE CASCADE
+  );
+`);
+
+console.log('✅ students table created');
+
+// Create indexes
+db.exec(`
+  CREATE INDEX IF NOT EXISTS idx_students_section ON students(section_id);
+  CREATE INDEX IF NOT EXISTS idx_students_email ON students(email);
+`);
+
+console.log('✅ indexes created');
+console.log('Database setup complete!');
+
+db.close();
+
+
+RUN SCRIPT:
+────────────────────────────────────────────────────────────────
+
+$ node setup-database.js
+
+Output:
+  Creating database schema...
+  ✅ sections table created
+  ✅ students table created
+  ✅ indexes created
+  Database setup complete!
+
+
+═══════════════════════════════════════════════════════════════════════════
+ PHASE 3: IMPORT EXISTING JSON DATA
+═══════════════════════════════════════════════════════════════════════════
+
+MIGRATION SCRIPT: import-json-data.js
+────────────────────────────────────────────────────────────────
+
+const Database = require('better-sqlite3');
+const fs = require('fs');
+const path = require('path');
+
+const db = new Database(path.join(__dirname, 'school.db'));
+
+// Read existing JSON file
+const jsonData = JSON.parse(
+  fs.readFileSync(path.join(__dirname, 'students.json'), 'utf8')
+);
+
+console.log(`Found ${jsonData.length} students in JSON file`);
+
+// Step 1: Extract unique sections from JSON
+const sectionsMap = new Map();
+
+jsonData.forEach(student => {
+  if (!sectionsMap.has(student.section)) {
+    sectionsMap.set(student.section, {
+      name: student.section,
+      adviser: 'TBD',  // Add manually later
+      room: 'TBD'
+    });
+  }
+});
+
+console.log(`Found ${sectionsMap.size} unique sections`);
+
+// Step 2: Insert sections
+const insertSection = db.prepare(`
+  INSERT INTO sections (name, adviser, room)
+  VALUES (?, ?, ?)
+`);
+
+const sectionIdMap = new Map();  // Map section name to id
+
+sectionsMap.forEach((section, name) => {
+  const result = insertSection.run(section.name, section.adviser, section.room);
+  sectionIdMap.set(name, result.lastInsertRowid);
+  console.log(`✅ Inserted section: ${name} (ID: ${result.lastInsertRowid})`);
+});
+
+// Step 3: Insert students
+const insertStudent = db.prepare(`
+  INSERT INTO students (student_id, first_name, last_name, age, section_id)
+  VALUES (?, ?, ?, ?, ?)
+`);
+
+let importedCount = 0;
+let errorCount = 0;
+
+jsonData.forEach(student => {
+  try {
+    // Parse name (assuming "First Last" format)
+    const nameParts = student.name.split(' ');
+    const firstName = nameParts[0];
+    const lastName = nameParts.slice(1).join(' ') || firstName;
+    
+    // Get section ID
+    const sectionId = sectionIdMap.get(student.section);
+    
+    if (!sectionId) {
+      console.log(`⚠️  Skipping ${student.name}: Unknown section`);
+      errorCount++;
+      return;
+    }
+    
+    // Insert student
+    insertStudent.run(
+      student.studentId,
+      firstName,
+      lastName,
+      student.age,
+      sectionId
+    );
+    
+    importedCount++;
+    
+  } catch (err) {
+    console.log(`❌ Error importing ${student.name}: ${err.message}`);
+    errorCount++;
+  }
+});
+
+console.log('\n=== Import Summary ===');
+console.log(`✅ Imported: ${importedCount} students`);
+console.log(`❌ Errors: ${errorCount}`);
+console.log(`📊 Total in JSON: ${jsonData.length}`);
+
+db.close();
+
+
+RUN IMPORT:
+────────────────────────────────────────────────────────────────
+
+$ node import-json-data.js
+
+Output:
+  Found 150 students in JSON file
+  Found 5 unique sections
+  ✅ Inserted section: Grade 10-A (ID: 1)
+  ✅ Inserted section: Grade 10-B (ID: 2)
+  ...
+  === Import Summary ===
+  ✅ Imported: 148 students
+  ❌ Errors: 2
+  📊 Total in JSON: 150
+
+
+VERIFY IMPORT:
+────────────────────────────────────────────────────────────────
+
+-- Check section counts
+SELECT 
+  sections.name,
+  COUNT(students.id) as student_count
+FROM sections
+LEFT JOIN students ON sections.id = students.section_id
+GROUP BY sections.id;
+
+-- Sample students
+SELECT * FROM students LIMIT 5;
+
+
+═══════════════════════════════════════════════════════════════════════════
+ PHASE 4: UPDATE APPLICATION CODE
+═══════════════════════════════════════════════════════════════════════════
+
+BEFORE: Reading JSON (Part 1)
+────────────────────────────────────────────────────────────────
+
+app.js:
+const fs = require('fs');
+const path = require('path');
+
+// Read JSON file
+app.get('/students', (req, res) => {
+  const data = JSON.parse(
+    fs.readFileSync(path.join(__dirname, 'students.json'), 'utf8')
+  );
+  
+  res.render('students', { students: data });
+});
+
+
+AFTER: Querying Database (Part 2)
+────────────────────────────────────────────────────────────────
+
+app.js:
+const Database = require('better-sqlite3');
+const path = require('path');
+
+const db = new Database(path.join(__dirname, 'school.db'));
+
+// Query database
+app.get('/students', (req, res) => {
+  const students = db.prepare(`
+    SELECT 
+      students.*,
+      sections.name as section_name
+    FROM students
+    INNER JOIN sections ON students.section_id = sections.id
+    ORDER BY students.last_name
+  `).all();
+  
+  res.render('students', { students });
+});
+
+
+───────────────────────────────────────────────────────────────────────────
+
+BEFORE: Adding Student (JSON)
+────────────────────────────────────────────────────────────────
+
+app.post('/students/add', (req, res) => {
+  // Read entire file
+  const data = JSON.parse(
+    fs.readFileSync('students.json', 'utf8')
+  );
+  
+  // Add new student
+  data.push({
+    id: data.length + 1,
+    studentId: req.body.studentId,
+    name: req.body.name,
+    age: parseInt(req.body.age),
+    section: req.body.section
+  });
+  
+  // Write entire file back
+  fs.writeFileSync(
+    'students.json',
+    JSON.stringify(data, null, 2)
+  );
+  
+  res.redirect('/students');
+});
+
+
+AFTER: Inserting into Database
+────────────────────────────────────────────────────────────────
+
+app.post('/students/add', (req, res) => {
+  // Validate
+  const errors = validateStudent(req.body);
+  if (errors.length > 0) {
+    req.flash('error', errors);
+    return res.redirect('/students/add');
+  }
+  
+  // Insert single row
+  db.prepare(`
+    INSERT INTO students (student_id, first_name, last_name, age, section_id)
+    VALUES (?, ?, ?, ?, ?)
+  `).run(
+    req.body.student_id,
+    req.body.first_name,
+    req.body.last_name,
+    parseInt(req.body.age),
+    parseInt(req.body.section_id)
+  );
+  
+  req.flash('success', 'Student added successfully!');
+  res.redirect('/students');
+});
+
+
+───────────────────────────────────────────────────────────────────────────
+
+BEFORE: Updating Student (JSON)
+────────────────────────────────────────────────────────────────
+
+app.post('/students/edit/:id', (req, res) => {
+  // Read entire file
+  const data = JSON.parse(
+    fs.readFileSync('students.json', 'utf8')
+  );
+  
+  // Find and update
+  const index = data.findIndex(s => s.id === parseInt(req.params.id));
+  if (index !== -1) {
+    data[index].name = req.body.name;
+    data[index].age = parseInt(req.body.age);
+    data[index].section = req.body.section;
+  }
+  
+  // Write entire file back
+  fs.writeFileSync(
+    'students.json',
+    JSON.stringify(data, null, 2)
+  );
+  
+  res.redirect('/students');
+});
+
+
+AFTER: Updating Database Row
+────────────────────────────────────────────────────────────────
+
+app.post('/students/edit/:id', (req, res) => {
+  // Validate
+  const errors = validateStudent(req.body);
+  if (errors.length > 0) {
+    req.flash('error', errors);
+    return res.redirect(`/students/edit/${req.params.id}`);
+  }
+  
+  // Update single row
+  const result = db.prepare(`
+    UPDATE students
+    SET first_name = ?, last_name = ?, age = ?, section_id = ?,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = ?
+  `).run(
+    req.body.first_name,
+    req.body.last_name,
+    parseInt(req.body.age),
+    parseInt(req.body.section_id),
+    req.params.id
+  );
+  
+  if (result.changes === 0) {
+    req.flash('error', 'Student not found');
+  } else {
+    req.flash('success', 'Student updated successfully!');
+  }
+  
+  res.redirect('/students');
+});
+
+
+───────────────────────────────────────────────────────────────────────────
+
+BEFORE: Deleting Student (JSON)
+────────────────────────────────────────────────────────────────
+
+app.post('/students/delete/:id', (req, res) => {
+  // Read entire file
+  const data = JSON.parse(
+    fs.readFileSync('students.json', 'utf8')
+  );
+  
+  // Filter out student
+  const filtered = data.filter(s => s.id !== parseInt(req.params.id));
+  
+  // Write entire file back
+  fs.writeFileSync(
+    'students.json',
+    JSON.stringify(filtered, null, 2)
+  );
+  
+  res.redirect('/students');
+});
+
+
+AFTER: Deleting Database Row
+────────────────────────────────────────────────────────────────
+
+app.post('/students/delete/:id', (req, res) => {
+  // Get student name for message
+  const student = db.prepare(
+    'SELECT first_name, last_name FROM students WHERE id = ?'
+  ).get(req.params.id);
+  
+  if (!student) {
+    req.flash('error', 'Student not found');
+    return res.redirect('/students');
+  }
+  
+  // Delete single row
+  db.prepare('DELETE FROM students WHERE id = ?').run(req.params.id);
+  
+  req.flash('success', `${student.first_name} ${student.last_name} deleted`);
+  res.redirect('/students');
+});
+
+
+═══════════════════════════════════════════════════════════════════════════
+ PHASE 5: UPDATE VIEWS (EJS Templates)
+═══════════════════════════════════════════════════════════════════════════
+
+BEFORE: Display JSON Data
+────────────────────────────────────────────────────────────────
+
+index.ejs:
+<% students.forEach(student => { %>
+  <tr>
+    <td><%= student.id %></td>
+    <td><%= student.name %></td>
+    <td><%= student.age %></td>
+    <td><%= student.section %></td>
+  </tr>
+<% }); %>
+
+
+AFTER: Display Database Data (with JOIN)
+────────────────────────────────────────────────────────────────
+
+index.ejs:
+<% students.forEach(student => { %>
+  <tr>
+    <td><%= student.id %></td>
+    <td><%= student.first_name %> <%= student.last_name %></td>
+    <td><%= student.age %></td>
+    <td><%= student.section_name %></td>  ← From JOIN
+    <td><%= new Date(student.created_at).toLocaleDateString() %></td>
+  </tr>
+<% }); %>
+
+
+BEFORE: Add Form (Text Input for Section)
+────────────────────────────────────────────────────────────────
+
+add.ejs:
+<input type="text" name="section" placeholder="Grade 10-A" required>
+
+
+AFTER: Add Form (Dropdown for Foreign Key)
+────────────────────────────────────────────────────────────────
+
+add.ejs:
+<select name="section_id" required>
+  <option value="">-- Select Section --</option>
+  <% sections.forEach(section => { %>
+    <option value="<%= section.id %>">
+      <%= section.name %> (Adviser: <%= section.adviser %>)
+    </option>
+  <% }); %>
+</select>
+
+
+═══════════════════════════════════════════════════════════════════════════
+ PHASE 6: TESTING CHECKLIST
+═══════════════════════════════════════════════════════════════════════════
+
+DATA MIGRATION TESTS:
+────────────────────────────────────────────────────────────────
+
+[ ] All JSON records imported correctly
+[ ] Section relationships set up properly
+[ ] No duplicate student IDs
+[ ] Name parsing (first/last) correct
+[ ] Age values within valid range
+[ ] Timestamps populated
+
+CRUD OPERATION TESTS:
+────────────────────────────────────────────────────────────────
+
+[ ] List all students (with section info)
+[ ] Add new student
+[ ] Edit existing student
+[ ] Delete student
+[ ] Search/filter students
+[ ] Sort students
+
+VALIDATION TESTS:
+────────────────────────────────────────────────────────────────
+
+[ ] Duplicate student_id rejected
+[ ] Invalid section_id rejected
+[ ] Missing required fields rejected
+[ ] Age out of range rejected
+[ ] Invalid email format rejected
+
+RELATIONSHIP TESTS:
+────────────────────────────────────────────────────────────────
+
+[ ] Transfer student between sections
+[ ] Delete section (CASCADE to students)
+[ ] Count students per section
+[ ] View section details with student list
+
+PERFORMANCE TESTS:
+────────────────────────────────────────────────────────────────
+
+[ ] Large dataset (1000+ students) loads quickly
+[ ] Search is instant
+[ ] Sorting is fast
+[ ] No file locking issues
+
+
+═══════════════════════════════════════════════════════════════════════════
+ DEPLOYMENT NOTES
+═══════════════════════════════════════════════════════════════════════════
+
+RAILWAY DEPLOYMENT:
+────────────────────────────────────────────────────────────────
+
+1. Add database to .gitignore
+   *.db
+   *.db-shm
+   *.db-wal
+
+2. Use Railway volumes for persistence
+   const dbPath = process.env.RAILWAY_VOLUME_MOUNT_PATH 
+     ? path.join(process.env.RAILWAY_VOLUME_MOUNT_PATH, 'school.db')
+     : path.join(__dirname, 'school.db');
+
+3. Run setup script after first deployment
+   railway run node setup-database.js
+
+4. Import data (optional)
+   railway run node import-json-data.js
+
+
+BACKUP STRATEGY:
+────────────────────────────────────────────────────────────────
+
+1. Regular database backups
+   sqlite3 school.db ".backup backup.db"
+
+2. Export to JSON (for portability)
+   const students = db.prepare('SELECT * FROM students').all();
+   fs.writeFileSync('backup.json', JSON.stringify(students, null, 2));
+
+3. Automate backups (cron job or scheduled task)
+
+
+┌─────────────────────────────────────────────────────────────┐
+│                    KEY TAKEAWAYS                            │
+└─────────────────────────────────────────────────────────────┘
+
+1. Plan schema before migration (normalize data)
+2. Create separate migration scripts (setup, import)
+3. Verify data import before deploying
+4. Update ALL routes (list, add, edit, delete)
+5. Update views (dropdowns for foreign keys, show relationships)
+6. Test thoroughly (CRUD, validation, relationships)
+7. Use Railway volumes for production persistence
+8. Keep JSON file as backup during transition
+9. Migration is an opportunity to improve data structure
+10. Document changes for future reference
+
+💡 REMEMBER: Migration is not just copying data - it's
+   improving your application architecture!
+```
+
+---
+
+## Usage in Lecture
+
+**Reference this diagram when:**
+- Starting Part 2A (transitioning from Part 1)
+- Creating mini-projects v2 (upgrading from JSON)
+- Discussing data normalization
+- Planning production deployment
+
+**Key teaching points:**
+1. Migration is opportunity to improve structure
+2. Normalize data (eliminate duplication)
+3. Add relationships (foreign keys)
+4. Import existing data carefully
+5. Test thoroughly before deploying
+
+---
+
+## Related Diagrams
+
+- **Diagram 01**: JSON vs Database (why migrate)
+- **Diagram 03**: Table Relationships (designing related tables)
+- **Diagram 05**: Database Schema (schema design patterns)
