@@ -10,8 +10,8 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                      DATABASE SCHEMA DESIGN                              │
-│              (Tables, Columns, Data Types, Constraints)                  │
+│                      DATABASE SCHEMA DESIGN                             │
+│              (Tables, Columns, Data Types, Constraints)                 │
 └─────────────────────────────────────────────────────────────────────────┘
 
 

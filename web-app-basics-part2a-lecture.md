@@ -73,7 +73,7 @@ A **database** is like a smart filing cabinet that:
 - Automatically shows related files together
 - Catches mistakes before saving ("Age can't be negative!")
 
-![JSON vs Database Comparison](diagrams/database-basics/json-vs-database.png)
+![JSON vs Database Comparison](diagrams/database-basics/json-vs-database-2a.png)
 
 ### When to Use Each
 
@@ -212,6 +212,8 @@ db.prepare('SELECT ...').all();
 
 **SQL (Structured Query Language)** is how we talk to databases. Think of it as the "language" databases understand.
 
+![Database Schema Overview](diagrams/database-basics/database-schema.png)
+
 ### Creating Tables
 
 Before storing data, we need to create a **table** (like creating a spreadsheet with columns).
@@ -264,6 +266,8 @@ CREATE TABLE students (
 - `UNIQUE` - No duplicates allowed
 
 **Analogy:** Creating a table is like designing a form. Each column is a field, constraints are the validation rules.
+
+![SQL CRUD Operations Overview](diagrams/database-basics/sql-operations-2a.png)
 
 ---
 
@@ -1072,6 +1076,8 @@ Result: YOUR ENTIRE STUDENTS TABLE IS DELETED! 💀
 
 ### How to Prevent SQL Injection
 
+![Prepared Statements Security](diagrams/database-basics/prepared-statements.png)
+
 **✅ ALWAYS USE PREPARED STATEMENTS (with ? placeholders)**
 
 ```javascript
@@ -1188,6 +1194,8 @@ db.prepare(sql).get(userInput);
 ---
 
 ## 🐛 Section 7: Troubleshooting Guide
+
+![Database Error Handling Patterns](diagrams/database-basics/error-handling.png)
 
 ### Common Errors and Solutions
 
@@ -1370,6 +1378,44 @@ SELECT * FROM students;
 
 **Migration Guide:**
 See `web-app-basics-part2a-migration-guide.md` for step-by-step instructions on upgrading your Part 1 JSON projects to SQLite.
+
+---
+
+## 🎓 Bonus Topics: Advanced Concepts
+
+The following diagrams cover advanced database concepts not required for Part 2A, but useful to understand as you grow as a developer.
+
+### Transaction Management
+
+![Transaction Flow Pattern](diagrams/database-basics/transaction-flow.png)
+
+**Transactions** ensure that multiple database operations either all succeed or all fail together (atomic operations). This is critical for financial apps, inventory systems, or any scenario where data consistency is essential.
+
+**When you'll need this:**
+- Processing payments (deduct from account A, add to account B)
+- Transferring inventory between warehouses
+- Complex multi-table operations
+
+**Learn more:** Advanced database courses, Part 3 lectures (future)
+
+---
+
+### Database Migration Strategies
+
+![Database Migration Strategy](diagrams/database-basics/migration-strategy.png)
+
+**Migrations** are version-controlled changes to your database schema. As your app evolves, you'll need to add columns, create new tables, or modify relationships without losing existing data.
+
+**When you'll need this:**
+- Deploying schema changes to production
+- Working in teams (syncing database structure)
+- Adding features to existing applications
+
+**Learn more:** Tools like Knex.js, Sequelize migrations, or Prisma
+
+---
+
+**These topics will be covered in future advanced lectures. For now, focus on mastering CRUD operations and relationships!** 💪
 
 ---
 
