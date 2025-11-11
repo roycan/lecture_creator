@@ -69,6 +69,8 @@ With 500 products in your database:
 
 ![DataTables Decision Tree](diagrams/advanced-features/datatables-decision.png)
 
+![DataTables Flow Diagram](diagrams/advanced-features/datatables-flow.png)
+
 ---
 
 ### Basic DataTables Setup
@@ -202,8 +204,6 @@ $('#productsTable').DataTable({
 
 If you have 10,000+ records, use server-side search:
 
-![DataTables Features Comparison](diagrams/advanced-features/datatables-features.png)
-
 ```javascript
 // Route: Handle search
 app.get('/products/search', requireLogin, (req, res) => {
@@ -280,6 +280,8 @@ app.post('/products', requireAdmin, (req, res) => {
 - ✅ Professional look (Bulma notifications)
 
 ![Flash Message Lifecycle Flow](diagrams/advanced-features/flash-lifecycle.png)
+
+![Flash Message Lifecycle Detailed](diagrams/advanced-features/flash-message-lifecycle.png)
 
 ---
 
@@ -504,7 +506,7 @@ app.get('/products/export/csv', requireAdmin, async (req, res) => {
 
 ### CSV Import
 
-![CSV Import Validation Flow](diagrams/advanced-features/csv-validation.png)
+![CSV Import Validation Flow](diagrams/advanced-features/csv-import-validation.png)
 
 **Upload form:**
 
@@ -623,6 +625,8 @@ app.post('/products/import/csv', requireAdmin, upload.single('csvFile'), (req, r
 
 ![QR Code Workflow](diagrams/advanced-features/qr-workflow.png)
 
+![QR Code Generation Process](diagrams/advanced-features/qr-code-generation.png)
+
 **Using QR Server API:**
 
 ```html
@@ -697,6 +701,8 @@ app.get('/residents/:id/id-card', requireLogin, (req, res) => {
 
 ### Store Inventory: Product QR Codes
 
+![QR Code Generation Detailed](diagrams/advanced-features/qr-code-generation-2.png)
+
 **Generate QR code for each product:**
 
 ```html
@@ -724,6 +730,8 @@ app.get('/residents/:id/id-card', requireLogin, (req, res) => {
 ---
 
 ### QR Code Scanning (Bonus)
+
+![QR Code Workflow Alternative](diagrams/advanced-features/qr-workflow-2.png)
 
 To scan QR codes on your phone:
 1. Open camera app
@@ -962,7 +970,9 @@ ALTER TABLE customers ADD COLUMN country_code TEXT;
 - ✅ Debugging (trace issues)
 - ✅ Security (detect unauthorized changes)
 
-![Audit Log Pattern](diagrams/advanced-features/audit-log.png)
+![Audit Log Pattern](diagrams/advanced-features/audit-log-pattern.png)
+
+![Audit Log Flow](diagrams/advanced-features/audit-log-flow.png)
 
 ---
 
@@ -1132,6 +1142,8 @@ app.post('/products/:id/delete', requireAdmin, (req, res) => {
 ---
 
 ### Viewing Audit Logs
+
+![Audit Log Alternative View](diagrams/advanced-features/audit-log-pattern-2.png)
 
 **Route:**
 

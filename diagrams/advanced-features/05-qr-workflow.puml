@@ -1,0 +1,166 @@
+@startuml qr-workflow
+' QR Code Workflow - Generate & Scan (PlantUML)
+' Purpose: Sequence diagram showing QR code generation, scanning, and product lookup
+' Render: plantuml 05-qr-workflow.puml
+' Online: https://www.plantuml.com/plantuml/
+
+title QR Code Workflow: Generation & Scanning
+
+' Define participants
+actor Manager as manager
+participant "Express Server" as server <<Service>>
+database "SQLite Database" as db
+participant "QRCode Library" as qrlib <<Library>>
+actor Customer as customer
+participant "QR Scanner\n(Browser)" as scanner <<Browser>>
+
+' ==================== GENERATION FLOW ====================
+autonumber
+box "GENERATION FLOW" #FFFACD
+    participant manager
+    participant server
+    participant db
+    participant qrlib
+end box
+
+manager -> server: POST /products\n{name: "Skyflakes",\nprice: 35, stock: 100}
+activate server
+
+server -> server: Generate unique code\ngenerateProductCode()
+note right of server
+  Result:
+  "PROD-2024-A7F3B9C2"
+end note
+
+server -> db: INSERT INTO products\n(name, price, qr_code)\nVALUES (...)
+activate db
+db --> server: lastInsertRowid: 42
+deactivate db
+
+server --> manager: Redirect to\n/products/42/qr
+deactivate server
+
+...
+
+manager -> server: GET /products/42/qr
+activate server
+
+server -> db: SELECT qr_code\nFROM products\nWHERE id = 42
+activate db
+db --> server: "PROD-2024-A7F3B9C2"
+deactivate db
+
+server -> qrlib: QRCode.toDataURL(\n"PROD-2024-A7F3B9C2"\n)
+activate qrlib
+qrlib --> server: data:image/png;\nbase64,...
+deactivate qrlib
+
+server --> manager: Render QR display page\n(with QR image)
+deactivate server
+
+manager -> manager: Print QR label\nAttach to product
+
+note over manager, scanner
+  ⏰ **TIME PASSES**
+  Product is on shelf with QR label
+end note
+
+' ==================== SCANNING FLOW ====================
+autonumber 1
+box "SCANNING FLOW" #E0F7FA
+    participant customer
+    participant scanner
+    participant server
+    participant db
+end box
+
+customer -> scanner: Open /scan page
+activate scanner
+
+scanner -> scanner: Request camera access
+note right of scanner
+  navigator.mediaDevices
+  .getUserMedia()
+end note
+
+scanner --> customer: Show camera view
+
+customer -> scanner: Point camera at\nQR code on product
+
+scanner -> scanner: Decode QR image
+note right of scanner
+  html5-qrcode library
+  scans and decodes
+end note
+
+scanner -> scanner: Extract text:\n"PROD-2024-A7F3B9C2"
+
+scanner -> server: GET /api/products/lookup\n?code=PROD-2024-A7F3B9C2
+deactivate scanner
+activate server
+
+server -> db: SELECT *\nFROM products\nWHERE qr_code = ?
+activate db
+db --> server: {id: 42,\nname: "Skyflakes",\nprice: 35,\nstock: 100}
+deactivate db
+
+server -> db: INSERT INTO qr_scans\n(product_id, qr_code,\nscanned_at, ip_address)
+activate db
+note right of server
+  Log scan for
+  audit/analytics
+end note
+db --> server: OK
+deactivate db
+
+server --> scanner: JSON: {product: {...}}
+deactivate server
+activate scanner
+
+scanner -> scanner: displayProduct(product)
+
+scanner --> customer: Show product details:\nName, Price, Stock\n[Add to Cart] button
+deactivate scanner
+
+customer -> server: POST /cart/add\n{productId: 42,\nquantity: 1}
+activate server
+
+server -> server: Add to session cart\nreq.session.cart.push(...)
+
+server --> customer: Flash: "Added to cart!"\nRedirect to /cart
+deactivate server
+
+' Success path
+note over manager, scanner #C8E6C9
+  ✅ **SUCCESS PATH**
+  Product found and added to cart
+end note
+
+' ==================== ERROR PATH ====================
+group Alternative: Product Not Found
+    customer -> scanner: Scan invalid/deleted\nQR code
+    activate scanner
+    
+    scanner -> server: GET /api/products/lookup\n?code=INVALID-CODE
+    activate server
+    
+    server -> db: SELECT *\nFROM products\nWHERE qr_code = ?
+    activate db
+    db --> server: undefined (not found)
+    deactivate db
+    
+    server --> scanner: 404 JSON:\n{error: "Product not found"}
+    deactivate server
+    
+    scanner -> scanner: showError(error)
+    
+    scanner --> customer: ❌ Error message:\n"Product not found.\nPlease scan again."
+    deactivate scanner
+    
+    note over customer, scanner #FFEBEE
+      ❌ **ERROR PATH**
+      Invalid QR code
+    end note
+end
+
+@enduml

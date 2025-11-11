@@ -1,0 +1,139 @@
+// QR Code Workflow - Generate & Scan (Graphviz DOT)
+// Purpose: Sequence diagram showing QR code generation, scanning, and product lookup
+// Render: dot -Tpng 05-qr-workflow.dot -o qr-workflow.png
+// Or: neato -Tsvg 05-qr-workflow.dot -o qr-workflow.svg
+
+digraph QRWorkflow {
+    // Graph settings
+    rankdir=TB;
+    splines=ortho;
+    nodesep=0.8;
+    ranksep=1.2;
+    
+    // Styling
+    node [shape=box, style=filled, fillcolor=lightblue, fontname="Arial", fontsize=10];
+    edge [fontname="Arial", fontsize=9, color=gray30];
+    
+    // Title
+    label="QR Code Workflow: Generation & Scanning\n\n";
+    labelloc=t;
+    fontsize=16;
+    fontname="Arial Bold";
+    
+    // ==================== ACTORS ====================
+    subgraph cluster_actors {
+        label="Actors";
+        style=dashed;
+        color=gray50;
+        
+        Manager [shape=oval, fillcolor=wheat, label="Manager\n(Store Staff)"];
+        Customer [shape=oval, fillcolor=wheat, label="Customer"];
+    }
+    
+    // ==================== GENERATION PHASE ====================
+    subgraph cluster_generation {
+        label="GENERATION FLOW";
+        style=filled;
+        fillcolor=lightyellow;
+        
+        Create [label="1. Create Product\nPOST /products\n{name, price, stock}", fillcolor=lightgreen];
+        GenerateCode [label="2. Generate Unique Code\ngenerateProductCode()\n→ PROD-2024-A7F3B9C2", fillcolor=lightcyan];
+        SaveDB [label="3. Save to Database\nINSERT INTO products\n(name, price, qr_code)", fillcolor=lightblue];
+        RenderQR [label="4. Render QR Page\nGET /products/:id/qr", fillcolor=lightgreen];
+        GenerateQR [label="5. Generate QR Image\nQRCode.toDataURL()\n→ PNG data URL", fillcolor=lightcyan];
+        DisplayQR [label="6. Display QR Code\nShow printable page", fillcolor=lightblue];
+        PrintLabel [label="7. Print & Attach\nManager prints label\nand attaches to product", fillcolor=wheat];
+    }
+    
+    // ==================== TIME GAP ====================
+    TimeGap [shape=note, fillcolor=lightyellow, label="⏰ TIME PASSES\nProduct sits on shelf\nwith QR label attached"];
+    
+    // ==================== SCANNING PHASE ====================
+    subgraph cluster_scanning {
+        label="SCANNING FLOW";
+        style=filled;
+        fillcolor=lightcyan;
+        
+        OpenScan [label="8. Open Scanner\nGET /scan\nRequest camera access", fillcolor=lightgreen];
+        PointCamera [label="9. Point at QR Code\nCustomer aims camera\nat product label", fillcolor=wheat];
+        DecodeQR [label="10. Decode QR\nhtml5-qrcode library\nextracts text from image", fillcolor=lightcyan];
+        LookupAPI [label="11. Lookup Product\nGET /api/products/lookup\n?code=PROD-2024-...", fillcolor=lightgreen];
+        QueryDB [label="12. Query Database\nSELECT * FROM products\nWHERE qr_code = ?", fillcolor=lightblue];
+        LogScan [label="13. Log Scan\nINSERT INTO qr_scans\n(product_id, scanned_at)", fillcolor=lightblue];
+        ReturnJSON [label="14. Return Product\nJSON: {product: {...}}", fillcolor=lightgreen];
+        DisplayProduct [label="15. Display Product\nShow name, price, stock\n[Add to Cart] button", fillcolor=lightcyan];
+        AddCart [label="16. Add to Cart\nPOST /cart/add\n{productId, quantity}", fillcolor=lightgreen];
+    }
+    
+    // ==================== SUCCESS PATH ====================
+    subgraph cluster_success {
+        label="✅ SUCCESS PATH";
+        style=filled;
+        fillcolor="#C8E6C9";
+        
+        Success [shape=ellipse, fillcolor=lightgreen, label="Product Found\n& Added to Cart"];
+    }
+    
+    // ==================== ERROR PATH ====================
+    subgraph cluster_error {
+        label="❌ ERROR PATH";
+        style=filled;
+        fillcolor="#FFEBEE";
+        
+        ScanInvalid [label="Scan Invalid QR", fillcolor=lightyellow];
+        LookupFail [label="Lookup Fails\nGET /api/products/lookup\n?code=INVALID", fillcolor=lightcoral];
+        QueryEmpty [label="Query Returns NULL\nSELECT...WHERE qr_code = ?", fillcolor=lightcoral];
+        Return404 [label="Return 404 Error\nJSON: {error: \"Not found\"}", fillcolor=lightcoral];
+        ShowError [label="Display Error\n❌ Product not found\nPlease scan again", fillcolor=lightcoral];
+    }
+    
+    // ==================== GENERATION FLOW ====================
+    Manager -> Create [label="creates\nproduct"];
+    Create -> GenerateCode;
+    GenerateCode -> SaveDB;
+    SaveDB -> RenderQR [label="redirect to\nQR page"];
+    RenderQR -> GenerateQR;
+    GenerateQR -> DisplayQR;
+    DisplayQR -> PrintLabel;
+    PrintLabel -> TimeGap [label="product\non shelf"];
+    
+    // ==================== SCANNING FLOW ====================
+    TimeGap -> OpenScan;
+    Customer -> OpenScan [label="opens\nscanner"];
+    OpenScan -> PointCamera;
+    PointCamera -> DecodeQR;
+    DecodeQR -> LookupAPI;
+    LookupAPI -> QueryDB;
+    QueryDB -> LogScan;
+    LogScan -> ReturnJSON;
+    ReturnJSON -> DisplayProduct;
+    DisplayProduct -> AddCart;
+    AddCart -> Success;
+    
+    // ==================== ERROR FLOW ====================
+    Customer -> ScanInvalid [label="scans invalid\nQR code", style=dashed, color=red];
+    ScanInvalid -> LookupFail;
+    LookupFail -> QueryEmpty;
+    QueryEmpty -> Return404;
+    Return404 -> ShowError;
+    
+    // ==================== KEY COMPONENTS ====================
+    subgraph cluster_legend {
+        label="Key Components";
+        style=filled;
+        fillcolor=white;
+        
+        Server [shape=cylinder, fillcolor=lightsteelblue, label="Express Server"];
+        Database [shape=cylinder, fillcolor=lightblue, label="SQLite Database"];
+        QRLibrary [shape=component, fillcolor=lightcyan, label="QRCode Library"];
+        Scanner [shape=component, fillcolor=lightcyan, label="html5-qrcode\nLibrary"];
+    }
+    
+    // Link components to flows
+    GenerateCode -> Server [style=dotted, dir=none];
+    SaveDB -> Database [style=dotted, dir=none];
+    GenerateQR -> QRLibrary [style=dotted, dir=none];
+    DecodeQR -> Scanner [style=dotted, dir=none];
+    QueryDB -> Database [style=dotted, dir=none];
+    LookupAPI -> Server [style=dotted, dir=none];
+}

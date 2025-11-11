@@ -280,13 +280,45 @@ document.addEventListener('DOMContentLoaded', () => {
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Lecture Presentation</title>
     <style>
+        /* Theme Variables */
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #fff;
+            --text-shadow: rgba(0, 0, 0, 0.5);
+            --code-bg: #333;
+            --pre-bg: #2d2d2d;
+            --overlay-bg: rgba(0, 0, 0, 0.95);
+            --overlay-panel: rgba(255, 255, 255, 0.03);
+            --border-color: #555;
+            --input-bg: #2d2d2d;
+            --subtle-bg: rgba(255, 255, 255, 0.05);
+            --shadow-light: rgba(255, 255, 255, 0.2);
+            --shadow-dark: rgba(0, 0, 0, 0.3);
+        }
+        
+        :root[data-theme="light"] {
+            --bg-color: #f5f5f5;
+            --text-color: #1a1a1a;
+            --text-shadow: rgba(255, 255, 255, 0.5);
+            --code-bg: #e0e0e0;
+            --pre-bg: #e8e8e8;
+            --overlay-bg: rgba(245, 245, 245, 0.98);
+            --overlay-panel: rgba(0, 0, 0, 0.03);
+            --border-color: #ccc;
+            --input-bg: #fff;
+            --subtle-bg: rgba(0, 0, 0, 0.05);
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-dark: rgba(0, 0, 0, 0.2);
+        }
+        
         * { box-sizing: border-box; }
         body, html {
             height: 100%;
             margin: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: #1a1a1a;
-            color: #fff;
+            background: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         
         #slide-container {
@@ -303,15 +335,15 @@ document.addEventListener('DOMContentLoaded', () => {
             margin: 0 auto;
         }
         
-        #slide-container h1 { font-size: 2.5em; margin: 0.5em 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-        #slide-container h2 { font-size: 2em; margin: 0.5em 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        #slide-container h1 { font-size: 2.5em; margin: 0.5em 0; text-shadow: 2px 2px 4px var(--text-shadow); }
+        #slide-container h2 { font-size: 2em; margin: 0.5em 0; text-shadow: 2px 2px 4px var(--text-shadow); }
         #slide-container h3 { font-size: 1.5em; margin: 0.5em 0; }
         #slide-container p { font-size: 1.2em; line-height: 1.6; max-width: 800px; margin: 0.5em auto; }
         #slide-container img { max-width: 100%; height: auto; border-radius: 8px; margin: 1.5rem 0; }
         #slide-container ul, #slide-container ol { text-align: left; max-width: 600px; margin: 1em auto; font-size: 1.1em; }
-        #slide-container code { background: #333; padding: 0.2em 0.4em; border-radius: 3px; }
+        #slide-container code { background: var(--code-bg); padding: 0.2em 0.4em; border-radius: 3px; }
         #slide-container pre { 
-            background: #2d2d2d; 
+            background: var(--pre-bg); 
             padding: 1em; 
             border-radius: 8px; 
             overflow-x: visible; 
@@ -334,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
         #start-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.95);
+            background: var(--overlay-bg);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -362,10 +394,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         #mode-selection fieldset {
-            border: 2px solid #555;
+            border: 2px solid var(--border-color);
             border-radius: 8px;
             padding: 1em;
-            background: rgba(255, 255, 255, 0.03);
+            background: var(--overlay-panel);
         }
         
         #mode-selection legend {
@@ -387,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         .mode-option:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--subtle-bg);
         }
         
         .mode-option input[type="radio"] {
@@ -405,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         .mode-option strong {
             font-size: 1.1em;
-            color: #fff;
+            color: var(--text-color);
         }
         
         .mode-option small {
@@ -421,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
             align-items: center;
             justify-content: center;
             padding: 1em;
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--subtle-bg);
             border-radius: 8px;
         }
         
@@ -434,9 +466,9 @@ document.addEventListener('DOMContentLoaded', () => {
             padding: 0.5em;
             font-size: 1em;
             border-radius: 4px;
-            border: 1px solid #555;
-            background: #2d2d2d;
-            color: #fff;
+            border: 1px solid var(--border-color);
+            background: var(--input-bg);
+            color: var(--text-color);
         }
         
         label {
@@ -493,7 +525,7 @@ document.addEventListener('DOMContentLoaded', () => {
             border-radius: 20px;
             font-size: 0.9em;
             text-align: center;
-            border: 1px solid #555;
+            border: 1px solid var(--border-color);
         }
         
         .nav-button {
@@ -536,7 +568,7 @@ document.addEventListener('DOMContentLoaded', () => {
             background: rgba(0, 0, 0, 0.8);
             padding: 8px 16px;
             border-radius: 20px;
-            border: 1px solid #555;
+            border: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -555,7 +587,7 @@ document.addEventListener('DOMContentLoaded', () => {
             width: 100px;
             height: 6px;
             cursor: pointer;
-            background: rgba(255, 255, 255, 0.2);
+            background: var(--shadow-light);
             border-radius: 3px;
             outline: none;
             -webkit-appearance: none;
@@ -603,12 +635,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         .keyboard-hint kbd {
-            background: rgba(0, 0, 0, 0.3);
+            background: var(--shadow-dark);
             padding: 2px 6px;
             border-radius: 3px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--shadow-light);
             font-family: monospace;
             font-size: 0.9em;
+        }
+        
+        /* Theme Toggle Button */
+        #theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            background: var(--subtle-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s;
+            z-index: 1001;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        #theme-toggle:hover {
+            background: var(--code-bg);
+            transform: scale(1.05);
+        }
+        
+        #theme-toggle .theme-icon {
+            font-size: 1.3em;
         }
         
         /* Speed Toast Notification */
@@ -671,6 +732,12 @@ document.addEventListener('DOMContentLoaded', () => {
     </style>
 </head>
 <body>
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" title="Toggle light/dark theme">
+        <span class="theme-icon">☀️</span>
+        <span class="theme-text">Light</span>
+    </button>
+    
     <main id="slide-container">
         <div id="start-overlay">
             <div class="spinner"></div>
@@ -743,6 +810,37 @@ document.addEventListener('DOMContentLoaded', () => {
     <script>
 (function() {
     'use strict';
+    
+    // Theme Toggle Functionality
+    (function initTheme() {
+        var themeToggle = document.getElementById('theme-toggle');
+        var themeIcon = themeToggle.querySelector('.theme-icon');
+        var themeText = themeToggle.querySelector('.theme-text');
+        var root = document.documentElement;
+        
+        // Load saved theme or default to dark
+        var savedTheme = localStorage.getItem('lecture-theme') || 'dark';
+        setTheme(savedTheme);
+        
+        function setTheme(theme) {
+            if (theme === 'light') {
+                root.setAttribute('data-theme', 'light');
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Dark';
+                localStorage.setItem('lecture-theme', 'light');
+            } else {
+                root.removeAttribute('data-theme');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light';
+                localStorage.setItem('lecture-theme', 'dark');
+            }
+        }
+        
+        themeToggle.addEventListener('click', function() {
+            var currentTheme = root.getAttribute('data-theme');
+            setTheme(currentTheme === 'light' ? 'dark' : 'light');
+        });
+    })();
     
     // Console logging helper
     function log(msg, level) {
