@@ -110,6 +110,11 @@ From project-scoping, Aling Rosa's requirements:
 
 ### The Testing Bridge (Feature → User Story → Acceptance Criteria → Test Cases)
 
+### **Visual Guide: Testing Timeline**
+
+![Testing Timeline](diagrams/testing-quality/testing-timeline.png)
+*Figure 1: Project lifecycle showing when each type of testing happens - from user stories to final UAT*
+
 **Step 1: Convert to User Stories**
 ```
 Feature: Product catalog
@@ -137,6 +142,11 @@ Acceptance Criteria: Product appears in catalog
   4. Verify price shows as ₱10.00
   5. Verify stock shows as 50
 ```
+
+### **Visual Guide: Types of Testing**
+
+![Types of Testing](diagrams/testing-quality/types-of-testing.png)
+*Figure 2: Overview of testing types from smoke tests to UAT and their purposes*
 
 ### Why This Matters for Project Delivery
 
@@ -172,6 +182,11 @@ As a [role]
 I want to [action]
 So that [benefit]
 ```
+
+### **Visual Guide: User Story Format**
+
+![User Story Format](diagrams/testing-quality/user-story-format.png)
+*Figure 3: Anatomy of a user story showing role, action, and benefit components with examples*
 
 **Why this format?**
 - **"As a [role]"** - Reminds you WHO will use this feature
@@ -293,6 +308,11 @@ WHEN [action occurs]
 THEN [expected result]
 AND [additional expected results]
 ```
+
+### **Visual Guide: Given-When-Then Structure**
+
+![Given-When-Then](diagrams/testing-quality/given-when-then.png)
+*Figure 4: Given-When-Then acceptance criteria format with context, action, and expected outcome*
 
 **Why this format?**
 - **GIVEN** - Sets up the test scenario (context)
@@ -423,6 +443,11 @@ This tool helps you write acceptance criteria:
 
 **Time:** 2-5 minutes (should be FAST)
 
+### **Visual Guide: Smoke Test Checklist**
+
+![Smoke Test Checklist](diagrams/testing-quality/smoke-test-checklist.png)
+*Figure 5: Complete smoke test checklist template for quick sanity checking before detailed testing*
+
 ### Sari-Sari Store Smoke Test Checklist
 
 ```
@@ -446,6 +471,11 @@ Tester: _____________
 ✅ PASS - All checks passed, safe to test details
 ❌ FAIL - Stop, fix broken items before continuing
 ```
+
+### **Visual Guide: Testing Pyramid**
+
+![Testing Pyramid](diagrams/testing-quality/testing-pyramid.png)
+*Figure 6: Testing pyramid showing the ratio of smoke tests, feature tests, and edge case tests*
 
 ### What Smoke Testing is NOT
 
@@ -543,6 +573,11 @@ Interactive tool for smoke testing:
 ✅ Fix root cause (not symptoms)
 ✅ Verify fix works
 ```
+
+### **Visual Guide: Debugging Workflow**
+
+![Debugging Workflow](diagrams/testing-quality/debugging-workflow.png)
+*Figure 7: Step-by-step systematic debugging process from error detection to verified fix*
 
 ### Step 1: Read the Error Message
 
@@ -796,6 +831,11 @@ Steps to reproduce:
 ```
 
 **Result:** You know EXACTLY what to fix.
+
+### **Visual Guide: Bug Severity Guide**
+
+![Bug Severity Guide](diagrams/testing-quality/bug-severity-guide.png)
+*Figure 8: Bug severity classification from critical to low priority with examples and response times*
 
 ### Professional Bug Report Template
 
@@ -1266,6 +1306,11 @@ Create E2E test scripts:
 ✅ Professional reputation grows
 ```
 
+### **Visual Guide: UAT Process Flow**
+
+![UAT Process Flow](diagrams/testing-quality/uat-process-flow.png)
+*Figure 9: Complete UAT workflow from preparation through client testing to final delivery*
+
 ### UAT Session Structure
 
 **Timing:** 3-5 days before final delivery
@@ -1352,6 +1397,11 @@ Create UAT forms:
 ### What is a Test Case Library?
 
 A **Test Case Library** is your collection of reusable test cases for common features.
+
+### **Visual Guide: Test Case Library Structure**
+
+![Test Case Library Structure](diagrams/testing-quality/test-case-library-structure.png)
+*Figure 11: Organizing your reusable test cases by feature categories for quick reuse across projects*
 
 **Why build one?**
 - Don't write same tests over and over
@@ -1555,6 +1605,11 @@ Result: Database full of invalid names, no way to clean it up.
 - Required field (can't be empty)
 - Valid characters (only letters)
 
+### **Visual Guide: Edge Cases Cheatsheet**
+
+![Edge Cases Cheatsheet](diagrams/testing-quality/edge-cases-cheatsheet.png)
+*Figure 10: Comprehensive edge case testing guide for common input types and scenarios*
+
 ### Common Edge Cases to Test
 
 **1. Numeric Inputs**
@@ -1678,6 +1733,11 @@ function addToCart(quantity) {
 - Get paid / get good grade
 
 **One bug during demo = Lost trust**
+
+### **Visual Guide: Demo Readiness Check**
+
+![Demo Readiness Check](diagrams/testing-quality/demo-readiness-check.png)
+*Figure 12: Complete pre-demo checklist with timeline from 3 days before to demo day*
 
 ### The Demo Preparation Checklist
 
