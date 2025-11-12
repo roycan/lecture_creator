@@ -1,0 +1,486 @@
+📦 NPM PACKAGES FOR PRODUCTION SECURITY
+=========================================
+
+This guide lists essential security packages for Express apps,
+what they do, and how to use them. For Grade 9 students deploying
+sari-sari stores, barangay systems, and school projects.
+
+
+SECURITY TIER 1: MUST-HAVE (Install These First!)
+--------------------------------------------------
+
+1. HELMET
+   Purpose: Adds security headers to HTTP responses
+   Difficulty: ⭐ Very Easy
+   Install: npm install helmet
+   
+   What it prevents:
+   ├─ XSS (Cross-Site Scripting)
+   ├─ Clickjacking
+   ├─ MIME sniffing attacks
+   └─ Other header-based attacks
+   
+   Usage:
+   ┌────────────────────────────────────┐
+   │ const helmet = require('helmet');  │
+   │ app.use(helmet());                 │
+   └────────────────────────────────────┘
+   
+   For EJS apps:
+   ┌────────────────────────────────────────────────┐
+   │ app.use(helmet({                               │
+   │   contentSecurityPolicy: {                     │
+   │     directives: {                              │
+   │       defaultSrc: ["'self'"],                  │
+   │       styleSrc: ["'self'", "'unsafe-inline'"], │
+   │       scriptSrc: ["'self'", "'unsafe-inline'"] │
+   │     }                                          │
+   │   }                                            │
+   │ }));                                           │
+   └────────────────────────────────────────────────┘
+
+
+2. EXPRESS-RATE-LIMIT
+   Purpose: Limit number of requests per IP
+   Difficulty: ⭐⭐ Easy
+   Install: npm install express-rate-limit
+   
+   What it prevents:
+   ├─ Brute force attacks (password guessing)
+   ├─ DDoS attacks
+   ├─ API abuse
+   └─ Spam submissions
+   
+   Basic usage:
+   ┌────────────────────────────────────────────┐
+   │ const rateLimit = require('express-rate-   │
+   │                           limit');          │
+   │                                             │
+   │ const limiter = rateLimit({                │
+   │   windowMs: 15 * 60 * 1000,  // 15 min     │
+   │   max: 100  // 100 requests per window     │
+   │ });                                        │
+   │                                             │
+   │ app.use(limiter);                          │
+   └────────────────────────────────────────────┘
+   
+   Strict limiter for login:
+   ┌────────────────────────────────────────────┐
+   │ const loginLimiter = rateLimit({           │
+   │   windowMs: 15 * 60 * 1000,                │
+   │   max: 5,  // Only 5 attempts              │
+   │   message: 'Too many login attempts'       │
+   │ });                                        │
+   │                                             │
+   │ app.use('/login', loginLimiter);           │
+   └────────────────────────────────────────────┘
+
+
+3. DOTENV
+   Purpose: Load environment variables from .env file
+   Difficulty: ⭐ Very Easy
+   Install: npm install dotenv
+   
+   What it protects:
+   ├─ Passwords (not in code!)
+   ├─ API keys
+   ├─ Database credentials
+   └─ Session secrets
+   
+   Usage:
+   ┌────────────────────────────────────┐
+   │ // Top of app.js                   │
+   │ require('dotenv').config();        │
+   │                                     │
+   │ // Now use process.env              │
+   │ const password = process.env.ADMIN_│
+   │                          PASSWORD;  │
+   └────────────────────────────────────┘
+   
+   .env file:
+   ┌────────────────────────────────────┐
+   │ PORT=3000                          │
+   │ ADMIN_PASSWORD=Secure2024!         │
+   │ SESSION_SECRET=random_string       │
+   └────────────────────────────────────┘
+   
+   ⚠️ IMPORTANT: Add .env to .gitignore!
+
+
+SECURITY TIER 2: HIGHLY RECOMMENDED
+------------------------------------
+
+4. CSRF-SYNC
+   Purpose: Prevent Cross-Site Request Forgery
+   Difficulty: ⭐⭐⭐ Moderate
+   Install: npm install csrf-sync
+   
+   What it prevents:
+   ├─ Forged form submissions
+   ├─ Unauthorized actions
+   └─ Session hijacking attacks
+   
+   Setup:
+   ┌────────────────────────────────────────────┐
+   │ const { csrfSync } = require('csrf-sync'); │
+   │                                             │
+   │ const { generateToken,                     │
+   │         csrfSynchronisedProtection } =     │
+   │   csrfSync();                              │
+   │                                             │
+   │ app.use(csrfSynchronisedProtection);       │
+   │                                             │
+   │ app.use((req, res, next) => {              │
+   │   res.locals.csrfToken =                   │
+   │           generateToken(req);              │
+   │   next();                                  │
+   │ });                                        │
+   └────────────────────────────────────────────┘
+   
+   In forms (ALL forms!):
+   ┌────────────────────────────────────────────┐
+   │ <form method="POST">                       │
+   │   <input type="hidden" name="_csrf"        │
+   │          value="<%= csrfToken %>">         │
+   │   <!-- form fields -->                     │
+   │ </form>                                    │
+   └────────────────────────────────────────────┘
+
+
+5. EXPRESS-VALIDATOR
+   Purpose: Validate and sanitize user input
+   Difficulty: ⭐⭐⭐ Moderate
+   Install: npm install express-validator
+   
+   What it prevents:
+   ├─ XSS attacks (script injection)
+   ├─ SQL injection
+   ├─ Invalid data crashes
+   └─ Malicious input
+   
+   Usage:
+   ┌────────────────────────────────────────────┐
+   │ const { body, validationResult } =         │
+   │   require('express-validator');            │
+   │                                             │
+   │ const validateResident = [                 │
+   │   body('name')                             │
+   │     .trim()                                │
+   │     .notEmpty()                            │
+   │     .isLength({ min: 2, max: 50 })         │
+   │     .matches(/^[a-zA-Z\s\-ñÑ]+$/),         │
+   │   body('age')                              │
+   │     .isInt({ min: 0, max: 120 })           │
+   │ ];                                         │
+   │                                             │
+   │ app.post('/residents/add',                 │
+   │          validateResident,                 │
+   │          (req, res) => {                   │
+   │   const errors = validationResult(req);    │
+   │   if (!errors.isEmpty()) {                 │
+   │     return res.render('form', {            │
+   │       errors: errors.array()               │
+   │     });                                    │
+   │   }                                        │
+   │   // Safe to use data                      │
+   │ });                                        │
+   └────────────────────────────────────────────┘
+
+
+6. EXPRESS-SESSION
+   Purpose: Manage user sessions (login state)
+   Difficulty: ⭐⭐ Easy
+   Install: npm install express-session
+   
+   What it provides:
+   ├─ User authentication
+   ├─ Login persistence
+   ├─ Role management
+   └─ Shopping cart (for stores)
+   
+   Usage:
+   ┌────────────────────────────────────────────┐
+   │ const session = require('express-session');│
+   │                                             │
+   │ app.use(session({                          │
+   │   secret: process.env.SESSION_SECRET,      │
+   │   resave: false,                           │
+   │   saveUninitialized: false,                │
+   │   cookie: {                                │
+   │     secure: process.env.NODE_ENV ===       │
+   │             'production',                  │
+   │     httpOnly: true,                        │
+   │     maxAge: 24 * 60 * 60 * 1000 // 24 hrs  │
+   │   }                                        │
+   │ }));                                       │
+   └────────────────────────────────────────────┘
+   
+   Using sessions:
+   ┌────────────────────────────────────────────┐
+   │ // Login                                   │
+   │ app.post('/login', (req, res) => {         │
+   │   if (validPassword) {                     │
+   │     req.session.loggedIn = true;           │
+   │     req.session.role = 'admin';            │
+   │     res.redirect('/dashboard');            │
+   │   }                                        │
+   │ });                                        │
+   │                                             │
+   │ // Protected route                         │
+   │ app.get('/admin', (req, res) => {          │
+   │   if (!req.session.loggedIn) {             │
+   │     return res.redirect('/login');         │
+   │   }                                        │
+   │   res.render('admin');                     │
+   │ });                                        │
+   │                                             │
+   │ // Logout                                  │
+   │ app.post('/logout', (req, res) => {        │
+   │   req.session.destroy();                   │
+   │   res.redirect('/');                       │
+   │ });                                        │
+   └────────────────────────────────────────────┘
+
+
+SECURITY TIER 3: ADVANCED (Optional but Good)
+----------------------------------------------
+
+7. BCRYPT
+   Purpose: Hash passwords securely
+   Difficulty: ⭐⭐⭐⭐ Advanced
+   Install: npm install bcrypt
+   
+   What it does:
+   ├─ Encrypts passwords (one-way)
+   ├─ Makes database breaches less dangerous
+   └─ Industry standard password storage
+   
+   Usage:
+   ┌────────────────────────────────────────────┐
+   │ const bcrypt = require('bcrypt');          │
+   │                                             │
+   │ // Hash password (during registration)     │
+   │ const hashedPassword = await bcrypt.hash(  │
+   │   password, 10                             │
+   │ );                                         │
+   │ // Save hashedPassword to database         │
+   │                                             │
+   │ // Verify password (during login)          │
+   │ const match = await bcrypt.compare(        │
+   │   inputPassword,                           │
+   │   storedHashedPassword                     │
+   │ );                                         │
+   │ if (match) {                               │
+   │   // Password correct!                     │
+   │ }                                          │
+   └────────────────────────────────────────────┘
+   
+   NOTE: Grade 9 students can use simple password
+   comparison for now. Use bcrypt when learning
+   databases in detail.
+
+
+8. COMPRESSION
+   Purpose: Compress responses (faster loading)
+   Difficulty: ⭐ Very Easy
+   Install: npm install compression
+   
+   What it does:
+   ├─ Reduces file sizes
+   ├─ Faster page loads
+   └─ Saves bandwidth (important in PH!)
+   
+   Usage:
+   ┌────────────────────────────────────┐
+   │ const compression = require(       │
+   │                   'compression');  │
+   │ app.use(compression());            │
+   └────────────────────────────────────┘
+
+
+COMPLETE SECURE EXPRESS APP TEMPLATE
+-------------------------------------
+
+package.json dependencies:
+┌────────────────────────────────────────┐
+│ {                                      │
+│   "dependencies": {                    │
+│     "express": "^4.18.2",              │
+│     "ejs": "^3.1.9",                   │
+│     "dotenv": "^16.3.1",               │
+│     "helmet": "^7.1.0",                │
+│     "express-rate-limit": "^7.1.5",    │
+│     "csrf-sync": "^4.0.4",             │
+│     "express-validator": "^7.0.1",     │
+│     "express-session": "^1.17.3",      │
+│     "compression": "^1.7.4"            │
+│   }                                    │
+│ }                                      │
+└────────────────────────────────────────┘
+
+Install all at once:
+├─ npm install express ejs dotenv helmet express-rate-limit
+│            csrf-sync express-validator express-session
+│            compression
+
+
+COMPLETE app.js SETUP
+----------------------
+
+┌────────────────────────────────────────────────┐
+│ require('dotenv').config();                    │
+│ const express = require('express');            │
+│ const helmet = require('helmet');              │
+│ const rateLimit = require('express-rate-limit');│
+│ const { csrfSync } = require('csrf-sync');     │
+│ const session = require('express-session');    │
+│ const compression = require('compression');    │
+│                                                 │
+│ const app = express();                         │
+│                                                 │
+│ // 1. Compression (first!)                     │
+│ app.use(compression());                        │
+│                                                 │
+│ // 2. Helmet (security headers)                │
+│ app.use(helmet({                               │
+│   contentSecurityPolicy: {                     │
+│     directives: {                              │
+│       defaultSrc: ["'self'"],                  │
+│       styleSrc: ["'self'", "'unsafe-inline'"], │
+│       scriptSrc: ["'self'", "'unsafe-inline'"] │
+│     }                                          │
+│   }                                            │
+│ }));                                           │
+│                                                 │
+│ // 3. Body parsing                             │
+│ app.use(express.urlencoded({ extended: true }));│
+│ app.use(express.json());                       │
+│ app.use(express.static('public'));             │
+│                                                 │
+│ // 4. Session                                  │
+│ app.use(session({                              │
+│   secret: process.env.SESSION_SECRET,          │
+│   resave: false,                               │
+│   saveUninitialized: false,                    │
+│   cookie: {                                    │
+│     secure: process.env.NODE_ENV === 'production',│
+│     httpOnly: true,                            │
+│     maxAge: 24 * 60 * 60 * 1000                │
+│   }                                            │
+│ }));                                           │
+│                                                 │
+│ // 5. CSRF protection                          │
+│ const { generateToken,                         │
+│         csrfSynchronisedProtection } =         │
+│   csrfSync();                                  │
+│ app.use(csrfSynchronisedProtection);           │
+│ app.use((req, res, next) => {                  │
+│   res.locals.csrfToken = generateToken(req);   │
+│   next();                                      │
+│ });                                            │
+│                                                 │
+│ // 6. Rate limiting                            │
+│ const limiter = rateLimit({                    │
+│   windowMs: 15 * 60 * 1000,                    │
+│   max: 100                                     │
+│ });                                            │
+│ app.use(limiter);                              │
+│                                                 │
+│ // 7. Views                                    │
+│ app.set('view engine', 'ejs');                 │
+│                                                 │
+│ // Your routes here...                         │
+│                                                 │
+│ const PORT = process.env.PORT || 3000;         │
+│ app.listen(PORT, () => {                       │
+│   console.log(`🛡️ Secure app on port ${PORT}`);│
+│ });                                            │
+└────────────────────────────────────────────────┘
+
+
+PHILIPPINE CONTEXT EXAMPLES
+----------------------------
+
+SARI-SARI STORE (Basic Security)
+├─ Helmet ✓
+├─ Rate limiting ✓
+├─ Dotenv for admin password ✓
+├─ Express-session for login ✓
+└─ CSRF on product forms ✓
+
+BARANGAY DIRECTORY (Medium Security)
+├─ All basic security ✓
+├─ CSRF on all forms ✓
+├─ Input validation (names, ages) ✓
+├─ Strict rate limits on certificate requests ✓
+└─ Session timeout after 1 hour ✓
+
+SCHOOL ENROLLMENT (High Security)
+├─ All medium security ✓
+├─ Bcrypt for passwords ✓
+├─ Advanced validation (emails, student IDs) ✓
+├─ Multiple user roles (admin, teacher, registrar) ✓
+└─ Audit logs (who did what when) ✓
+
+
+INSTALLATION CHECKLIST
+-----------------------
+
+✅ Basic Security (Everyone should have):
+   ├─ npm install express ejs
+   ├─ npm install dotenv
+   ├─ npm install helmet
+   ├─ npm install express-session
+   └─ npm install express-rate-limit
+
+✅ Form Security (If you have forms):
+   ├─ npm install csrf-sync
+   └─ npm install express-validator
+
+✅ Performance (If deploying):
+   └─ npm install compression
+
+✅ Advanced (Later, when learning databases):
+   └─ npm install bcrypt
+
+
+WHERE TO LEARN MORE
+-------------------
+
+Helmet:
+└─ https://helmetjs.github.io/
+
+Express Rate Limit:
+└─ https://express-rate-limit.mintlify.app/
+
+CSRF-Sync:
+└─ https://github.com/Psifi-Solutions/csrf-sync
+
+Express Validator:
+└─ https://express-validator.github.io/
+
+Express Session:
+└─ https://github.com/expressjs/session
+
+
+SUMMARY
+-------
+
+MUST HAVE (Tier 1):
+├─ helmet (2 lines)
+├─ express-rate-limit (5 lines)
+└─ dotenv (1 line)
+
+HIGHLY RECOMMENDED (Tier 2):
+├─ csrf-sync (forms security)
+├─ express-validator (input safety)
+└─ express-session (login state)
+
+OPTIONAL (Tier 3):
+├─ bcrypt (password hashing)
+└─ compression (performance)
+
+Total setup time: 15-30 minutes
+Total security improvement: 🚀 MASSIVE!
+
+PROTECT YOUR USERS. USE THESE PACKAGES! 🛡️

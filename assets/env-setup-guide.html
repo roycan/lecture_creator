@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Environment Variables Setup Guide</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .code-block {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 5px;
+      border-left: 4px solid #3273dc;
+      margin: 15px 0;
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+    .step {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+    .step h3 {
+      color: #3273dc;
+      margin-top: 0;
+    }
+    .checklist {
+      background: #f0f9ff;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 15px 0;
+    }
+    .checklist label {
+      display: block;
+      margin: 8px 0;
+      cursor: pointer;
+    }
+    .warning {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    .success {
+      background: #d4edda;
+      border-left: 4px solid #28a745;
+      padding: 15px;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>🔐 Environment Variables Setup Guide</h1>
+      <p><strong>For:</strong> Express apps that need to hide secrets</p>
+      <p><strong>Time:</strong> 15 minutes</p>
+
+      <div class="warning">
+        <strong>⚠️ Important:</strong> Never commit passwords or API keys to GitHub! This guide shows you how to keep them safe.
+      </div>
+
+      <!-- Step 1 -->
+      <div class="step">
+        <h3>📦 Step 1: Install dotenv Package</h3>
+        <p>In your project folder, run:</p>
+        <div class="code-block">npm install dotenv</div>
+        <p>This package loads environment variables from a <code>.env</code> file.</p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step">
+        <h3>📝 Step 2: Create .env File</h3>
+        <p>Create a file named <code>.env</code> in your project root (same folder as <code>app.js</code>).</p>
+        <p><strong>Example .env file:</strong></p>
+        <div class="code-block"># Server Configuration
+PORT=3000
+NODE_ENV=development
+
+# Database
+DB_FILE=my-app.db
+
+# Admin Credentials
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=MySecurePassword2024!
+
+# Session Security
+SESSION_SECRET=random_long_string_abc123xyz789
+
+# Application Info
+APP_NAME=Barangay Directory
+BARANGAY_NAME=Barangay San Juan
+BARANGAY_CAPTAIN=Hon. Maria Santos</div>
+        
+        <div class="warning">
+          <strong>Rules for .env files:</strong>
+          <ul>
+            <li>One variable per line</li>
+            <li>Format: <code>KEY=value</code> (no spaces around =)</li>
+            <li>No quotes needed</li>
+            <li>Use # for comments</li>
+            <li>Never commit to Git!</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step">
+        <h3>🚫 Step 3: Create .gitignore</h3>
+        <p>Protect your secrets! Create <code>.gitignore</code> file:</p>
+        <div class="code-block"># Dependencies
+node_modules/
+
+# Environment variables (SECRETS!)
+.env
+.env.local
+.env.production
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/</div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step">
+        <h3>⚙️ Step 4: Load Environment Variables in app.js</h3>
+        <p>At the <strong>very top</strong> of your <code>app.js</code>:</p>
+        <div class="code-block">require('dotenv').config();  // MUST BE FIRST!
+
+const express = require('express');
+const app = express();
+
+// Now you can use process.env
+const PORT = process.env.PORT || 3000;
+const DB_FILE = process.env.DB_FILE;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+
+console.log('Server port:', PORT);
+console.log('Database:', DB_FILE);
+console.log('Admin password:', ADMIN_PASSWORD ? '✓ Set' : '✗ Missing');
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});</div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="step">
+        <h3>🔒 Step 5: Use Variables in Your Code</h3>
+        <p><strong>Example: Login Route</strong></p>
+        <div class="code-block">app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  
+  // Check against environment variables
+  if (username === process.env.ADMIN_USERNAME &&
+      password === process.env.ADMIN_PASSWORD) {
+    req.session.loggedIn = true;
+    res.redirect('/admin/dashboard');
+  } else {
+    res.render('login', { error: 'Invalid credentials' });
+  }
+});</div>
+
+        <p><strong>Example: Session Secret</strong></p>
+        <div class="code-block">const session = require('express-session');
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+}));</div>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="step">
+        <h3>✅ Step 6: Test It</h3>
+        <p>1. Start your server:</p>
+        <div class="code-block">node app.js</div>
+        <p>2. Check console output - you should see your values!</p>
+        <p>3. Verify .gitignore is working:</p>
+        <div class="code-block">git status</div>
+        <p>You should <strong>NOT</strong> see <code>.env</code> in the list. If you do, check your .gitignore!</p>
+      </div>
+
+      <!-- Step 7 -->
+      <div class="step">
+        <h3>☁️ Step 7: Set Variables on Railway</h3>
+        <p>Your production app needs the same variables!</p>
+        <ol>
+          <li>Go to Railway dashboard</li>
+          <li>Click your project</li>
+          <li>Click "Variables" tab</li>
+          <li>Add each variable from your .env file</li>
+          <li>Click "Deploy" (if it doesn't auto-deploy)</li>
+        </ol>
+        <div class="warning">
+          <strong>Note:</strong> Railway automatically sets <code>PORT</code>, you don't need to add it!
+        </div>
+      </div>
+
+      <!-- Checklist -->
+      <div class="checklist">
+        <h3>✅ Pre-Deployment Checklist</h3>
+        <label><input type="checkbox"> Installed dotenv package</label>
+        <label><input type="checkbox"> Created .env file with all secrets</label>
+        <label><input type="checkbox"> Created .gitignore with .env listed</label>
+        <label><input type="checkbox"> Added require('dotenv').config() at top of app.js</label>
+        <label><input type="checkbox"> Replaced all hardcoded secrets with process.env</label>
+        <label><input type="checkbox"> Tested locally (npm start works)</label>
+        <label><input type="checkbox"> Verified .env not in git status</label>
+        <label><input type="checkbox"> Set all variables on Railway</label>
+        <label><input type="checkbox"> Deployed to Railway successfully</label>
+        <label><input type="checkbox"> Tested production app</label>
+      </div>
+
+      <!-- Common Mistakes -->
+      <div class="warning">
+        <h3>❌ Common Mistakes to Avoid</h3>
+        <ul>
+          <li><strong>Forgetting to call .config()</strong> - Environment variables won't load!</li>
+          <li><strong>Putting .config() after other requires</strong> - Put it FIRST!</li>
+          <li><strong>Committing .env to GitHub</strong> - Your secrets are now public!</li>
+          <li><strong>Using quotes in .env</strong> - <code>NAME="John"</code> includes the quotes!</li>
+          <li><strong>Spaces around =</strong> - Use <code>KEY=value</code> not <code>KEY = value</code></li>
+          <li><strong>Forgetting Railway variables</strong> - Production will crash!</li>
+          <li><strong>Logging passwords</strong> - Don't console.log secrets!</li>
+        </ul>
+      </div>
+
+      <!-- Quick Reference -->
+      <div class="success">
+        <h3>📚 Quick Reference</h3>
+        <p><strong>Install:</strong> <code>npm install dotenv</code></p>
+        <p><strong>Load:</strong> <code>require('dotenv').config();</code> (first line of app.js)</p>
+        <p><strong>Use:</strong> <code>process.env.VARIABLE_NAME</code></p>
+        <p><strong>Protect:</strong> Add <code>.env</code> to <code>.gitignore</code></p>
+        <p><strong>Deploy:</strong> Set variables in Railway dashboard</p>
+      </div>
+
+      <!-- Practice Exercise -->
+      <div class="card" style="background: #f0f9ff; margin-top: 30px;">
+        <h2>🎯 Practice Exercise</h2>
+        <p>Create a simple Express app with environment variables:</p>
+        <ol>
+          <li>Create project folder</li>
+          <li>npm init -y</li>
+          <li>npm install express dotenv express-session</li>
+          <li>Create .env with:
+            <div class="code-block">PORT=3000
+APP_NAME=My Practice App
+ADMIN_PASSWORD=Practice123!</div>
+          </li>
+          <li>Create .gitignore</li>
+          <li>Create app.js that uses these variables</li>
+          <li>Test it works</li>
+          <li>Check git status (should not see .env)</li>
+        </ol>
+        <p><strong>Success:</strong> You see your APP_NAME on homepage, and .env is protected!</p>
+      </div>
+
+      <div style="margin-top: 40px; padding: 20px; background: #d4edda; border-radius: 5px;">
+        <h3>🎉 You've Learned Environment Variables!</h3>
+        <p>Now you can:</p>
+        <ul>
+          <li>Keep secrets out of your code</li>
+          <li>Use different settings for dev vs production</li>
+          <li>Deploy safely to Railway</li>
+          <li>Change passwords without changing code</li>
+        </ul>
+        <p><strong>Next:</strong> Learn about security hardening with Helmet and CSRF protection!</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

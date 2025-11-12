@@ -1,0 +1,382 @@
+```
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    PRODUCTION MAINTENANCE CHECKLIST                          ║
+║                    (Error Handling + Logging + Backups + Monitoring)         ║
+╔══════════════════════════════════════════════════════════════════════════════╗
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 1. ERROR HANDLING                                                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Daily:
+  □ Check error logs for new issues
+  □ Review error patterns
+
+Weekly:
+  □ Review most common errors
+  □ Update error messages if needed
+  □ Test error pages still work
+
+Setup Once:
+  ✓ Create error.ejs template
+  ✓ Add 404 handler before error middleware
+  ✓ Add error middleware at end of app.js
+  ✓ Use try-catch in all database operations
+  ✓ Log errors with context
+  ✓ Test all error scenarios
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 2. LOGGING (Winston)                                                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Daily:
+  □ Check logs/error.log for new errors
+  □ Review warnings in logs/combined.log
+  □ Check for high memory warnings
+
+Weekly:
+  □ Download logs for archiving
+  □ Clear old log files (keep last 30 days)
+  □ Review log levels (too much DEBUG?)
+
+Setup Once:
+  ✓ Install winston: npm install winston
+  ✓ Create config/logger.js
+  ✓ Create logs/ directory
+  ✓ Add logs/ to .gitignore
+  ✓ Log all user actions (login, add, edit, delete)
+  ✓ NEVER log passwords or sensitive data
+  ✓ Use appropriate log levels (DEBUG/INFO/WARN/ERROR/FATAL)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 3. DATABASE BACKUPS                                                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Daily:
+  □ Verify automatic backup ran (check logs)
+  □ Verify backup file was created
+
+Weekly:
+  □ Download latest backup via admin UI
+  □ Store in Google Drive/Dropbox
+  □ Test restore procedure
+
+Monthly:
+  □ Full backup test:
+    1. Download backup
+    2. Delete database
+    3. Restore from backup
+    4. Verify data intact
+  □ Review backup storage space
+
+Setup Once:
+  ✓ Install node-cron: npm install node-cron
+  ✓ Create utils/backup.js
+  ✓ Setup automatic daily backups (2:00 AM)
+  ✓ Setup cleanup (keep 7 days)
+  ✓ Add manual backup button in admin page
+  ✓ Add download backup route
+  ✓ Add backups/ to .gitignore
+  ✓ For Railway: Setup weekly download reminder
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 4. MONITORING                                                                │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Daily:
+  □ Check UptimeRobot status
+  □ Review Railway metrics (CPU, memory)
+  □ Check for any DOWN alerts
+
+Weekly:
+  □ Review uptime percentage (should be >99%)
+  □ Review response times (should be <500ms)
+  □ Check error rate (should be <1%)
+
+Monthly:
+  □ Test monitoring:
+    1. Intentionally break app
+    2. Verify alert received
+    3. Fix and verify recovery
+  □ Review and update alert contacts
+
+Setup Once:
+  ✓ Create /health endpoint
+  ✓ Deploy to Railway
+  ✓ Create UptimeRobot account
+  ✓ Add monitor for /health endpoint
+  ✓ Set 5-minute check interval
+  ✓ Add email alert contact
+  ✓ Test by breaking app
+  ✓ Document response procedures
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                           COMPLETE FILE STRUCTURE                             ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+my-app/
+├── app.js                        ← Main app with error handling
+├── database.db                   ← Production database
+├── package.json
+├── .env                          ← Environment variables
+├── .gitignore                    ← logs/, backups/, .env
+│
+├── config/
+│   └── logger.js                 ← Winston logger config
+│
+├── utils/
+│   └── backup.js                 ← Backup functions
+│
+├── views/
+│   ├── error.ejs                 ← Generic error page
+│   ├── error-404.ejs             ← 404 page
+│   └── admin-health.ejs          ← Health dashboard
+│
+├── logs/                         ← Winston logs (gitignored)
+│   ├── combined.log              ← All logs
+│   └── error.log                 ← Only errors
+│
+└── backups/                      ← Auto backups (gitignored)
+    ├── backup-2024-01-16T02-00-00.db
+    ├── backup-2024-01-15T02-00-00.db
+    └── ... (7 days total)
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                        SAMPLE app.js STRUCTURE                                ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+// 1. Imports
+require('dotenv').config();
+const express = require('express');
+const cron = require('node-cron');
+const logger = require('./config/logger');
+const { backupDatabase, cleanOldBackups } = require('./utils/backup');
+
+// 2. Setup
+const app = express();
+app.set('view engine', 'ejs');
+app.use(express.urlencoded({ extended: true }));
+
+// 3. Your routes
+app.get('/', (req, res) => { ... });
+app.post('/residents/add', (req, res) => {
+  try {
+    // ... database operations ...
+    logger.INFO('Resident added', { ... });
+  } catch (error) {
+    logger.ERROR('Failed to add resident', { error: error.message });
+    next(error);
+  }
+});
+
+// 4. Health check
+app.get('/health', (req, res) => {
+  // Check server, database, memory
+  res.json({ status: 'healthy', ... });
+});
+
+// 5. Admin backup route
+app.post('/admin/backup', requireAdmin, (req, res) => {
+  const result = backupDatabase('database.db');
+  res.json(result);
+});
+
+// 6. 404 handler (BEFORE error middleware)
+app.use((req, res) => {
+  res.status(404).render('error-404', { path: req.path });
+});
+
+// 7. Error middleware (LAST)
+app.use((err, req, res, next) => {
+  logger.ERROR('Request error', {
+    error: err.message,
+    stack: err.stack,
+    path: req.path
+  });
+  
+  res.status(500).render('error', {
+    message: 'May problema sa system',
+    debug: process.env.NODE_ENV === 'development' ? err.stack : null
+  });
+});
+
+// 8. Automatic backups (2:00 AM daily)
+cron.schedule('0 2 * * *', () => {
+  logger.INFO('Running automatic backup');
+  backupDatabase('database.db');
+  cleanOldBackups('backups', 7);
+});
+
+// 9. Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  logger.INFO('Server started', { port: PORT, env: process.env.NODE_ENV });
+});
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                          MONITORING DASHBOARD                                 ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────┬─────────────────┬─────────────────┬─────────────────┐
+│  🖥️ Server      │  💾 Database    │  🧠 Memory      │  ⏱️ Uptime      │
+│                 │                 │                 │                 │
+│  Status: UP     │  Status: UP     │  45 / 512 MB   │  12 days        │
+│  ✅ Healthy     │  ✅ Connected   │  ⚠️ 9%         │  ✅ Good        │
+└─────────────────┴─────────────────┴─────────────────┴─────────────────┘
+
+Recent Health Checks:
+  ✅ [14:30:00] Health check passed - All systems operational
+  ✅ [14:25:00] Health check passed - All systems operational
+  ✅ [14:20:00] Health check passed - All systems operational
+
+Recent Errors:
+  ❌ [14:15:32] Database query failed - Connection timeout
+  ⚠️ [14:10:15] Slow query detected - 1500ms (threshold: 1000ms)
+  ⚠️ [14:05:47] Login failed - Wrong password (user: juan)
+
+Recent Backups:
+  ✅ [02:00:00] backup-2024-01-16T02-00-00.db (2.45 MB)
+  ✅ [02:00:00] Cleaned 2 old backups
+  ✅ [02:00:00] Backup completed successfully
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                         EXTERNAL MONITORING SETUP                             ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ UptimeRobot Configuration                                                     │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  Monitor Name:    Barangay Certificate System                                │
+│  Monitor Type:    HTTP(s)                                                    │
+│  URL:            https://barangay-app.up.railway.app/health                  │
+│  Interval:       5 minutes                                                   │
+│  Timeout:        30 seconds                                                  │
+│                                                                               │
+│  Alert Contacts:                                                             │
+│    📧 Email:     admin@barangay.gov.ph                                       │
+│    📱 SMS:       +63 912 345 6789                                            │
+│                                                                               │
+│  Status:         ✅ UP (99.8% uptime last 30 days)                           │
+│  Last Check:     2 minutes ago                                               │
+│  Response Time:  187ms (average)                                             │
+│                                                                               │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+When You Receive Alert:
+  1. Check Railway dashboard for errors
+  2. Check /health endpoint directly
+  3. Review error logs
+  4. Check database connection
+  5. Restart if needed
+  6. Document incident
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                         DISASTER RECOVERY PLAN                                ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Scenario 1: App Won't Start
+  → Check Railway logs
+  → Look for syntax errors
+  → Check environment variables
+  → Rollback to previous deployment if needed
+
+Scenario 2: Database Corrupted
+  → Stop server
+  → Backup corrupted database (for forensics)
+  → Restore from latest backup
+  → Restart server
+  → Verify data integrity
+
+Scenario 3: Data Loss (Accidental Delete)
+  → Identify when data was deleted (check logs)
+  → Find backup BEFORE the deletion
+  → Stop server
+  → Restore from that backup
+  → Restart server
+  → Verify restored data
+
+Scenario 4: High Memory Usage
+  → Check Railway metrics
+  → Look for memory leaks in code
+  → Restart server (temporary fix)
+  → Investigate cause in logs
+  → Fix code and redeploy
+
+Scenario 5: Slow Performance
+  → Check database query times (logs)
+  → Check Railway CPU/memory graphs
+  → Look for slow queries (>1000ms)
+  → Add database indexes if needed
+  → Optimize slow routes
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    PRODUCTION READINESS CHECKLIST                             ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Error Handling:
+  ✓ Generic error page created (error.ejs)
+  ✓ 404 page created (error-404.ejs)
+  ✓ Error middleware added (last in app.js)
+  ✓ 404 handler added (before error middleware)
+  ✓ Try-catch in all database operations
+  ✓ Errors logged with context
+  ✓ Stack traces hidden in production
+  ✓ User-friendly error messages
+  ✓ All error scenarios tested
+
+Logging:
+  ✓ Winston installed and configured
+  ✓ Logger used throughout app
+  ✓ All user actions logged
+  ✓ All errors logged with context
+  ✓ No passwords or sensitive data logged
+  ✓ Appropriate log levels used
+  ✓ Log files gitignored
+  ✓ Logs reviewed weekly
+
+Backups:
+  ✓ Manual backup function created
+  ✓ Automatic daily backups scheduled
+  ✓ Old backups cleaned (keep 7 days)
+  ✓ Download backup route added
+  ✓ Backup tested and verified
+  ✓ Restore procedure documented
+  ✓ Weekly offsite backup scheduled
+  ✓ Monthly backup test scheduled
+
+Monitoring:
+  ✓ Health check endpoint created
+  ✓ UptimeRobot monitor configured
+  ✓ Email alerts enabled
+  ✓ Railway metrics reviewed
+  ✓ Response procedures documented
+  ✓ Alert tested by breaking app
+  ✓ Health dashboard created
+  ✓ Monthly monitoring test scheduled
+
+Documentation:
+  ✓ Error handling guide written
+  ✓ Logging guide written
+  ✓ Backup procedures documented
+  ✓ Monitoring setup documented
+  ✓ Disaster recovery plan written
+  ✓ Team trained on procedures
+
+═══════════════════════════════════════════════════════════════════════════════
+
+YOU ARE NOW READY FOR PRODUCTION! 🚀
+
+Remember:
+  • Check logs daily
+  • Download backups weekly
+  • Test procedures monthly
+  • Document everything
+  • Never log passwords
+  • Always use try-catch
+  • Monitor uptime 24/7
+
+Good luck, and may your app never go down! 💪
+
+═══════════════════════════════════════════════════════════════════════════════
+```

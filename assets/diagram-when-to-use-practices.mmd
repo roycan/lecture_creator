@@ -1,0 +1,482 @@
+```mermaid
+flowchart TD
+    START[New Project] --> Q1{Who will use it?}
+    
+    Q1 -->|Just me| BASIC[Use Basic Practices]
+    Q1 -->|Classmates<br/>10-50 users| MEDIUM[Use Medium Practices]
+    Q1 -->|Real business<br/>100+ users| FULL[Use Full Practices]
+    Q1 -->|Government<br/>Critical system| CRITICAL[Use All + Extras]
+    
+    BASIC --> B1[✅ Try-catch<br/>✅ Basic error pages<br/>✅ .gitignore<br/>✅ README]
+    BASIC --> B2[❌ Skip Winston<br/>❌ Skip monitoring<br/>❌ Skip auto backups]
+    
+    MEDIUM --> M1[✅ Try-catch + middleware<br/>✅ Winston logging<br/>✅ .env for secrets<br/>✅ Helmet<br/>✅ Manual backups]
+    MEDIUM --> M2[❌ Skip auto backups<br/>❌ Skip UptimeRobot<br/>❌ Skip CSRF]
+    
+    FULL --> F1[✅ All security<br/>✅ Winston<br/>✅ Auto backups<br/>✅ UptimeRobot<br/>✅ Performance opt<br/>✅ Health checks]
+    
+    CRITICAL --> C1[✅ Everything from FULL<br/>✅ Audit logging<br/>✅ Offsite backups<br/>✅ Multiple alerts<br/>✅ Formal testing<br/>✅ Documentation]
+    
+    B1 --> TIME1{How long<br/>will it run?}
+    M1 --> TIME2{How long<br/>will it run?}
+    F1 --> TIME3{How long<br/>will it run?}
+    
+    TIME1 -->|1 week demo| OK1[OK for school]
+    TIME1 -->|1+ months| UPGRADE1[Upgrade to Medium]
+    
+    TIME2 -->|1 semester| OK2[OK for personal]
+    TIME2 -->|6+ months| UPGRADE2[Upgrade to Full]
+    
+    TIME3 -->|6+ months| OK3[Good for business]
+    TIME3 -->|Critical/permanent| UPGRADE3[Upgrade to Critical]
+    
+    style BASIC fill:#fff3cd
+    style MEDIUM fill:#cfe2ff
+    style FULL fill:#d1e7dd
+    style CRITICAL fill:#f8d7da
+    style B1 fill:#d4edda
+    style M1 fill:#d4edda
+    style F1 fill:#d4edda
+    style C1 fill:#d4edda
+```
+
+# When to Use Production Practices - Decision Framework
+
+## Quick Decision Tree
+
+Ask yourself these 3 questions:
+
+### 1. Who will use this?
+```
+Just me
+  → Use BASIC practices
+  → Example: Personal learning project
+
+Classmates (10-50 users)
+  → Use MEDIUM practices
+  → Example: Class directory, group project
+
+Real business (100+ users)
+  → Use FULL practices
+  → Example: Aling Rosa's sari-sari store POS
+
+Government/Critical
+  → Use CRITICAL practices (all + extras)
+  → Example: Barangay certificate system
+```
+
+### 2. What happens if it breaks?
+```
+I get a bad grade
+  → Use BASIC practices
+  
+Users annoyed but not critical
+  → Use MEDIUM practices
+  
+Business loses money
+  → Use FULL practices
+  
+Legal/safety problems
+  → Use CRITICAL practices
+```
+
+### 3. How long will it run?
+```
+1 week demo
+  → Use BASIC practices
+  
+1 semester (3-4 months)
+  → Use MEDIUM practices
+  
+6+ months
+  → Use FULL practices
+  
+Permanent/indefinite
+  → Use CRITICAL practices
+```
+
+## Practice Levels Explained
+
+### BASIC (School Projects)
+
+**Use These:**
+- ✅ Try-catch for database operations
+- ✅ Basic error page (custom 404 and 500)
+- ✅ .gitignore (node_modules, .env)
+- ✅ README with setup instructions
+
+**Skip These:**
+- ❌ Winston logging (console.log is fine)
+- ❌ Automatic backups (no cron needed)
+- ❌ External monitoring (Railway metrics enough)
+- ❌ Advanced security (no Helmet, CSRF, rate limiting)
+- ❌ Performance optimization (not critical yet)
+
+**Why:**
+- Focus on learning core concepts
+- Don't overwhelm with complexity
+- 1-2 weeks only
+- Teacher is only user
+
+**Example Projects:**
+- Barangay directory for class demo
+- Sari-sari store inventory (learning exercise)
+- Grade 9-Einstein attendance tracker
+
+**Time to Implement:** 30 minutes
+
+---
+
+### MEDIUM (Personal/Group Projects)
+
+**Use These:**
+- ✅ Try-catch + error middleware
+- ✅ Winston logging (info level)
+- ✅ .env for any secrets (session secret, API keys)
+- ✅ Manual backups (download button in admin)
+- ✅ Basic health check (/health endpoint)
+- ✅ Helmet (one line of code - why not?)
+
+**Skip These:**
+- ❌ Automatic backups (manual weekly is fine)
+- ❌ UptimeRobot (Railway metrics enough for low stakes)
+- ❌ CSRF protection (if no forms or read-only)
+- ❌ Rate limiting (low traffic)
+- ❌ Advanced performance (not needed yet)
+
+**Why:**
+- Balance learning with reasonable practices
+- Used by classmates, not strangers
+- Runs for 1 semester
+- Not critical if it goes down for an hour
+
+**Example Projects:**
+- Class section directory (40 classmates use it)
+- Personal portfolio with contact form
+- Group project: Barangay website
+
+**Time to Implement:** 2-3 hours
+
+---
+
+### FULL (Real Business/Client Projects)
+
+**Use These:**
+- ✅ ALL security practices:
+  - Helmet
+  - CSRF protection
+  - Rate limiting
+  - Input validation
+  - Parameterized queries
+- ✅ Winston logging (debug in dev, info in prod)
+- ✅ Automatic daily backups (cron)
+- ✅ UptimeRobot monitoring
+- ✅ Performance optimization:
+  - Compression
+  - Caching
+  - Query optimization
+  - Pagination
+- ✅ Complete error handling
+- ✅ Health checks with database validation
+
+**Skip These:**
+- Nothing! Use everything in the lecture.
+
+**Why:**
+- Real money at stake
+- Real users depend on it
+- Owner expects reliability
+- Runs 24/7
+- Downtime costs sales
+
+**Example Projects:**
+- Aling Rosa's sari-sari store POS system
+- Barangay San Juan resident directory
+- Small business inventory management
+
+**Time to Implement:** 8-12 hours (spread over days)
+
+---
+
+### CRITICAL (Government/High-Stakes Systems)
+
+**Use These:**
+- ✅ EVERYTHING from FULL level
+- ✅ PLUS: Audit logging (who did what, when, from where)
+- ✅ PLUS: Offsite backups (email weekly, Google Drive monthly)
+- ✅ PLUS: Multiple alert contacts (email + SMS + Slack)
+- ✅ PLUS: Formal testing (written test cases, UAT with users)
+- ✅ PLUS: Documentation (user manual, admin guide, troubleshooting)
+- ✅ PLUS: Compliance (data privacy, security policies)
+
+**Why:**
+- Public service responsibility
+- Legal requirements (data privacy, audit trails)
+- High reliability requirements
+- Many concurrent users
+- Data cannot be lost
+- Security breaches have serious consequences
+
+**Example Projects:**
+- Barangay certificate issuance system
+- Government permit application portal
+- School enrollment system with grades
+
+**Time to Implement:** 20-40 hours (proper project)
+
+---
+
+## Common Scenarios
+
+### Scenario 1: Grade 9 Class Project (1 week)
+
+**Project:** Barangay directory for class presentation
+
+**Decision:**
+- Who: Only teacher and classmates
+- Breaks: Bad grade, but no real harm
+- Duration: 1 week
+
+**Use:** BASIC practices only
+- Try-catch on database queries
+- Custom 404 and error pages
+- .gitignore for node_modules
+- Simple README
+
+**Skip:** Everything else
+- No Winston (console.log is fine)
+- No backups (SQLite file is small, can re-create)
+- No monitoring (not needed for demo)
+
+**Time:** 30 minutes setup, focus on features
+
+---
+
+### Scenario 2: Personal Project (1 semester)
+
+**Project:** Class section attendance and grades tracker
+
+**Decision:**
+- Who: 40 classmates + 5 teachers
+- Breaks: Everyone annoyed, grades might be lost
+- Duration: 4 months (1 semester)
+
+**Use:** MEDIUM practices
+- Try-catch + error middleware
+- Winston logging (track who changed grades)
+- .env for session secret
+- Manual backup button (download database weekly)
+- Basic health check
+- Helmet (one line, why not?)
+
+**Skip:**
+- Automatic backups (manual weekly is acceptable)
+- UptimeRobot (check Railway metrics weekly)
+- CSRF (if no forms, or simple forms)
+
+**Time:** 2-3 hours setup
+
+---
+
+### Scenario 3: Client Project (6+ months)
+
+**Project:** Aling Rosa's sari-sari store inventory + POS
+
+**Decision:**
+- Who: Aling Rosa + customers (100+ per day)
+- Breaks: Lost sales, angry customers, money lost
+- Duration: Permanent (as long as store runs)
+
+**Use:** FULL practices
+- All security (Helmet, CSRF, rate limiting, validation)
+- Winston logging (track all transactions)
+- Automatic daily backups (2 AM)
+- UptimeRobot with SMS alerts (Aling Rosa's phone)
+- Compression (fast loading on Aling Rosa's phone)
+- Caching (save on data costs)
+- Query optimization (handle busy hours)
+- Health check + monitoring
+
+**Skip:** Nothing - use everything
+
+**Time:** 8-12 hours initial setup, worth it for reliability
+
+---
+
+### Scenario 4: Government System
+
+**Project:** Barangay San Juan certificate issuance system
+
+**Decision:**
+- Who: 5,000+ residents
+- Breaks: Public service disruption, legal issues
+- Duration: Permanent
+
+**Use:** CRITICAL practices (all + extras)
+- Everything from FULL
+- Audit logging (who issued certificate, when, to whom)
+- Offsite backups (email to barangay captain weekly)
+- Multiple alerts (kagawad emails + SMS)
+- Formal UAT (test with actual residents)
+- User manual (for kagawad staff)
+- Admin guide (for barangay IT)
+- Compliance (data privacy, security policies)
+
+**Skip:** Nothing
+
+**Time:** 20-40 hours, proper professional project
+
+---
+
+## Practice Prioritization
+
+**If you only have time for 3 things:**
+1. Try-catch for database operations ← Prevents crashes
+2. Environment variables for secrets ← Security basics
+3. Basic error pages ← User experience
+
+**If you have time for 5 things:**
+1-3 above, plus:
+4. Winston logging ← Debugging and audit trail
+5. Health check endpoint ← Know if it's working
+
+**If you have time for 7 things:**
+1-5 above, plus:
+6. Compression ← One line of code, huge benefit!
+7. Manual backup function ← Data protection
+
+**If you have time for 10+ things (full production):**
+1-7 above, plus:
+8. Automatic backups ← Reliability
+9. UptimeRobot monitoring ← Know when it breaks
+10. Security packages (Helmet, rate limiting) ← Protect from attacks
+
+---
+
+## Red Flags (Common Mistakes)
+
+### ❌ Mistake 1: Using EVERYTHING for a 1-week demo
+**Problem:**
+- Wastes time on setup instead of learning
+- Over-complicates simple project
+- Misses the point of the assignment
+
+**Fix:**
+- Use only BASIC practices
+- Focus on features, not production
+- Save advanced practices for real projects
+
+---
+
+### ❌ Mistake 2: Using NOTHING for a real business
+**Problem:**
+- Data loss risk
+- Security vulnerabilities
+- Angry customers
+- Lost money
+- Reputation damage
+
+**Fix:**
+- Use FULL practices
+- 8-12 hours setup is worth it
+- Client deserves reliability
+
+---
+
+### ❌ Mistake 3: Copying practices without understanding
+**Problem:**
+- "My friend uses Winston, so I will too"
+- Don't know why or when to use it
+- Can't explain to teacher/client
+
+**Fix:**
+- Understand WHY each practice exists
+- Use decision framework above
+- Choose appropriate level for YOUR project
+
+---
+
+### ❌ Mistake 4: Premature optimization
+**Problem:**
+- Optimizing before performance problems exist
+- "My site loads in 0.5 seconds but I'll add caching anyway"
+- Wastes time on non-issues
+
+**Fix:**
+- Make it work first
+- Optimize if slow (> 3 seconds)
+- Test on 3G connection first
+- Use Lighthouse to find real bottlenecks
+
+---
+
+## The Golden Rule
+
+> **Start simple. Add practices as needed.**
+>
+> Begin with BASIC practices. As your project grows in importance, users, or duration, add more practices.
+>
+> Don't overwhelm yourself trying to use everything at once.
+
+---
+
+## Decision Checklist
+
+Use this checklist to decide your level:
+
+```
+☐ Who will use it?
+  ☐ Just me → BASIC
+  ☐ Classmates → MEDIUM
+  ☐ Real users → FULL
+  ☐ Government → CRITICAL
+
+☐ What happens if it breaks?
+  ☐ Bad grade → BASIC
+  ☐ Annoyed users → MEDIUM
+  ☐ Lost money → FULL
+  ☐ Legal issues → CRITICAL
+
+☐ How long will it run?
+  ☐ 1 week → BASIC
+  ☐ 1 semester → MEDIUM
+  ☐ 6+ months → FULL
+  ☐ Permanent → CRITICAL
+
+☐ How much traffic?
+  ☐ < 10 users → BASIC
+  ☐ 10-100 users → MEDIUM
+  ☐ 100-1000 users → FULL
+  ☐ 1000+ users → CRITICAL
+```
+
+**Most common answer = Your level**
+
+Example:
+- Just me, bad grade if breaks, 1 week, < 10 users
+- Answer: BASIC (4/4)
+
+Example 2:
+- Real users, lost money if breaks, 6+ months, 100-1000 users
+- Answer: FULL (4/4)
+
+---
+
+## Final Advice
+
+**For Students:**
+- School projects: BASIC is fine
+- Personal portfolio: MEDIUM is good
+- Real client: FULL is necessary
+- Don't stress about using everything
+
+**For Developers:**
+- Match practices to stakes
+- Start simple, add as needed
+- Question: "What happens if this breaks?"
+- Answer determines practice level
+
+**When in Doubt:**
+- Use one level higher than you think
+- Better safe than sorry
+- 1-2 hours extra setup beats 10 hours fixing disasters

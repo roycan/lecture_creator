@@ -1,0 +1,141 @@
+┌─────────────────────────────────────────────────────────────┐
+│              🧪 TEST CASE LIBRARY STRUCTURE                 │
+└─────────────────────────────────────────────────────────────┘
+
+test-cases/
+│
+├── 🔐 authentication/
+│   ├── TC-001-login-valid.txt
+│   ├── TC-002-login-invalid-password.txt
+│   ├── TC-003-login-empty-fields.txt
+│   ├── TC-004-logout.txt
+│   └── TC-005-session-timeout.txt
+│
+├── ➕ crud/
+│   ├── create/
+│   │   ├── TC-010-create-happy-path.txt
+│   │   ├── TC-011-create-missing-required.txt
+│   │   ├── TC-012-create-invalid-data.txt
+│   │   └── TC-013-create-duplicate.txt
+│   │
+│   ├── read/
+│   │   ├── TC-020-view-list.txt
+│   │   ├── TC-021-view-details.txt
+│   │   └── TC-022-view-empty-list.txt
+│   │
+│   ├── update/
+│   │   ├── TC-030-update-happy-path.txt
+│   │   ├── TC-031-update-invalid-data.txt
+│   │   └── TC-032-update-nonexistent.txt
+│   │
+│   └── delete/
+│       ├── TC-040-delete-success.txt
+│       ├── TC-041-delete-with-confirmation.txt
+│       └── TC-042-delete-nonexistent.txt
+│
+├── 🔍 search/
+│   ├── TC-050-search-existing.txt
+│   ├── TC-051-search-not-found.txt
+│   ├── TC-052-search-empty-query.txt
+│   ├── TC-053-search-special-chars.txt
+│   └── TC-054-search-pagination.txt
+│
+├── 📊 reports/
+│   ├── TC-060-generate-daily-report.txt
+│   ├── TC-061-generate-weekly-report.txt
+│   ├── TC-062-export-excel.txt
+│   └── TC-063-export-pdf.txt
+│
+└── 📁 project-specific/
+    ├── sari-sari-store/
+    │   ├── TC-100-record-sale.txt
+    │   ├── TC-101-low-stock-alert.txt
+    │   └── TC-102-inventory-update.txt
+    │
+    ├── barangay-directory/
+    │   ├── TC-200-register-resident.txt
+    │   └── TC-201-resident-report.txt
+    │
+    └── appointment-booking/
+        ├── TC-300-book-appointment.txt
+        ├── TC-301-reschedule.txt
+        └── TC-302-cancel-appointment.txt
+
+┌─────────────────────────────────────────────────────────────┐
+│                    💡 USAGE TIPS                            │
+└─────────────────────────────────────────────────────────────┘
+
+✅ Start with authentication/ and crud/ folders
+   → These are universal for all web apps
+
+✅ Build search/ folder next
+   → Most projects have search functionality
+
+✅ Add project-specific/ as you build projects
+   → Copy and adapt for similar future projects
+
+✅ Number test cases by category
+   → TC-001 to TC-009: Authentication
+   → TC-010 to TC-049: CRUD
+   → TC-050 to TC-059: Search
+   → TC-100+: Project-specific
+
+✅ Keep test cases SHORT and REUSABLE
+   → Change only the data, keep the steps
+
+┌─────────────────────────────────────────────────────────────┐
+│              🎯 BUILDING YOUR LIBRARY                       │
+└─────────────────────────────────────────────────────────────┘
+
+Week 1: Create 5 authentication test cases
+Week 2: Create 10 CRUD test cases (2-3 per operation)
+Week 3: Create 5 search test cases
+Week 4: Add project-specific tests from your current project
+
+After 1 month: You'll have 20+ reusable test cases!
+
+┌─────────────────────────────────────────────────────────────┐
+│              📝 TEST CASE FILE FORMAT                       │
+└─────────────────────────────────────────────────────────────┘
+
+Each .txt file contains ONE test case in this format:
+
+═══════════════════════════════════════════════════════
+TEST CASE ID: TC-001
+FEATURE: User Login - Valid Credentials
+PRIORITY: HIGH
+═══════════════════════════════════════════════════════
+
+PRECONDITIONS:
+- User account exists
+- Username: admin
+- Password: pass123
+
+STEPS:
+1. Navigate to login page
+2. Enter username: admin
+3. Enter password: pass123
+4. Click "Login" button
+
+EXPECTED RESULT:
+- User redirected to dashboard
+- Welcome message displays: "Welcome, Admin"
+- No error messages
+
+TEST DATA:
+Username: admin
+Password: pass123
+
+═══════════════════════════════════════════════════════
+EXECUTION:
+PASS/FAIL: [ ]
+TESTED BY: _______________
+DATE: _______________
+NOTES: _______________
+═══════════════════════════════════════════════════════
+
+This format makes it easy to:
+✅ Copy-paste for execution
+✅ Share with team members
+✅ Track test results
+✅ Reuse for future projects

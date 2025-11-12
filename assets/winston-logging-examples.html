@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Winston Logging Examples</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .example-box {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      border-left: 5px solid #3273dc;
+    }
+    .code-block {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 15px;
+      border-radius: 5px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+    .log-output {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 15px;
+      border-radius: 5px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      margin: 10px 0;
+    }
+    .log-debug { color: #9cdcfe; }
+    .log-info { color: #4ec9b0; }
+    .log-warn { color: #ce9178; }
+    .log-error { color: #f48771; }
+    .log-fatal { color: #ff0000; font-weight: bold; }
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    .comparison-table th,
+    .comparison-table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    .comparison-table th {
+      background: #3273dc;
+      color: white;
+    }
+    .comparison-table tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+    .good { color: #28a745; font-weight: bold; }
+    .bad { color: #dc3545; font-weight: bold; }
+    .tab-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .tab-button {
+      padding: 10px 20px;
+      border: none;
+      background: #e0e0e0;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .tab-button.active {
+      background: #3273dc;
+      color: white;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>📝 Winston Logging Examples</h1>
+      <p><strong>For:</strong> Production-ready logging with log rotation</p>
+      <p><strong>Goal:</strong> Track everything without slowing down your app</p>
+
+      <!-- Tab Navigation -->
+      <div class="tab-buttons">
+        <button class="tab-button active" onclick="showTab('setup')">Initial Setup</button>
+        <button class="tab-button" onclick="showTab('examples')">Usage Examples</button>
+        <button class="tab-button" onclick="showTab('levels')">Log Levels</button>
+        <button class="tab-button" onclick="showTab('bestpractices')">Best Practices</button>
+      </div>
+
+      <!-- Setup Tab -->
+      <div id="tab-setup" class="tab-content active">
+        <div class="example-box">
+          <h2>1. Install Winston</h2>
+          <div class="code-block">npm install winston</div>
+
+          <h2>2. Create Logger Configuration</h2>
+          <p>Create <code>config/logger.js</code>:</p>
+          <div class="code-block">// config/logger.js
+const winston = require('winston');
+const path = require('path');
+
+// Log levels (from least to most severe)
+const levels = {
+  DEBUG: 0,   // Detailed debug info
+  INFO: 1,    // General information
+  WARN: 2,    // Warning but not error
+  ERROR: 3,   // Error messages
+  FATAL: 4    // Critical failures
+};
+
+// Log colors for console
+const colors = {
+  DEBUG: 'blue',
+  INFO: 'green',
+  WARN: 'yellow',
+  ERROR: 'red',
+  FATAL: 'magenta'
+};
+
+winston.addColors(colors);
+
+// Create logger
+const logger = winston.createLogger({
+  levels: levels,
+  format: winston.format.combine(
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.errors({ stack: true }),
+    winston.format.splat(),
+    winston.format.json()
+  ),
+  
+  transports: [
+    // Write all logs to combined.log
+    new winston.transports.File({
+      filename: path.join('logs', 'combined.log'),
+      level: 'DEBUG'
+    }),
+    
+    // Write errors to error.log
+    new winston.transports.File({
+      filename: path.join('logs', 'error.log'),
+      level: 'ERROR'
+    })
+  ]
+});
+
+// Console output in development
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.simple()
+    )
+  }));
+}
+
+module.exports = logger;</div>
+
+          <h2>3. Create Logs Directory</h2>
+          <div class="code-block">mkdir logs
+echo "logs/" >> .gitignore</div>
+
+          <h2>4. Use in Your App</h2>
+          <div class="code-block">// app.js
+const logger = require('./config/logger');
+
+logger.INFO('Server starting...');
+logger.DEBUG('Environment:', process.env.NODE_ENV);
+
+app.listen(PORT, () => {
+  logger.INFO(`Server running on port ${PORT}`);
+});</div>
+        </div>
+      </div>
+
+      <!-- Examples Tab -->
+      <div id="tab-examples" class="tab-content">
+        <div class="example-box">
+          <h2>Example 1: Login Route</h2>
+          <div class="code-block">const logger = require('../config/logger');
+
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  
+  logger.INFO('Login attempt', { 
+    username: username,
+    ip: req.ip,
+    userAgent: req.get('user-agent')
+  });
+  
+  const user = db.prepare(
+    'SELECT * FROM users WHERE username = ?'
+  ).get(username);
+  
+  if (!user) {
+    logger.WARN('Login failed - user not found', { 
+      username: username,
+      ip: req.ip 
+    });
+    return res.render('login', { 
+      error: 'Invalid credentials' 
+    });
+  }
+  
+  const validPassword = bcrypt.compareSync(password, user.password);
+  
+  if (!validPassword) {
+    logger.WARN('Login failed - wrong password', { 
+      username: username,
+      ip: req.ip 
+    });
+    return res.render('login', { 
+      error: 'Invalid credentials' 
+    });
+  }
+  
+  req.session.userId = user.id;
+  logger.INFO('Login successful', { 
+    userId: user.id,
+    username: username 
+  });
+  
+  res.redirect('/dashboard');
+});</div>
+
+          <h3>Log Output:</h3>
+          <div class="log-output">
+<span class="log-info">[2024-01-15 14:23:11] INFO: Login attempt {"username":"juan","ip":"192.168.1.1","userAgent":"Mozilla/5.0..."}</span>
+<span class="log-info">[2024-01-15 14:23:11] INFO: Login successful {"userId":5,"username":"juan"}</span>
+          </div>
+        </div>
+
+        <div class="example-box">
+          <h2>Example 2: Database Operations</h2>
+          <div class="code-block">app.post('/residents/add', (req, res) => {
+  const { firstName, lastName, age } = req.body;
+  
+  logger.DEBUG('Adding resident', { 
+    firstName, lastName, age,
+    userId: req.session.userId 
+  });
+  
+  try {
+    const result = db.prepare(
+      'INSERT INTO residents (firstName, lastName, age) VALUES (?, ?, ?)'
+    ).run(firstName, lastName, age);
+    
+    logger.INFO('Resident added successfully', { 
+      residentId: result.lastInsertRowid,
+      firstName: firstName,
+      lastName: lastName,
+      addedBy: req.session.userId
+    });
+    
+    res.redirect('/residents');
+    
+  } catch (error) {
+    logger.ERROR('Failed to add resident', {
+      error: error.message,
+      firstName: firstName,
+      lastName: lastName,
+      userId: req.session.userId
+    });
+    
+    res.render('residents', { 
+      error: 'Failed to add resident' 
+    });
+  }
+});</div>
+
+          <h3>Log Output:</h3>
+          <div class="log-output">
+<span class="log-debug">[2024-01-15 14:25:03] DEBUG: Adding resident {"firstName":"Maria","lastName":"Santos","age":25,"userId":1}</span>
+<span class="log-info">[2024-01-15 14:25:03] INFO: Resident added successfully {"residentId":42,"firstName":"Maria","lastName":"Santos","addedBy":1}</span>
+          </div>
+        </div>
+
+        <div class="example-box">
+          <h2>Example 3: Error Handling</h2>
+          <div class="code-block">// Error middleware
+app.use((err, req, res, next) => {
+  // Log the error with full context
+  logger.ERROR('Request error', {
+    error: err.message,
+    stack: err.stack,
+    path: req.path,
+    method: req.method,
+    userId: req.session?.userId,
+    ip: req.ip,
+    body: req.body,
+    query: req.query
+  });
+  
+  // If database error
+  if (err.code?.startsWith('SQLITE')) {
+    logger.FATAL('Database error occurred', {
+      code: err.code,
+      message: err.message,
+      path: req.path
+    });
+  }
+  
+  res.status(500).render('error', {
+    message: 'May problema sa system.',
+    debug: process.env.NODE_ENV === 'development' ? err.stack : null
+  });
+});</div>
+
+          <h3>Log Output:</h3>
+          <div class="log-output">
+<span class="log-error">[2024-01-15 14:27:45] ERROR: Request error {"error":"Cannot read property 'id' of undefined","stack":"TypeError: Cannot read...","path":"/residents/42/edit","method":"POST","userId":1,"ip":"192.168.1.1"}</span>
+          </div>
+        </div>
+
+        <div class="example-box">
+          <h2>Example 4: System Events</h2>
+          <div class="code-block">// Server startup
+app.listen(PORT, () => {
+  logger.INFO('Server started', { 
+    port: PORT,
+    environment: process.env.NODE_ENV,
+    nodeVersion: process.version,
+    platform: process.platform
+  });
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  logger.WARN('SIGTERM received, shutting down gracefully');
+  
+  server.close(() => {
+    logger.INFO('Server closed');
+    db.close();
+    logger.INFO('Database connections closed');
+    process.exit(0);
+  });
+});
+
+// Uncaught exceptions
+process.on('uncaughtException', (error) => {
+  logger.FATAL('Uncaught exception', {
+    error: error.message,
+    stack: error.stack
+  });
+  process.exit(1);
+});
+
+// Unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+  logger.FATAL('Unhandled promise rejection', {
+    reason: reason,
+    promise: promise
+  });
+});</div>
+        </div>
+      </div>
+
+      <!-- Log Levels Tab -->
+      <div id="tab-levels" class="tab-content">
+        <div class="example-box">
+          <h2>When to Use Each Log Level</h2>
+
+          <table class="comparison-table">
+            <tr>
+              <th>Level</th>
+              <th>When to Use</th>
+              <th>Example</th>
+            </tr>
+            <tr>
+              <td class="log-debug">DEBUG</td>
+              <td>Detailed information for debugging</td>
+              <td>
+                <code>logger.DEBUG('User object:', { user });</code><br>
+                <code>logger.DEBUG('SQL query:', query);</code>
+              </td>
+            </tr>
+            <tr>
+              <td class="log-info">INFO</td>
+              <td>General informational messages</td>
+              <td>
+                <code>logger.INFO('Server started on port 3000');</code><br>
+                <code>logger.INFO('User logged in', { userId });</code>
+              </td>
+            </tr>
+            <tr>
+              <td class="log-warn">WARN</td>
+              <td>Warning but app still works</td>
+              <td>
+                <code>logger.WARN('Login failed', { username });</code><br>
+                <code>logger.WARN('Slow query detected', { duration });</code>
+              </td>
+            </tr>
+            <tr>
+              <td class="log-error">ERROR</td>
+              <td>Error occurred but app continues</td>
+              <td>
+                <code>logger.ERROR('Failed to send email', { error });</code><br>
+                <code>logger.ERROR('Database query failed', { error });</code>
+              </td>
+            </tr>
+            <tr>
+              <td class="log-fatal">FATAL</td>
+              <td>Critical error, app may crash</td>
+              <td>
+                <code>logger.FATAL('Database connection lost');</code><br>
+                <code>logger.FATAL('Out of memory', { error });</code>
+              </td>
+            </tr>
+          </table>
+
+          <h3>Log Level Examples in Real Scenarios</h3>
+
+          <h4>Scenario 1: User Registration</h4>
+          <div class="code-block">app.post('/register', (req, res) => {
+  const { username, email, password } = req.body;
+  
+  logger.DEBUG('Registration attempt', { username, email });
+  
+  // Check if username exists
+  const existing = db.prepare(
+    'SELECT id FROM users WHERE username = ?'
+  ).get(username);
+  
+  if (existing) {
+    logger.WARN('Registration failed - username taken', { username });
+    return res.render('register', { 
+      error: 'Username already taken' 
+    });
+  }
+  
+  try {
+    const hash = bcrypt.hashSync(password, 10);
+    const result = db.prepare(
+      'INSERT INTO users (username, email, password) VALUES (?, ?, ?)'
+    ).run(username, email, hash);
+    
+    logger.INFO('User registered successfully', { 
+      userId: result.lastInsertRowid,
+      username: username
+    });
+    
+    res.redirect('/login');
+    
+  } catch (error) {
+    logger.ERROR('Registration failed - database error', {
+      error: error.message,
+      username: username
+    });
+    
+    res.render('register', { 
+      error: 'Registration failed' 
+    });
+  }
+});</div>
+
+          <h4>Scenario 2: File Upload</h4>
+          <div class="code-block">app.post('/upload', upload.single('document'), (req, res) => {
+  logger.DEBUG('File upload started', {
+    filename: req.file?.originalname,
+    size: req.file?.size,
+    mimetype: req.file?.mimetype
+  });
+  
+  if (!req.file) {
+    logger.WARN('File upload failed - no file provided');
+    return res.status(400).json({ error: 'No file provided' });
+  }
+  
+  // Check file size (max 5MB)
+  if (req.file.size > 5 * 1024 * 1024) {
+    logger.WARN('File upload rejected - too large', {
+      filename: req.file.originalname,
+      size: req.file.size
+    });
+    return res.status(400).json({ error: 'File too large' });
+  }
+  
+  try {
+    // Save to database
+    const result = db.prepare(
+      'INSERT INTO documents (filename, path, size) VALUES (?, ?, ?)'
+    ).run(req.file.filename, req.file.path, req.file.size);
+    
+    logger.INFO('File uploaded successfully', {
+      documentId: result.lastInsertRowid,
+      filename: req.file.originalname,
+      size: req.file.size
+    });
+    
+    res.json({ success: true, id: result.lastInsertRowid });
+    
+  } catch (error) {
+    logger.ERROR('File upload failed - database error', {
+      error: error.message,
+      filename: req.file.originalname
+    });
+    
+    res.status(500).json({ error: 'Upload failed' });
+  }
+});</div>
+        </div>
+      </div>
+
+      <!-- Best Practices Tab -->
+      <div id="tab-bestpractices" class="tab-content">
+        <div class="example-box">
+          <h2>✅ Do's and ❌ Don'ts</h2>
+
+          <h3>✅ DO: Log Important Context</h3>
+          <div class="code-block good">// GOOD - Includes context
+logger.INFO('Payment processed', {
+  orderId: order.id,
+  amount: order.total,
+  userId: req.session.userId,
+  paymentMethod: 'cash'
+});</div>
+
+          <h3>❌ DON'T: Log Without Context</h3>
+          <div class="code-block bad">// BAD - No context
+logger.INFO('Payment processed');</div>
+
+          <h3>✅ DO: Log Errors with Stack Traces</h3>
+          <div class="code-block good">// GOOD - Includes error details
+try {
+  // ... code ...
+} catch (error) {
+  logger.ERROR('Database query failed', {
+    error: error.message,
+    stack: error.stack,
+    query: sqlQuery,
+    params: queryParams
+  });
+}</div>
+
+          <h3>❌ DON'T: Log Sensitive Data</h3>
+          <div class="code-block bad">// BAD - Logs password!
+logger.DEBUG('User login', {
+  username: username,
+  password: password  // ❌ NEVER LOG PASSWORDS!
+});
+
+// BAD - Logs credit card!
+logger.INFO('Payment info', {
+  cardNumber: '4532-1111-2222-3333'  // ❌ NEVER!
+});</div>
+
+          <h3>✅ DO: Log Without Sensitive Data</h3>
+          <div class="code-block good">// GOOD - No sensitive data
+logger.DEBUG('User login attempt', {
+  username: username,
+  ip: req.ip
+});
+
+// GOOD - Masked payment info
+logger.INFO('Payment processed', {
+  cardLast4: '3333',
+  amount: 500
+});</div>
+
+          <h3>What to LOG vs NOT LOG</h3>
+          <table class="comparison-table">
+            <tr>
+              <th>✅ LOG THESE</th>
+              <th>❌ NEVER LOG THESE</th>
+            </tr>
+            <tr>
+              <td>
+                • User ID<br>
+                • Username<br>
+                • IP address<br>
+                • Timestamps<br>
+                • Request paths<br>
+                • HTTP methods<br>
+                • Status codes<br>
+                • Error messages<br>
+                • Query performance<br>
+                • System events
+              </td>
+              <td>
+                • Passwords (plain or hashed)<br>
+                • API keys<br>
+                • Database credentials<br>
+                • JWT tokens<br>
+                • Credit card numbers<br>
+                • Social security numbers<br>
+                • Personal health info<br>
+                • Private keys<br>
+                • Session secrets<br>
+                • Full request bodies (may contain passwords)
+              </td>
+            </tr>
+          </table>
+
+          <h3>✅ DO: Structure Your Logs</h3>
+          <div class="code-block good">// GOOD - Consistent structure
+logger.INFO('Action description', {
+  actor: 'who did it',
+  action: 'what they did',
+  target: 'what was affected',
+  result: 'success or failure',
+  metadata: { /* additional info */ }
+});
+
+// Example
+logger.INFO('Resident deleted', {
+  actor: req.session.userId,
+  action: 'DELETE',
+  target: residentId,
+  result: 'success',
+  metadata: { reason: 'duplicate entry' }
+});</div>
+
+          <h3>✅ DO: Use Appropriate Log Levels</h3>
+          <div class="code-block good">// Server starts - INFO
+logger.INFO('Server started on port 3000');
+
+// User action - INFO
+logger.INFO('User logged in', { userId: 5 });
+
+// Failed login - WARN
+logger.WARN('Login failed', { username: 'juan' });
+
+// Database error - ERROR
+logger.ERROR('Query failed', { error: err.message });
+
+// Server crash - FATAL
+logger.FATAL('Unhandled exception', { error: err.stack });</div>
+
+          <h3>✅ DO: Log Performance Issues</h3>
+          <div class="code-block good">const start = Date.now();
+
+// ... perform database query ...
+
+const duration = Date.now() - start;
+
+if (duration > 1000) {  // Slower than 1 second
+  logger.WARN('Slow query detected', {
+    query: sqlQuery,
+    duration: duration,
+    threshold: 1000
+  });
+}</div>
+        </div>
+
+        <div class="example-box">
+          <h2>Complete Example: Barangay Certificate System</h2>
+          <div class="code-block">const logger = require('./config/logger');
+
+// Issue certificate route
+app.post('/certificates/issue', (req, res) => {
+  const { residentId, certificateType, purpose } = req.body;
+  
+  logger.DEBUG('Certificate issuance started', {
+    residentId, certificateType, purpose,
+    issuedBy: req.session.userId
+  });
+  
+  try {
+    // Get resident info
+    const resident = db.prepare(
+      'SELECT * FROM residents WHERE id = ?'
+    ).get(residentId);
+    
+    if (!resident) {
+      logger.WARN('Certificate issuance failed - resident not found', {
+        residentId: residentId,
+        attemptedBy: req.session.userId
+      });
+      return res.status(404).json({ 
+        error: 'Resident not found' 
+      });
+    }
+    
+    // Create certificate
+    const certNumber = `CERT-${Date.now()}`;
+    const result = db.prepare(`
+      INSERT INTO certificates 
+      (certNumber, residentId, type, purpose, issuedBy, issuedAt)
+      VALUES (?, ?, ?, ?, ?, datetime('now'))
+    `).run(
+      certNumber, residentId, certificateType, 
+      purpose, req.session.userId
+    );
+    
+    logger.INFO('Certificate issued successfully', {
+      certificateId: result.lastInsertRowid,
+      certNumber: certNumber,
+      residentId: residentId,
+      residentName: `${resident.firstName} ${resident.lastName}`,
+      type: certificateType,
+      issuedBy: req.session.userId
+    });
+    
+    res.json({ 
+      success: true,
+      certNumber: certNumber
+    });
+    
+  } catch (error) {
+    logger.ERROR('Certificate issuance failed', {
+      error: error.message,
+      stack: error.stack,
+      residentId: residentId,
+      certificateType: certificateType,
+      issuedBy: req.session.userId
+    });
+    
+    res.status(500).json({ 
+      error: 'Failed to issue certificate' 
+    });
+  }
+});</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 40px; padding: 20px; background: #d4edda; border-radius: 8px;">
+        <h3>🎯 Winston Logging Checklist</h3>
+        <ul style="text-align: left;">
+          <li>Install winston: <code>npm install winston</code></li>
+          <li>Create config/logger.js with 5 log levels</li>
+          <li>Create logs/ directory and add to .gitignore</li>
+          <li>Use logger throughout your app</li>
+          <li>Log all user actions (login, add, edit, delete)</li>
+          <li>Log all errors with context</li>
+          <li>NEVER log passwords or sensitive data</li>
+          <li>Use appropriate log levels (DEBUG, INFO, WARN, ERROR, FATAL)</li>
+          <li>Include context (userId, IP, timestamp, etc.)</li>
+          <li>Test logging in development mode</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      document.getElementById('tab-' + tabName).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

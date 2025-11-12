@@ -1,0 +1,28 @@
+graph LR
+    subgraph uat["👥 UAT Process Flow"]
+        Plan["📋 1. Prepare UAT Form<br/>List features to test<br/>Define success criteria"]
+        Schedule["📅 2. Schedule Session<br/>3-5 days before deadline<br/>1 hour with client"]
+        Conduct["🎬 3. Conduct UAT<br/>Watch client use system<br/>Take detailed notes"]
+        Record["📝 4. Record Feedback<br/>✅ Works<br/>⚠️ Needs improvement<br/>❌ Critical issues"]
+        Prioritize["🎯 5. Prioritize Fixes<br/>Critical: Must fix<br/>High: Should fix<br/>Low: Nice to have"]
+        Fix["🔧 6. Fix Issues<br/>1-2 days<br/>Focus on critical"]
+        Retest["✅ 7. Re-test<br/>Verify fixes work<br/>Quick smoke test"]
+        Deliver["🚀 8. Final Delivery<br/>Client confident<br/>No surprises"]
+    end
+    
+    Plan --> Schedule
+    Schedule --> Conduct
+    Conduct --> Record
+    Record --> Prioritize
+    Prioritize --> Fix
+    Fix --> Retest
+    Retest --> Deliver
+    
+    style Plan fill:#74c0fc,stroke:#1971c2,color:#000
+    style Schedule fill:#ffd93d,stroke:#f08c00,color:#000
+    style Conduct fill:#b197fc,stroke:#7950f2,color:#fff
+    style Record fill:#ffd93d,stroke:#f08c00,color:#000
+    style Prioritize fill:#ff8787,stroke:#fa5252,color:#fff
+    style Fix fill:#51cf66,stroke:#37b24d,color:#fff
+    style Retest fill:#51cf66,stroke:#37b24d,color:#fff
+    style Deliver fill:#51cf66,stroke:#37b24d,color:#fff

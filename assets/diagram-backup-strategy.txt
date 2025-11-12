@@ -1,0 +1,264 @@
+```mermaid
+flowchart TD
+    A[Database Running] --> B[Backup Strategy]
+    
+    B --> C[Manual Backup]
+    B --> D[Automatic Backup]
+    B --> E[Offsite Backup]
+    
+    C --> F[Admin Clicks Button]
+    F --> G[utils/backup.js]
+    G --> H[fs.copyFileSync]
+    H --> I[backups/backup-TIMESTAMP.db]
+    
+    D --> J[node-cron Schedule]
+    J --> K[2:00 AM Daily]
+    K --> G
+    I --> L[Clean Old Backups]
+    L --> M{Age > 7 Days?}
+    M -->|Yes| N[Delete Old File]
+    M -->|No| O[Keep File]
+    
+    E --> P{Railway?}
+    P -->|Yes| Q[Download via Admin UI]
+    P -->|Yes| R[Email Backup Weekly]
+    P -->|Yes| S[Google Drive Upload]
+    P -->|No| T[Keep Local Backups]
+    
+    Q --> U[Store in Google Drive]
+    R --> U
+    S --> U
+    
+    style C fill:#e1f5ff
+    style D fill:#e1ffe1
+    style E fill:#fff4e1
+    style U fill:#ffe1e1
+```
+
+# Database Backup Strategy
+
+## 3-Layer Backup Approach
+
+### Layer 1: Manual Backups (On-Demand)
+**When:** Before major changes or updates
+**How:** Admin clicks "Create Backup" button
+
+```javascript
+// utils/backup.js
+function backupDatabase(dbPath) {
+  const timestamp = new Date().toISOString().replace(/:/g, '-').split('.')[0];
+  const backupFilename = `backup-${timestamp}.db`;
+  const backupPath = path.join('backups', backupFilename);
+  
+  fs.copyFileSync(dbPath, backupPath);
+  console.log('✅ Backup created:', backupFilename);
+  
+  return { success: true, filename: backupFilename };
+}
+```
+
+**Pros:**
+- ✅ Full control over when to backup
+- ✅ Quick and easy
+- ✅ Can be done before risky operations
+
+**Cons:**
+- ❌ Requires manual action
+- ❌ Easy to forget
+
+---
+
+### Layer 2: Automatic Daily Backups
+**When:** Every day at 2:00 AM
+**How:** node-cron scheduled task
+
+```javascript
+// app.js
+const cron = require('node-cron');
+const { backupDatabase, cleanOldBackups } = require('./utils/backup');
+
+// Run every day at 2:00 AM
+cron.schedule('0 2 * * *', () => {
+  console.log('🕐 Running automatic backup...');
+  
+  const dbPath = path.join(__dirname, 'database.db');
+  backupDatabase(dbPath);
+  
+  // Keep only last 7 days
+  const backupsDir = path.join(__dirname, 'backups');
+  cleanOldBackups(backupsDir, 7);
+});
+```
+
+**Cron Schedule Patterns:**
+```
+0 2 * * *      → Every day at 2:00 AM
+0 */6 * * *    → Every 6 hours
+0 0 * * 0      → Every Sunday at midnight
+*/30 * * * *   → Every 30 minutes
+```
+
+**Pros:**
+- ✅ No manual action required
+- ✅ Consistent daily backups
+- ✅ Old backups automatically cleaned
+
+**Cons:**
+- ❌ Backups lost if server crashes
+- ❌ Railway ephemeral storage issue
+
+---
+
+### Layer 3: Offsite Backups (Critical!)
+**When:** Weekly or monthly
+**How:** Download or email backups
+
+#### Option A: Download via Admin UI
+```javascript
+app.get('/admin/download-backup', requireAdmin, (req, res) => {
+  const dbPath = path.join(__dirname, 'database.db');
+  const filename = `barangay-backup-${new Date().toISOString().split('T')[0]}.db`;
+  
+  res.download(dbPath, filename);
+});
+```
+
+#### Option B: Email Backup
+```javascript
+// Weekly email backup (Sundays at 3:00 AM)
+cron.schedule('0 3 * * 0', async () => {
+  await emailBackup('database.db');
+});
+```
+
+#### Option C: Google Drive Upload
+```javascript
+// Monthly upload to Google Drive
+cron.schedule('0 4 1 * *', async () => {
+  await uploadToDrive('database.db');
+});
+```
+
+**Pros:**
+- ✅ Safe from server crashes
+- ✅ Works with Railway ephemeral storage
+- ✅ Can restore from anywhere
+
+**Cons:**
+- ❌ Requires external service setup
+- ❌ Email attachments have size limits
+
+---
+
+## Backup File Structure
+
+```
+my-app/
+├── database.db                           ← Production database
+├── backups/                              ← Local backups (7 days)
+│   ├── backup-2024-01-16T02-00-00.db   ← Today
+│   ├── backup-2024-01-15T02-00-00.db   ← Yesterday
+│   ├── backup-2024-01-14T02-00-00.db
+│   ├── backup-2024-01-13T02-00-00.db
+│   ├── backup-2024-01-12T02-00-00.db
+│   ├── backup-2024-01-11T02-00-00.db
+│   └── backup-2024-01-10T02-00-00.db   ← 7 days ago (oldest)
+└── offsite-backups/                      ← Downloaded/emailed backups
+    ├── monthly-2024-01.db               ← Monthly archive
+    ├── monthly-2023-12.db
+    └── pre-migration-2024-01-05.db      ← Before major changes
+```
+
+---
+
+## Restore Procedure
+
+### Step 1: Stop the Server
+```bash
+# Railway: No need, will auto-restart
+# Local: Ctrl+C to stop
+```
+
+### Step 2: Backup Current Database (Just in Case)
+```bash
+cp database.db database.db.broken
+```
+
+### Step 3: Restore from Backup
+```bash
+cp backups/backup-2024-01-15T02-00-00.db database.db
+```
+
+### Step 4: Restart Server
+```bash
+npm start
+```
+
+---
+
+## Railway-Specific Strategy
+
+⚠️ **Railway Problem:** Ephemeral storage means backups in `/backups` folder are lost on restart!
+
+**Solution: 3-Part Strategy**
+
+1. **Daily automatic backups** (short-term recovery)
+   - Helps recover from bugs/mistakes within same day
+   - Lost on server restart but better than nothing
+
+2. **Weekly manual download** (medium-term)
+   - Admin downloads backup every Monday
+   - Stores in Google Drive/Dropbox
+   - Can restore data from last week
+
+3. **Monthly offsite backup** (long-term)
+   - Automated email or Google Drive upload
+   - Archive of important milestones
+   - Disaster recovery backup
+
+---
+
+## Cleanup Strategy
+
+**Keep 7 days of local backups:**
+```javascript
+function cleanOldBackups(backupsDir, daysToKeep = 7) {
+  const files = fs.readdirSync(backupsDir);
+  const now = Date.now();
+  const maxAge = daysToKeep * 24 * 60 * 60 * 1000;
+  
+  files.forEach(file => {
+    const filePath = path.join(backupsDir, file);
+    const stats = fs.statSync(filePath);
+    const age = now - stats.mtimeMs;
+    
+    if (age > maxAge) {
+      fs.unlinkSync(filePath);
+      console.log('🗑️ Deleted old backup:', file);
+    }
+  });
+}
+```
+
+**Why 7 days?**
+- Recent enough to recover from mistakes
+- Old enough to not fill up disk space
+- Balances storage vs. safety
+
+---
+
+## Testing Your Backup Strategy
+
+### Monthly Backup Test Checklist:
+1. ✅ Create manual backup
+2. ✅ Verify file exists in `/backups`
+3. ✅ Download backup via admin UI
+4. ✅ Stop server
+5. ✅ Delete database.db
+6. ✅ Restore from backup
+7. ✅ Restart server
+8. ✅ Verify data is intact
+9. ✅ Check automatic backup still runs
+10. ✅ Document any issues
+
+**Set calendar reminder:** First Monday of every month!

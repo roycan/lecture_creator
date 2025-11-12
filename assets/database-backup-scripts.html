@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Database Backup Scripts</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .script-box {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      border-left: 5px solid #28a745;
+    }
+    .code-block {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 15px;
+      border-radius: 5px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+    .terminal-output {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 15px;
+      border-radius: 5px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      margin: 10px 0;
+    }
+    .success { color: #4ec9b0; }
+    .warning { color: #ce9178; }
+    .error { color: #f48771; }
+    .tab-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .tab-button {
+      padding: 10px 20px;
+      border: none;
+      background: #e0e0e0;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .tab-button.active {
+      background: #28a745;
+      color: white;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .file-structure {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      font-family: 'Courier New', monospace;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>💾 Database Backup Scripts</h1>
+      <p><strong>For:</strong> SQLite database backup automation</p>
+      <p><strong>Goal:</strong> Never lose data, even if server crashes</p>
+
+      <!-- Tab Navigation -->
+      <div class="tab-buttons">
+        <button class="tab-button active" onclick="showTab('manual')">Manual Backup</button>
+        <button class="tab-button" onclick="showTab('automatic')">Automatic Backup</button>
+        <button class="tab-button" onclick="showTab('restore')">Restore Backup</button>
+        <button class="tab-button" onclick="showTab('railway')">Railway Strategy</button>
+      </div>
+
+      <!-- Manual Backup Tab -->
+      <div id="tab-manual" class="tab-content active">
+        <div class="script-box">
+          <h2>Manual Backup Function</h2>
+          <p>Create a function you can call anytime to backup your database.</p>
+
+          <h3>Step 1: Create Backup Function</h3>
+          <div class="code-block">// utils/backup.js
+const fs = require('fs');
+const path = require('path');
+
+function backupDatabase(dbPath) {
+  try {
+    // Create backups folder if it doesn't exist
+    const backupsDir = path.join(__dirname, '..', 'backups');
+    if (!fs.existsSync(backupsDir)) {
+      fs.mkdirSync(backupsDir, { recursive: true });
+    }
+    
+    // Generate backup filename with timestamp
+    const timestamp = new Date().toISOString().replace(/:/g, '-').split('.')[0];
+    const backupFilename = `backup-${timestamp}.db`;
+    const backupPath = path.join(backupsDir, backupFilename);
+    
+    // Copy database file
+    fs.copyFileSync(dbPath, backupPath);
+    
+    // Get file size
+    const stats = fs.statSync(backupPath);
+    const fileSizeInMB = (stats.size / (1024 * 1024)).toFixed(2);
+    
+    console.log(`✅ Backup created: ${backupFilename}`);
+    console.log(`   Size: ${fileSizeInMB} MB`);
+    console.log(`   Path: ${backupPath}`);
+    
+    return {
+      success: true,
+      filename: backupFilename,
+      path: backupPath,
+      size: fileSizeInMB
+    };
+    
+  } catch (error) {
+    console.error('❌ Backup failed:', error.message);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+}
+
+module.exports = { backupDatabase };</div>
+
+          <h3>Step 2: Use in Your App</h3>
+          <div class="code-block">// app.js
+const { backupDatabase } = require('./utils/backup');
+
+// Manual backup route (admin only)
+app.post('/admin/backup', requireAdmin, (req, res) => {
+  const dbPath = path.join(__dirname, 'database.db');
+  const result = backupDatabase(dbPath);
+  
+  if (result.success) {
+    res.json({
+      success: true,
+      message: 'Backup created successfully',
+      filename: result.filename,
+      size: result.size
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: result.error
+    });
+  }
+});</div>
+
+          <h3>Step 3: Add Backup Button in Admin Page</h3>
+          <div class="code-block">&lt;!-- views/admin.ejs --&gt;
+&lt;div class="backup-section"&gt;
+  &lt;h2&gt;💾 Database Backup&lt;/h2&gt;
+  &lt;p&gt;I-click ang button para mag-backup ng database.&lt;/p&gt;
+  
+  &lt;button onclick="createBackup()" class="button"&gt;
+    📦 Create Backup Now
+  &lt;/button&gt;
+  
+  &lt;div id="backup-result"&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+async function createBackup() {
+  const resultDiv = document.getElementById('backup-result');
+  resultDiv.innerHTML = '⏳ Creating backup...';
+  
+  try {
+    const response = await fetch('/admin/backup', {
+      method: 'POST'
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      resultDiv.innerHTML = `
+        &lt;div class="success"&gt;
+          ✅ Backup created successfully!&lt;br&gt;
+          Filename: ${data.filename}&lt;br&gt;
+          Size: ${data.size} MB
+        &lt;/div&gt;
+      `;
+    } else {
+      resultDiv.innerHTML = `
+        &lt;div class="error"&gt;
+          ❌ Backup failed: ${data.error}
+        &lt;/div&gt;
+      `;
+    }
+  } catch (error) {
+    resultDiv.innerHTML = `
+      &lt;div class="error"&gt;
+        ❌ Error: ${error.message}
+      &lt;/div&gt;
+    `;
+  }
+}
+&lt;/script&gt;</div>
+
+          <h3>Terminal Output:</h3>
+          <div class="terminal-output">
+<span class="success">✅ Backup created: backup-2024-01-15T14-30-00.db</span>
+<span class="success">   Size: 2.45 MB</span>
+<span class="success">   Path: /app/backups/backup-2024-01-15T14-30-00.db</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Automatic Backup Tab -->
+      <div id="tab-automatic" class="tab-content">
+        <div class="script-box">
+          <h2>Automatic Daily Backups</h2>
+          <p>Use node-cron to automatically backup your database every day.</p>
+
+          <h3>Step 1: Install node-cron</h3>
+          <div class="code-block">npm install node-cron</div>
+
+          <h3>Step 2: Setup Automatic Backups</h3>
+          <div class="code-block">// app.js
+const cron = require('node-cron');
+const { backupDatabase } = require('./utils/backup');
+const path = require('path');
+
+// Backup database every day at 2:00 AM
+cron.schedule('0 2 * * *', () => {
+  console.log('🕐 Running automatic backup at 2:00 AM...');
+  
+  const dbPath = path.join(__dirname, 'database.db');
+  const result = backupDatabase(dbPath);
+  
+  if (result.success) {
+    console.log('✅ Automatic backup completed');
+  } else {
+    console.error('❌ Automatic backup failed:', result.error);
+  }
+});
+
+// Log when cron job is set up
+console.log('⏰ Automatic backup scheduled for 2:00 AM daily');</div>
+
+          <h3>Cron Schedule Examples:</h3>
+          <div class="code-block">// Every day at 2:00 AM
+cron.schedule('0 2 * * *', () => { ... });
+
+// Every 6 hours
+cron.schedule('0 */6 * * *', () => { ... });
+
+// Every Sunday at 3:00 AM
+cron.schedule('0 3 * * 0', () => { ... });
+
+// Every hour
+cron.schedule('0 * * * *', () => { ... });
+
+// Every 30 minutes
+cron.schedule('*/30 * * * *', () => { ... });
+
+// Format: minute hour day month day-of-week
+//         0-59   0-23 1-31 1-12  0-7 (0 and 7 = Sunday)</div>
+
+          <h3>Step 3: Clean Old Backups (Keep Only 7 Days)</h3>
+          <div class="code-block">// utils/backup.js
+const fs = require('fs');
+const path = require('path');
+
+function cleanOldBackups(backupsDir, daysToKeep = 7) {
+  try {
+    const files = fs.readdirSync(backupsDir);
+    const now = Date.now();
+    const maxAge = daysToKeep * 24 * 60 * 60 * 1000; // days to milliseconds
+    
+    let deletedCount = 0;
+    
+    files.forEach(file => {
+      const filePath = path.join(backupsDir, file);
+      const stats = fs.statSync(filePath);
+      const fileAge = now - stats.mtimeMs;
+      
+      if (fileAge > maxAge) {
+        fs.unlinkSync(filePath);
+        console.log(`🗑️  Deleted old backup: ${file}`);
+        deletedCount++;
+      }
+    });
+    
+    console.log(`✅ Cleaned ${deletedCount} old backups`);
+    
+    return { success: true, deletedCount };
+    
+  } catch (error) {
+    console.error('❌ Error cleaning backups:', error.message);
+    return { success: false, error: error.message };
+  }
+}
+
+module.exports = { backupDatabase, cleanOldBackups };</div>
+
+          <h3>Step 4: Run Cleanup After Backup</h3>
+          <div class="code-block">// app.js
+const cron = require('node-cron');
+const { backupDatabase, cleanOldBackups } = require('./utils/backup');
+const path = require('path');
+
+// Backup every day at 2:00 AM
+cron.schedule('0 2 * * *', () => {
+  console.log('🕐 Running automatic backup...');
+  
+  // Create backup
+  const dbPath = path.join(__dirname, 'database.db');
+  const result = backupDatabase(dbPath);
+  
+  if (result.success) {
+    console.log('✅ Backup completed');
+    
+    // Clean old backups (keep only 7 days)
+    const backupsDir = path.join(__dirname, 'backups');
+    cleanOldBackups(backupsDir, 7);
+  } else {
+    console.error('❌ Backup failed:', result.error);
+  }
+});
+
+console.log('⏰ Automatic backup scheduled for 2:00 AM daily');</div>
+
+          <h3>Terminal Output:</h3>
+          <div class="terminal-output">
+<span class="success">Server running on port 3000</span>
+<span class="success">⏰ Automatic backup scheduled for 2:00 AM daily</span>
+
+<span style="color: #888;">... (next day at 2:00 AM) ...</span>
+
+<span class="success">🕐 Running automatic backup...</span>
+<span class="success">✅ Backup created: backup-2024-01-16T02-00-00.db</span>
+<span class="success">   Size: 2.47 MB</span>
+<span class="warning">🗑️  Deleted old backup: backup-2024-01-08T02-00-00.db</span>
+<span class="warning">🗑️  Deleted old backup: backup-2024-01-07T02-00-00.db</span>
+<span class="success">✅ Cleaned 2 old backups</span>
+<span class="success">✅ Backup completed</span>
+          </div>
+        </div>
+
+        <div class="script-box">
+          <h2>File Structure After Backups</h2>
+          <div class="file-structure">my-app/
+├── app.js
+├── database.db
+├── backups/
+│   ├── backup-2024-01-16T02-00-00.db  ← Today
+│   ├── backup-2024-01-15T02-00-00.db  ← Yesterday
+│   ├── backup-2024-01-14T02-00-00.db
+│   ├── backup-2024-01-13T02-00-00.db
+│   ├── backup-2024-01-12T02-00-00.db
+│   ├── backup-2024-01-11T02-00-00.db
+│   └── backup-2024-01-10T02-00-00.db  ← 7 days ago
+├── utils/
+│   └── backup.js
+└── .gitignore  ← Add "backups/" here</div>
+
+          <h3>Add to .gitignore:</h3>
+          <div class="code-block"># Don't commit backups to git (they're too large)
+backups/
+*.db
+!schema.sql</div>
+        </div>
+      </div>
+
+      <!-- Restore Tab -->
+      <div id="tab-restore" class="tab-content">
+        <div class="script-box">
+          <h2>Restore from Backup</h2>
+          <p>When disaster strikes, here's how to restore your database.</p>
+
+          <h3>Method 1: Manual Restore (Terminal)</h3>
+          <div class="code-block"># Stop your server first!
+# Then copy backup over current database
+
+cd /path/to/your/app
+
+# Backup current database (just in case)
+cp database.db database.db.broken
+
+# Restore from backup
+cp backups/backup-2024-01-15T02-00-00.db database.db
+
+# Restart server
+npm start</div>
+
+          <h3>Method 2: Restore Function in Code</h3>
+          <div class="code-block">// utils/backup.js
+function restoreBackup(backupPath, dbPath) {
+  try {
+    // Check if backup exists
+    if (!fs.existsSync(backupPath)) {
+      throw new Error('Backup file not found');
+    }
+    
+    // Backup current database first (just in case)
+    const brokenDbPath = dbPath + '.broken';
+    if (fs.existsSync(dbPath)) {
+      fs.copyFileSync(dbPath, brokenDbPath);
+      console.log('⚠️  Current database backed up to:', brokenDbPath);
+    }
+    
+    // Restore from backup
+    fs.copyFileSync(backupPath, dbPath);
+    
+    console.log('✅ Database restored from:', backupPath);
+    
+    return { success: true };
+    
+  } catch (error) {
+    console.error('❌ Restore failed:', error.message);
+    return { success: false, error: error.message };
+  }
+}
+
+module.exports = { backupDatabase, cleanOldBackups, restoreBackup };</div>
+
+          <h3>Method 3: Admin UI for Restore</h3>
+          <div class="code-block">// app.js
+const { restoreBackup } = require('./utils/backup');
+
+// List available backups
+app.get('/admin/backups', requireAdmin, (req, res) => {
+  const backupsDir = path.join(__dirname, 'backups');
+  
+  if (!fs.existsSync(backupsDir)) {
+    return res.json({ backups: [] });
+  }
+  
+  const files = fs.readdirSync(backupsDir);
+  const backups = files.map(file => {
+    const filePath = path.join(backupsDir, file);
+    const stats = fs.statSync(filePath);
+    
+    return {
+      filename: file,
+      size: (stats.size / (1024 * 1024)).toFixed(2) + ' MB',
+      date: stats.mtime
+    };
+  });
+  
+  // Sort by date (newest first)
+  backups.sort((a, b) => b.date - a.date);
+  
+  res.json({ backups });
+});
+
+// Restore from backup
+app.post('/admin/restore/:filename', requireAdmin, (req, res) => {
+  const backupPath = path.join(__dirname, 'backups', req.params.filename);
+  const dbPath = path.join(__dirname, 'database.db');
+  
+  const result = restoreBackup(backupPath, dbPath);
+  
+  if (result.success) {
+    res.json({
+      success: true,
+      message: 'Database restored. Please restart the server.'
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      error: result.error
+    });
+  }
+});</div>
+
+          <h3>Admin Page UI:</h3>
+          <div class="code-block">&lt;!-- views/admin-backups.ejs --&gt;
+&lt;div class="backups-section"&gt;
+  &lt;h2&gt;💾 Available Backups&lt;/h2&gt;
+  
+  &lt;table id="backups-table"&gt;
+    &lt;thead&gt;
+      &lt;tr&gt;
+        &lt;th&gt;Filename&lt;/th&gt;
+        &lt;th&gt;Size&lt;/th&gt;
+        &lt;th&gt;Date&lt;/th&gt;
+        &lt;th&gt;Action&lt;/th&gt;
+      &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody id="backups-list"&gt;
+      &lt;tr&gt;
+        &lt;td colspan="4"&gt;Loading...&lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+// Load backups
+async function loadBackups() {
+  const response = await fetch('/admin/backups');
+  const data = await response.json();
+  
+  const tbody = document.getElementById('backups-list');
+  
+  if (data.backups.length === 0) {
+    tbody.innerHTML = '&lt;tr&gt;&lt;td colspan="4"&gt;No backups found&lt;/td&gt;&lt;/tr&gt;';
+    return;
+  }
+  
+  tbody.innerHTML = data.backups.map(backup =&gt; `
+    &lt;tr&gt;
+      &lt;td&gt;${backup.filename}&lt;/td&gt;
+      &lt;td&gt;${backup.size}&lt;/td&gt;
+      &lt;td&gt;${new Date(backup.date).toLocaleString()}&lt;/td&gt;
+      &lt;td&gt;
+        &lt;button onclick="restoreBackup('${backup.filename}')"&gt;
+          🔄 Restore
+        &lt;/button&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+  `).join('');
+}
+
+// Restore backup
+async function restoreBackup(filename) {
+  if (!confirm('⚠️ This will replace your current database. Continue?')) {
+    return;
+  }
+  
+  try {
+    const response = await fetch(`/admin/restore/${filename}`, {
+      method: 'POST'
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      alert('✅ ' + data.message);
+    } else {
+      alert('❌ Restore failed: ' + data.error);
+    }
+  } catch (error) {
+    alert('❌ Error: ' + error.message);
+  }
+}
+
+// Load on page load
+loadBackups();
+&lt;/script&gt;</div>
+        </div>
+      </div>
+
+      <!-- Railway Strategy Tab -->
+      <div id="tab-railway" class="tab-content">
+        <div class="script-box">
+          <h2>Railway Deployment Backup Strategy</h2>
+          <p>Railway doesn't have persistent storage, so you need offsite backups.</p>
+
+          <h3>⚠️ Problem: Railway Ephemeral Storage</h3>
+          <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0;">
+            <p><strong>Railway uses ephemeral storage:</strong></p>
+            <ul>
+              <li>Files created during runtime are temporary</li>
+              <li>When app restarts, all files are lost</li>
+              <li>This includes backups saved to /backups folder!</li>
+            </ul>
+          </div>
+
+          <h3>✅ Solution: Download Backups Regularly</h3>
+
+          <h4>Option 1: Download via Admin UI</h4>
+          <div class="code-block">// app.js
+app.get('/admin/download-backup', requireAdmin, (req, res) => {
+  const dbPath = path.join(__dirname, 'database.db');
+  
+  // Check if database exists
+  if (!fs.existsSync(dbPath)) {
+    return res.status(404).send('Database not found');
+  }
+  
+  // Generate filename with timestamp
+  const timestamp = new Date().toISOString().split('T')[0];
+  const filename = `barangay-backup-${timestamp}.db`;
+  
+  // Send file as download
+  res.download(dbPath, filename, (err) => {
+    if (err) {
+      console.error('Download error:', err);
+      res.status(500).send('Download failed');
+    }
+  });
+});</div>
+
+          <div class="code-block">&lt;!-- Add to admin page --&gt;
+&lt;div class="backup-section"&gt;
+  &lt;h2&gt;💾 Download Database Backup&lt;/h2&gt;
+  &lt;p&gt;I-download ang database para may local copy ka.&lt;/p&gt;
+  
+  &lt;a href="/admin/download-backup" class="button"&gt;
+    📥 Download Backup
+  &lt;/a&gt;
+  
+  &lt;p style="font-size: 14px; color: #666;"&gt;
+    💡 Tip: Download weekly para hindi mawala ang data!
+  &lt;/p&gt;
+&lt;/div&gt;</div>
+
+          <h4>Option 2: Automatic Email Backups</h4>
+          <div class="code-block">// Install nodemailer
+npm install nodemailer
+
+// utils/email-backup.js
+const nodemailer = require('nodemailer');
+const fs = require('fs');
+
+async function emailBackup(dbPath) {
+  try {
+    // Create email transporter
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD
+      }
+    });
+    
+    // Generate filename
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename = `backup-${timestamp}.db`;
+    
+    // Send email with attachment
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: process.env.ADMIN_EMAIL,
+      subject: `Database Backup - ${timestamp}`,
+      text: `Automatic database backup attached.`,
+      attachments: [
+        {
+          filename: filename,
+          path: dbPath
+        }
+      ]
+    });
+    
+    console.log('✅ Backup emailed to admin');
+    return { success: true };
+    
+  } catch (error) {
+    console.error('❌ Email backup failed:', error.message);
+    return { success: false, error: error.message };
+  }
+}
+
+module.exports = { emailBackup };</div>
+
+          <div class="code-block">// app.js - Schedule weekly email backup
+const cron = require('node-cron');
+const { emailBackup } = require('./utils/email-backup');
+
+// Email backup every Sunday at 3:00 AM
+cron.schedule('0 3 * * 0', async () => {
+  console.log('📧 Sending backup email...');
+  
+  const dbPath = path.join(__dirname, 'database.db');
+  const result = await emailBackup(dbPath);
+  
+  if (result.success) {
+    console.log('✅ Email sent successfully');
+  } else {
+    console.error('❌ Email failed:', result.error);
+  }
+});</div>
+
+          <h4>Option 3: Save to Cloud Storage (Google Drive API)</h4>
+          <div class="code-block">// Install googleapis
+npm install googleapis
+
+// This is more complex but most reliable
+// Follow Google Drive API setup guide:
+// https://developers.google.com/drive/api/quickstart/nodejs
+
+// utils/drive-backup.js
+const { google } = require('googleapis');
+const fs = require('fs');
+
+async function uploadToDrive(dbPath) {
+  // Setup Google Drive authentication (see Google's guide)
+  const auth = await google.auth.getClient({
+    scopes: ['https://www.googleapis.com/auth/drive.file']
+  });
+  
+  const drive = google.drive({ version: 'v3', auth });
+  
+  const filename = `backup-${new Date().toISOString()}.db`;
+  
+  const response = await drive.files.create({
+    requestBody: {
+      name: filename,
+      mimeType: 'application/x-sqlite3'
+    },
+    media: {
+      mimeType: 'application/x-sqlite3',
+      body: fs.createReadStream(dbPath)
+    }
+  });
+  
+  console.log('✅ Uploaded to Google Drive:', response.data.id);
+  return { success: true, fileId: response.data.id };
+}</div>
+
+          <h3>🎯 Recommended Railway Strategy</h3>
+          <div style="background: #d4edda; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h4>Best Approach for Production:</h4>
+            <ol style="text-align: left;">
+              <li><strong>Daily automatic backups</strong> to logs (for short-term)</li>
+              <li><strong>Weekly manual download</strong> via admin UI (for medium-term)</li>
+              <li><strong>Monthly email backup</strong> or Google Drive upload (for long-term)</li>
+            </ol>
+            
+            <p><strong>Setup Steps:</strong></p>
+            <ul style="text-align: left;">
+              <li>Enable daily backups with node-cron</li>
+              <li>Add download button in admin page</li>
+              <li>Set reminder to download weekly</li>
+              <li>Store downloaded backups in Google Drive/Dropbox</li>
+              <li>Test restore procedure monthly</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 40px; padding: 20px; background: #d4edda; border-radius: 8px;">
+        <h3>💾 Backup Checklist</h3>
+        <ul style="text-align: left;">
+          <li>Create utils/backup.js with backup functions</li>
+          <li>Install node-cron: <code>npm install node-cron</code></li>
+          <li>Setup automatic daily backups (2:00 AM)</li>
+          <li>Setup cleanup to keep only 7 days</li>
+          <li>Add manual backup button in admin page</li>
+          <li>Add download backup route</li>
+          <li>Test backup and restore procedures</li>
+          <li>Add backups/ to .gitignore</li>
+          <li>For Railway: Setup weekly download or email</li>
+          <li>Store important backups in Google Drive</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      document.getElementById('tab-' + tabName).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

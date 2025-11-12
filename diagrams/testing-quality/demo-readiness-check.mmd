@@ -1,0 +1,53 @@
+graph TD
+    Start["🎬 Demo Day - 30 Min Before"]
+    
+    Smoke["💨 Run Smoke Test<br/>(2-5 minutes)"]
+    
+    CheckLogin["✅ Login works?"]
+    CheckCore["✅ Core features work?"]
+    CheckErrors["✅ No console errors?"]
+    CheckUI["✅ Professional appearance?"]
+    
+    AllPass{"All checks<br/>passed?"}
+    
+    Ready["✅ READY TO DEMO<br/>Breathe, stay confident"]
+    
+    NotReady["❌ NOT READY<br/>Issues found"]
+    
+    QuickFix{"Can fix in<br/>10 minutes?"}
+    
+    FixNow["🔧 Fix quickly<br/>Re-test"]
+    
+    Postpone["📞 Postpone Demo<br/>Be honest with client:<br/>'Found issue, need 1 day'"]
+    
+    Backup["📸 Use Backup Plan<br/>Show screenshots/video<br/>Explain issue professionally"]
+    
+    DemoTime["🎤 START DEMO"]
+    
+    Start --> Smoke
+    Smoke --> CheckLogin
+    CheckLogin --> CheckCore
+    CheckCore --> CheckErrors
+    CheckErrors --> CheckUI
+    CheckUI --> AllPass
+    
+    AllPass -->|"Yes"| Ready
+    AllPass -->|"No"| NotReady
+    
+    Ready --> DemoTime
+    
+    NotReady --> QuickFix
+    QuickFix -->|"Yes"| FixNow
+    FixNow --> Smoke
+    
+    QuickFix -->|"No - Major bug"| Postpone
+    QuickFix -->|"No - Minor issue"| Backup
+    
+    Backup --> DemoTime
+    
+    style Start fill:#74c0fc,stroke:#1971c2,color:#000
+    style Ready fill:#51cf66,stroke:#37b24d,color:#fff
+    style NotReady fill:#ff6b6b,stroke:#c92a2a,color:#fff
+    style DemoTime fill:#51cf66,stroke:#37b24d,color:#fff
+    style Postpone fill:#ff6b6b,stroke:#c92a2a,color:#fff
+    style Backup fill:#ffd93d,stroke:#f08c00,color:#000

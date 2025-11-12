@@ -1,5 +1,5 @@
 ┌──────────────────────────────────────────────────────────────┐
-│              VIEWPORT META TAG EXPLAINED                      │
+│              VIEWPORT META TAG EXPLAINED                     │
 └──────────────────────────────────────────────────────────────┘
 
 THE PROBLEM (Without Viewport Meta Tag)
@@ -11,9 +11,9 @@ Mobile browsers assume website is 980px wide and zoom out!
 
 Without viewport tag:
 ┌─────────────────────────────────────┐
-│  Tiny text  Tiny buttons  Tiny form│  ← Everything is tiny!
-│  ──────────────────────────────────│  ← User must zoom in
-│  User can't read anything!         │  ← Bad experience
+│  Tiny text  Tiny buttons  Tiny form │  ← Everything is tiny!
+│  ────────────────────────────────── │  ← User must zoom in
+│  User can't read anything!          │  ← Bad experience
 └─────────────────────────────────────┘
     ↑
 Phone shows entire desktop site (zoomed out)
@@ -170,13 +170,13 @@ Test: Remove viewport meta tag
 
 Before (with viewport):        After (without viewport):
 ┌──────────────┐              ┌─────────────────────────┐
-│              │              │ Tiny  Tiny  Tiny  Tiny │
-│  [Button]    │              │ Text  Text  Text  Text │
-│              │              │                        │
-│  Normal Text │              │ [b][b][b][b][b][b][b] │
-│              │    →         │                        │
-│  Readable    │              │ Everything is tiny!    │
-│              │              │ User must zoom in      │
+│              │              │ Tiny  Tiny  Tiny  Tiny  │
+│  [Button]    │              │ Text  Text  Text  Text  │
+│              │              │                         │
+│  Normal Text │              │ [b][b][b][b][b][b][b]   │
+│              │    →         │                         │
+│  Readable    │              │ Everything is tiny!     │
+│              │              │ User must zoom in       │
 └──────────────┘              └─────────────────────────┘
    GOOD                            BAD
 

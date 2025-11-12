@@ -1,0 +1,176 @@
+┌─────────────────────────────────────────────────────────────┐
+│           ⚡ EDGE CASES TESTING CHEAT SHEET                 │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│ 🔢 NUMERIC INPUTS (Quantity, Price, Age, etc.)              │
+└─────────────────────────────────────────────────────────────┘
+
+Test EVERY numeric field with:
+[ ] Zero (0)                  → Should it be allowed?
+[ ] Negative (-1, -100)       → Should show error
+[ ] Minimum boundary (1)      → Smallest valid value
+[ ] Maximum boundary (9999)   → Largest valid value
+[ ] Above maximum (10000)     → Should show error
+[ ] Decimal (5.5, 10.99)     → Integer vs decimal?
+[ ] Very large (999999999)    → System limits?
+[ ] Text instead ("abc")      → Validation working?
+
+Example: Product Quantity Field
+✅ Test: 0, -5, 1, 100, 101, 5.5, 999999, "five"
+Expected: Only accept 1-100, integers only
+
+┌─────────────────────────────────────────────────────────────┐
+│ 📝 TEXT INPUTS (Name, Address, Description)                 │
+└─────────────────────────────────────────────────────────────┘
+
+Test EVERY text field with:
+[ ] Empty string ("")         → Required field?
+[ ] Single character ("A")    → Minimum length?
+[ ] Very long (500+ chars)    → Maximum length?
+[ ] Numbers only ("12345")    → Should be allowed?
+[ ] Special chars ("O'Brien") → Apostrophes OK?
+[ ] Accented chars ("José")   → Unicode support?
+[ ] Spaces ("  John  ")       → Trim whitespace?
+[ ] SQL injection (' OR '1'='1) → Security check
+[ ] HTML/Script tags          → XSS protection
+
+Example: First Name Field
+✅ Test: "", "A", [500 chars], "123", "O'Brien", "José"
+Expected: 2-50 chars, letters only, allow apostrophes
+
+┌─────────────────────────────────────────────────────────────┐
+│ 📅 DATE INPUTS (Birthdate, Appointment Date)                │
+└─────────────────────────────────────────────────────────────┘
+
+Test EVERY date field with:
+[ ] Future date               → Allowed or not?
+[ ] Past date (very old)      → Reasonable range?
+[ ] Today                     → Valid?
+[ ] Feb 29 (leap year)        → Date validation?
+[ ] Feb 29 (non-leap)         → Should error
+[ ] Invalid format            → DD/MM vs MM/DD?
+[ ] Empty/null                → Required?
+
+Example: Birthdate Field
+✅ Test: 2030-01-01, 1800-01-01, today, 2024-02-29, 2023-02-29
+Expected: Past dates only, 1900-2023, proper leap year handling
+
+┌─────────────────────────────────────────────────────────────┐
+│ 📞 PHONE NUMBER INPUTS                                      │
+└─────────────────────────────────────────────────────────────┘
+
+Test phone fields with:
+[ ] Too short (123)           → Minimum 11 digits?
+[ ] Correct length (09171234567) → Valid format
+[ ] Too long (091712345678901) → Maximum 11 digits?
+[ ] Letters (09abc123456)     → Numbers only?
+[ ] Special chars (09-17-123) → Allow or reject?
+[ ] Spaces (0917 123 4567)    → Format handling?
+[ ] Missing leading 0         → Should add?
+
+Example: Contact Number
+✅ Test: "123", "09171234567", "0917123456789012", "abc"
+Expected: Exactly 11 digits, numbers only, starts with 09
+
+┌─────────────────────────────────────────────────────────────┐
+│ 📋 LISTS & PAGINATION                                       │
+└─────────────────────────────────────────────────────────────┘
+
+Test lists with:
+[ ] Zero items                → Empty state message?
+[ ] One item                  → Displays correctly?
+[ ] Exactly page size (100)   → One full page?
+[ ] Page size + 1 (101)       → Pagination triggers?
+[ ] Many items (500+)         → Performance OK?
+
+Example: Residents List (page size = 100)
+✅ Test: 0, 1, 99, 100, 101, 500 residents
+Expected: Empty message, pagination at 101+, no slowdown
+
+┌─────────────────────────────────────────────────────────────┐
+│ ➗ CALCULATIONS & FORMULAS                                  │
+└─────────────────────────────────────────────────────────────┘
+
+Test calculations with:
+[ ] Zero in calculation       → Price × 0 = 0?
+[ ] Negative values           → -5 × 10 = -50?
+[ ] Division by zero          → Error handling?
+[ ] Very large numbers        → Overflow?
+[ ] Rounding (0.99 + 0.99)    → Correct decimal handling?
+
+Example: Sales Total = Price × Quantity
+✅ Test: ₱10 × 0, ₱10 × -5, ₱999999 × 1000
+Expected: Handle zero, reject negative, prevent overflow
+
+┌─────────────────────────────────────────────────────────────┐
+│ 🔐 FILE UPLOADS                                             │
+└─────────────────────────────────────────────────────────────┘
+
+Test file uploads with:
+[ ] Empty/no file selected    → Required or optional?
+[ ] Correct file type (.jpg)  → Accepts
+[ ] Wrong file type (.exe)    → Rejects with error
+[ ] Very large file (100MB)   → Size limit?
+[ ] Very small file (1KB)     → Minimum size?
+[ ] Filename with special chars → Sanitize?
+
+┌─────────────────────────────────────────────────────────────┐
+│ 🎯 QUICK EDGE CASE CHECKLIST                                │
+└─────────────────────────────────────────────────────────────┘
+
+For EVERY form/feature, ask:
+
+✅ What if the input is EMPTY?
+✅ What if it's TOO SHORT?
+✅ What if it's TOO LONG?
+✅ What if it's the WRONG TYPE?
+✅ What if it's NEGATIVE?
+✅ What if it's ZERO?
+✅ What if it's MAXIMUM?
+✅ What if there are NO RESULTS?
+✅ What if there are TOO MANY RESULTS?
+
+┌─────────────────────────────────────────────────────────────┐
+│ 💡 WHY EDGE CASE TESTING MATTERS                            │
+└─────────────────────────────────────────────────────────────┘
+
+Real student project failures:
+
+❌ Sari-sari store allowed negative quantities
+   → Customer "bought" -50 items, got ₱500 credit!
+
+❌ Barangay directory accepted 1-letter names
+   → Database full of "A", "B", "C" residents
+
+❌ Appointment system allowed past dates
+   → Booked appointments for last year
+
+❌ No maximum length on address field
+   → Someone entered 10,000 characters, broke layout
+
+✅ 30 minutes of edge case testing = Prevented all these bugs!
+
+┌─────────────────────────────────────────────────────────────┐
+│              🔧 HOW TO PREVENT EDGE CASE BUGS               │
+└─────────────────────────────────────────────────────────────┘
+
+Add validation to EVERY input:
+
+// ✅ Good: Validates quantity
+function addToCart(quantity) {
+  if (quantity < 1) return alert('Min 1 item');
+  if (quantity > 100) return alert('Max 100 items');
+  if (!Number.isInteger(quantity)) return alert('Whole numbers only');
+  
+  // OK to proceed
+  cart.push(quantity);
+}
+
+// ❌ Bad: No validation
+function addToCart(quantity) {
+  cart.push(quantity); // Accepts anything!
+}
+
+Remember: Users WILL try weird inputs (accidentally or on purpose).
+Your job: EXPECT the unexpected! 🛡️

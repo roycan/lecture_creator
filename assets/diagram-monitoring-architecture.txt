@@ -1,0 +1,438 @@
+```mermaid
+flowchart TD
+    A[Your Express App] --> B[/health Endpoint]
+    
+    B --> C{Health Check}
+    C --> D[Check Server Status]
+    C --> E[Check Database]
+    C --> F[Check Memory]
+    
+    D --> G{All Healthy?}
+    E --> G
+    F --> G
+    
+    G -->|Yes| H[Return 200 OK]
+    G -->|No| I[Return 503 Service Unavailable]
+    
+    H --> J[External Monitoring Service]
+    I --> J
+    
+    J --> K{UptimeRobot}
+    J --> L{Better Uptime}
+    J --> M{Custom Monitor}
+    
+    K --> N[Check Every 5 Minutes]
+    L --> N
+    M --> N
+    
+    N --> O{Response OK?}
+    
+    O -->|200 OK| P[✅ App is UP]
+    O -->|Timeout/Error| Q[🚨 App is DOWN]
+    
+    P --> R[Log Success]
+    Q --> S[Send Alert]
+    
+    S --> T[Email Alert]
+    S --> U[SMS Alert]
+    S --> V[Slack Alert]
+    
+    T --> W[Admin Receives Alert]
+    U --> W
+    V --> W
+    
+    W --> X[Admin Investigates]
+    X --> Y[Check Railway Logs]
+    X --> Z[Check Database]
+    X --> AA[Check Server Resources]
+    
+    style B fill:#e1f5ff
+    style G fill:#fff4e1
+    style Q fill:#ffe1e1
+    style W fill:#ffe1e1
+```
+
+# Monitoring Architecture
+
+## 1. Health Check Endpoint
+
+Your app exposes a `/health` endpoint that returns system status:
+
+```javascript
+app.get('/health', (req, res) => {
+  const health = {
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    checks: {}
+  };
+  
+  // Check 1: Server
+  health.checks.server = {
+    status: 'healthy',
+    uptime: Math.floor(process.uptime()) + ' seconds',
+    memory: Math.round(process.memoryUsage().heapUsed / 1024 / 1024) + ' MB'
+  };
+  
+  // Check 2: Database
+  try {
+    db.prepare('SELECT 1').get();
+    health.checks.database = {
+      status: 'healthy',
+      connection: 'active'
+    };
+  } catch (error) {
+    health.status = 'unhealthy';
+    health.checks.database = {
+      status: 'unhealthy',
+      error: error.message
+    };
+  }
+  
+  const statusCode = health.status === 'healthy' ? 200 : 503;
+  res.status(statusCode).json(health);
+});
+```
+
+**Response Example (Healthy):**
+```json
+{
+  "status": "healthy",
+  "timestamp": "2024-01-15T14:30:00.000Z",
+  "checks": {
+    "server": {
+      "status": "healthy",
+      "uptime": "86400 seconds",
+      "memory": "45 MB"
+    },
+    "database": {
+      "status": "healthy",
+      "connection": "active"
+    }
+  }
+}
+```
+
+**Response Example (Unhealthy):**
+```json
+{
+  "status": "unhealthy",
+  "timestamp": "2024-01-15T14:30:00.000Z",
+  "checks": {
+    "server": {
+      "status": "healthy",
+      "uptime": "86400 seconds",
+      "memory": "45 MB"
+    },
+    "database": {
+      "status": "unhealthy",
+      "error": "SQLITE_CANTOPEN: unable to open database file"
+    }
+  }
+}
+```
+
+---
+
+## 2. External Monitoring Services
+
+### UptimeRobot (Recommended)
+
+**Setup:**
+1. Create account at uptimerobot.com
+2. Add new monitor:
+   - Type: HTTP(s)
+   - URL: `https://your-app.up.railway.app/health`
+   - Interval: 5 minutes
+3. Add alert contacts (email, SMS)
+
+**How it Works:**
+- UptimeRobot pings your `/health` endpoint every 5 minutes
+- If it gets 200 OK → App is UP
+- If it gets error/timeout → App is DOWN
+- After 2 consecutive failures, sends alert
+
+**Alert Example:**
+```
+🚨 UptimeRobot Alert
+
+Monitor: Barangay App
+Status: DOWN
+URL: https://barangay-app.up.railway.app/health
+Reason: Connection timeout (30s)
+Time: Jan 15, 2024 - 2:30 AM
+
+Down since: 2:25 AM
+Duration: 5 minutes
+```
+
+---
+
+### Better Uptime (Alternative)
+
+**Features:**
+- 3-minute check interval (vs 5 for UptimeRobot)
+- Slack integration
+- Incident management
+- On-call scheduling
+
+**Setup:**
+1. Create account at betteruptime.com
+2. Add monitor with your health check URL
+3. Configure alert channels (Slack, email, SMS)
+
+---
+
+## 3. Railway Built-in Monitoring
+
+Railway dashboard provides:
+
+### CPU Usage
+```
+[Graph showing CPU percentage over time]
+```
+
+### Memory Usage
+```
+[Graph showing MB used over time]
+```
+
+### Network Traffic
+```
+[Graph showing requests/second]
+```
+
+### Logs
+```
+[2024-01-15 14:30:00] Server started
+[2024-01-15 14:30:15] GET /health 200 15ms
+[2024-01-15 14:31:00] ERROR Database connection lost
+```
+
+**Access:**
+1. Go to railway.app
+2. Select your project
+3. Click your service
+4. Click "Metrics" tab
+
+---
+
+## 4. Custom Monitoring Script
+
+For advanced users, run your own monitoring script:
+
+```javascript
+// monitor.js (run on separate server)
+const fetch = require('node-fetch');
+
+const APP_URL = 'https://your-app.up.railway.app/health';
+const CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes
+
+let consecutiveFailures = 0;
+
+async function checkHealth() {
+  try {
+    const response = await fetch(APP_URL, { timeout: 10000 });
+    
+    if (response.ok) {
+      const data = await response.json();
+      
+      if (data.status === 'healthy') {
+        console.log('✅ App is healthy');
+        consecutiveFailures = 0;
+      } else {
+        handleFailure('App returned unhealthy status');
+      }
+    } else {
+      handleFailure(`HTTP ${response.status}`);
+    }
+  } catch (error) {
+    handleFailure(error.message);
+  }
+}
+
+function handleFailure(reason) {
+  consecutiveFailures++;
+  console.error(`❌ Check failed (${consecutiveFailures}): ${reason}`);
+  
+  if (consecutiveFailures >= 3) {
+    sendAlert(reason);
+  }
+}
+
+setInterval(checkHealth, CHECK_INTERVAL);
+```
+
+---
+
+## 5. What to Monitor
+
+### Server Health Checks:
+- ✅ Server uptime
+- ✅ Memory usage
+- ✅ CPU usage
+- ✅ Response time
+
+### Database Health Checks:
+- ✅ Connection active
+- ✅ Can read data
+- ✅ Can write data (careful!)
+- ✅ Database file size
+
+### Application Health Checks:
+- ✅ Critical routes working
+- ✅ Authentication working
+- ✅ File uploads working
+- ✅ No critical errors in logs
+
+---
+
+## 6. Alert Escalation
+
+### Level 1: Single Failure
+- Action: Log only
+- No alert sent
+
+### Level 2: 2-3 Consecutive Failures
+- Action: Send email alert
+- Priority: Medium
+
+### Level 3: 5+ Consecutive Failures
+- Action: Send SMS + email
+- Priority: High
+
+### Level 4: Down for 30+ minutes
+- Action: SMS + email + call
+- Priority: Critical
+
+---
+
+## 7. Response Checklist
+
+When you receive a DOWN alert:
+
+1. **Check Railway dashboard**
+   - Is the app running?
+   - Any error logs?
+   - Memory/CPU spikes?
+
+2. **Check health endpoint directly**
+   - Open `https://your-app.up.railway.app/health` in browser
+   - What error do you see?
+
+3. **Check database**
+   - Can you connect?
+   - Is database file corrupted?
+
+4. **Check recent changes**
+   - Did you deploy recently?
+   - Any code changes?
+
+5. **Restart if needed**
+   - Railway: Trigger redeploy
+   - Or: Push dummy commit to trigger deploy
+
+6. **Restore from backup** (if database issue)
+   - Follow backup restore procedure
+
+7. **Document the incident**
+   - What happened?
+   - What was the fix?
+   - How to prevent in future?
+
+---
+
+## 8. Monitoring Metrics to Track
+
+### Response Time
+```javascript
+app.use((req, res, next) => {
+  const start = Date.now();
+  
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    
+    if (duration > 1000) {
+      logger.WARN('Slow request', {
+        path: req.path,
+        method: req.method,
+        duration: duration + 'ms'
+      });
+    }
+  });
+  
+  next();
+});
+```
+
+### Error Rate
+```javascript
+let totalRequests = 0;
+let errorRequests = 0;
+
+app.use((req, res, next) => {
+  totalRequests++;
+  
+  res.on('finish', () => {
+    if (res.statusCode >= 500) {
+      errorRequests++;
+    }
+    
+    const errorRate = (errorRequests / totalRequests) * 100;
+    
+    if (errorRate > 5) {
+      logger.ERROR('High error rate detected', {
+        errorRate: errorRate.toFixed(2) + '%',
+        errors: errorRequests,
+        total: totalRequests
+      });
+    }
+  });
+  
+  next();
+});
+```
+
+---
+
+## Complete Monitoring Setup
+
+### Step 1: Add Health Endpoint
+```javascript
+app.get('/health', (req, res) => { /* ... */ });
+```
+
+### Step 2: Deploy to Railway
+```bash
+git add .
+git commit -m "Add health check"
+git push
+```
+
+### Step 3: Setup UptimeRobot
+- Create monitor for `/health` endpoint
+- Set 5-minute interval
+- Add email alert
+
+### Step 4: Test
+- Intentionally break your app
+- Wait for alert
+- Fix and verify
+
+### Step 5: Document
+- Create runbook for alerts
+- List common issues and fixes
+- Share with team
+
+---
+
+## Monitoring Checklist
+
+- ✅ `/health` endpoint created
+- ✅ Returns 200 when healthy, 503 when not
+- ✅ Checks server, database, memory
+- ✅ UptimeRobot monitor configured
+- ✅ Email alerts enabled
+- ✅ Tested by breaking app
+- ✅ Railway metrics reviewed
+- ✅ Response procedures documented
+- ✅ Monthly test scheduled

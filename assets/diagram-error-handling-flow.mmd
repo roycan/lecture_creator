@@ -1,0 +1,105 @@
+```mermaid
+flowchart TD
+    A[Request Arrives] --> B{Try Block}
+    B -->|Success| C[Process Request]
+    C --> D[Send Response]
+    
+    B -->|Error Thrown| E{Catch Block}
+    E --> F[Log Error Details]
+    F --> G{Error Type?}
+    
+    G -->|404 Not Found| H[404 Handler]
+    G -->|Validation Error| I[400 Bad Request]
+    G -->|Database Error| J[500 Server Error]
+    G -->|Auth Error| K[401 Unauthorized]
+    
+    H --> L[Render error.ejs]
+    I --> L
+    J --> L
+    K --> L
+    
+    L --> M{NODE_ENV?}
+    M -->|development| N[Show Stack Trace]
+    M -->|production| O[Hide Technical Details]
+    
+    N --> P[Send Error Page]
+    O --> P
+    
+    style B fill:#e1f5ff
+    style E fill:#ffe1e1
+    style L fill:#fff4e1
+    style P fill:#e1ffe1
+```
+
+# Error Handling Flow Diagram
+
+## How Express Handles Errors
+
+### 1. Try-Catch Pattern
+```javascript
+app.post('/residents/add', (req, res) => {
+  try {
+    // Try to process request
+    const result = db.prepare(
+      'INSERT INTO residents VALUES (?, ?)'
+    ).run(firstName, lastName);
+    
+    res.redirect('/residents');
+  } catch (error) {
+    // If error occurs, catch it
+    next(error);  // Pass to error middleware
+  }
+});
+```
+
+### 2. Error Middleware
+```javascript
+app.use((err, req, res, next) => {
+  // Log the error
+  logger.ERROR('Request error', {
+    error: err.message,
+    path: req.path
+  });
+  
+  // Determine error type
+  let statusCode = 500;
+  if (err.name === 'ValidationError') statusCode = 400;
+  if (err.code === 'SQLITE_CONSTRAINT') statusCode = 409;
+  
+  // Render error page
+  res.status(statusCode).render('error', {
+    message: 'May problema sa system',
+    debug: process.env.NODE_ENV === 'development' ? err.stack : null
+  });
+});
+```
+
+### 3. 404 Handler (Before Error Middleware)
+```javascript
+app.use((req, res) => {
+  res.status(404).render('error-404', {
+    path: req.path
+  });
+});
+```
+
+## Error Types
+
+| Status Code | Error Type | When to Use |
+|-------------|------------|-------------|
+| 400 | Bad Request | Invalid input data |
+| 401 | Unauthorized | Not logged in |
+| 403 | Forbidden | Logged in but no permission |
+| 404 | Not Found | Page doesn't exist |
+| 409 | Conflict | Duplicate entry |
+| 500 | Server Error | Database or system error |
+
+## Key Points
+
+1. **Always use try-catch** for database operations
+2. **Log errors** with context (user, path, time)
+3. **Call next(error)** to pass to error middleware
+4. **Show stack traces** only in development
+5. **User-friendly messages** in production
+6. **404 handler** goes BEFORE error middleware
+7. **Error middleware** goes LAST in app.js

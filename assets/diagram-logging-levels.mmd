@@ -1,0 +1,235 @@
+```mermaid
+flowchart TD
+    A[Event Occurs] --> B{What Severity?}
+    
+    B -->|Detailed Info| C[DEBUG Level]
+    B -->|Normal Action| D[INFO Level]
+    B -->|Warning Sign| E[WARN Level]
+    B -->|Error Occurred| F[ERROR Level]
+    B -->|Critical Failure| G[FATAL Level]
+    
+    C --> H{NODE_ENV?}
+    D --> I[Always Log]
+    E --> I
+    F --> I
+    G --> I
+    
+    H -->|development| I
+    H -->|production| J[Skip DEBUG]
+    
+    I --> K[Write to File]
+    J --> K
+    
+    K --> L{Log Level}
+    L -->|DEBUG/INFO| M[combined.log]
+    L -->|ERROR/FATAL| N[error.log]
+    L -->|ERROR/FATAL| M
+    
+    style C fill:#e1f5ff
+    style D fill:#e1ffe1
+    style E fill:#fff4e1
+    style F fill:#ffe1e1
+    style G fill:#ff4444,color:#fff
+```
+
+# Winston Log Levels Guide
+
+## When to Use Each Level
+
+### 1. DEBUG (Level 0)
+**Use for:** Detailed information for debugging
+**Examples:**
+```javascript
+logger.DEBUG('SQL query executed', {
+  query: 'SELECT * FROM residents WHERE id = ?',
+  params: [42],
+  duration: '15ms'
+});
+
+logger.DEBUG('Session data', {
+  sessionId: req.sessionID,
+  userId: req.session.userId
+});
+```
+
+### 2. INFO (Level 1)
+**Use for:** General informational messages
+**Examples:**
+```javascript
+logger.INFO('User logged in', {
+  userId: 5,
+  username: 'juan',
+  ip: '192.168.1.1'
+});
+
+logger.INFO('Certificate issued', {
+  certNumber: 'CERT-001',
+  residentId: 42,
+  type: 'Barangay Clearance'
+});
+```
+
+### 3. WARN (Level 2)
+**Use for:** Warning messages (not errors, but concerning)
+**Examples:**
+```javascript
+logger.WARN('Login failed', {
+  username: 'juan',
+  reason: 'wrong password',
+  attemptCount: 3
+});
+
+logger.WARN('Slow query detected', {
+  query: 'SELECT * FROM residents',
+  duration: '1500ms',
+  threshold: '1000ms'
+});
+```
+
+### 4. ERROR (Level 3)
+**Use for:** Error occurred but app continues
+**Examples:**
+```javascript
+logger.ERROR('Database query failed', {
+  error: err.message,
+  query: 'INSERT INTO residents...',
+  userId: req.session.userId
+});
+
+logger.ERROR('Email sending failed', {
+  error: err.message,
+  recipient: 'admin@barangay.gov.ph'
+});
+```
+
+### 5. FATAL (Level 4)
+**Use for:** Critical errors that may crash the app
+**Examples:**
+```javascript
+logger.FATAL('Database connection lost', {
+  error: err.message,
+  reconnectAttempts: 3
+});
+
+logger.FATAL('Uncaught exception', {
+  error: err.message,
+  stack: err.stack
+});
+```
+
+## Log Level Visibility
+
+| Level | Development | Production |
+|-------|-------------|------------|
+| DEBUG | ✅ Show | ❌ Hide |
+| INFO | ✅ Show | ✅ Show |
+| WARN | ✅ Show | ✅ Show |
+| ERROR | ✅ Show | ✅ Show |
+| FATAL | ✅ Show | ✅ Show |
+
+## Configuration
+
+```javascript
+// config/logger.js
+const logger = winston.createLogger({
+  levels: {
+    DEBUG: 0,
+    INFO: 1,
+    WARN: 2,
+    ERROR: 3,
+    FATAL: 4
+  },
+  transports: [
+    // All logs go to combined.log
+    new winston.transports.File({
+      filename: 'logs/combined.log',
+      level: 'DEBUG'
+    }),
+    
+    // Only errors go to error.log
+    new winston.transports.File({
+      filename: 'logs/error.log',
+      level: 'ERROR'
+    })
+  ]
+});
+
+// Console output in development only
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple()
+  }));
+}
+```
+
+## What to LOG vs NOT LOG
+
+### ✅ DO LOG:
+- User actions (login, add, edit, delete)
+- System events (startup, shutdown)
+- Errors with context
+- Performance metrics (slow queries)
+- Security events (failed logins)
+- Database operations
+
+### ❌ NEVER LOG:
+- Passwords (plain or hashed)
+- API keys
+- Database credentials
+- JWT tokens
+- Credit card numbers
+- Session secrets
+- Private personal information
+
+## Example: Complete Route with Logging
+
+```javascript
+app.post('/residents/add', (req, res) => {
+  const { firstName, lastName, age } = req.body;
+  
+  logger.DEBUG('Add resident attempt', {
+    firstName, lastName, age,
+    userId: req.session.userId
+  });
+  
+  try {
+    // Validation
+    if (!firstName || !lastName) {
+      logger.WARN('Validation failed - missing name', {
+        firstName: !!firstName,
+        lastName: !!lastName,
+        userId: req.session.userId
+      });
+      return res.render('residents', {
+        error: 'Name is required'
+      });
+    }
+    
+    // Insert
+    const result = db.prepare(
+      'INSERT INTO residents (firstName, lastName, age) VALUES (?, ?, ?)'
+    ).run(firstName, lastName, age);
+    
+    logger.INFO('Resident added successfully', {
+      residentId: result.lastInsertRowid,
+      firstName: firstName,
+      lastName: lastName,
+      addedBy: req.session.userId
+    });
+    
+    res.redirect('/residents');
+    
+  } catch (error) {
+    logger.ERROR('Failed to add resident', {
+      error: error.message,
+      firstName: firstName,
+      lastName: lastName,
+      userId: req.session.userId
+    });
+    
+    res.render('residents', {
+      error: 'Failed to add resident'
+    });
+  }
+});
+```

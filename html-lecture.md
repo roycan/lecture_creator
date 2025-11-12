@@ -99,6 +99,11 @@ All of this structure is HTML!
 </html>
 ```
 
+### **Visual Guide: HTML Document Structure**
+
+![HTML Document Structure](diagrams/html/document-structure.png)
+*Figure 1: Complete HTML5 document structure showing DOCTYPE, html, head, and body sections*
+
 ### **Understanding Each Part**
 
 #### **1. `<!DOCTYPE html>`**
@@ -129,6 +134,11 @@ All of this structure is HTML!
 <!-- Use comments to explain your code -->
 <!-- Useful for notes and reminders -->
 ```
+
+### **Visual Guide: HTML Attribute Syntax**
+
+![HTML Attribute Syntax](diagrams/html/attribute-syntax.png)
+*Figure 2: Anatomy of HTML tags and attributes - understanding opening tags, closing tags, and attribute syntax*
 
 **🎯 Try It:** Basic Structure
 - Open `assets/html-structure.html` in your browser
@@ -161,6 +171,11 @@ All of this structure is HTML!
 <footer>Bottom of page</footer>
 ```
 ✅ Clear meaning! Anyone can understand structure.
+
+### **Visual Guide: Semantic Page Layout**
+
+![Semantic Layout](diagrams/html/semantic-layout.png)
+*Figure 3: Modern HTML5 semantic layout showing header, nav, main, article, aside, and footer elements*
 
 ### **HTML5 Semantic Elements**
 
@@ -299,6 +314,11 @@ All of this structure is HTML!
 <h5>Smaller heading</h5>
 <h6>Smallest heading</h6>
 ```
+
+### **Visual Guide: Heading Hierarchy**
+
+![Heading Hierarchy](diagrams/html/heading-hierarchy.png)
+*Figure 4: Proper heading hierarchy showing h1 through h6 levels and nesting rules*
 
 **Rules:**
 - ✅ Use **ONE** `<h1>` per page (main title)
@@ -463,6 +483,11 @@ All of this structure is HTML!
 </a>
 ```
 
+### **Visual Guide: Link Types**
+
+![Link Types](diagrams/html/link-types.png)
+*Figure 5: Different types of HTML links - external, internal, anchor, email, and phone links*
+
 ### **Images: `<img>` Tag**
 
 #### **Basic Image:**
@@ -546,6 +571,11 @@ Forms are how users interact with websites:
 - Registration
 - Search boxes
 - Order forms
+
+### **Visual Guide: Form Structure**
+
+![Form Structure](diagrams/html/form-structure.png)
+*Figure 6: Complete HTML form structure showing form element, labels, inputs, and submit button*
 
 ### **Basic Form Structure**
 
@@ -739,6 +769,11 @@ Tables organize data in rows and columns:
 - Schedules
 - Reports
 - Comparison charts
+
+### **Visual Guide: Table Structure**
+
+![Table Structure](diagrams/html/table-structure.png)
+*Figure 7: HTML table anatomy showing table, thead, tbody, tr, th, and td elements*
 
 ### **Basic Table Structure**
 

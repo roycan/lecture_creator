@@ -1,6 +1,6 @@
 ┌─────────────────────────────────────────────────────────────┐
-│              💨 SMOKE TEST CHECKLIST                         │
-│              (2-5 Minute Sanity Check)                       │
+│              💨 SMOKE TEST CHECKLIST                        │
+│              (2-5 Minute Sanity Check)                      │
 └─────────────────────────────────────────────────────────────┘
 
 🎯 Purpose: Quick check to see if the system is ALIVE
@@ -8,7 +8,7 @@
 📅 When: Before client demos, after deployments, Monday mornings
 
 ┌─────────────────────────────────────────────────────────────┐
-│               🔥 CRITICAL FEATURES ONLY                      │
+│               🔥 CRITICAL FEATURES ONLY                     │
 └─────────────────────────────────────────────────────────────┘
 
 ❗ If ANY of these fail → Don't show to client yet
@@ -48,7 +48,7 @@
 ❌ Any Fail → Fix before showing client
 
 ┌─────────────────────────────────────────────────────────────┐
-│             🎯 WHAT SMOKE TESTS ARE NOT                      │
+│             🎯 WHAT SMOKE TESTS ARE NOT                     │
 └─────────────────────────────────────────────────────────────┘
 
 ❌ NOT comprehensive testing (that takes hours)
@@ -59,7 +59,7 @@
 ✅ Smoke tests just verify: "Is the system ALIVE and BREATHING?"
 
 ┌─────────────────────────────────────────────────────────────┐
-│              📝 WHEN TO RUN SMOKE TESTS                      │
+│              📝 WHEN TO RUN SMOKE TESTS                     │
 └─────────────────────────────────────────────────────────────┘
 
 ✅ Before every client demo (5 min before meeting)
@@ -69,7 +69,7 @@
 ✅ Before submitting to teacher
 
 ┌─────────────────────────────────────────────────────────────┐
-│           🚨 WHAT TO DO IF SMOKE TEST FAILS                  │
+│           🚨 WHAT TO DO IF SMOKE TEST FAILS                 │
 └─────────────────────────────────────────────────────────────┘
 
 1. DON'T PANIC (but don't ignore it)
@@ -81,7 +81,7 @@
 7. Once all pass → Schedule new demo
 
 ┌─────────────────────────────────────────────────────────────┐
-│                  💡 PRO TIP                                  │
+│                  💡 PRO TIP                                 │
 └─────────────────────────────────────────────────────────────┘
 
 Create a smoke test checklist for EACH project you build.

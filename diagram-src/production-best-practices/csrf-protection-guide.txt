@@ -1,0 +1,231 @@
+🔐 CSRF ATTACK PREVENTION
+====================================
+
+SCENARIO: Cross-Site Request Forgery Attack
+-------------------------------------------
+
+WITHOUT CSRF PROTECTION ❌
+--------------------------
+
+1. User logs into Barangay Admin
+   ├─ Browser stores session cookie
+   └─ Cookie sent automatically with ALL requests
+
+2. User visits malicious website (evil.com)
+   └─ While STILL logged into Barangay Admin!
+
+3. Malicious website contains hidden form:
+   ┌──────────────────────────────────────┐
+   │ <form action="https://barangay.com/  │
+   │        residents/delete/123"         │
+   │        method="POST">                │
+   │   <input type="hidden" name="id"     │
+   │          value="123">                │
+   │   <script>                           │
+   │     // Auto-submit form!             │
+   │     document.forms[0].submit();      │
+   │   </script>                          │
+   │ </form>                              │
+   └──────────────────────────────────────┘
+
+4. Browser sends request to barangay.com
+   ├─ Includes session cookie (automatic!)
+   ├─ Server thinks it's legitimate request
+   └─ Resident #123 DELETED! 😱
+
+RESULT: Attacker deleted resident without authorization!
+
+
+WITH CSRF PROTECTION ✅
+------------------------
+
+1. Server generates unique CSRF token for each session
+   └─ Token: "abc123xyz789random"
+
+2. Token embedded in ALL forms:
+   ┌──────────────────────────────────────┐
+   │ <form action="/residents/delete/123" │
+   │        method="POST">                │
+   │   <!-- CSRF Token (required!) -->    │
+   │   <input type="hidden" name="_csrf"  │
+   │          value="abc123xyz789random"> │
+   │   <button>Delete</button>            │
+   │ </form>                              │
+   └──────────────────────────────────────┘
+
+3. Attacker's website tries same attack:
+   ┌──────────────────────────────────────┐
+   │ <form action="https://barangay.com/  │
+   │        residents/delete/123"         │
+   │        method="POST">                │
+   │   <!-- Attacker doesn't have token! -->
+   │   <input type="hidden" name="_csrf"  │
+   │          value="WRONG_OR_MISSING">   │
+   │ </form>                              │
+   └──────────────────────────────────────┘
+
+4. Server checks CSRF token:
+   ├─ Expected: "abc123xyz789random"
+   ├─ Received: "WRONG_OR_MISSING"
+   ├─ Tokens don't match!
+   └─ 🚫 REQUEST BLOCKED! (403 Forbidden)
+
+5. Resident NOT deleted
+   └─ Attack prevented! ✅
+
+RESULT: Only forms from YOUR website can modify data!
+
+
+HOW TO IMPLEMENT (Express)
+---------------------------
+
+STEP 1: Install package
+├─ npm install csrf-sync
+
+STEP 2: Setup middleware
+┌────────────────────────────────────────────────┐
+│ const { csrfSync } = require('csrf-sync');     │
+│                                                │
+│ const { generateToken,                         │
+│         csrfSynchronisedProtection } =         │
+│   csrfSync();                                  │
+│                                                │
+│ // Apply protection to ALL POST routes         │
+│ app.use(csrfSynchronisedProtection);           │
+│                                                │
+│ // Make token available to views               │
+│ app.use((req, res, next) => {                  │
+│   res.locals.csrfToken = generateToken(req);   │
+│   next();                                      │
+│ });                                            │
+└────────────────────────────────────────────────┘
+
+STEP 3: Add token to EVERY form
+┌────────────────────────────────────────────────┐
+│ <form method="POST" action="/residents/add">   │
+│   <!-- CSRF Token (REQUIRED!) -->              │
+│   <input type="hidden" name="_csrf"            │
+│          value="<%= csrfToken %>">             │
+│                                                │
+│   <!-- Your form fields -->                    │
+│   <input type="text" name="name">              │
+│   <button type="submit">Submit</button>        │
+│ </form>                                        │
+└────────────────────────────────────────────────┘
+
+STEP 4: Middleware automatically validates!
+├─ On POST/PUT/DELETE requests
+├─ Checks _csrf field matches session token
+├─ If valid → Allow request
+└─ If invalid → Block with 403 error
+
+
+WHEN TO USE CSRF PROTECTION
+----------------------------
+
+✅ ALWAYS use for:
+├─ Forms that modify data (POST, PUT, DELETE)
+├─ Admin panels
+├─ User account management
+├─ Financial transactions
+└─ Any destructive action
+
+❌ NOT needed for:
+├─ GET requests (read-only)
+├─ Public APIs (use API keys instead)
+└─ Pure static pages
+
+
+REAL PHILIPPINE EXAMPLES
+-------------------------
+
+SCENARIO 1: Barangay Resident Directory
+├─ Forms need CSRF:
+│   ├─ Add resident
+│   ├─ Update resident info
+│   ├─ Delete resident
+│   └─ Issue certificate
+└─ Prevents: Unauthorized deletion/modification
+
+SCENARIO 2: Sari-Sari Store Inventory
+├─ Forms need CSRF:
+│   ├─ Add product
+│   ├─ Update stock
+│   ├─ Record sale
+│   └─ Generate report
+└─ Prevents: Fake sales, inventory tampering
+
+SCENARIO 3: School Enrollment System
+├─ Forms need CSRF:
+│   ├─ Enroll student
+│   ├─ Update grades
+│   ├─ Drop course
+│   └─ Generate transcript
+└─ Prevents: Unauthorized enrollment changes
+
+
+COMMON MISTAKES
+----------------
+
+❌ MISTAKE 1: Forgetting token in forms
+├─ Result: All forms break (403 errors)
+└─ Fix: Add <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+❌ MISTAKE 2: Applying to GET requests
+├─ Result: Navigation breaks (can't view pages)
+└─ Fix: CSRF only for POST/PUT/DELETE
+
+❌ MISTAKE 3: Token in URL (query params)
+├─ Result: Token leaked in logs/history
+└─ Fix: Use hidden form field, NOT URL
+
+❌ MISTAKE 4: Not setting up session
+├─ Result: CSRF won't work (needs session storage)
+└─ Fix: app.use(session({...})) BEFORE CSRF middleware
+
+
+TESTING CSRF PROTECTION
+------------------------
+
+TEST 1: Valid form submission
+├─ Fill form on your site
+├─ Submit
+└─ ✅ Should work
+
+TEST 2: Form without token
+├─ Remove <input name="_csrf"> from form
+├─ Submit
+└─ 🚫 Should get 403 Forbidden
+
+TEST 3: Form with wrong token
+├─ Change token value to "wrong_token"
+├─ Submit
+└─ 🚫 Should get 403 Forbidden
+
+TEST 4: External site attack (simulated)
+├─ Create form on different domain
+├─ Try to submit to your app
+└─ 🚫 Should fail (no valid token)
+
+
+SUMMARY
+-------
+
+CSRF Protection = Form Security Token
+
+Without it:
+├─ Attackers can forge requests
+├─ Data can be modified/deleted
+└─ Users are vulnerable
+
+With it:
+├─ Only YOUR forms work
+├─ External sites can't forge requests
+└─ Data is protected
+
+Implementation:
+├─ 3 lines of setup
+├─ 1 line per form
+└─ Automatic protection
+
+ALWAYS USE CSRF PROTECTION FOR PRODUCTION APPS! 🛡️

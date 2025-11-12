@@ -1,0 +1,228 @@
+┌─────────────────────────────────────────────────────────────┐
+│        🚨 BUG SEVERITY CLASSIFICATION GUIDE                 │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│ 🚨 CRITICAL - Fix IMMEDIATELY (Same Day)                    │
+└─────────────────────────────────────────────────────────────┘
+
+Definition: System unusable, blocks ALL work
+
+Examples:
+❌ Cannot login (even with correct password)
+❌ Database connection fails (can't save anything)
+❌ Main feature completely broken (e.g., can't record sales)
+❌ System crashes on load
+❌ Data loss (records disappearing)
+❌ Security breach (anyone can see admin panel)
+
+Impact: Client cannot use system AT ALL
+
+Timeline: Fix within 2-4 hours, cancel demo if needed
+
+Client Communication:
+"Found critical issue that blocks all functionality. 
+Need 4 hours to fix. Can we reschedule demo to tomorrow?"
+
+┌─────────────────────────────────────────────────────────────┐
+│ ⚠️ HIGH - Fix SOON (Within 1-2 Days)                        │
+└─────────────────────────────────────────────────────────────┘
+
+Definition: Major feature broken, has workaround
+
+Examples:
+⚠️ Search doesn't work (but can scroll through list)
+⚠️ Export button broken (but can copy-paste data)
+⚠️ Edit function fails (but can delete and re-add)
+⚠️ Reports show wrong totals
+⚠️ Validation missing (accepts invalid data)
+⚠️ Mobile layout broken (but works on desktop)
+
+Impact: Client can work but it's frustrating
+
+Timeline: Fix before final delivery (1-2 days)
+
+Client Communication:
+"Feature X has an issue. You can use workaround Y 
+for now. Will fix by tomorrow."
+
+┌─────────────────────────────────────────────────────────────┐
+│ 📝 MEDIUM - Fix When Convenient (Within 1 Week)             │
+└─────────────────────────────────────────────────────────────┘
+
+Definition: Minor feature broken, doesn't block work
+
+Examples:
+📝 Filter button doesn't work
+📝 Sort order wrong
+📝 Minor calculation error (off by ₱1)
+📝 UI element misaligned
+📝 Slow loading (5 seconds instead of 2)
+📝 Help text missing or wrong
+
+Impact: Annoying but client can still work
+
+Timeline: Fix in next update (1 week)
+
+Client Communication:
+"Noted this issue. Will include in next week's 
+update along with other improvements."
+
+┌─────────────────────────────────────────────────────────────┐
+│ ✨ LOW - Fix Eventually (Future Update)                     │
+└─────────────────────────────────────────────────────────────┘
+
+Definition: Cosmetic issues, no functional impact
+
+Examples:
+✨ Typo in label ("Sumbit" instead of "Submit")
+✨ Button color not exactly right
+✨ Icon misaligned by 2 pixels
+✨ Hover effect missing
+✨ Font size slightly off
+✨ Minor UI inconsistency
+
+Impact: Zero impact on work
+
+Timeline: Fix when you have time (or never)
+
+Client Communication:
+"Good catch! Will polish this in a future update."
+
+┌─────────────────────────────────────────────────────────────┐
+│              🎯 QUICK CLASSIFICATION QUIZ                   │
+└─────────────────────────────────────────────────────────────┘
+
+Ask these questions:
+
+1️⃣ Can client use system?
+   NO → CRITICAL
+   YES → Continue...
+
+2️⃣ Does it break a major feature?
+   YES → HIGH
+   NO → Continue...
+
+3️⃣ Does it affect work quality/speed?
+   YES → MEDIUM
+   NO → Continue...
+
+4️⃣ Is it just cosmetic?
+   YES → LOW
+
+┌─────────────────────────────────────────────────────────────┐
+│           📊 SEVERITY DECISION FLOWCHART                    │
+└─────────────────────────────────────────────────────────────┘
+
+Bug Reported
+     ↓
+Can login? ──NO──→ CRITICAL
+     ↓ YES
+     
+Can use main features? ──NO──→ CRITICAL
+     ↓ YES
+     
+Is important feature broken? ──YES──→ HIGH
+     ↓ NO
+     
+Does it slow down work? ──YES──→ MEDIUM
+     ↓ NO
+     
+Is it just visual? ──YES──→ LOW
+
+┌─────────────────────────────────────────────────────────────┐
+│        💡 REAL EXAMPLES FROM STUDENT PROJECTS               │
+└─────────────────────────────────────────────────────────────┘
+
+CRITICAL Examples:
+🚨 Sari-sari store: "Cannot record ANY sales"
+   → Fix: 2 hours (bug in form validation)
+
+🚨 Barangay: "Login button does nothing"
+   → Fix: 1 hour (JavaScript file not loaded)
+
+HIGH Examples:
+⚠️ Appointment: "Cannot book future dates"
+   → Workaround: Book today, edit date manually
+   → Fix: 3 hours (date comparison logic)
+
+⚠️ Store: "Search returns wrong products"
+   → Workaround: Scroll through all products
+   → Fix: 2 hours (search query bug)
+
+MEDIUM Examples:
+📝 Barangay: "Report shows 100 residents, actually 102"
+   → Still usable, minor count issue
+   → Fix: 1 hour (counting query)
+
+📝 Store: "Stock alert shows at 5, should show at 10"
+   → Still warns, just earlier
+   → Fix: 30 minutes (change threshold)
+
+LOW Examples:
+✨ Appointment: "Calendar header is blue, should be green"
+   → Zero functional impact
+   → Fix: 5 minutes (CSS change)
+
+✨ Store: "Button says 'Sumbit' not 'Submit'"
+   → Everyone understands typo
+   → Fix: 1 minute (text change)
+
+┌─────────────────────────────────────────────────────────────┐
+│           ⚖️ BALANCING FIXES VS DEADLINES                   │
+└─────────────────────────────────────────────────────────────┘
+
+Scenario: Demo in 2 days, found 5 bugs
+
+Bug 1: Cannot login (CRITICAL)
+Bug 2: Search broken (HIGH)
+Bug 3: Sort doesn't work (MEDIUM)
+Bug 4: Slow loading (MEDIUM)
+Bug 5: Typo in title (LOW)
+
+Fix Priority:
+1. Bug 1 (CRITICAL) → Must fix today
+2. Bug 2 (HIGH) → Fix tonight
+3. Bug 3 (MEDIUM) → Fix if time, mention in demo
+4. Bug 4 (MEDIUM) → Note for future update
+5. Bug 5 (LOW) → Ignore for now
+
+Result: Demo with working core features, minor known issues
+
+┌─────────────────────────────────────────────────────────────┐
+│        🎤 COMMUNICATING SEVERITY TO CLIENTS                 │
+└─────────────────────────────────────────────────────────────┘
+
+CRITICAL:
+"This breaks the system. Postponing demo to fix properly."
+
+HIGH:
+"This feature isn't working. Here's a workaround for now,
+fixing by tomorrow."
+
+MEDIUM:
+"This has a minor issue but doesn't block your work.
+Will fix in next week's update."
+
+LOW:
+"Good eye! This is cosmetic, will polish it when I can."
+
+┌─────────────────────────────────────────────────────────────┐
+│              🛡️ PREVENTING SEVERITY CONFUSION               │
+└─────────────────────────────────────────────────────────────┘
+
+Common Mistakes:
+
+❌ Student thinks: "Typo is critical because it looks bad"
+✅ Reality: No one cares, LOW severity
+
+❌ Client thinks: "Button color is critical!"
+✅ Reality: Cosmetic only, LOW severity
+
+❌ Student thinks: "Search bug is just medium"
+✅ Reality: Blocks major workflow, HIGH severity
+
+❌ Client thinks: "Everything is critical!"
+✅ Reality: Prioritize together, educate on severity
+
+Key: Focus on IMPACT, not how embarrassing it is!

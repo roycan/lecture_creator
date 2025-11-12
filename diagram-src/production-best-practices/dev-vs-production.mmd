@@ -1,0 +1,22 @@
+graph TB
+    subgraph dev["💻 Development Environment"]
+        devCode["Your Laptop<br/>- Fast changes<br/>- Test data<br/>- Detailed errors<br/>- Simple passwords"]
+        devDB["test-data.db<br/>(Fake residents)"]
+        devConsole["Console shows<br/>everything"]
+    end
+    
+    subgraph prod["☁️ Production Environment (Railway)"]
+        prodCode["Live Server<br/>- Real users<br/>- Real data<br/>- Security first<br/>- Strong passwords"]
+        prodDB["residents.db<br/>(Real people!)"]
+        prodLogs["Private logs<br/>(hide details)"]
+    end
+    
+    devCode -->|"Push to GitHub"| prodCode
+    devDB -.->|"NOT copied"| prodDB
+    
+    style dev fill:#e7f3ff,stroke:#3273dc
+    style prod fill:#fff3cd,stroke:#ffc107
+    style devCode fill:#fff,stroke:#3273dc
+    style prodCode fill:#fff,stroke:#dc3545
+    style devDB fill:#fff,stroke:#3273dc
+    style prodDB fill:#fff,stroke:#dc3545

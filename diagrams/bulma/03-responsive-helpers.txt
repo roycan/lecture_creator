@@ -1,5 +1,5 @@
 ┌──────────────────────────────────────────────────────────────┐
-│         RESPONSIVE HELPERS (Show/Hide Content)                │
+│         RESPONSIVE HELPERS (Show/Hide Content)               │
 └──────────────────────────────────────────────────────────────┘
 
 VISIBILITY CLASSES
@@ -114,9 +114,9 @@ EXAMPLE 3: Contact Information
 
 Mobile:                    Desktop:
 ┌──────────────┐          ┌─────────────────────────┐
-│📱 0912-345-  │          │Phone: 0912-345-6789    │
-│   6789       │          │Email: info@school...   │
-└──────────────┘          │Address: Manila, PH     │
+│📱 0912-345-  │          │Phone: 0912-345-6789     │
+│   6789       │          │Email: info@school...    │
+└──────────────┘          │Address: Manila, PH      │
                           └─────────────────────────┘
 
 

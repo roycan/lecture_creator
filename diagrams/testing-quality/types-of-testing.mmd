@@ -1,0 +1,28 @@
+graph LR
+    subgraph types["🎯 Types of Testing"]
+        Manual["👤 Manual Testing<br/>Human tests system<br/>Exploratory, UAT<br/>Time: Hours"]
+        
+        Automated["🤖 Automated Testing<br/>Code tests code<br/>Unit, Integration<br/>Time: Seconds"]
+        
+        Visual["👁️ Visual Testing<br/>Does it look right?<br/>UI, UX, Layout<br/>Time: Minutes"]
+        
+        Performance["⚡ Performance Testing<br/>Is it fast enough?<br/>Load time, Speed<br/>Time: Minutes"]
+        
+        Security["🔒 Security Testing<br/>Is it safe?<br/>SQL injection, XSS<br/>Time: Hours"]
+        
+        Usability["😊 Usability Testing<br/>Is it easy to use?<br/>User-friendly?<br/>Time: Hours"]
+    end
+    
+    Manual -->|"Grade 9 Focus"| Manual
+    Automated -->|"Advanced Topic"| Automated
+    Visual -->|"Important"| Visual
+    Performance -->|"Basic Checks"| Performance
+    Security -->|"Awareness"| Security
+    Usability -->|"UAT Covers This"| Usability
+    
+    style Manual fill:#51cf66,stroke:#37b24d,color:#fff
+    style Visual fill:#74c0fc,stroke:#1971c2,color:#000
+    style Performance fill:#ffd93d,stroke:#f08c00,color:#000
+    style Automated fill:#dee2e6,stroke:#495057,color:#000
+    style Security fill:#ffd93d,stroke:#f08c00,color:#000
+    style Usability fill:#74c0fc,stroke:#1971c2,color:#000

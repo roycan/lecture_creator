@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error Page Templates</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .template-preview {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      border: 2px solid #ddd;
+    }
+    .template-code {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 5px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+    .error-preview {
+      border: 2px dashed #dc3545;
+      padding: 30px;
+      text-align: center;
+      background: #fff;
+      margin: 15px 0;
+    }
+    .error-icon {
+      font-size: 60px;
+      margin-bottom: 10px;
+    }
+    .tab-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .tab-button {
+      padding: 10px 20px;
+      border: none;
+      background: #e0e0e0;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .tab-button.active {
+      background: #3273dc;
+      color: white;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>⚠️ Error Page Templates</h1>
+      <p><strong>For:</strong> Express apps with user-friendly error messages</p>
+      <p><strong>Philippine Context:</strong> English + Tagalog messages</p>
+
+      <!-- Tab Navigation -->
+      <div class="tab-buttons">
+        <button class="tab-button active" onclick="showTab('404')">404 Not Found</button>
+        <button class="tab-button" onclick="showTab('500')">500 Server Error</button>
+        <button class="tab-button" onclick="showTab('401')">401 Unauthorized</button>
+        <button class="tab-button" onclick="showTab('middleware')">Error Middleware</button>
+      </div>
+
+      <!-- 404 Tab -->
+      <div id="tab-404" class="tab-content active">
+        <div class="template-preview">
+          <h2>404 - Page Not Found</h2>
+          
+          <div class="error-preview">
+            <div class="error-icon">🔍</div>
+            <h1 style="color: #ffc107;">404 - Page Not Found</h1>
+            <p>Hindi makita ang page na hinahanap mo.</p>
+            <p><strong>Suggestion:</strong> Baka mali ang URL? <a href="/">Bumalik sa home</a></p>
+          </div>
+
+          <h3>EJS Template Code:</h3>
+          <div class="template-code">&lt;!-- views/error-404.ejs --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;404 - Page Not Found&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      text-align: center;
+    }
+    .error-icon { font-size: 80px; margin-bottom: 20px; }
+    h1 { color: #ffc107; }
+    .message { font-size: 18px; margin: 20px 0; }
+    .suggestion {
+      background: #fff3cd;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+    .button {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #3273dc;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="error-icon"&gt;🔍&lt;/div&gt;
+  &lt;h1&gt;404 - Page Not Found&lt;/h1&gt;
+  &lt;p class="message"&gt;Hindi makita ang page na hinahanap mo.&lt;/p&gt;
+  
+  &lt;div class="suggestion"&gt;
+    &lt;strong&gt;💡 Suggestion:&lt;/strong&gt;&lt;br&gt;
+    Baka mali ang URL? Tingnan ang address bar at subukang muli.
+  &lt;/div&gt;
+  
+  &lt;a href="/" class="button"&gt;← Bumalik sa Home&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;</div>
+
+          <h3>Express Handler:</h3>
+          <div class="template-code">// 404 handler (put BEFORE error middleware, AFTER all routes)
+app.use((req, res) => {
+  res.status(404).render('error-404', {
+    path: req.path
+  });
+});</div>
+        </div>
+      </div>
+
+      <!-- 500 Tab -->
+      <div id="tab-500" class="tab-content">
+        <div class="template-preview">
+          <h2>500 - Server Error</h2>
+          
+          <div class="error-preview">
+            <div class="error-icon">❌</div>
+            <h1 style="color: #dc3545;">500 - Server Error</h1>
+            <p>May problema sa system. Pakisubukan muli mamaya.</p>
+            <p><strong>Suggestion:</strong> Kung patuloy ang problema, kontakin ang admin.</p>
+          </div>
+
+          <h3>EJS Template Code:</h3>
+          <div class="template-code">&lt;!-- views/error-500.ejs --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;500 - Server Error&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      text-align: center;
+    }
+    .error-icon { font-size: 80px; margin-bottom: 20px; }
+    h1 { color: #dc3545; }
+    .message { font-size: 18px; margin: 20px 0; color: #333; }
+    .suggestion {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+    .contact {
+      background: #d1ecf1;
+      border: 1px solid #bee5eb;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+    .button {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #3273dc;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+    .debug {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      text-align: left;
+      font-family: monospace;
+      font-size: 12px;
+      display: &lt;%= locals.showDebug ? 'block' : 'none' %&gt;;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="error-icon"&gt;❌&lt;/div&gt;
+  &lt;h1&gt;500 - Server Error&lt;/h1&gt;
+  &lt;p class="message"&gt;
+    Pasensya na! May technical problem sa system.&lt;br&gt;
+    Please try again in a few minutes.
+  &lt;/p&gt;
+  
+  &lt;div class="suggestion"&gt;
+    &lt;strong&gt;💡 Kung patuloy ang problema:&lt;/strong&gt;&lt;br&gt;
+    • Subukang mag-refresh ng page&lt;br&gt;
+    • I-clear ang browser cache&lt;br&gt;
+    • Mag-logout at mag-login ulit&lt;br&gt;
+    • Kontakin ang admin kung hindi pa rin gumagana
+  &lt;/div&gt;
+  
+  &lt;div class="contact"&gt;
+    &lt;strong&gt;📞 Contact Admin:&lt;/strong&gt;&lt;br&gt;
+    Email: admin@barangay.gov.ph&lt;br&gt;
+    Phone: (02) 1234-5678
+  &lt;/div&gt;
+  
+  &lt;a href="/" class="button"&gt;← Bumalik sa Home&lt;/a&gt;
+  
+  &lt;% if (locals.showDebug && locals.errorDetails) { %&gt;
+    &lt;div class="debug"&gt;
+      &lt;strong&gt;Debug Info (development only):&lt;/strong&gt;&lt;br&gt;
+      &lt;%= errorDetails %&gt;
+    &lt;/div&gt;
+  &lt;% } %&gt;
+&lt;/body&gt;
+&lt;/html&gt;</div>
+
+          <h3>Express Error Middleware:</h3>
+          <div class="template-code">// Error handling middleware (put LAST)
+app.use((err, req, res, next) => {
+  // Log error
+  console.error('Error:', err);
+  
+  // Determine if we should show debug info
+  const showDebug = process.env.NODE_ENV === 'development';
+  
+  res.status(500).render('error-500', {
+    showDebug: showDebug,
+    errorDetails: showDebug ? err.stack : null
+  });
+});</div>
+        </div>
+      </div>
+
+      <!-- 401 Tab -->
+      <div id="tab-401" class="tab-content">
+        <div class="template-preview">
+          <h2>401 - Unauthorized</h2>
+          
+          <div class="error-preview">
+            <div class="error-icon">🔒</div>
+            <h1 style="color: #dc3545;">401 - Unauthorized</h1>
+            <p>Kailangan mong mag-login para makita ang page na ito.</p>
+            <p><strong>Suggestion:</strong> <a href="/login">I-click dito para mag-login</a></p>
+          </div>
+
+          <h3>EJS Template Code:</h3>
+          <div class="template-code">&lt;!-- views/error-401.ejs --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;401 - Unauthorized&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      text-align: center;
+    }
+    .error-icon { font-size: 80px; margin-bottom: 20px; }
+    h1 { color: #dc3545; }
+    .message { font-size: 18px; margin: 20px 0; }
+    .login-box {
+      background: #e7f3ff;
+      border: 2px solid #3273dc;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    .button {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #3273dc;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      margin: 10px 5px;
+    }
+    .button-secondary {
+      background: #6c757d;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="error-icon"&gt;🔒&lt;/div&gt;
+  &lt;h1&gt;401 - Hindi Ka Pa Naka-Login&lt;/h1&gt;
+  &lt;p class="message"&gt;
+    Kailangan mong mag-login para makita ang page na ito.
+  &lt;/p&gt;
+  
+  &lt;div class="login-box"&gt;
+    &lt;p&gt;&lt;strong&gt;Para sa authorized users lang ang page na ito.&lt;/strong&gt;&lt;/p&gt;
+    &lt;p&gt;Kung may account ka, mag-login muna.&lt;/p&gt;
+    &lt;a href="/login?redirect=&lt;%= locals.originalUrl || '/' %&gt;" class="button"&gt;
+      🔓 Login Na
+    &lt;/a&gt;
+  &lt;/div&gt;
+  
+  &lt;a href="/" class="button button-secondary"&gt;← Bumalik sa Home&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;</div>
+
+          <h3>Express Auth Middleware:</h3>
+          <div class="template-code">// Authentication middleware
+function requireLogin(req, res, next) {
+  if (!req.session.loggedIn) {
+    return res.status(401).render('error-401', {
+      originalUrl: req.originalUrl
+    });
+  }
+  next();
+}
+
+// Use in routes
+app.get('/admin/dashboard', requireLogin, (req, res) => {
+  res.render('admin-dashboard');
+});
+
+// Login with redirect
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  
+  if (validCredentials(username, password)) {
+    req.session.loggedIn = true;
+    
+    // Redirect to original page they wanted
+    const redirect = req.query.redirect || '/dashboard';
+    res.redirect(redirect);
+  } else {
+    res.render('login', { error: 'Invalid credentials' });
+  }
+});</div>
+        </div>
+      </div>
+
+      <!-- Middleware Tab -->
+      <div id="tab-middleware" class="tab-content">
+        <div class="template-preview">
+          <h2>Complete Error Handling Setup</h2>
+
+          <h3>1. Create Generic Error Template</h3>
+          <div class="template-code">&lt;!-- views/error.ejs - Generic error page --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;&lt;%= title || 'Error' %&gt;&lt;/title&gt;
+  &lt;link rel="stylesheet" href="/styles.css"&gt;
+  &lt;style&gt;
+    .error-container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      text-align: center;
+    }
+    .error-icon { font-size: 80px; margin-bottom: 20px; }
+    h1 { color: #dc3545; margin-bottom: 10px; }
+    .message { font-size: 18px; margin: 20px 0; color: #333; }
+    .suggestion {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+    .button {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #3273dc;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+    .debug {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 20px;
+      text-align: left;
+      font-family: monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="error-container"&gt;
+    &lt;div class="error-icon"&gt;&lt;%= icon || '⚠️' %&gt;&lt;/div&gt;
+    &lt;h1&gt;&lt;%= title || 'Error Occurred' %&gt;&lt;/h1&gt;
+    &lt;p class="message"&gt;&lt;%= message %&gt;&lt;/p&gt;
+    
+    &lt;% if (suggestion) { %&gt;
+      &lt;div class="suggestion"&gt;
+        &lt;strong&gt;💡 Suggestion:&lt;/strong&gt;&lt;br&gt;
+        &lt;%- suggestion %&gt;
+      &lt;/div&gt;
+    &lt;% } %&gt;
+    
+    &lt;a href="/" class="button"&gt;← Bumalik sa Home&lt;/a&gt;
+    
+    &lt;% if (locals.debug && locals.debugInfo) { %&gt;
+      &lt;div class="debug"&gt;
+        &lt;strong&gt;Debug Info (development only):&lt;/strong&gt;&lt;br&gt;
+        &lt;%= debugInfo %&gt;
+      &lt;/div&gt;
+    &lt;% } %&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</div>
+
+          <h3>2. Complete app.js Setup</h3>
+          <div class="template-code">// app.js - Complete error handling setup
+require('dotenv').config();
+const express = require('express');
+const app = express();
+
+// ... other middleware ...
+
+// Your routes here
+app.get('/', (req, res) => {
+  res.render('index');
+});
+
+// 404 Handler (put BEFORE error middleware, AFTER all routes)
+app.use((req, res) => {
+  res.status(404).render('error', {
+    icon: '🔍',
+    title: '404 - Page Not Found',
+    message: 'Hindi makita ang page na hinahanap mo.',
+    suggestion: 'Baka mali ang URL? <a href="/">Bumalik sa home</a>'
+  });
+});
+
+// Error Middleware (put LAST)
+app.use((err, req, res, next) => {
+  // Log error details
+  console.error('❌ Error occurred:');
+  console.error('Path:', req.path);
+  console.error('Method:', req.method);
+  console.error('Error:', err.message);
+  console.error('Stack:', err.stack);
+  
+  // Determine error response
+  let statusCode = err.statusCode || 500;
+  let icon = '❌';
+  let title = 'Error';
+  let message = 'May problema sa system.';
+  let suggestion = 'Subukang muli mamaya.';
+  
+  // Customize based on error type
+  if (err.code === 'SQLITE_FULL') {
+    message = 'Puno na ang database.';
+    suggestion = 'Kontakin ang admin para linisin ang database.';
+  } else if (err.code === 'ECONNREFUSED') {
+    message = 'Hindi makonekta sa database.';
+    suggestion = 'Siguruhing tumatakbo ang database server.';
+  } else if (err.name === 'ValidationError') {
+    statusCode = 400;
+    icon = '⚠️';
+    title = 'Invalid Input';
+    message = 'May mali sa input na datos.';
+    suggestion = 'Tingnan ang error messages at subukang muli.';
+  } else if (statusCode === 401) {
+    icon = '🔒';
+    title = 'Unauthorized';
+    message = 'Kailangan mong mag-login.';
+    suggestion = '<a href="/login">Login dito</a>';
+  }
+  
+  // Send error page
+  res.status(statusCode).render('error', {
+    icon: icon,
+    title: title,
+    message: message,
+    suggestion: suggestion,
+    debug: process.env.NODE_ENV === 'development',
+    debugInfo: err.stack
+  });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});</div>
+
+          <h3>3. Throwing Custom Errors in Routes</h3>
+          <div class="template-code">// Example route with custom errors
+app.post('/residents/add', (req, res, next) => {
+  try {
+    const { firstName, lastName, age } = req.body;
+    
+    // Validation
+    if (!firstName || !lastName) {
+      const error = new Error('First name and last name required');
+      error.statusCode = 400;
+      error.name = 'ValidationError';
+      throw error;
+    }
+    
+    if (age < 0 || age > 120) {
+      const error = new Error('Age must be 0-120');
+      error.statusCode = 400;
+      error.name = 'ValidationError';
+      throw error;
+    }
+    
+    // Insert to database
+    const result = db.prepare(
+      'INSERT INTO residents (firstName, lastName, age) VALUES (?, ?, ?)'
+    ).run(firstName, lastName, age);
+    
+    res.redirect('/residents');
+    
+  } catch (error) {
+    next(error);  // Pass to error middleware
+  }
+});</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 40px; padding: 20px; background: #d4edda; border-radius: 8px;">
+        <h3>✅ Error Handling Checklist</h3>
+        <ul style="text-align: left;">
+          <li>Create error.ejs template in views/</li>
+          <li>Add 404 handler before error middleware</li>
+          <li>Add error middleware at end of app.js</li>
+          <li>Use try-catch in routes that access database</li>
+          <li>Call next(error) to pass errors to middleware</li>
+          <li>Log errors with context (path, method, user)</li>
+          <li>Show debug info only in development</li>
+          <li>Test all error scenarios</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Remove active from all buttons
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // Show selected tab
+      document.getElementById('tab-' + tabName).classList.add('active');
+      
+      // Mark button as active
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

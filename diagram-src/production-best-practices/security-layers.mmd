@@ -1,0 +1,41 @@
+graph TB
+    request["🌐 HTTP Request<br/>(from user's browser)"]
+    
+    subgraph layers["🛡️ Security Layers (Order Matters!)"]
+        helmet["1️⃣ Helmet<br/>Add security headers<br/>Block common attacks"]
+        rateLimit["2️⃣ Rate Limiter<br/>Check request count<br/>Block if too many"]
+        session["3️⃣ Session<br/>Load user session<br/>Track login state"]
+        csrf["4️⃣ CSRF Check<br/>Verify form token<br/>Reject if missing"]
+        validation["5️⃣ Input Validation<br/>Sanitize user data<br/>Reject bad input"]
+        auth["6️⃣ Auth Check<br/>Is user logged in?<br/>Has permission?"]
+    end
+    
+    route["✅ Your Route Handler<br/>Safe to process request!"]
+    response["📤 Response to user"]
+    
+    blocked["🚫 Blocked!<br/>Error response<br/>Attack prevented"]
+    
+    request --> helmet
+    helmet --> rateLimit
+    rateLimit -->|"Too many requests?"| blocked
+    rateLimit -->|"OK"| session
+    session --> csrf
+    csrf -->|"Invalid token?"| blocked
+    csrf -->|"Valid"| validation
+    validation -->|"Bad input?"| blocked
+    validation -->|"Clean"| auth
+    auth -->|"Not authorized?"| blocked
+    auth -->|"Authorized"| route
+    route --> response
+    
+    style request fill:#e7f3ff,stroke:#3273dc
+    style layers fill:#f0f0f0,stroke:#666
+    style helmet fill:#fff,stroke:#6c757d
+    style rateLimit fill:#fff,stroke:#ffc107
+    style session fill:#fff,stroke:#17a2b8
+    style csrf fill:#fff,stroke:#28a745
+    style validation fill:#fff,stroke:#007bff
+    style auth fill:#fff,stroke:#6610f2
+    style route fill:#d4edda,stroke:#28a745
+    style response fill:#d4edda,stroke:#28a745
+    style blocked fill:#f8d7da,stroke:#dc3545

@@ -1,0 +1,31 @@
+graph LR
+    subgraph wrong["❌ WRONG: Secrets in Code"]
+        code1["app.js<br/>const password = '123456'"]
+        github1["GitHub<br/>(code is public!)"]
+        hacker1["😈 Hacker sees<br/>password in code"]
+        
+        code1 --> github1
+        github1 --> hacker1
+    end
+    
+    subgraph right["✅ RIGHT: Environment Variables"]
+        code2["app.js<br/>const password = process.env.PASSWORD"]
+        env["<br/>.env file<br/>PASSWORD=secure123<br/>(not in GitHub!)"]
+        gitignore[".gitignore<br/>.env"]
+        railway["☁️ Railway<br/>Environment Variables<br/>PASSWORD=secure123"]
+        
+        code2 -.->|"reads from"| env
+        env --> gitignore
+        gitignore -.->|"protects"| env
+        railway -->|"production secrets"| code2
+    end
+    
+    style wrong fill:#ffe6e6,stroke:#dc3545
+    style right fill:#d4edda,stroke:#28a745
+    style code1 fill:#fff,stroke:#dc3545
+    style github1 fill:#fff,stroke:#dc3545
+    style hacker1 fill:#fff,stroke:#dc3545
+    style code2 fill:#fff,stroke:#28a745
+    style env fill:#fff,stroke:#28a745
+    style gitignore fill:#fff,stroke:#28a745
+    style railway fill:#fff,stroke:#3273dc

@@ -1,0 +1,179 @@
+```mermaid
+flowchart TD
+    A[HTTP Request] --> B{Compression?}
+    B -->|Yes| C[Compress Response<br/>100 KB → 25 KB]
+    B -->|No| D[Send Full Size<br/>100 KB]
+    
+    C --> E{Browser Cache?}
+    D --> E
+    
+    E -->|Cached| F[Load from Cache<br/>0 seconds!]
+    E -->|Not Cached| G[Download from Server]
+    
+    G --> H{Lazy Load Images?}
+    H -->|Yes| I[Load Visible Only<br/>5 images]
+    H -->|No| J[Load All Images<br/>100 images]
+    
+    I --> K[Fast Page Load<br/>1-2 seconds]
+    J --> L[Slow Page Load<br/>10-20 seconds]
+    
+    style C fill:#d4edda
+    style F fill:#d4edda
+    style I fill:#d4edda
+    style K fill:#d4edda
+    style D fill:#f8d7da
+    style J fill:#f8d7da
+    style L fill:#f8d7da
+```
+
+# Performance Optimization Flow
+
+## How Optimization Works
+
+### 1. Compression (Gzip)
+```
+Without:
+- HTML: 100 KB
+- Load time: 5 seconds on 3G
+- Data cost: 100 KB
+
+With Compression:
+- HTML: 100 KB → compressed to 25 KB
+- Load time: 1.25 seconds on 3G
+- Data cost: 25 KB
+
+Savings: 75% smaller, 4x faster!
+```
+
+**Setup:**
+```javascript
+const compression = require('compression');
+app.use(compression());
+```
+
+### 2. Browser Caching
+```
+First Visit:
+- Download styles.css (5 KB) - 1 second
+- Download app.js (10 KB) - 2 seconds
+- Download logo.png (20 KB) - 4 seconds
+Total: 7 seconds
+
+Second Visit (with caching):
+- All files: Loaded from cache - Instant!
+Total: 0 seconds
+```
+
+**Setup:**
+```javascript
+app.use(express.static('public', {
+  maxAge: '7d'  // Cache 7 days
+}));
+```
+
+### 3. Lazy Loading Images
+```
+Without Lazy Loading:
+- Load 100 product images (10 MB)
+- Takes 20 seconds on 3G
+- Uses 10 MB data
+
+With Lazy Loading:
+- Load only visible images (5 images = 500 KB)
+- Takes 1 second
+- Uses 500 KB data
+- Other images load when scrolled
+
+20x faster! 20x less data!
+```
+
+**Setup:**
+```html
+<img loading="lazy" src="product.jpg" alt="Product">
+```
+
+### 4. Database Query Optimization
+```
+Slow (filter in JavaScript):
+- Load ALL 10,000 residents → 2 seconds
+- Filter in JavaScript → 0.5 seconds
+Total: 2.5 seconds
+
+Fast (filter in SQL):
+- Database filters directly → 0.1 seconds
+Total: 0.1 seconds
+
+25x faster!
+```
+
+**Slow Way:**
+```javascript
+const all = db.prepare('SELECT * FROM residents').all();
+const active = all.filter(r => r.status === 'active');
+```
+
+**Fast Way:**
+```javascript
+const active = db.prepare(
+  'SELECT * FROM residents WHERE status = ?'
+).all('active');
+```
+
+### 5. Pagination
+```
+Without Pagination:
+- Load 10,000 products
+- Render 10,000 HTML elements
+- Takes 8 seconds
+- Uses 50 MB memory
+
+With Pagination (20 per page):
+- Load 20 products
+- Render 20 HTML elements
+- Takes 0.08 seconds
+- Uses 0.5 MB memory
+
+100x faster! 100x less memory!
+```
+
+## Performance Impact in the Philippines
+
+| Optimization | 3G Load Time | Data Saved | Cost Savings |
+|--------------|--------------|------------|--------------|
+| No optimization | 20 seconds | 0 MB | ₱0 |
+| Compression only | 8 seconds | 7.5 MB | ₱3.75 |
+| + Caching | 3 seconds | 9.5 MB | ₱4.75 |
+| + Lazy loading | 1 second | 9.9 MB | ₱4.95 |
+| + Pagination | 1 second | 9.95 MB | ₱4.98 |
+
+*Assuming ₱0.50 per MB data cost*
+
+## Quick Wins (1-line optimizations)
+
+```javascript
+// 1. Compression (70-80% size reduction)
+app.use(compression());
+
+// 2. Caching (instant subsequent loads)
+app.use(express.static('public', { maxAge: '7d' }));
+
+// 3. Lazy loading (HTML attribute)
+<img loading="lazy" src="image.jpg">
+```
+
+## When to Optimize
+
+✅ **Optimize when:**
+- Page loads > 3 seconds
+- Users complain about slowness
+- High data costs matter
+- Budget Android phones struggle
+- Many images/large lists
+
+❌ **Don't optimize when:**
+- Page already loads < 1 second
+- Only 10-20 users
+- No performance complaints
+- Desktop-only users
+
+**Rule:** Make it work first, then optimize if slow!
