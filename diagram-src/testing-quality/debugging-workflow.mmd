@@ -1,0 +1,36 @@
+graph TD
+    Start["🐛 Bug Discovered"]
+    
+    Reproduce["🔁 Try to Reproduce<br/>Follow exact steps<br/>Note conditions"]
+    
+    Isolate["🔍 Isolate the Problem<br/>Which feature?<br/>Which file/function?"]
+    
+    Console["🖥️ Check Console<br/>Error messages?<br/>Network failures?"]
+    
+    Breakpoint["⏸️ Set Breakpoints<br/>Pause execution<br/>Inspect variables"]
+    
+    Hypothesis["💡 Form Hypothesis<br/>What could cause this?<br/>Test one thing"]
+    
+    Fix["🔧 Attempt Fix<br/>Change ONE thing<br/>Test immediately"]
+    
+    Test["✅ Test Fix<br/>Does it work?<br/>Any new bugs?"]
+    
+    Document["📝 Document<br/>What was wrong?<br/>How you fixed it"]
+    
+    Done["✨ Bug Fixed!"]
+    
+    Start --> Reproduce
+    Reproduce --> Isolate
+    Isolate --> Console
+    Console --> Breakpoint
+    Breakpoint --> Hypothesis
+    Hypothesis --> Fix
+    Fix --> Test
+    Test -->|"Works!"| Document
+    Test -->|"Still broken"| Hypothesis
+    Document --> Done
+    
+    style Start fill:#ff6b6b,stroke:#c92a2a,color:#fff
+    style Done fill:#6bcf7f,stroke:#2f9e44,color:#fff
+    style Console fill:#ffd93d,stroke:#f08c00
+    style Breakpoint fill:#74c0fc,stroke:#1971c2,color:#fff

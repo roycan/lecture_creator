@@ -1,4 +1,4 @@
-# Web App Basics Part 1 - Implementation Progress
+# Express Basics - Implementation Progress
 
 **Date:** November 10, 2025  
 **Status:** In Progress (40% Complete)
@@ -8,7 +8,7 @@
 ## ✅ Completed
 
 ### Main Lecture
-- ✅ `web-app-basics-part1-lecture.md` (complete, ~5000 lines)
+- ✅ `express-basics-lecture.md` (complete, ~5000 lines)
   - All 13 sections written
   - Philippine context throughout
   - Try-It blocks for all examples
@@ -49,7 +49,7 @@
 - ⏳ deployment-flow (Mermaid)
 
 ### Documentation
-- ⏳ `logs/web-app-basics-part1-implementation-2025-11-10.md`
+- ⏳ `logs/express-basics-implementation-2025-11-10.md`
 
 ---
 

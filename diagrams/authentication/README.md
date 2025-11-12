@@ -1,6 +1,6 @@
 # Authentication Diagrams - Source Files
 
-This directory contains source files for authentication diagrams used in **web-app-basics-part2b-lecture.md**.
+This directory contains source files for authentication diagrams used in **authentication-sessions-lecture.md**.
 
 ---
 

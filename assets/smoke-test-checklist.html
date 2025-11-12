@@ -1,0 +1,465 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>🔥 Smoke Test Checklist</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>🔥 Smoke Test Checklist Generator</h2>
+      <p>Create quick sanity check lists to verify basic functionality before detailed testing.</p>
+      
+      <div style="margin-top: 20px;">
+        <h3>💡 What is Smoke Testing?</h3>
+        <div class="info-box">
+          <p><strong>Purpose:</strong> Quick checks (2-5 minutes) to catch catastrophic failures</p>
+          <p><strong>Ask:</strong> "Can I even start testing?" (basic sanity)</p>
+          <p><strong>When:</strong> Before client demo, after deployment, after making changes, Monday morning</p>
+          <p><strong>Not for:</strong> Detailed validation, edge cases, complete workflows (that's E2E testing)</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 30px;">
+        <h3>🎯 Select Project Type</h3>
+        
+        <div class="form-group">
+          <label for="projectType">Choose project template:</label>
+          <select id="projectType" class="input" onchange="loadTemplate()">
+            <option value="">-- Select project type --</option>
+            <option value="sari-sari">🏪 Sari-Sari Store Inventory</option>
+            <option value="barangay">🏛️ Barangay Directory System</option>
+            <option value="appointment">📅 Appointment Booking System</option>
+            <option value="school">🎓 School Records System</option>
+            <option value="custom">✍️ Custom (build your own)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="customSection" style="margin-top: 30px; display: none;">
+        <h3>✍️ Build Custom Checklist</h3>
+        
+        <div class="form-group">
+          <label for="projectName">Project Name:</label>
+          <input type="text" id="projectName" class="input" placeholder="e.g., Library Management System">
+        </div>
+
+        <div class="form-group">
+          <label>Add Checklist Items:</label>
+          <div id="customChecklistItems"></div>
+          <button onclick="addCustomItem()" class="btn-small">➕ Add Item</button>
+        </div>
+
+        <button onclick="generateCustomChecklist()" class="btn">✨ Generate Custom Checklist</button>
+      </div>
+
+      <div id="checklistSection" style="margin-top: 30px; display: none;">
+        <h3>📋 Smoke Test Checklist</h3>
+        
+        <div style="background: #fff3cd; padding: 15px; border-left: 4px solid #856404; border-radius: 5px; margin-bottom: 20px;">
+          <p><strong>⏱️ Time Limit: 5 minutes</strong></p>
+          <p>If smoke test takes longer than 5 minutes, it's too detailed. Focus on basics only!</p>
+        </div>
+
+        <div class="checklist-header">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div>
+              <label for="testDate">Date:</label>
+              <input type="date" id="testDate" class="input">
+            </div>
+            <div>
+              <label for="testerName">Tester:</label>
+              <input type="text" id="testerName" class="input" placeholder="Your name">
+            </div>
+          </div>
+        </div>
+
+        <div id="checklistItems" style="margin-top: 20px;"></div>
+
+        <div style="margin-top: 30px; padding: 20px; border-radius: 5px;" id="resultDiv">
+          <h3 id="resultTitle"></h3>
+          <p id="resultMessage" style="font-size: 18px; font-weight: bold;"></p>
+        </div>
+
+        <div style="margin-top: 20px;">
+          <button onclick="copyChecklist()" class="btn">📋 Copy Checklist</button>
+          <button onclick="resetChecklist()" class="btn" style="background: #6c757d;">🔄 Reset</button>
+          <button onclick="exportChecklist()" class="btn" style="background: #28a745;">💾 Export Report</button>
+        </div>
+      </div>
+
+      <div style="margin-top: 40px; padding: 20px; background: #e7f3ff; border-left: 4px solid #0066cc; border-radius: 5px;">
+        <h3>📖 Smoke Test Examples</h3>
+        
+        <p><strong>Sari-Sari Store (5 minutes):</strong></p>
+        <ul>
+          <li>✅ App loads without errors</li>
+          <li>✅ Can log in as admin</li>
+          <li>✅ Dashboard displays</li>
+          <li>✅ Can navigate to Products page</li>
+          <li>✅ Can add one product</li>
+          <li>✅ Can record one sale</li>
+          <li>✅ Can log out</li>
+        </ul>
+
+        <p><strong>Before Client Demo (Critical):</strong></p>
+        <ol>
+          <li>Run smoke test 1 hour before demo</li>
+          <li>If ALL pass → safe to demo</li>
+          <li>If ANY fail → fix immediately or postpone demo</li>
+        </ol>
+
+        <p><strong>After Railway Deployment:</strong></p>
+        <ol>
+          <li>Visit live URL</li>
+          <li>Test login</li>
+          <li>Test one main feature</li>
+          <li>Check console for errors</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentChecklist = [];
+    let checkedCount = 0;
+
+    const templates = {
+      'sari-sari': {
+        name: 'Sari-Sari Store Inventory System',
+        items: [
+          'Application loads (no white screen, no console errors)',
+          'Can navigate to login page',
+          'Can log in as admin (test credentials work)',
+          'Dashboard displays (no errors, shows summary)',
+          'Can navigate to Products page',
+          'Product list loads (test products visible)',
+          'Can click "Add Product" button (form appears)',
+          'Can navigate to Sales page',
+          'Sales list displays',
+          'Can log out successfully',
+          'Can log in as cashier (test cashier role)',
+          'Cashier can access sales page'
+        ]
+      },
+      'barangay': {
+        name: 'Barangay Directory System',
+        items: [
+          'Application loads without errors',
+          'Can log in as admin',
+          'Residents list displays (test data appears)',
+          'Can use search box (accepts input)',
+          'Search returns results',
+          'Can click "Add Resident" (form appears)',
+          'Can view resident details (click name)',
+          'Pagination works (if applicable)',
+          'Can navigate to Officials page',
+          'Can generate clearance request',
+          'Can log out',
+          'Can log back in'
+        ]
+      },
+      'appointment': {
+        name: 'Appointment Booking System',
+        items: [
+          'Application loads successfully',
+          'Can log in as service provider',
+          'Calendar/schedule displays',
+          'Can view available time slots',
+          'Can click "Book Appointment"',
+          'Booking form appears and works',
+          'Can select date and time',
+          'Can view upcoming appointments',
+          'Can log out',
+          'Can log in as customer',
+          'Customer can view their bookings',
+          'QR code displays on booking confirmation'
+        ]
+      },
+      'school': {
+        name: 'School Records System',
+        items: [
+          'Application loads',
+          'Can log in as teacher',
+          'Student roster displays',
+          'Can navigate to Grades page',
+          'Grade recording form works',
+          'Can view attendance records',
+          'Can search students',
+          'Can log out',
+          'Can log in as student',
+          'Student can view own grades',
+          'Student can view class schedule',
+          'Report card generates'
+        ]
+      }
+    };
+
+    function loadTemplate() {
+      const type = document.getElementById('projectType').value;
+      
+      if (type === 'custom') {
+        document.getElementById('customSection').style.display = 'block';
+        document.getElementById('checklistSection').style.display = 'none';
+        initializeCustomItems();
+        return;
+      }
+      
+      if (!type) {
+        document.getElementById('customSection').style.display = 'none';
+        document.getElementById('checklistSection').style.display = 'none';
+        return;
+      }
+
+      const template = templates[type];
+      currentChecklist = template.items;
+      
+      document.getElementById('customSection').style.display = 'none';
+      document.getElementById('checklistSection').style.display = 'block';
+      
+      // Set current date
+      document.getElementById('testDate').valueAsDate = new Date();
+      
+      renderChecklist(template.name);
+    }
+
+    function renderChecklist(projectName) {
+      const container = document.getElementById('checklistItems');
+      
+      let html = `<h4 style="color: #333; margin-bottom: 15px;">Project: ${projectName}</h4>`;
+      html += '<div style="background: #f8f9fa; padding: 20px; border-radius: 5px;">';
+      
+      currentChecklist.forEach((item, index) => {
+        html += `
+          <div style="margin-bottom: 12px; padding: 10px; background: white; border-radius: 4px; display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="check_${index}" onchange="updateResults()" style="width: 20px; height: 20px; cursor: pointer;">
+            <label for="check_${index}" style="cursor: pointer; flex: 1; margin: 0;">${index + 1}. ${item}</label>
+          </div>
+        `;
+      });
+      
+      html += '</div>';
+      container.innerHTML = html;
+      
+      checkedCount = 0;
+      updateResults();
+    }
+
+    function updateResults() {
+      const checkboxes = document.querySelectorAll('#checklistItems input[type="checkbox"]');
+      checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+      
+      const total = currentChecklist.length;
+      const resultDiv = document.getElementById('resultDiv');
+      const resultTitle = document.getElementById('resultTitle');
+      const resultMessage = document.getElementById('resultMessage');
+      
+      if (checkedCount === 0) {
+        resultDiv.style.background = '#f8f9fa';
+        resultDiv.style.border = '1px solid #dee2e6';
+        resultTitle.textContent = '📊 Progress';
+        resultTitle.style.color = '#333';
+        resultMessage.textContent = `0 of ${total} checks completed`;
+        resultMessage.style.color = '#666';
+      } else if (checkedCount === total) {
+        resultDiv.style.background = '#d4edda';
+        resultDiv.style.border = '3px solid #28a745';
+        resultTitle.textContent = '✅ PASS - All Checks Passed!';
+        resultTitle.style.color = '#155724';
+        resultMessage.textContent = `Safe to proceed with detailed testing`;
+        resultMessage.style.color = '#155724';
+      } else {
+        const failures = total - checkedCount;
+        resultDiv.style.background = '#f8d7da';
+        resultDiv.style.border = '3px solid #dc3545';
+        resultTitle.textContent = '❌ FAIL - Smoke Test Failed';
+        resultTitle.style.color = '#721c24';
+        resultMessage.textContent = `${failures} check(s) failed. Fix critical issues before continuing.`;
+        resultMessage.style.color = '#721c24';
+      }
+    }
+
+    function resetChecklist() {
+      const checkboxes = document.querySelectorAll('#checklistItems input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = false);
+      checkedCount = 0;
+      updateResults();
+    }
+
+    function copyChecklist() {
+      const projectType = document.getElementById('projectType').value;
+      const template = templates[projectType];
+      const testDate = document.getElementById('testDate').value;
+      const testerName = document.getElementById('testerName').value;
+      
+      let text = '═══════════════════════════════════════\n';
+      text += '🔥 SMOKE TEST CHECKLIST\n';
+      text += '═══════════════════════════════════════\n\n';
+      text += `Project: ${template.name}\n`;
+      text += `Date: ${testDate || 'Not specified'}\n`;
+      text += `Tester: ${testerName || 'Not specified'}\n\n`;
+      text += 'Checklist:\n';
+      text += '──────────\n';
+      
+      currentChecklist.forEach((item, index) => {
+        text += `☐ ${index + 1}. ${item}\n`;
+      });
+      
+      text += '\n\nResult:\n';
+      text += '───────\n';
+      text += '☐ PASS - All checks passed, safe to test details\n';
+      text += '☐ FAIL - Stop, fix broken items before continuing\n';
+      
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ Checklist copied to clipboard!');
+      });
+    }
+
+    function exportChecklist() {
+      const projectType = document.getElementById('projectType').value;
+      const template = templates[projectType];
+      const testDate = document.getElementById('testDate').value;
+      const testerName = document.getElementById('testerName').value;
+      const checkboxes = document.querySelectorAll('#checklistItems input[type="checkbox"]');
+      
+      let text = '═══════════════════════════════════════\n';
+      text += '🔥 SMOKE TEST REPORT\n';
+      text += '═══════════════════════════════════════\n\n';
+      text += `Project: ${template.name}\n`;
+      text += `Date: ${testDate || new Date().toLocaleDateString()}\n`;
+      text += `Tester: ${testerName || 'Not specified'}\n\n`;
+      text += 'Results:\n';
+      text += '────────\n';
+      
+      currentChecklist.forEach((item, index) => {
+        const checked = checkboxes[index].checked;
+        text += `${checked ? '✅' : '❌'} ${index + 1}. ${item}\n`;
+      });
+      
+      const total = currentChecklist.length;
+      const passed = checkedCount;
+      const failed = total - passed;
+      
+      text += '\n\nSummary:\n';
+      text += '────────\n';
+      text += `Total Checks: ${total}\n`;
+      text += `Passed: ${passed}\n`;
+      text += `Failed: ${failed}\n\n`;
+      
+      if (passed === total) {
+        text += 'RESULT: ✅ PASS\n';
+        text += 'All basic functionality works. Safe to proceed with detailed testing.\n';
+      } else {
+        text += 'RESULT: ❌ FAIL\n';
+        text += `${failed} check(s) failed. Fix critical issues before continuing.\n`;
+      }
+      
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ Test report copied to clipboard!');
+      });
+    }
+
+    // Custom checklist functions
+    function initializeCustomItems() {
+      const container = document.getElementById('customChecklistItems');
+      container.innerHTML = '';
+      addCustomItem();
+      addCustomItem();
+      addCustomItem();
+    }
+
+    function addCustomItem() {
+      const container = document.getElementById('customChecklistItems');
+      const div = document.createElement('div');
+      div.className = 'custom-item';
+      div.innerHTML = `
+        <input type="text" class="input custom-check-input" placeholder="e.g., Application loads successfully">
+        <button onclick="removeCustomItem(this)" class="btn-small btn-danger">✖</button>
+      `;
+      container.appendChild(div);
+    }
+
+    function removeCustomItem(button) {
+      if (document.querySelectorAll('.custom-item').length > 1) {
+        button.parentElement.remove();
+      } else {
+        alert('⚠️ Must have at least one checklist item');
+      }
+    }
+
+    function generateCustomChecklist() {
+      const projectName = document.getElementById('projectName').value.trim();
+      const customInputs = document.querySelectorAll('.custom-check-input');
+      const items = Array.from(customInputs)
+        .map(input => input.value.trim())
+        .filter(val => val !== '');
+
+      if (!projectName) {
+        alert('⚠️ Please enter a project name');
+        return;
+      }
+      if (items.length === 0) {
+        alert('⚠️ Please enter at least one checklist item');
+        return;
+      }
+
+      currentChecklist = items;
+      document.getElementById('customSection').style.display = 'none';
+      document.getElementById('checklistSection').style.display = 'block';
+      document.getElementById('testDate').valueAsDate = new Date();
+      renderChecklist(projectName);
+    }
+  </script>
+
+  <style>
+    .info-box {
+      background: #d1ecf1;
+      padding: 15px;
+      border-left: 4px solid #0c5460;
+      border-radius: 5px;
+    }
+    .info-box p {
+      margin: 5px 0;
+      color: #0c5460;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+    }
+    .btn-small {
+      padding: 5px 15px;
+      font-size: 14px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-small:hover {
+      background: #0056b3;
+    }
+    .btn-danger {
+      background: #dc3545;
+    }
+    .btn-danger:hover {
+      background: #c82333;
+    }
+    .custom-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+    .custom-item input {
+      flex: 1;
+    }
+  </style>
+</body>
+</html>

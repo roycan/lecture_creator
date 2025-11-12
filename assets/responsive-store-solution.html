@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Store Catalog - Complete Solution</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        .product-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card .card-content {
+            flex-grow: 1;
+        }
+        .product-image {
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+        }
+        .price-tag {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar is-primary">
+        <div class="navbar-brand">
+            <span class="navbar-item">
+                <strong>🏪 Tindahan ni Aling Rosa</strong>
+            </span>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero is-info">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">Product Catalog</h1>
+                <h2 class="subtitle">Quality products at affordable prices!</h2>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="section">
+        <div class="container">
+            <!-- Search Bar -->
+            <div class="field has-addons">
+                <div class="control is-expanded">
+                    <input class="input is-large" type="text" placeholder="Search products...">
+                </div>
+                <div class="control">
+                    <button class="button is-primary is-large">
+                        🔍 Search
+                    </button>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <h2 class="title is-4 mt-5 mb-4">Featured Products</h2>
+            
+            <div class="columns is-multiline">
+                <!-- Product 1 -->
+                <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+                    <div class="card product-card">
+                        <div class="card-image">
+                            <div class="product-image">🍪</div>
+                        </div>
+                        <div class="card-content">
+                            <p class="title is-5">Skyflakes Crackers</p>
+                            <p class="subtitle is-6">200g pack</p>
+                            <p class="price-tag">₱35.00</p>
+                        </div>
+                        <footer class="card-footer">
+                            <button class="button is-primary is-fullwidth">Add to Cart</button>
+                        </footer>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+                    <div class="card product-card">
+                        <div class="card-image">
+                            <div class="product-image">🍜</div>
+                        </div>
+                        <div class="card-content">
+                            <p class="title is-5">Lucky Me! Pancit Canton</p>
+                            <p class="subtitle is-6">Chilimansi flavor</p>
+                            <p class="price-tag">₱12.00</p>
+                        </div>
+                        <footer class="card-footer">
+                            <button class="button is-primary is-fullwidth">Add to Cart</button>
+                        </footer>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+                    <div class="card product-card">
+                        <div class="card-image">
+                            <div class="product-image">☕</div>
+                        </div>
+                        <div class="card-content">
+                            <p class="title is-5">Kopiko Brown Coffee</p>
+                            <p class="subtitle is-6">10 sachets</p>
+                            <p class="price-tag">₱45.00</p>
+                        </div>
+                        <footer class="card-footer">
+                            <button class="button is-primary is-fullwidth">Add to Cart</button>
+                        </footer>
+                    </div>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+                    <div class="card product-card">
+                        <div class="card-image">
+                            <div class="product-image">🥤</div>
+                        </div>
+                        <div class="card-content">
+                            <p class="title is-5">C2 Green Tea</p>
+                            <p class="subtitle is-6">Apple flavor, 1L</p>
+                            <p class="price-tag">₱38.00</p>
+                        </div>
+                        <footer class="card-footer">
+                            <button class="button is-primary is-fullwidth">Add to Cart</button>
+                        </footer>
+                    </div>
+                </div>
+
+                <!-- Product 5 -->
+                <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+                    <div class="card product-card">
+                        <div class="card-image">
+                            <div class="product-image">🍫</div>
+                        </div>
+                        <div class="card-content">
+                            <p class="title is-5">Oishi Choco Chug</p>
+                            <p class="subtitle is-6">Chocolate drink</p>
+                            <p class="price-tag">₱8.00</p>
+                        </div>
+                        <footer class="card-footer">
+                            <button class="button is-primary is-fullwidth">Add to Cart</button>
+                        </footer>
+                    </div>
+                </div>
+
+                <!-- Product 6 -->
+                <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+                    <div class="card product-card">
+                        <div class="card-image">
+                            <div class="product-image">🥛</div>
+                        </div>
+                        <div class="card-content">
+                            <p class="title is-5">Milo Activ-Go</p>
+                            <p class="subtitle is-6">35g sachet</p>
+                            <p class="price-tag">₱14.00</p>
+                        </div>
+                        <footer class="card-footer">
+                            <button class="button is-primary is-fullwidth">Add to Cart</button>
+                        </footer>
+                    </div>
+                </div>
+
+                <!-- Product 7 -->
+                <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+                    <div class="card product-card">
+                        <div class="card-image">
+                            <div class="product-image">🥤</div>
+                        </div>
+                        <div class="card-content">
+                            <p class="title is-5">Sprite 1.5L</p>
+                            <p class="subtitle is-6">Lemon-lime soda</p>
+                            <p class="price-tag">₱55.00</p>
+                        </div>
+                        <footer class="card-footer">
+                            <button class="button is-primary is-fullwidth">Add to Cart</button>
+                        </footer>
+                    </div>
+                </div>
+
+                <!-- Product 8 -->
+                <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+                    <div class="card product-card">
+                        <div class="card-image">
+                            <div class="product-image">🍿</div>
+                        </div>
+                        <div class="card-content">
+                            <p class="title is-5">Chippy Barbecue</p>
+                            <p class="subtitle is-6">110g pack</p>
+                            <p class="price-tag">₱32.00</p>
+                        </div>
+                        <footer class="card-footer">
+                            <button class="button is-primary is-fullwidth">Add to Cart</button>
+                        </footer>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Responsive Explanation -->
+            <div class="notification is-info is-light mt-6">
+                <h3 class="title is-5">📱 Responsive Grid Demonstration</h3>
+                <p><strong>Notice how the layout adapts to different screen sizes:</strong></p>
+                <ul class="mt-3">
+                    <li>📱 <strong>Mobile (phone):</strong> 2 products per row - easy to browse with one hand</li>
+                    <li>📱 <strong>Tablet:</strong> 3 products per row - more products visible</li>
+                    <li>💻 <strong>Desktop:</strong> 4 products per row - maximum information density</li>
+                </ul>
+                <p class="mt-3"><strong>Try resizing your browser window to see the magic! 🪄</strong></p>
+                <p class="mt-2"><em>This is achieved with Bulma classes: is-half-mobile, is-one-third-tablet, is-one-quarter-desktop</em></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Tindahan ni Aling Rosa</strong> 🏪<br>
+                123 Sampaguita Street, Barangay San Juan, Manila<br>
+                📞 0912-345-6789 | 📧 aling.rosa@tindahan.ph<br>
+                Open daily: 6:00 AM - 10:00 PM
+            </p>
+            <p class="mt-3">
+                <em>Mura, Mabilis, Malapit! (Cheap, Fast, Near!)</em>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        console.log('Responsive Store Catalog - Solution');
+        console.log('Responsive breakpoints:');
+        console.log('- Mobile: is-half-mobile (2 columns)');
+        console.log('- Tablet: is-one-third-tablet (3 columns)');
+        console.log('- Desktop: is-one-quarter-desktop (4 columns)');
+    </script>
+</body>
+</html>

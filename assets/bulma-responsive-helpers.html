@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bulma Responsive Helpers Demo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        .device-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Device Indicator -->
+    <div class="device-indicator is-hidden-mobile has-background-danger has-text-white">
+        💻 Desktop View
+    </div>
+    <div class="device-indicator is-hidden-desktop-only is-hidden-mobile has-background-warning has-text-dark">
+        📲 Tablet View
+    </div>
+    <div class="device-indicator is-hidden-tablet has-background-info has-text-white">
+        📱 Mobile View
+    </div>
+
+    <section class="hero is-link">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">👁️ Responsive Helpers Demo</h1>
+                <p class="subtitle">Show or hide content based on screen size</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <!-- Demo 1: Hide on Mobile -->
+            <div class="box">
+                <h2 class="title is-4">1. Hide on Mobile (is-hidden-mobile)</h2>
+                <p class="content">This content disappears on phones but shows on tablets and desktops.</p>
+                
+                <div class="notification is-primary is-hidden-mobile">
+                    <p><strong>📲 You're on tablet or desktop!</strong></p>
+                    <p>This message only appears on screens wider than 768px. Try resizing your browser window!</p>
+                </div>
+                
+                <div class="notification is-info is-hidden-tablet">
+                    <p><strong>📱 You're on mobile!</strong></p>
+                    <p>The tablet/desktop message is hidden. This is the mobile version!</p>
+                </div>
+            </div>
+
+            <!-- Demo 2: Hide on Tablet -->
+            <div class="box">
+                <h2 class="title is-4">2. Hide on Tablet (is-hidden-tablet-only)</h2>
+                <p class="content">This content disappears only on tablets, but shows on mobile and desktop.</p>
+                
+                <div class="notification is-warning is-hidden-tablet-only">
+                    <p><strong>Visible on mobile and desktop, hidden on tablet</strong></p>
+                    <p>Useful when you want different layouts for tablet specifically.</p>
+                </div>
+            </div>
+
+            <!-- Demo 3: Hide on Desktop -->
+            <div class="box">
+                <h2 class="title is-4">3. Hide on Desktop (is-hidden-desktop)</h2>
+                <p class="content">This content disappears on large screens.</p>
+                
+                <div class="notification is-success is-hidden-desktop">
+                    <p><strong>📱📲 Mobile & Tablet Only!</strong></p>
+                    <p>Desktop users won't see this. Great for mobile-specific tips or compact layouts.</p>
+                </div>
+            </div>
+
+            <!-- Demo 4: Philippine Example - Navigation -->
+            <div class="box">
+                <h2 class="title is-4">🇵🇭 Real Example: Barangay Navigation</h2>
+                <p class="content">Different navigation styles for different devices</p>
+                
+                <!-- Desktop Navigation -->
+                <nav class="navbar is-primary is-hidden-mobile">
+                    <div class="navbar-brand">
+                        <span class="navbar-item">
+                            <strong>Barangay San Juan</strong>
+                        </span>
+                    </div>
+                    <div class="navbar-menu">
+                        <div class="navbar-start">
+                            <a class="navbar-item">🏠 Home</a>
+                            <a class="navbar-item">👥 Officials</a>
+                            <a class="navbar-item">📋 Services</a>
+                            <a class="navbar-item">📢 Announcements</a>
+                            <a class="navbar-item">📞 Contact</a>
+                        </div>
+                    </div>
+                </nav>
+                
+                <!-- Mobile Navigation -->
+                <div class="box has-background-primary has-text-white is-hidden-tablet">
+                    <div class="level is-mobile">
+                        <div class="level-left">
+                            <strong>Barangay San Juan</strong>
+                        </div>
+                        <div class="level-right">
+                            <button class="button is-small is-light">☰ Menu</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="notification is-info">
+                    <p><strong>Try resizing your window!</strong></p>
+                    <ul>
+                        <li>📱 Mobile: Compact header with menu button</li>
+                        <li>💻 Desktop: Full navigation bar with all links</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Demo 5: Text Length Variations -->
+            <div class="box">
+                <h2 class="title is-4">5. Different Text for Different Screens</h2>
+                <p class="content">Show shorter text on mobile, fuller descriptions on desktop</p>
+                
+                <article class="message is-info">
+                    <div class="message-header">
+                        <p>Barangay Clearance</p>
+                    </div>
+                    <div class="message-body">
+                        <!-- Mobile: Short version -->
+                        <p class="is-hidden-tablet">
+                            <strong>Barangay clearance - ₱50.</strong> Bring valid ID. Ready in 1 day.
+                        </p>
+                        
+                        <!-- Desktop: Full version -->
+                        <div class="is-hidden-mobile">
+                            <p><strong>Barangay Clearance Certificate</strong></p>
+                            <p>Required for job applications, school enrollment, and other official purposes. Processing fee is ₱50. Please bring one valid ID and fill out the application form. Clearances are typically ready within 1 business day.</p>
+                            <p><strong>Office Hours:</strong> Monday-Friday, 8:00 AM - 5:00 PM</p>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Demo 6: Images -->
+            <div class="box">
+                <h2 class="title is-4">6. Different Images for Different Screens</h2>
+                <p class="content">Load smaller images on mobile to save data!</p>
+                
+                <div class="columns">
+                    <div class="column">
+                        <!-- Mobile: Smaller image -->
+                        <figure class="image is-16by9 is-hidden-tablet">
+                            <img src="https://via.placeholder.com/400x225/3273dc/ffffff?text=Mobile+Image+%28Small%29" alt="Barangay Hall">
+                        </figure>
+                        
+                        <!-- Desktop: Larger image -->
+                        <figure class="image is-16by9 is-hidden-mobile">
+                            <img src="https://via.placeholder.com/800x450/3273dc/ffffff?text=Desktop+Image+%28Large%29" alt="Barangay Hall">
+                        </figure>
+                        
+                        <div class="notification is-success">
+                            <p><strong>💡 Pro Tip:</strong> Use smaller images on mobile to save data!</p>
+                            <p>Many Filipinos have limited mobile data. Smaller images = faster loading + less data usage.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo 7: Table vs Cards -->
+            <div class="box">
+                <h2 class="title is-4">🇵🇭 7. Tables vs Cards (Mobile-Friendly Data)</h2>
+                <p class="content">Tables are hard to read on mobile. Use cards instead!</p>
+                
+                <!-- Mobile: Card Layout -->
+                <div class="is-hidden-tablet">
+                    <h3 class="title is-5">Barangay Officials</h3>
+                    
+                    <div class="card" style="margin-bottom: 1rem;">
+                        <div class="card-content">
+                            <p class="title is-5">Juan Dela Cruz</p>
+                            <p class="subtitle is-6">Barangay Captain</p>
+                            <p><strong>Contact:</strong> 0912-345-6789</p>
+                            <p><strong>Email:</strong> juan@brgy.gov.ph</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card" style="margin-bottom: 1rem;">
+                        <div class="card-content">
+                            <p class="title is-5">Maria Santos</p>
+                            <p class="subtitle is-6">Kagawad</p>
+                            <p><strong>Contact:</strong> 0923-456-7890</p>
+                            <p><strong>Email:</strong> maria@brgy.gov.ph</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card" style="margin-bottom: 1rem;">
+                        <div class="card-content">
+                            <p class="title is-5">Pedro Ramos</p>
+                            <p class="subtitle is-6">SK Chairman</p>
+                            <p><strong>Contact:</strong> 0934-567-8901</p>
+                            <p><strong>Email:</strong> pedro@brgy.gov.ph</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Desktop: Table Layout -->
+                <div class="is-hidden-mobile">
+                    <h3 class="title is-5">Barangay Officials</h3>
+                    <table class="table is-fullwidth is-striped is-hoverable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Position</th>
+                                <th>Contact</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Juan Dela Cruz</td>
+                                <td>Barangay Captain</td>
+                                <td>0912-345-6789</td>
+                                <td>juan@brgy.gov.ph</td>
+                            </tr>
+                            <tr>
+                                <td>Maria Santos</td>
+                                <td>Kagawad</td>
+                                <td>0923-456-7890</td>
+                                <td>maria@brgy.gov.ph</td>
+                            </tr>
+                            <tr>
+                                <td>Pedro Ramos</td>
+                                <td>SK Chairman</td>
+                                <td>0934-567-8901</td>
+                                <td>pedro@brgy.gov.ph</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="notification is-warning">
+                    <p><strong>💡 Pattern:</strong> Cards on mobile, tables on desktop</p>
+                    <p>This is one of the most important responsive patterns! Tables are hard to read on small screens.</p>
+                </div>
+            </div>
+
+            <!-- Demo 8: Columns Reordering -->
+            <div class="box">
+                <h2 class="title is-4">8. Column Reordering (Mobile vs Desktop)</h2>
+                <p class="content">Change column order on different screens</p>
+                
+                <div class="columns is-mobile">
+                    <div class="column is-narrow-mobile is-full-tablet">
+                        <div class="notification is-primary">
+                            <p><strong>Main Content</strong></p>
+                            <p>On mobile, I'm on the right. On tablet+, I'm full width on top.</p>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="notification is-info">
+                            <p><strong>Sidebar</strong></p>
+                            <p>On mobile, I'm on the left. On tablet+, I'm below.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cheat Sheet -->
+            <div class="box has-background-light">
+                <h2 class="title is-4">📋 Responsive Helpers Cheat Sheet</h2>
+                <div class="content">
+                    <table class="table is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>Class</th>
+                                <th>What It Does</th>
+                                <th>When to Use</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>is-hidden-mobile</code></td>
+                                <td>Hides on phones (< 768px)</td>
+                                <td>Full navigation menus, detailed descriptions</td>
+                            </tr>
+                            <tr>
+                                <td><code>is-hidden-tablet-only</code></td>
+                                <td>Hides only on tablets (769-1023px)</td>
+                                <td>Rarely used, specific tablet layouts</td>
+                            </tr>
+                            <tr>
+                                <td><code>is-hidden-desktop</code></td>
+                                <td>Hides on desktops (> 1024px)</td>
+                                <td>Mobile-specific menus, compact layouts</td>
+                            </tr>
+                            <tr>
+                                <td><code>is-hidden-tablet</code></td>
+                                <td>Hides on tablets & desktop</td>
+                                <td>Mobile-only content</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Best Practices -->
+            <div class="notification is-success">
+                <h3 class="title is-5">✅ Best Practices</h3>
+                <div class="content">
+                    <ol>
+                        <li><strong>Think Mobile First:</strong> Design for mobile, then enhance for desktop</li>
+                        <li><strong>Keep Mobile Simple:</strong> Shorter text, fewer options, bigger buttons</li>
+                        <li><strong>Test on Real Devices:</strong> Emulators are good, but real phones are better</li>
+                        <li><strong>Save Data on Mobile:</strong> Use smaller images, fewer features</li>
+                        <li><strong>Cards > Tables on Mobile:</strong> Always transform tables to cards</li>
+                        <li><strong>Big Touch Targets:</strong> Buttons should be at least 44x44px</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Try It -->
+            <div class="notification is-primary">
+                <h3 class="title is-5">🎯 Try It Yourself!</h3>
+                <p><strong>Challenge:</strong> Resize your browser window right now!</p>
+                <p>Watch how content appears and disappears. Notice the device indicator in the top-right corner?</p>
+                <p><strong>Next:</strong> Open DevTools (F12), enable Device Toolbar, and test on different phone sizes!</p>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,22 @@
+graph TB
+    subgraph pyramid["🔺 Testing Pyramid"]
+        E2E["🌐 E2E Tests (Few)<br/>Full user workflows<br/>Time: 10-30 min<br/>Example: Complete checkout"]
+        
+        Integration["🔗 Integration Tests (Some)<br/>Multiple features together<br/>Time: 2-10 min<br/>Example: Login + view products"]
+        
+        Unit["⚡ Unit Tests (Many)<br/>Individual functions<br/>Time: seconds<br/>Example: Calculate total"]
+        
+        Smoke["💨 Smoke Tests (Quick)<br/>Basic sanity checks<br/>Time: 2-5 min<br/>Example: Site loads, login works"]
+    end
+    
+    E2E --> Integration
+    Integration --> Unit
+    Unit --> Smoke
+    
+    style E2E fill:#ff6b6b,stroke:#c92a2a,color:#fff
+    style Integration fill:#ffd93d,stroke:#f08c00
+    style Unit fill:#6bcf7f,stroke:#2f9e44,color:#fff
+    style Smoke fill:#74c0fc,stroke:#1971c2,color:#fff
+    
+    classDef pyramidStyle fill:#f8f9fa,stroke:#495057,stroke-width:3px
+    class pyramid pyramidStyle

@@ -1377,7 +1377,7 @@ SELECT * FROM students;
 - **Part 2C:** Advanced features (CSV export, QR codes, API integration, audit logs)
 
 **Migration Guide:**
-See `web-app-basics-part2a-migration-guide.md` for step-by-step instructions on upgrading your Part 1 JSON projects to SQLite.
+See `database-sqlite-migration-guide.md` for step-by-step instructions on upgrading your Part 1 JSON projects to SQLite.
 
 ---
 
@@ -1439,7 +1439,7 @@ The following diagrams cover advanced database concepts not required for Part 2A
 ## 🚀 What's Next?
 
 **Step 1:** Review the concepts in this lecture  
-**Step 2:** Read `web-app-basics-part2a-migration-guide.md` to upgrade your projects  
+**Step 2:** Read `database-sqlite-migration-guide.md` to upgrade your projects  
 **Step 3:** Choose one mini-project to explore:
 - `practice-apps/barangay-directory-v2/`
 - `practice-apps/class-list-v2/`

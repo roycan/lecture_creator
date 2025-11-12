@@ -1,0 +1,220 @@
+┌──────────────────────────────────────────────────────────────┐
+│         RESPONSIVE HELPERS (Show/Hide Content)                │
+└──────────────────────────────────────────────────────────────┘
+
+VISIBILITY CLASSES
+══════════════════
+
+HIDE CLASSES (is-hidden-*)
+──────────────────────────
+
+Class                   Mobile  Tablet  Desktop  Wide    Full
+                       <768    769-    1024-    1216-   1408+
+                              1023    1215     1407
+
+is-hidden-mobile        ❌      ✅      ✅       ✅      ✅
+is-hidden-tablet-only   ✅      ❌      ✅       ✅      ✅
+is-hidden-desktop-only  ✅      ✅      ❌       ✅      ✅
+is-hidden-widescreen    ✅      ✅      ✅       ❌      ❌
+is-hidden-touch         ❌      ❌      ✅       ✅      ✅
+is-hidden-tablet        ✅      ❌      ❌       ❌      ❌
+is-hidden-desktop       ✅      ✅      ❌       ❌      ❌
+
+Legend: ✅ = Visible  ❌ = Hidden
+
+
+SHOW CLASSES (Display Only On...)
+──────────────────────────────────
+
+is-block-mobile         → Display as block ONLY on mobile
+is-block-tablet-only    → Display as block ONLY on tablet
+is-block-desktop-only   → Display as block ONLY on desktop
+is-block-widescreen     → Display as block on widescreen+
+is-block-touch          → Display as block on mobile + tablet
+
+
+REAL EXAMPLES
+═════════════
+
+EXAMPLE 1: Mobile vs Desktop Navigation
+────────────────────────────────────────
+
+<nav>
+  <!-- Mobile: Show hamburger icon -->
+  <button class="is-hidden-tablet">
+    ☰ Menu
+  </button>
+  
+  <!-- Desktop: Show full menu -->
+  <div class="is-hidden-mobile">
+    <a href="#">Home</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+  </div>
+</nav>
+
+Mobile (< 768px):         Desktop (≥ 769px):
+┌──────────────┐          ┌────────────────────────────┐
+│  ☰ Menu      │          │  Home  About  Contact      │
+└──────────────┘          └────────────────────────────┘
+
+
+EXAMPLE 2: Product Cards (Different Layouts)
+─────────────────────────────────────────────
+
+<div class="columns is-mobile">
+  <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+    
+    <!-- Mobile: Vertical stack -->
+    <div class="is-hidden-tablet">
+      <img src="product.jpg">
+      <h3>Product Name</h3>
+      <p>Price: ₱100</p>
+    </div>
+    
+    <!-- Tablet+: Horizontal card -->
+    <div class="is-hidden-mobile columns">
+      <div class="column is-4">
+        <img src="product.jpg">
+      </div>
+      <div class="column">
+        <h3>Product Name</h3>
+        <p>Price: ₱100</p>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+Mobile:                    Tablet/Desktop:
+┌────────────┐            ┌──────┬─────────────┐
+│  [Image]   │            │[Img] │ Product Name│
+│            │            │      │ Price: ₱100 │
+│Product Name│            └──────┴─────────────┘
+│Price: ₱100 │
+└────────────┘
+
+
+EXAMPLE 3: Contact Information
+───────────────────────────────
+
+<div class="contact-info">
+  <!-- Mobile: Show phone icon + number -->
+  <div class="is-hidden-tablet">
+    📱 <a href="tel:+639123456789">0912-345-6789</a>
+  </div>
+  
+  <!-- Desktop: Show full details -->
+  <div class="is-hidden-mobile">
+    <p>Phone: 0912-345-6789</p>
+    <p>Email: info@school.edu.ph</p>
+    <p>Address: Manila, Philippines</p>
+  </div>
+</div>
+
+Mobile:                    Desktop:
+┌──────────────┐          ┌─────────────────────────┐
+│📱 0912-345-  │          │Phone: 0912-345-6789    │
+│   6789       │          │Email: info@school...   │
+└──────────────┘          │Address: Manila, PH     │
+                          └─────────────────────────┘
+
+
+EXAMPLE 4: Data Tables (Scroll on Mobile)
+──────────────────────────────────────────
+
+<!-- Mobile: Scrollable table -->
+<div class="is-hidden-tablet">
+  <div style="overflow-x: auto;">
+    <table>...</table>
+  </div>
+  <p class="help">👉 Swipe to see more</p>
+</div>
+
+<!-- Desktop: Full table -->
+<div class="is-hidden-mobile">
+  <table>...</table>
+</div>
+
+Mobile:                    Desktop:
+┌───────────────┐         ┌─────────────────────────────┐
+│Name | Age | G│→         │Name    │Age │Grade │Address │
+├───────────────┤         ├─────────────────────────────┤
+│Juan | 15  | 9│          │Juan    │15  │9     │Manila  │
+└───────────────┘         └─────────────────────────────┘
+👉 Swipe to see more
+
+
+EXAMPLE 5: Hero Banner
+──────────────────────
+
+<section class="hero">
+  <!-- Mobile: Smaller text -->
+  <div class="is-hidden-tablet">
+    <h1 class="title is-4">Welcome!</h1>
+    <p class="subtitle is-6">Short description</p>
+  </div>
+  
+  <!-- Desktop: Larger text -->
+  <div class="is-hidden-mobile">
+    <h1 class="title is-1">Welcome to Our School!</h1>
+    <p class="subtitle is-3">Building futures through education</p>
+  </div>
+</section>
+
+Mobile:                    Desktop:
+┌──────────────┐          ┌─────────────────────────────┐
+│  Welcome!    │          │ Welcome to Our School!      │
+│              │          │                             │
+│Short desc... │          │ Building futures through    │
+└──────────────┘          │ education                   │
+                          └─────────────────────────────┘
+
+
+COMMON PATTERNS
+═══════════════
+
+1. Navigation (Hamburger vs Full Menu)
+   Mobile: is-hidden-tablet (show burger)
+   Desktop: is-hidden-mobile (show full menu)
+
+2. Images (Different sizes)
+   Mobile: Smaller image
+   Desktop: Larger, full-width image
+
+3. Tables (Scroll vs Full)
+   Mobile: Horizontal scroll + helper text
+   Desktop: Full table layout
+
+4. Forms (Stack vs Side-by-side)
+   Mobile: Full-width inputs (stack)
+   Desktop: Two-column layout
+
+5. Contact Info (Icon vs Full)
+   Mobile: Icon + link only
+   Desktop: Full contact details
+
+
+TOUCH DEVICES (Mobile + Tablet)
+════════════════════════════════
+
+is-hidden-touch    → Hide on phones AND tablets
+is-block-touch     → Show on phones AND tablets
+
+Use for:
+• Touch-optimized buttons (larger)
+• Swipe gestures
+• Mobile-specific features
+
+
+BEST PRACTICES
+══════════════
+✓ Test on real devices (not just DevTools)
+✓ Start mobile-first (design for small screens)
+✓ Use is-hidden-* for major layout changes
+✓ Don't hide important content on mobile
+✓ Consider Philippine context (70% mobile users)
+✓ Keep mobile layouts simple and scrollable
+
+❌ DON'T hide critical info on mobile
+✓ DO optimize for touch (larger buttons, spacing)

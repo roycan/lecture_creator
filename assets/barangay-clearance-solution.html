@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Clearance - Complete Solution</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        /* Print Styles - SOLUTION */
+        @media print {
+            /* Hide interactive/decorative elements */
+            .no-print,
+            nav,
+            .navbar,
+            button,
+            .button,
+            footer,
+            .hero {
+                display: none !important;
+            }
+            
+            /* Black and white */
+            * {
+                background: white !important;
+                color: black !important;
+                box-shadow: none !important;
+            }
+            
+            /* Keep borders */
+            .box {
+                border: 2px solid black;
+            }
+            
+            /* Full width */
+            .container {
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 10mm !important;
+            }
+            
+            /* Page settings */
+            @page {
+                size: A4;
+                margin: 15mm;
+            }
+            
+            /* Typography */
+            body {
+                font-size: 12pt;
+                line-height: 1.5;
+            }
+            
+            h1 { font-size: 18pt; }
+            h2 { font-size: 14pt; }
+            
+            /* Avoid page breaks */
+            .box {
+                page-break-inside: avoid;
+            }
+        }
+        
+        /* Screen styles */
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .signature-line {
+            border-bottom: 2px solid #333;
+            width: 250px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation (hidden when printing) -->
+    <nav class="navbar is-primary no-print">
+        <div class="navbar-brand">
+            <span class="navbar-item">
+                <strong>🏘️ Barangay San Juan</strong>
+            </span>
+        </div>
+    </nav>
+
+    <!-- Hero Section (hidden when printing) -->
+    <section class="hero is-info no-print">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">Barangay Clearance Application</h1>
+                <h2 class="subtitle">Fill out the form and print for submission</h2>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Form -->
+    <section class="section">
+        <div class="container form-container">
+            <div class="box">
+                <!-- Document Header -->
+                <div class="has-text-centered mb-5">
+                    <h1 class="title is-3">Republic of the Philippines</h1>
+                    <h2 class="subtitle is-5">Barangay San Juan, Manila</h2>
+                    <h1 class="title is-4 mt-4">BARANGAY CLEARANCE</h1>
+                    <p class="subtitle is-6">Certificate of Residency</p>
+                </div>
+
+                <!-- Date Field -->
+                <div class="field">
+                    <label class="label">Date Issued:</label>
+                    <div class="control">
+                        <input class="input" type="date" id="date" required>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="content my-5">
+                    <p><strong>TO WHOM IT MAY CONCERN:</strong></p>
+                    <p>This is to certify that the person whose name and signature appear below is a bonafide resident of Barangay San Juan, Manila, Philippines.</p>
+                </div>
+
+                <!-- Personal Information -->
+                <h3 class="title is-5 mb-3">PERSONAL INFORMATION</h3>
+
+                <div class="field">
+                    <label class="label">Complete Name:</label>
+                    <div class="control">
+                        <input class="input" type="text" placeholder="Juan Santos Dela Cruz" required>
+                    </div>
+                </div>
+
+                <div class="columns">
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Age:</label>
+                            <div class="control">
+                                <input class="input" type="number" placeholder="25" min="0" max="150" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="field">
+                            <label class="label">Civil Status:</label>
+                            <div class="control">
+                                <div class="select is-fullwidth">
+                                    <select required>
+                                        <option value="">Select...</option>
+                                        <option>Single</option>
+                                        <option>Married</option>
+                                        <option>Widowed</option>
+                                        <option>Separated</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Complete Address:</label>
+                    <div class="control">
+                        <input class="input" type="text" placeholder="123 Sampaguita Street, Purok 5" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Length of Residency:</label>
+                    <div class="control">
+                        <input class="input" type="text" placeholder="5 years" required>
+                    </div>
+                </div>
+
+                <!-- Purpose -->
+                <div class="field">
+                    <label class="label">Purpose of Clearance:</label>
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select required>
+                                <option value="">Select Purpose...</option>
+                                <option>Employment</option>
+                                <option>Business Permit Application</option>
+                                <option>Police Clearance Requirement</option>
+                                <option>School Requirements</option>
+                                <option>Loan Application</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-5">
+
+                <div class="content">
+                    <p>This clearance is being issued upon the request of the above-named person for whatever legal purpose it may serve.</p>
+                </div>
+
+                <!-- Signatures -->
+                <div class="columns mt-6">
+                    <div class="column has-text-centered">
+                        <div class="signature-line"></div>
+                        <p><strong>Applicant's Signature</strong></p>
+                    </div>
+                </div>
+
+                <div class="columns mt-6">
+                    <div class="column has-text-centered">
+                        <p><strong>Certified by:</strong></p>
+                        <div class="signature-line mt-5"></div>
+                        <p><strong>MARIA P. SANTOS</strong></p>
+                        <p>Punong Barangay</p>
+                    </div>
+                </div>
+
+                <!-- Official Receipt -->
+                <div class="mt-6 pt-4" style="border-top: 2px dashed #ccc;">
+                    <p><strong>Official Receipt No.:</strong> _________________</p>
+                    <p><strong>Amount Paid:</strong> ₱50.00</p>
+                </div>
+            </div>
+
+            <!-- Print Button (hidden when printing) -->
+            <div class="buttons is-centered mt-5 no-print">
+                <button class="button is-primary is-large" onclick="window.print()">
+                    🖨️ Print This Form
+                </button>
+                <button class="button is-light is-large" onclick="location.reload()">
+                    🔄 Clear Form
+                </button>
+            </div>
+
+            <!-- Instructions (hidden when printing) -->
+            <div class="notification is-success is-light mt-5 no-print">
+                <h3 class="title is-5">✅ Solution Features:</h3>
+                <ul>
+                    <li>✅ Complete form with all required fields</li>
+                    <li>✅ Responsive layout (works on mobile, tablet, desktop)</li>
+                    <li>✅ Print styles implemented (@media print)</li>
+                    <li>✅ .no-print class hides navigation, buttons, footer</li>
+                    <li>✅ Black & white printing (saves ink)</li>
+                    <li>✅ Fits on one A4 page</li>
+                </ul>
+                <p class="mt-3"><strong>Press Ctrl+P to see the print preview!</strong></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (hidden when printing) -->
+    <footer class="footer no-print">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Barangay San Juan</strong> 🏘️<br>
+                456 Maligaya Avenue, Manila<br>
+                📞 (02) 8123-4567 | 📧 info@brgy-sanjuan.ph
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Auto-set today's date
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('date').value = `${yyyy}-${mm}-${dd}`;
+        });
+    </script>
+</body>
+</html>

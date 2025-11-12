@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate of Completion - Complete Solution</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        /* Print Styles - SOLUTION */
+        @media print {
+            /* Hide interactive elements */
+            .no-print,
+            nav,
+            .navbar,
+            button,
+            .button,
+            footer,
+            .notification {
+                display: none !important;
+            }
+            
+            /* Black and white */
+            * {
+                background: white !important;
+                color: black !important;
+                box-shadow: none !important;
+            }
+            
+            /* Keep certificate border */
+            .certificate-border {
+                border: 10px double black !important;
+            }
+            
+            .certificate-seal {
+                background: white !important;
+                border: 3px solid black;
+            }
+            
+            /* Full width */
+            .certificate-container {
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            
+            /* Page settings - LANDSCAPE! */
+            @page {
+                size: A4 landscape;
+                margin: 15mm;
+            }
+            
+            /* Typography */
+            body {
+                font-size: 14pt;
+            }
+            
+            h1 { font-size: 28pt; }
+            h2 { font-size: 16pt; }
+            
+            /* No page breaks */
+            .certificate-border {
+                page-break-inside: avoid;
+            }
+        }
+        
+        /* Screen styles */
+        .certificate-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        
+        .certificate-border {
+            border: 10px double #3273dc;
+            padding: 40px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+        }
+        
+        .certificate-seal {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3273dc, #209cee);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            font-size: 4em;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .signature-line {
+            border-top: 2px solid #333;
+            width: 250px;
+            margin: 20px auto 5px;
+        }
+        
+        .certificate-text {
+            font-size: 1.2em;
+            line-height: 2;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation (hidden when printing) -->
+    <nav class="navbar is-primary no-print">
+        <div class="navbar-brand">
+            <span class="navbar-item">
+                <strong>🏆 Certificate Generator</strong>
+            </span>
+        </div>
+    </nav>
+
+    <!-- Instructions (hidden when printing) -->
+    <section class="section no-print">
+        <div class="container">
+            <div class="notification is-info">
+                <h2 class="title is-4">📋 Instructions</h2>
+                <ol>
+                    <li>Fill out the certificate details below</li>
+                    <li>Click the "Print Certificate" button</li>
+                    <li><strong>Important:</strong> In print settings, select <strong>Landscape orientation</strong></li>
+                    <li>The certificate will print beautifully on one A4 page!</li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Certificate -->
+    <section class="section">
+        <div class="certificate-container">
+            <div class="box certificate-border">
+                <!-- Seal -->
+                <div class="certificate-seal mb-5">🏆</div>
+                
+                <!-- Header -->
+                <div class="has-text-centered mb-5">
+                    <h1 class="title is-2">CERTIFICATE OF COMPLETION</h1>
+                    <h2 class="subtitle is-5">Barangay Skills Training Program</h2>
+                    <h3 class="subtitle is-6">Barangay San Juan, Manila</h3>
+                </div>
+
+                <hr>
+
+                <!-- Certificate Text -->
+                <div class="content certificate-text has-text-centered my-5">
+                    <p>This certifies that</p>
+                    
+                    <div class="field">
+                        <div class="control">
+                            <input class="input is-large has-text-centered" 
+                                   type="text" 
+                                   id="recipient-name"
+                                   placeholder="Juan Santos Dela Cruz" 
+                                   style="font-size: 1.8em; font-weight: bold; border: none; border-bottom: 2px solid #333;"
+                                   required>
+                        </div>
+                    </div>
+                    
+                    <p class="mt-4">has successfully completed the training program in</p>
+                    
+                    <div class="field">
+                        <div class="control">
+                            <div class="select is-large" style="width: 100%;">
+                                <select id="program" style="width: 100%; font-size: 1.5em; font-weight: bold;" required>
+                                    <option value="">Select Program...</option>
+                                    <option>Web Development Fundamentals</option>
+                                    <option>Culinary Arts and Food Service</option>
+                                    <option>Electronics Repair and Maintenance</option>
+                                    <option>Small Business Management</option>
+                                    <option>Computer Literacy</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="mt-4">and has demonstrated competency in the required skills.</p>
+                </div>
+
+                <hr class="my-5">
+
+                <!-- Date and Location -->
+                <div class="columns">
+                    <div class="column has-text-centered">
+                        <div class="field">
+                            <label class="label">Date Issued:</label>
+                            <div class="control">
+                                <input class="input has-text-centered" type="date" id="date" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column has-text-centered">
+                        <p class="mt-4"><strong>Location:</strong> Barangay San Juan, Manila, Philippines</p>
+                    </div>
+                </div>
+
+                <!-- Signatures -->
+                <div class="columns mt-6">
+                    <div class="column has-text-centered">
+                        <div class="signature-line"></div>
+                        <p><strong>MARIA P. SANTOS</strong></p>
+                        <p>Barangay Captain</p>
+                    </div>
+                    <div class="column has-text-centered">
+                        <div class="signature-line"></div>
+                        <p><strong>JUAN R. REYES</strong></p>
+                        <p>Program Coordinator</p>
+                    </div>
+                </div>
+
+                <!-- Certificate Number -->
+                <div class="has-text-centered mt-5">
+                    <p><small>Certificate No.: <span id="cert-number">2025-BSJM-001</span></small></p>
+                </div>
+            </div>
+
+            <!-- Print Button (hidden when printing) -->
+            <div class="buttons is-centered mt-5 no-print">
+                <button class="button is-primary is-large" onclick="window.print()">
+                    🖨️ Print Certificate (Landscape)
+                </button>
+                <button class="button is-light is-large" onclick="location.reload()">
+                    🔄 New Certificate
+                </button>
+            </div>
+
+            <!-- Solution Info (hidden when printing) -->
+            <div class="notification is-success is-light mt-5 no-print">
+                <h3 class="title is-5">✅ Solution Features:</h3>
+                <ul>
+                    <li>✅ Professional certificate layout</li>
+                    <li>✅ Responsive design (works on all devices)</li>
+                    <li>✅ Print styles for landscape A4 (@page { size: A4 landscape; })</li>
+                    <li>✅ Black & white printing (saves ink)</li>
+                    <li>✅ Hides navigation, buttons, and instructions when printing</li>
+                    <li>✅ Auto-fills certificate number and date</li>
+                </ul>
+                <p class="mt-3"><strong>💡 Tip:</strong> Make sure to select "Landscape" orientation in print settings!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (hidden when printing) -->
+    <footer class="footer no-print">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Barangay San Juan Skills Training</strong> 🏆<br>
+                456 Maligaya Avenue, Manila<br>
+                📞 (02) 8123-4567 | 📧 training@brgy-sanjuan.ph
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Auto-set today's date and generate certificate number
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('date').value = `${yyyy}-${mm}-${dd}`;
+            
+            // Generate random certificate number
+            const certNum = `${yyyy}-BSJM-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
+            document.getElementById('cert-number').textContent = certNum;
+        });
+        
+        console.log('Certificate Generator - Solution');
+        console.log('Print Features:');
+        console.log('✅ Landscape orientation: @page { size: A4 landscape; }');
+        console.log('✅ Hides .no-print elements');
+        console.log('✅ Black & white output');
+        console.log('Remember to select LANDSCAPE in print settings!');
+    </script>
+</body>
+</html>

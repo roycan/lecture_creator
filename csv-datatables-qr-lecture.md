@@ -373,6 +373,10 @@ app.use((req, res, next) => {
 
 ### Using Flash Messages
 
+![Flash Lifecycle Variants](diagrams/advanced-features/flash-lifecycle-2.png)
+
+![Flash Lifecycle Alternative](diagrams/advanced-features/flash-lifecycle-3.png)
+
 ```javascript
 // Success message
 app.post('/products', requireAdmin, (req, res) => {
@@ -623,9 +627,11 @@ app.post('/products/import/csv', requireAdmin, upload.single('csvFile'), (req, r
 
 ### QR Code Basics
 
+![QR Code Generation Process](diagrams/advanced-features/qr-code-generation.png)
+
 ![QR Code Workflow](diagrams/advanced-features/qr-workflow.png)
 
-![QR Code Generation Process](diagrams/advanced-features/qr-code-generation.png)
+
 
 **Using QR Server API:**
 
@@ -1228,6 +1234,6 @@ app.get('/admin/audit-log', requireAdmin, (req, res) => {
 
 ---
 
-**✅ Part 2C Lecture (Section 1-6) Complete!**
+**✅ Part 2C Section 1-6 Complete!**
 
-*Continuing in next file to avoid length limit...*
+*Continuing in next file...*

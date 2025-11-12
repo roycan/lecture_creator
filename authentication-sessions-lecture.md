@@ -1472,7 +1472,7 @@ SESSION_SECRET=your-random-long-secret-here-min-32-chars
 - See `support-materials/security-checklist.md` for deployment checklist
 
 **Migration Guide:**
-- See `web-app-basics-part2b-migration-guide.md` for step-by-step upgrade from Part 2A
+- See `authentication-sessions-migration-guide.md` for step-by-step upgrade from Part 2A
 
 ---
 
@@ -1515,7 +1515,7 @@ SESSION_SECRET=your-random-long-secret-here-min-32-chars
 ## 🚀 What's Next?
 
 **Step 1:** Review concepts in this lecture  
-**Step 2:** Read `web-app-basics-part2b-migration-guide.md` to upgrade your Part 2A projects  
+**Step 2:** Read `authentication-sessions-migration-guide.md` to upgrade your Part 2A projects  
 **Step 3:** Choose one mini-project to add authentication:
 - `practice-apps/barangay-directory-v3/`
 - `practice-apps/class-list-v3/`

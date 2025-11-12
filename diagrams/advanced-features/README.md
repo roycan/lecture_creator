@@ -308,9 +308,9 @@ edge [color="#FF0000"];
 ## 📚 Related Resources
 
 ### Part 2C Lecture Materials
-- `web-app-basics-part2c-lecture-part1.md` - Sections 1-6
-- `web-app-basics-part2c-lecture-part2.md` - Sections 7-10
-- `web-app-basics-part2c-migration-guide.md` - Upgrade guide (pending)
+- `csv-datatables-qr-lecture.md` - CSV, DataTables, QR codes
+- `json-api-audit-lecture.md` - JSON backup, REST API, audit logs
+- `advanced-features-migration-guide.md` - Upgrade guide for v3 → v4
 
 ### Other Diagram Folders
 - `diagram-src/database-basics/` - SQL and database concepts

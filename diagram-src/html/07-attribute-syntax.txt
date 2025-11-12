@@ -1,0 +1,174 @@
+┌──────────────────────────────────────────────────────────────┐
+│              HTML ATTRIBUTE SYNTAX GUIDE                      │
+└──────────────────────────────────────────────────────────────┘
+
+ANATOMY OF AN HTML TAG WITH ATTRIBUTES
+═══════════════════════════════════════
+
+<tagname attribute1="value1" attribute2="value2">Content</tagname>
+   │         │          │         │          │         │
+   │         │          │         │          │         └─ Closing tag
+   │         │          │         │          └─ Value (in quotes)
+   │         │          │         └─ Attribute name
+   │         │          └─ Value (in quotes)
+   │         └─ Attribute name
+   └─ Opening tag
+
+
+EXAMPLE: Complete Image Tag
+════════════════════════════
+
+<img src="logo.png" alt="School Logo" width="200" title="Our School">
+  │    │             │                  │             │
+  │    │             │                  │             └─ Tooltip text
+  │    │             │                  └─ Image width in pixels
+  │    │             └─ Alternative text (accessibility)
+  │    └─ Image file path
+  └─ Image tag (self-closing)
+
+
+GLOBAL ATTRIBUTES (Work on Any Tag)
+════════════════════════════════════
+
+id          - Unique identifier
+class       - CSS styling classes
+title       - Tooltip text
+style       - Inline CSS (avoid)
+data-*      - Custom data attributes
+lang        - Language code
+hidden      - Hide element
+
+
+EXAMPLES:
+─────────
+
+1. ID Attribute (Must be unique)
+   <div id="header">...</div>
+   <section id="about">...</section>
+
+2. Class Attribute (Can be reused)
+   <p class="intro">...</p>
+   <div class="card featured">...</div>
+           └─ Multiple classes separated by spaces
+
+3. Data Attributes (Custom data)
+   <button data-student-id="12345" data-grade="9">
+     View Student
+   </button>
+
+4. Title Attribute (Tooltip)
+   <a href="page.html" title="Click to learn more">
+     Read More
+   </a>
+
+
+TAG-SPECIFIC ATTRIBUTES
+═══════════════════════
+
+<a> Link Attributes:
+────────────────────
+<a href="page.html"        ← Destination URL
+   target="_blank"         ← Open in new tab
+   rel="noopener"          ← Security
+   title="Tooltip">        ← Hover text
+   Link Text
+</a>
+
+
+<img> Image Attributes:
+────────────────────────
+<img src="photo.jpg"       ← Image file path
+     alt="Description"     ← Alternative text (required!)
+     width="300"           ← Width in pixels
+     height="200"          ← Height in pixels
+     title="Tooltip">      ← Hover text
+
+
+<input> Form Attributes:
+────────────────────────
+<input type="text"         ← Input type
+       id="username"       ← Unique ID (for label)
+       name="username"     ← Form field name
+       value="John"        ← Default value
+       placeholder="..."   ← Hint text
+       required            ← Must be filled
+       disabled            ← Cannot edit
+       maxlength="50">     ← Max characters
+
+
+<form> Form Attributes:
+───────────────────────
+<form action="/submit"     ← Where to send data
+      method="POST"        ← HTTP method (GET/POST)
+      id="contact-form">   ← Form ID
+
+
+BOOLEAN ATTRIBUTES (No Value Needed)
+═════════════════════════════════════
+
+These attributes don't need values:
+
+required    - Field must be filled
+disabled    - Element is disabled
+readonly    - Can't be edited
+checked     - Checkbox/radio is selected
+hidden      - Element is hidden
+multiple    - Allow multiple selections
+
+CORRECT WAYS:
+<input type="text" required>
+<input type="text" required="required">  ← Also valid
+<input type="checkbox" checked>
+
+
+REAL EXAMPLE: Student Form
+═══════════════════════════
+
+<form action="/enroll" method="POST" id="enrollment-form">
+  
+  <label for="lrn">LRN:</label>
+  <input type="text" 
+         id="lrn"
+         name="lrn"
+         class="form-input"
+         placeholder="12-digit LRN"
+         maxlength="12"
+         required>
+  
+  <label for="grade">Grade Level:</label>
+  <select id="grade" 
+          name="grade" 
+          class="form-select"
+          required>
+    <option value="">Select...</option>
+    <option value="9">Grade 9</option>
+    <option value="10">Grade 10</option>
+  </select>
+  
+  <button type="submit" 
+          class="btn-primary"
+          title="Submit enrollment form">
+    Enroll Now
+  </button>
+</form>
+
+
+ATTRIBUTE RULES
+═══════════════
+✓ Always use quotes ("value" or 'value')
+✓ Lowercase attribute names (id, class, not ID, CLASS)
+✓ No spaces around = sign (id="value" not id = "value")
+✓ ID must be unique on the page
+✓ Class can be reused multiple times
+✓ Boolean attributes don't need values
+✓ Always include alt text for images
+
+❌ WRONG:
+<img src=logo.png>              ← Missing quotes
+<div ID="Header">               ← Uppercase
+<input type="text" required="">  ← Empty value for boolean
+
+✓ CORRECT:
+<img src="logo.png" alt="Logo">
+<div id="header">
+<input type="text" required>

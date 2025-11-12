@@ -1,0 +1,295 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>📝 User Story Template Generator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>📝 User Story Template Generator</h2>
+      <p>Create professional user stories in "As a / I want / So that" format.</p>
+      
+      <div style="margin-top: 20px;">
+        <h3>💡 What is a User Story?</h3>
+        <div class="info-box">
+          <p><strong>Format:</strong> As a [role], I want to [action], so that [benefit]</p>
+          <p><strong>Purpose:</strong> Describes what users need from their perspective</p>
+          <p><strong>Example:</strong> As a store owner, I want to track inventory, so that I know what to reorder</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 30px;">
+        <h3>✍️ Create Your User Story</h3>
+        
+        <div class="form-group">
+          <label for="role">As a (select role):</label>
+          <select id="role" class="input">
+            <option value="">-- Select role --</option>
+            <optgroup label="Sari-Sari Store">
+              <option value="store owner">store owner</option>
+              <option value="cashier">cashier</option>
+              <option value="customer">customer</option>
+            </optgroup>
+            <optgroup label="Barangay System">
+              <option value="barangay captain">barangay captain</option>
+              <option value="kagawad">kagawad</option>
+              <option value="resident">resident</option>
+              <option value="SK chairman">SK chairman</option>
+            </optgroup>
+            <optgroup label="School System">
+              <option value="teacher">teacher</option>
+              <option value="student">student</option>
+              <option value="parent">parent</option>
+              <option value="registrar">registrar</option>
+            </optgroup>
+            <optgroup label="Appointment System">
+              <option value="service provider">service provider</option>
+              <option value="receptionist">receptionist</option>
+              <option value="customer">customer</option>
+            </optgroup>
+            <optgroup label="Custom">
+              <option value="custom">-- Custom role --</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="form-group" id="customRoleDiv" style="display: none;">
+          <label for="customRole">Custom role:</label>
+          <input type="text" id="customRole" class="input" placeholder="e.g., admin, manager, user">
+        </div>
+
+        <div class="form-group">
+          <label for="action">I want to (action):</label>
+          <input type="text" id="action" class="input" placeholder="e.g., add new products, search residents, book appointments">
+          <small style="color: #666; display: block; margin-top: 5px;">
+            💡 Tip: Start with a verb (add, view, edit, delete, search, filter, export)
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="benefit">So that (benefit):</label>
+          <input type="text" id="benefit" class="input" placeholder="e.g., I can track inventory, customers can book easily">
+          <small style="color: #666; display: block; margin-top: 5px;">
+            💡 Tip: Explain WHY this feature matters
+          </small>
+        </div>
+
+        <button onclick="generateUserStory()" class="btn">✨ Generate User Story</button>
+        <button onclick="clearForm()" class="btn" style="background: #6c757d;">🔄 Clear</button>
+      </div>
+
+      <div id="result" style="margin-top: 30px; display: none;">
+        <h3>✅ Generated User Story</h3>
+        <div class="result-box">
+          <p id="userStoryOutput" style="font-size: 18px; font-weight: bold; color: #155724; line-height: 1.6;"></p>
+        </div>
+        
+        <div style="margin-top: 15px;">
+          <button onclick="copyToClipboard()" class="btn">📋 Copy to Clipboard</button>
+          <button onclick="addToList()" class="btn" style="background: #28a745;">➕ Add to List</button>
+        </div>
+      </div>
+
+      <div id="userStoryList" style="margin-top: 30px; display: none;">
+        <h3>📚 Your User Stories</h3>
+        <div id="storyList"></div>
+        <button onclick="exportStories()" class="btn" style="margin-top: 15px;">💾 Export All Stories</button>
+        <button onclick="clearList()" class="btn" style="background: #dc3545; margin-top: 15px;">🗑️ Clear List</button>
+      </div>
+
+      <div style="margin-top: 40px; padding: 20px; background: #e7f3ff; border-left: 4px solid #0066cc; border-radius: 5px;">
+        <h3>📖 User Story Examples</h3>
+        
+        <p><strong>Sari-Sari Store:</strong></p>
+        <ul>
+          <li>As a <strong>store owner</strong>, I want to <strong>see low stock alerts</strong>, so that <strong>I know what to reorder before running out</strong></li>
+          <li>As a <strong>cashier</strong>, I want to <strong>record sales quickly</strong>, so that <strong>customers don't wait long at checkout</strong></li>
+        </ul>
+
+        <p><strong>Barangay Directory:</strong></p>
+        <ul>
+          <li>As a <strong>kagawad</strong>, I want to <strong>search residents by name</strong>, so that <strong>I can find their information quickly</strong></li>
+          <li>As a <strong>resident</strong>, I want to <strong>request barangay clearance online</strong>, so that <strong>I don't have to visit the office during work hours</strong></li>
+        </ul>
+
+        <p><strong>School System:</strong></p>
+        <ul>
+          <li>As a <strong>teacher</strong>, I want to <strong>record student grades</strong>, so that <strong>parents can view their child's progress</strong></li>
+          <li>As a <strong>student</strong>, I want to <strong>view my class schedule</strong>, so that <strong>I know when and where my classes are</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Show/hide custom role input
+    document.getElementById('role').addEventListener('change', function() {
+      const customDiv = document.getElementById('customRoleDiv');
+      if (this.value === 'custom') {
+        customDiv.style.display = 'block';
+      } else {
+        customDiv.style.display = 'none';
+      }
+    });
+
+    let stories = [];
+
+    function generateUserStory() {
+      const roleSelect = document.getElementById('role');
+      const customRole = document.getElementById('customRole').value.trim();
+      const role = roleSelect.value === 'custom' ? customRole : roleSelect.value;
+      const action = document.getElementById('action').value.trim();
+      const benefit = document.getElementById('benefit').value.trim();
+
+      // Validation
+      if (!role) {
+        alert('⚠️ Please select or enter a role');
+        return;
+      }
+      if (!action) {
+        alert('⚠️ Please enter an action (what they want to do)');
+        return;
+      }
+      if (!benefit) {
+        alert('⚠️ Please enter a benefit (why they need it)');
+        return;
+      }
+
+      // Generate user story
+      const userStory = `As a ${role}, I want to ${action}, so that ${benefit}.`;
+      
+      // Display result
+      document.getElementById('userStoryOutput').textContent = userStory;
+      document.getElementById('result').style.display = 'block';
+
+      // Scroll to result
+      document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function clearForm() {
+      document.getElementById('role').value = '';
+      document.getElementById('customRole').value = '';
+      document.getElementById('action').value = '';
+      document.getElementById('benefit').value = '';
+      document.getElementById('customRoleDiv').style.display = 'none';
+      document.getElementById('result').style.display = 'none';
+    }
+
+    function copyToClipboard() {
+      const text = document.getElementById('userStoryOutput').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ User story copied to clipboard!');
+      });
+    }
+
+    function addToList() {
+      const userStory = document.getElementById('userStoryOutput').textContent;
+      stories.push(userStory);
+      
+      // Update list display
+      updateStoryList();
+      
+      // Show list section
+      document.getElementById('userStoryList').style.display = 'block';
+      
+      // Clear form for next story
+      clearForm();
+      
+      alert('✅ Story added to list!');
+    }
+
+    function updateStoryList() {
+      const listDiv = document.getElementById('storyList');
+      if (stories.length === 0) {
+        listDiv.innerHTML = '<p style="color: #666;">No stories yet. Generate and add stories above.</p>';
+        return;
+      }
+
+      let html = '<ol style="line-height: 1.8;">';
+      stories.forEach((story, index) => {
+        html += `
+          <li style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-left: 3px solid #007bff; border-radius: 3px;">
+            ${story}
+            <button onclick="removeStory(${index})" style="margin-left: 10px; padding: 3px 8px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer;">✖</button>
+          </li>
+        `;
+      });
+      html += '</ol>';
+      
+      listDiv.innerHTML = html;
+    }
+
+    function removeStory(index) {
+      stories.splice(index, 1);
+      updateStoryList();
+      if (stories.length === 0) {
+        document.getElementById('userStoryList').style.display = 'none';
+      }
+    }
+
+    function exportStories() {
+      if (stories.length === 0) {
+        alert('⚠️ No stories to export');
+        return;
+      }
+
+      let text = '═══════════════════════════════════════\n';
+      text += '📝 USER STORIES\n';
+      text += '═══════════════════════════════════════\n\n';
+      
+      stories.forEach((story, index) => {
+        text += `${index + 1}. ${story}\n\n`;
+      });
+      
+      text += `\nTotal Stories: ${stories.length}\n`;
+      text += `Generated: ${new Date().toLocaleString()}\n`;
+      
+      // Copy to clipboard
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ All stories copied to clipboard!\n\nYou can paste them into a document.');
+      });
+    }
+
+    function clearList() {
+      if (confirm('⚠️ Clear all stories from the list? This cannot be undone.')) {
+        stories = [];
+        updateStoryList();
+        document.getElementById('userStoryList').style.display = 'none';
+      }
+    }
+  </script>
+
+  <style>
+    .info-box {
+      background: #d1ecf1;
+      padding: 15px;
+      border-left: 4px solid #0c5460;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    .info-box p {
+      margin: 5px 0;
+      color: #0c5460;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+    }
+    .result-box {
+      background: #d4edda;
+      padding: 20px;
+      border-left: 4px solid #28a745;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+  </style>
+</body>
+</html>

@@ -1,7 +1,7 @@
-# Migration Guide: Upgrading to Part 2C (v3 → v4)
+# Advanced Features Migration Guide (v3 → v4)
 ## Adding Advanced Features to Your Mini-Projects
 
-**Target Audience:** Grade 9 students who completed Part 2A and 2B  
+**Target Audience:** Grade 9 students who completed Database SQLite and Authentication Sessions  
 **Prerequisites:** Working v3 project with authentication (database + sessions + login)  
 **Goal:** Add professional features (DataTables, flash messages, CSV, QR codes, audit logging)
 

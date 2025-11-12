@@ -1,0 +1,392 @@
+┌──────────────────────────────────────────────────────────────┐
+│              @MEDIA QUERY SYNTAX GUIDE                        │
+└──────────────────────────────────────────────────────────────┘
+
+ANATOMY OF A MEDIA QUERY
+═════════════════════════
+
+@media screen and (min-width: 768px) {
+  │      │      │    │         │
+  │      │      │    │         └─ Breakpoint value
+  │      │      │    └─ Feature (width, height, etc.)
+  │      │      └─ Logical operator
+  │      └─ Media type (screen, print, all)
+  └─ Media query keyword
+
+  /* CSS rules for this condition */
+  .container {
+    max-width: 960px;
+  }
+}
+
+
+MEDIA TYPES
+═══════════
+
+screen  - Computer screens, tablets, phones (most common)
+print   - Printers and print preview
+all     - All devices (default)
+
+Examples:
+@media screen { ... }    ← For screens only
+@media print { ... }     ← For printing only
+@media all { ... }       ← For everything
+
+
+WIDTH FEATURES
+══════════════
+
+min-width  - Minimum width (≥)  → "this size and larger"
+max-width  - Maximum width (≤)  → "this size and smaller"
+width      - Exact width (=)    → "exactly this size" (rare)
+
+Examples:
+@media (min-width: 768px) { ... }   ← 768px and larger
+@media (max-width: 767px) { ... }   ← 767px and smaller
+@media (width: 768px) { ... }       ← Exactly 768px (rarely used)
+
+
+MOBILE-FIRST (min-width) - RECOMMENDED
+═══════════════════════════════════════
+
+Start with mobile styles, enhance for larger screens:
+
+/* Mobile styles (default, no media query) */
+.container {
+  width: 100%;
+  padding: 10px;
+}
+
+/* Tablet and up (≥ 769px) */
+@media (min-width: 769px) {
+  .container {
+    width: 720px;
+    padding: 20px;
+  }
+}
+
+/* Desktop and up (≥ 1024px) */
+@media (min-width: 1024px) {
+  .container {
+    width: 960px;
+  }
+}
+
+Timeline:
+0px ────────── 768px ────────── 1024px ─────────→
+  Mobile         Tablet           Desktop
+  (default)    (add styles)    (add more styles)
+
+
+DESKTOP-FIRST (max-width) - NOT RECOMMENDED
+════════════════════════════════════════════
+
+Start with desktop styles, shrink for smaller screens:
+
+/* Desktop styles (default, no media query) */
+.container {
+  width: 1200px;
+}
+
+/* Tablet and smaller (≤ 1023px) */
+@media (max-width: 1023px) {
+  .container {
+    width: 960px;
+  }
+}
+
+/* Mobile and smaller (≤ 768px) */
+@media (max-width: 768px) {
+  .container {
+    width: 100%;
+  }
+}
+
+Timeline:
+0px ────────── 768px ────────── 1024px ─────────→
+  Mobile         Tablet           Desktop
+(override)    (override)        (default)
+
+❌ Problem: Have to undo desktop styles for mobile!
+
+
+LOGICAL OPERATORS
+═════════════════
+
+AND - Both conditions must be true
+────
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  /* Tablet only (769-1023px) */
+}
+
+OR (comma) - At least one condition must be true
+──────────
+@media (max-width: 768px), (min-width: 1200px) {
+  /* Mobile OR widescreen */
+}
+
+NOT - Negates the condition
+───
+@media not print {
+  /* Everything except print */
+}
+
+
+COMMON BREAKPOINTS
+══════════════════
+
+Mobile:
+@media (max-width: 768px) { ... }
+
+Tablet:
+@media (min-width: 769px) and (max-width: 1023px) { ... }
+
+Desktop:
+@media (min-width: 1024px) { ... }
+
+Widescreen:
+@media (min-width: 1216px) { ... }
+
+
+BULMA'S BREAKPOINTS
+═══════════════════
+
+Mobile:     0px - 768px
+Tablet:     769px - 1023px
+Desktop:    1024px - 1215px
+Widescreen: 1216px - 1407px
+Fullhd:     1408px+
+
+In CSS:
+@media (min-width: 769px) { /* Tablet+ */ }
+@media (min-width: 1024px) { /* Desktop+ */ }
+@media (min-width: 1216px) { /* Widescreen+ */ }
+@media (min-width: 1408px) { /* Fullhd+ */ }
+
+
+REAL EXAMPLE 1: Product Grid
+═════════════════════════════
+
+/* Mobile: 2 columns (default) */
+.product-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Tablet: 3 columns (≥ 769px) */
+@media (min-width: 769px) {
+  .product-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+  }
+}
+
+/* Desktop: 4 columns (≥ 1024px) */
+@media (min-width: 1024px) {
+  .product-grid {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 20px;
+  }
+}
+
+Mobile:              Tablet:            Desktop:
+┌────┬────┐         ┌───┬───┬───┐      ┌──┬──┬──┬──┐
+│ P1 │ P2 │         │P1 │P2 │P3 │      │P1│P2│P3│P4│
+├────┼────┤         └───┴───┴───┘      └──┴──┴──┴──┘
+│ P3 │ P4 │
+└────┴────┘
+
+
+REAL EXAMPLE 2: Navigation
+══════════════════════════
+
+/* Mobile: Hamburger menu (default) */
+.nav-menu {
+  display: none;
+}
+
+.hamburger {
+  display: block;
+}
+
+/* Tablet+: Full menu (≥ 769px) */
+@media (min-width: 769px) {
+  .nav-menu {
+    display: flex;
+  }
+  
+  .hamburger {
+    display: none;
+  }
+}
+
+Mobile:                    Tablet/Desktop:
+┌──────────────┐          ┌────────────────────────────┐
+│  Logo    ☰   │          │  Logo  Home|About|Contact  │
+└──────────────┘          └────────────────────────────┘
+
+
+REAL EXAMPLE 3: Typography
+══════════════════════════
+
+/* Mobile: Smaller text (default) */
+h1 {
+  font-size: 24px;
+}
+
+p {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Tablet+: Larger text (≥ 769px) */
+@media (min-width: 769px) {
+  h1 {
+    font-size: 36px;
+  }
+  
+  p {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+}
+
+/* Desktop+: Even larger (≥ 1024px) */
+@media (min-width: 1024px) {
+  h1 {
+    font-size: 48px;
+  }
+  
+  p {
+    font-size: 18px;
+    line-height: 1.7;
+  }
+}
+
+
+PRINT MEDIA QUERY
+═════════════════
+
+/* Screen styles (default) */
+.no-print {
+  display: block;
+}
+
+body {
+  background: #f5f5f5;
+  color: #333;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+}
+
+
+HEIGHT MEDIA QUERIES
+════════════════════
+
+Rarely used, but available:
+
+@media (min-height: 600px) {
+  /* For tall screens */
+}
+
+@media (max-height: 500px) {
+  /* For short screens (landscape phones) */
+}
+
+
+ORIENTATION
+═══════════
+
+@media (orientation: portrait) {
+  /* Vertical screen (phone held normally) */
+}
+
+@media (orientation: landscape) {
+  /* Horizontal screen (phone rotated) */
+}
+
+Example:
+/* Portrait: Stack vertically */
+@media (orientation: portrait) {
+  .container {
+    flex-direction: column;
+  }
+}
+
+/* Landscape: Side by side */
+@media (orientation: landscape) {
+  .container {
+    flex-direction: row;
+  }
+}
+
+
+COMBINING CONDITIONS
+════════════════════
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  /* Tablet only: Screen + between 768-1023px */
+}
+
+@media (min-width: 1024px) and (orientation: landscape) {
+  /* Desktop in landscape mode */
+}
+
+@media print and (orientation: landscape) {
+  /* Printing in landscape */
+  @page {
+    size: A4 landscape;
+  }
+}
+
+
+BEST PRACTICES
+══════════════
+✓ Use mobile-first (min-width)
+✓ Use meaningful breakpoints (768px, 1024px)
+✓ Match Bulma's breakpoints for consistency
+✓ Test on real devices
+✓ Don't target specific devices (use ranges)
+✓ Keep media queries together in code
+✓ Use rem/em instead of px (accessibility)
+✓ Order from smallest to largest (mobile-first)
+
+❌ DON'T:
+• Use max-width (desktop-first)
+• Create too many breakpoints
+• Target specific devices (e.g., "iPhone 12")
+• Duplicate code across media queries
+
+✓ DO:
+• Use min-width (mobile-first)
+• Use 2-3 breakpoints (mobile, tablet, desktop)
+• Test on multiple devices
+• Keep media queries simple
+
+
+MEDIA QUERY CHECKLIST
+═════════════════════
+✓ Start with mobile styles (no media query)
+✓ Add tablet styles with @media (min-width: 769px)
+✓ Add desktop styles with @media (min-width: 1024px)
+✓ Use screen media type for screen-specific styles
+✓ Use print media type for printing
+✓ Test breakpoints in Chrome DevTools
+✓ Verify on real mobile devices
+✓ Match Bulma's breakpoints for consistency

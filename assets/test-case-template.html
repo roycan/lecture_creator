@@ -1,0 +1,370 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>📚 Test Case Template Generator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>📚 Test Case Template Generator</h2>
+      <p>Build reusable test cases for your test library.</p>
+      
+      <div style="margin-top: 20px;">
+        <h3>💡 Quick Start Templates</h3>
+        <p>Select a common scenario:</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px;">
+          <button onclick="loadTemplate('login-valid')" class="btn" style="background: #6c757d; font-size: 13px;">✅ Valid Login</button>
+          <button onclick="loadTemplate('login-invalid')" class="btn" style="background: #6c757d; font-size: 13px;">❌ Invalid Login</button>
+          <button onclick="loadTemplate('create-record')" class="btn" style="background: #6c757d; font-size: 13px;">➕ Create Record</button>
+          <button onclick="loadTemplate('update-record')" class="btn" style="background: #6c757d; font-size: 13px;">✏️ Update Record</button>
+          <button onclick="loadTemplate('delete-record')" class="btn" style="background: #6c757d; font-size: 13px;">🗑️ Delete Record</button>
+          <button onclick="loadTemplate('search')" class="btn" style="background: #6c757d; font-size: 13px;">🔍 Search</button>
+        </div>
+      </div>
+
+      <div style="margin-top: 30px;">
+        <h3>✍️ Create Test Case</h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div class="form-group">
+            <label for="testId">Test Case ID:</label>
+            <input type="text" id="testId" class="input" placeholder="e.g., TC-001">
+          </div>
+          <div class="form-group">
+            <label for="priority">Priority:</label>
+            <select id="priority" class="input">
+              <option value="HIGH">HIGH</option>
+              <option value="MEDIUM" selected>MEDIUM</option>
+              <option value="LOW">LOW</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="featureName">Feature Being Tested:</label>
+          <input type="text" id="featureName" class="input" placeholder="e.g., User Login">
+        </div>
+
+        <div class="form-group">
+          <label for="preconditions">Preconditions (What must be true BEFORE test):</label>
+          <textarea id="preconditions" class="input" rows="2" placeholder="e.g., User account exists with username 'admin' and password '1234'"></textarea>
+        </div>
+
+        <hr style="margin: 20px 0; border: none; border-top: 2px solid #dee2e6;">
+
+        <h4>📋 Test Steps</h4>
+        <div id="stepsContainer"></div>
+        <button onclick="addStep()" class="btn" style="background: #28a745; margin-top: 10px;">➕ Add Step</button>
+
+        <hr style="margin: 20px 0; border: none; border-top: 2px solid #dee2e6;">
+
+        <div class="form-group">
+          <label for="expectedResult">Expected Result (What SHOULD happen):</label>
+          <textarea id="expectedResult" class="input" rows="3" placeholder="e.g., User is redirected to dashboard, welcome message displays"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="testData">Test Data (specific values to use):</label>
+          <textarea id="testData" class="input" rows="2" placeholder="e.g., Username: admin, Password: 1234"></textarea>
+        </div>
+
+        <div style="margin-top: 30px;">
+          <button onclick="generateTestCase()" class="btn">✨ Generate Test Case</button>
+          <button onclick="clearForm()" class="btn" style="background: #6c757d;">🔄 Clear</button>
+        </div>
+      </div>
+
+      <div id="result" style="margin-top: 30px; display: none;">
+        <h3>✅ Generated Test Case</h3>
+        <div class="result-box">
+          <pre id="testCaseOutput" style="white-space: pre-wrap; font-family: 'Courier New', monospace; line-height: 1.6;"></pre>
+        </div>
+        
+        <div style="margin-top: 15px;">
+          <button onclick="copyTestCase()" class="btn">📋 Copy</button>
+          <button onclick="addToLibrary()" class="btn" style="background: #28a745;">💾 Add to Library</button>
+        </div>
+      </div>
+
+      <div id="library" style="margin-top: 30px; display: none;">
+        <h3>📚 Your Test Case Library</h3>
+        <div id="libraryContent"></div>
+        <button onclick="exportLibrary()" class="btn" style="margin-top: 15px;">💾 Export All</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let stepCount = 0;
+    let library = [];
+
+    window.onload = function() {
+      addStep();
+      addStep();
+    };
+
+    function addStep() {
+      stepCount++;
+      const container = document.getElementById('stepsContainer');
+      const stepDiv = document.createElement('div');
+      stepDiv.className = 'step-item';
+      stepDiv.style.cssText = 'margin-bottom: 10px; display: flex; gap: 10px; align-items: center;';
+      stepDiv.innerHTML = `
+        <span style="min-width: 60px;"><strong>Step ${stepCount}:</strong></span>
+        <input type="text" class="input step-text" placeholder="e.g., Click 'Login' button" style="flex: 1;">
+        <button onclick="removeStep(this)" style="padding: 5px 10px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer;">✕</button>
+      `;
+      container.appendChild(stepDiv);
+    }
+
+    function removeStep(btn) {
+      btn.closest('.step-item').remove();
+      renumberSteps();
+    }
+
+    function renumberSteps() {
+      const steps = document.querySelectorAll('.step-item');
+      steps.forEach((step, index) => {
+        step.querySelector('strong').textContent = `Step ${index + 1}:`;
+      });
+      stepCount = steps.length;
+    }
+
+    function loadTemplate(type) {
+      const templates = {
+        'login-valid': {
+          id: 'TC-001',
+          feature: 'User Login - Valid Credentials',
+          preconditions: 'User account exists (username: admin, password: 1234)',
+          steps: ['Navigate to login page', 'Enter username: admin', 'Enter password: 1234', 'Click "Login" button'],
+          expected: 'User is redirected to dashboard, welcome message displays',
+          testData: 'Username: admin\nPassword: 1234'
+        },
+        'login-invalid': {
+          id: 'TC-002',
+          feature: 'User Login - Invalid Password',
+          preconditions: 'User account exists with correct username',
+          steps: ['Navigate to login page', 'Enter valid username', 'Enter WRONG password', 'Click "Login" button'],
+          expected: 'Error message "Invalid credentials" displays, user stays on login page',
+          testData: 'Username: admin\nPassword: wrongpass'
+        },
+        'create-record': {
+          id: 'TC-010',
+          feature: 'Create New Record',
+          preconditions: 'User is logged in as admin',
+          steps: ['Click "Add New" button', 'Fill all required fields', 'Click "Save"'],
+          expected: 'Success message displays, new record appears in list',
+          testData: 'Name: Maria Santos\nAge: 25\nAddress: Block 5'
+        },
+        'update-record': {
+          id: 'TC-030',
+          feature: 'Update Existing Record',
+          preconditions: 'At least one record exists in database',
+          steps: ['Navigate to list page', 'Click on existing record', 'Click "Edit" button', 'Change one field', 'Click "Save"'],
+          expected: 'Success message displays, changes visible in list',
+          testData: 'Change Name from "Maria" to "Maria Clara"'
+        },
+        'delete-record': {
+          id: 'TC-040',
+          feature: 'Delete Record',
+          preconditions: 'At least one record exists in database',
+          steps: ['Navigate to list page', 'Click on record to delete', 'Click "Delete" button', 'Confirm deletion'],
+          expected: 'Record removed from list, count decreased by 1',
+          testData: 'Delete record: Maria Santos'
+        },
+        'search': {
+          id: 'TC-050',
+          feature: 'Search for Existing Record',
+          preconditions: 'Database contains 10+ records',
+          steps: ['Navigate to search page', 'Enter search term that exists', 'Click "Search" button'],
+          expected: 'Matching records display in results',
+          testData: 'Search term: "Santos"'
+        }
+      };
+
+      const template = templates[type];
+      if (!template) return;
+
+      document.getElementById('testId').value = template.id;
+      document.getElementById('featureName').value = template.feature;
+      document.getElementById('preconditions').value = template.preconditions;
+      document.getElementById('expectedResult').value = template.expected;
+      document.getElementById('testData').value = template.testData;
+
+      document.getElementById('stepsContainer').innerHTML = '';
+      stepCount = 0;
+      template.steps.forEach(stepText => {
+        addStep();
+        const steps = document.querySelectorAll('.step-text');
+        steps[steps.length - 1].value = stepText;
+      });
+    }
+
+    function generateTestCase() {
+      const testId = document.getElementById('testId').value.trim();
+      const priority = document.getElementById('priority').value;
+      const featureName = document.getElementById('featureName').value.trim();
+      const preconditions = document.getElementById('preconditions').value.trim();
+      const expectedResult = document.getElementById('expectedResult').value.trim();
+      const testData = document.getElementById('testData').value.trim();
+
+      if (!testId || !featureName) {
+        alert('⚠️ Please fill in Test ID and Feature Name');
+        return;
+      }
+
+      const steps = Array.from(document.querySelectorAll('.step-text'))
+        .map(input => input.value.trim())
+        .filter(text => text);
+
+      if (steps.length === 0) {
+        alert('⚠️ Please add at least one test step');
+        return;
+      }
+
+      let output = '';
+      output += '═'.repeat(60) + '\n';
+      output += 'TEST CASE\n';
+      output += '═'.repeat(60) + '\n\n';
+      output += `TEST CASE ID: ${testId}\n`;
+      output += `PRIORITY: ${priority}\n`;
+      output += `FEATURE: ${featureName}\n\n`;
+      
+      if (preconditions) {
+        output += '─'.repeat(60) + '\n';
+        output += 'PRECONDITIONS:\n';
+        output += '─'.repeat(60) + '\n';
+        output += preconditions + '\n\n';
+      }
+
+      output += '─'.repeat(60) + '\n';
+      output += 'TEST STEPS:\n';
+      output += '─'.repeat(60) + '\n';
+      steps.forEach((step, index) => {
+        output += `${index + 1}. ${step}\n`;
+      });
+      output += '\n';
+
+      if (expectedResult) {
+        output += '─'.repeat(60) + '\n';
+        output += 'EXPECTED RESULT:\n';
+        output += '─'.repeat(60) + '\n';
+        output += expectedResult + '\n\n';
+      }
+
+      if (testData) {
+        output += '─'.repeat(60) + '\n';
+        output += 'TEST DATA:\n';
+        output += '─'.repeat(60) + '\n';
+        output += testData + '\n\n';
+      }
+
+      output += '═'.repeat(60) + '\n';
+      output += 'TEST EXECUTION:\n';
+      output += '═'.repeat(60) + '\n';
+      output += 'PASS/FAIL: [ ]\n';
+      output += 'TESTED BY: _______________\n';
+      output += 'DATE: _______________\n';
+      output += 'ACTUAL RESULT: _______________________________________\n';
+      output += 'NOTES: _______________________________________________\n';
+      output += '═'.repeat(60) + '\n';
+
+      document.getElementById('testCaseOutput').textContent = output;
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function clearForm() {
+      document.getElementById('testId').value = '';
+      document.getElementById('priority').value = 'MEDIUM';
+      document.getElementById('featureName').value = '';
+      document.getElementById('preconditions').value = '';
+      document.getElementById('expectedResult').value = '';
+      document.getElementById('testData').value = '';
+      document.getElementById('stepsContainer').innerHTML = '';
+      stepCount = 0;
+      addStep();
+      addStep();
+      document.getElementById('result').style.display = 'none';
+    }
+
+    function copyTestCase() {
+      const text = document.getElementById('testCaseOutput').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ Test case copied!');
+      });
+    }
+
+    function addToLibrary() {
+      const testCase = document.getElementById('testCaseOutput').textContent;
+      const testId = document.getElementById('testId').value.trim();
+      const featureName = document.getElementById('featureName').value.trim();
+      library.push({ id: testId, name: featureName, testCase });
+      updateLibrary();
+      document.getElementById('library').style.display = 'block';
+      alert('✅ Added to library!');
+    }
+
+    function updateLibrary() {
+      const container = document.getElementById('libraryContent');
+      if (library.length === 0) {
+        container.innerHTML = '<p style="color: #666;">No test cases yet.</p>';
+        return;
+      }
+
+      let html = '';
+      library.forEach((tc, index) => {
+        html += `
+          <div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-left: 3px solid #007bff; border-radius: 3px;">
+            <strong>${tc.id}: ${tc.name}</strong>
+            <button onclick="removeFromLibrary(${index})" style="float: right; padding: 3px 8px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 12px;">Remove</button>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function removeFromLibrary(index) {
+      library.splice(index, 1);
+      updateLibrary();
+      if (library.length === 0) {
+        document.getElementById('library').style.display = 'none';
+      }
+    }
+
+    function exportLibrary() {
+      if (library.length === 0) {
+        alert('⚠️ No test cases to export');
+        return;
+      }
+
+      let text = '═'.repeat(60) + '\n';
+      text += 'TEST CASE LIBRARY\n';
+      text += '═'.repeat(60) + '\n\n';
+      
+      library.forEach(tc => {
+        text += tc.testCase + '\n\n';
+      });
+      
+      text += `Total Test Cases: ${library.length}\n`;
+      text += `Exported: ${new Date().toLocaleString()}\n`;
+      
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ Test library copied!');
+      });
+    }
+  </script>
+
+  <style>
+    .result-box {
+      background: #d4edda;
+      padding: 20px;
+      border-left: 4px solid #28a745;
+      border-radius: 5px;
+    }
+  </style>
+</body>
+</html>

@@ -1,0 +1,91 @@
+┌─────────────────────────────────────────────────────────────┐
+│              💨 SMOKE TEST CHECKLIST                         │
+│              (2-5 Minute Sanity Check)                       │
+└─────────────────────────────────────────────────────────────┘
+
+🎯 Purpose: Quick check to see if the system is ALIVE
+⏱️  Time Limit: 2-5 minutes MAX
+📅 When: Before client demos, after deployments, Monday mornings
+
+┌─────────────────────────────────────────────────────────────┐
+│               🔥 CRITICAL FEATURES ONLY                      │
+└─────────────────────────────────────────────────────────────┘
+
+❗ If ANY of these fail → Don't show to client yet
+
+┌─────────────────────────────────────────────────────────────┐
+│        📋 SARI-SARI STORE SMOKE TEST (Example)              │
+└─────────────────────────────────────────────────────────────┘
+
+[  ] 1. Site Loads
+     → Open store-inventory.html
+     → Page displays within 3 seconds
+     → No error messages in console
+
+[  ] 2. Login Works
+     → Enter username: "cashier"
+     → Enter password: "1234"
+     → Click "Login"
+     → Redirects to dashboard
+
+[  ] 3. Core Feature #1: View Products
+     → See list of products
+     → Products show: name, stock, price
+     → At least 5 products visible
+
+[  ] 4. Core Feature #2: Record Sale
+     → Select any product
+     → Enter quantity: 1
+     → Click "Record Sale"
+     → Success message appears
+
+[  ] 5. Core Feature #3: View Sales
+     → Click "Today's Sales"
+     → See sales table
+     → Today's total displays
+
+✅ All Pass → Safe to demo
+❌ Any Fail → Fix before showing client
+
+┌─────────────────────────────────────────────────────────────┐
+│             🎯 WHAT SMOKE TESTS ARE NOT                      │
+└─────────────────────────────────────────────────────────────┘
+
+❌ NOT comprehensive testing (that takes hours)
+❌ NOT checking edge cases
+❌ NOT testing every single button
+❌ NOT stress testing
+
+✅ Smoke tests just verify: "Is the system ALIVE and BREATHING?"
+
+┌─────────────────────────────────────────────────────────────┐
+│              📝 WHEN TO RUN SMOKE TESTS                      │
+└─────────────────────────────────────────────────────────────┘
+
+✅ Before every client demo (5 min before meeting)
+✅ After deploying to live site
+✅ Monday morning (after weekend)
+✅ After adding major features
+✅ Before submitting to teacher
+
+┌─────────────────────────────────────────────────────────────┐
+│           🚨 WHAT TO DO IF SMOKE TEST FAILS                  │
+└─────────────────────────────────────────────────────────────┘
+
+1. DON'T PANIC (but don't ignore it)
+2. Check browser console for errors
+3. Try on different browser/device
+4. If still failing → POSTPONE CLIENT DEMO
+5. Fix the issue first
+6. Re-run smoke test
+7. Once all pass → Schedule new demo
+
+┌─────────────────────────────────────────────────────────────┐
+│                  💡 PRO TIP                                  │
+└─────────────────────────────────────────────────────────────┘
+
+Create a smoke test checklist for EACH project you build.
+Print it out. Laminate it. Check it every time.
+
+Your reputation depends on showing working software.
+5 minutes of smoke testing = 0 embarrassing demo failures.

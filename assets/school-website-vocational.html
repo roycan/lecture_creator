@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Philippine Skills Development Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+        header {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        header p {
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+        nav {
+            background-color: #34495e;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: #e67e22;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 20px;
+        }
+        main {
+            background-color: #fff;
+        }
+        section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background-color: #fff;
+            border-radius: 8px;
+            border: 2px solid #ecf0f1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        h2 {
+            color: #e67e22;
+            margin-bottom: 20px;
+            font-size: 2em;
+            border-bottom: 3px solid #e67e22;
+            padding-bottom: 10px;
+        }
+        h3 {
+            color: #d35400;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+        .hero-image {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.95;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul li {
+            padding: 12px;
+            margin: 10px 0;
+            background-color: #fff;
+            border-left: 4px solid #e67e22;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        ul li:before {
+            content: "⚙️ ";
+            margin-right: 10px;
+        }
+        .course-card {
+            background-color: #fff;
+            border: 2px solid #e67e22;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .course-card h4 {
+            color: #e67e22;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin: 5px 5px 5px 0;
+        }
+        .nc2 {
+            background-color: #27ae60;
+            color: white;
+        }
+        .nc3 {
+            background-color: #2980b9;
+            color: white;
+        }
+        .months {
+            background-color: #95a5a6;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #e67e22;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #fef5e7;
+        }
+        tr:hover {
+            background-color: #fdebd0;
+        }
+        form {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            border: 2px solid #e67e22;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #e67e22;
+        }
+        button {
+            margin-top: 20px;
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        button[type="submit"] {
+            background-color: #e67e22;
+            color: white;
+        }
+        button[type="submit"]:hover {
+            background-color: #d35400;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        button[type="reset"] {
+            background-color: #95a5a6;
+            color: white;
+            margin-left: 10px;
+        }
+        button[type="reset"]:hover {
+            background-color: #7f8c8d;
+        }
+        aside {
+            background-color: #fef5e7;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e67e22;
+            height: fit-content;
+            position: sticky;
+            top: 80px;
+        }
+        aside h3 {
+            color: #d35400;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e67e22;
+            padding-bottom: 8px;
+        }
+        aside p {
+            margin: 12px 0;
+            padding: 12px;
+            background-color: white;
+            border-radius: 5px;
+            border-left: 3px solid #e67e22;
+            font-size: 0.95em;
+        }
+        footer {
+            background-color: #34495e;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 40px;
+        }
+        footer h3 {
+            color: #e67e22;
+            margin-bottom: 15px;
+        }
+        footer p {
+            margin: 8px 0;
+        }
+        footer a {
+            color: #f39c12;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        .required {
+            color: #e74c3c;
+        }
+        .highlight-box {
+            background-color: #fef5e7;
+            border-left: 5px solid #e67e22;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://via.placeholder.com/120x120/e67e22/ffffff?text=PSDC" 
+             alt="Philippine Skills Development Center Logo" 
+             style="border-radius: 50%; border: 4px solid white; margin-bottom: 15px;">
+        <h1>⚙️ Philippine Skills Development Center</h1>
+        <p>TESDA-Accredited | Building Careers, Empowering Lives</p>
+    </header>
+    
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#programs">Courses</a>
+        <a href="#trainers">Trainers</a>
+        <a href="#enrollment">Enroll Now</a>
+    </nav>
+    
+    <div class="container">
+        <main>
+            <!-- Welcome Section -->
+            <section id="home">
+                <h2>Welcome to PSDC</h2>
+                <img src="https://via.placeholder.com/800x400/f39c12/2c3e50?text=Hands-On+Training+Workshop" 
+                     alt="Students in technical training workshop" 
+                     class="hero-image">
+                
+                <p>
+                    <strong>Philippine Skills Development Center (PSDC)</strong> is a TESDA-accredited training 
+                    institution committed to providing quality technical-vocational education and training (TVET) 
+                    to Filipinos seeking employment, career advancement, or entrepreneurship opportunities.
+                </p>
+                
+                <p>
+                    Since 2010, we have trained over <strong>15,000 students</strong> in various technical and 
+                    vocational skills, with a <strong>95% employment rate</strong> within 3 months of graduation. 
+                    Our graduates work in leading companies across the Philippines and abroad as OFWs.
+                </p>
+                
+                <div class="highlight-box">
+                    <h3>🎯 Why Choose PSDC?</h3>
+                    <ul style="list-style-type: disc; padding-left: 20px;">
+                        <li><strong>TESDA-Certified Programs</strong> - National Certification (NC II/III) upon completion</li>
+                        <li><strong>Industry-Experienced Trainers</strong> - Learn from professionals with 10+ years experience</li>
+                        <li><strong>Job Placement Assistance</strong> - 95% of graduates employed within 3 months</li>
+                        <li><strong>Modern Facilities</strong> - Fully-equipped workshops and laboratories</li>
+                        <li><strong>Flexible Schedules</strong> - Morning, afternoon, and weekend classes available</li>
+                        <li><strong>Affordable Tuition</strong> - Payment plans and scholarships available</li>
+                    </ul>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">15,000+</div>
+                        <div class="stat-label">Graduates Since 2010</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">95%</div>
+                        <div class="stat-label">Employment Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Partner Companies</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">98%</div>
+                        <div class="stat-label">TESDA Pass Rate</div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- About Section -->
+            <section id="about">
+                <h2>About PSDC</h2>
+                
+                <h3>Our Mission</h3>
+                <p>
+                    To provide accessible, quality technical-vocational training that develops skilled, 
+                    competent, and globally competitive Filipino workers who contribute to national economic 
+                    development and personal prosperity.
+                </p>
+                
+                <h3>Our Vision</h3>
+                <p>
+                    To be the leading TVET institution in Metro Manila, recognized for excellence in skills 
+                    training, high employment rates, and graduates who excel in their chosen fields both 
+                    locally and internationally.
+                </p>
+                
+                <h3>TESDA Accreditation</h3>
+                <div class="highlight-box">
+                    <p>
+                        <strong>PSDC is fully accredited by the Technical Education and Skills Development Authority (TESDA)</strong>, 
+                        the Philippine government agency responsible for managing and supervising technical education 
+                        and skills development in the country.
+                    </p>
+                    <p>
+                        <strong>TESDA Registration No:</strong> NCR-2010-0123<br>
+                        <strong>Accreditation Level:</strong> Full Compliance<br>
+                        <strong>Valid Until:</strong> December 2026
+                    </p>
+                </div>
+                
+                <h3>Training Facilities</h3>
+                <ul>
+                    <li>Welding Workshop with 20 welding booths (SMAW, GMAW, GTAW equipment)</li>
+                    <li>Automotive Service Center with 10 service bays and diagnostic tools</li>
+                    <li>Computer Laboratory with 40 workstations (hardware and software)</li>
+                    <li>Electrical Installation Workshop with industrial-grade equipment</li>
+                    <li>Culinary Arts Kitchen with commercial-grade cooking equipment</li>
+                    <li>Food & Beverage Service Training Restaurant</li>
+                    <li>Caregiving Training Center with medical equipment and mannequins</li>
+                    <li>Plumbing Workshop with complete tools and materials</li>
+                    <li>Library and study areas</li>
+                    <li>Free WiFi throughout campus</li>
+                </ul>
+                
+                <h3>Industry Partnerships</h3>
+                <p>We partner with leading companies for On-the-Job Training (OJT) and job placement:</p>
+                <ul>
+                    <li><strong>Construction:</strong> DMCI, EEI Corporation, Megawide Construction</li>
+                    <li><strong>Hospitality:</strong> Jollibee Group, McDonald's, Max's Restaurant</li>
+                    <li><strong>Automotive:</strong> Toyota, Honda, Suzuki authorized service centers</li>
+                    <li><strong>BPO/IT:</strong> Accenture, Concentrix, TDCX Philippines</li>
+                    <li><strong>Manufacturing:</strong> San Miguel Corporation, Nestlé Philippines</li>
+                    <li><strong>Healthcare:</strong> Philippine General Hospital, St. Luke's Medical Center</li>
+                </ul>
+            </section>
+            
+            <!-- Programs Section -->
+            <section id="programs">
+                <h2>TESDA-Certified Courses</h2>
+                <p>
+                    All our courses lead to <strong>TESDA National Certification (NC II or NC III)</strong>, 
+                    recognized by employers nationwide and accepted internationally. Graduates are qualified 
+                    to take the TESDA National Assessment exam.
+                </p>
+                
+                <h3>Construction Trades</h3>
+                
+                <div class="course-card">
+                    <h4>Welding Technology (SMAW)</h4>
+                    <span class="badge nc2">TESDA NC II</span>
+                    <span class="badge months">3 months</span>
+                    <p><strong>Skills Covered:</strong></p>
+                    <ul style="list-style-type: disc; padding-left: 20px;">
+                        <li>Shielded Metal Arc Welding (SMAW/Stick Welding)</li>
+                        <li>Blueprint reading and welding symbols</li>
+                        <li>Metal fabrication techniques</li>
+                        <li>Safety and quality control</li>
+                    </ul>
+                    <p><strong>Career Opportunities:</strong> Welder, Metal Fabricator, Construction Worker (local & OFW)</p>
+                    <p><strong>Average Starting Salary:</strong> ₱18,000-₱25,000/month (PH) | $1,500-$2,500/month (abroad)</p>
+                </div>
+                
+                <div class="course-card">
+                    <h4>Electrical Installation and Maintenance</h4>
+                    <span class="badge nc2">TESDA NC II</span>
+                    <span class="badge months">3 months</span>
+                    <p><strong>Skills Covered:</strong></p>
+                    <ul style="list-style-type: disc; padding-left: 20px;">
+                        <li>Residential and commercial electrical wiring</li>
+                        <li>Electrical circuit installation and troubleshooting</li>
+                        <li>Reading electrical plans and diagrams</li>
+                        <li>Philippine Electrical Code compliance</li>
+                    </ul>
+                    <p><strong>Career Opportunities:</strong> Electrician, Maintenance Technician, Electrical Contractor</p>
+                    <p><strong>Average Starting Salary:</strong> ₱20,000-₱28,000/month</p>
+                </div>
+                
+                <div class="course-card">
+                    <h4>Plumbing</h4>
+                    <span class="badge nc2">TESDA NC II</span>
+                    <span class="badge months">3 months</span>
+                    <p><strong>Skills Covered:</strong></p>
+                    <ul style="list-style-type: disc; padding-left: 20px;">
+                        <li>Water supply and drainage systems installation</li>
+                        <li>Pipe fitting and soldering</li>
+                        <li>Sanitary fixture installation</li>
+                        <li>Plumbing system maintenance and repair</li>
+                    </ul>
+                    <p><strong>Career Opportunities:</strong> Plumber, Pipefitter, Maintenance Worker</p>
+                    <p><strong>Average Starting Salary:</strong> ₱18,000-₱25,000/month</p>
+                </div>
+                
+                <h3>Automotive Services</h3>
+                
+                <div class="course-card">
+                    <h4>Automotive Servicing NC II</h4>
+                    <span class="badge nc2">TESDA NC II</span>
+                    <span class="badge months">4 months</span>
+                    <p><strong>Skills Covered:</strong></p>
+                    <ul style="list-style-type: disc; padding-left: 20px;">
+                        <li>Engine repair and maintenance</li>
+                        <li>Electrical system diagnostics</li>
+                        <li>Brake and suspension systems</li>
+                        <li>Automotive troubleshooting</li>
+                    </ul>
+                    <p><strong>Career Opportunities:</strong> Auto Mechanic, Service Technician, Shop Supervisor</p>
+                    <p><strong>Average Starting Salary:</strong> ₱20,000-₱30,000/month</p>
+                </div>
+                
+                <h3>Information Technology</h3>
+                
+                <div class="course-card">
+                    <h4>Computer Systems Servicing</h4>
+                    <span class="badge nc2">TESDA NC II</span>
+                    <span class="badge months">3 months</span>
+                    <p><strong>Skills Covered:</strong></p>
+                    <ul style="list-style-type: disc; padding-left: 20px;">
+                        <li>Computer hardware installation and configuration</li>
+                        <li>Operating system installation (Windows, Linux)</li>
+                        <li>Network cable installation and configuration</li>
+                        <li>Computer troubleshooting and repair</li>
+                    </ul>
+                    <p><strong>Career Opportunities:</strong> Computer Technician, IT Support, Network Assistant</p>
+                    <p><strong>Average Starting Salary:</strong> ₱18,000-₱25,000/month</p>
+                </div>
+                
+                <h3>Hospitality & Food Service</h3>
+                
+                <div class="course-card">
+                    <h4>Cookery NC II</h4>
+                    <span class="badge nc2">TESDA NC II</span>
+                    <span class="badge months">3 months</span>
+                    <p><strong>Skills Covered:</strong></p>
+                    <ul style="list-style-type: disc; padding-left: 20px;">
+                        <li>Food preparation and cooking methods</li>
+                        <li>Menu planning and food costing</li>
+                        <li>Kitchen safety and sanitation</li>
+                        <li>Philippine and international cuisine</li>
+                    </ul>
+                    <p><strong>Career Opportunities:</strong> Cook, Chef Assistant, Food Service Worker, Catering Staff</p>
+                    <p><strong>Average Starting Salary:</strong> ₱15,000-₱22,000/month (local) | $1,200-$2,000/month (cruise ships)</p>
+                </div>
+                
+                <div class="course-card">
+                    <h4>Food and Beverage Services NC II</h4>
+                    <span class="badge nc2">TESDA NC II</span>
+                    <span class="badge months">3 months</span>
+                    <p><strong>Skills Covered:</strong></p>
+                    <ul style="list-style-type: disc; padding-left: 20px;">
+                        <li>Table service techniques</li>
+                        <li>Food and beverage preparation</li>
+                        <li>Customer service excellence</li>
+                        <li>Restaurant operations</li>
+                    </ul>
+                    <p><strong>Career Opportunities:</strong> Waiter/Waitress, Barista, Restaurant Supervisor</p>
+                    <p><strong>Average Starting Salary:</strong> ₱14,000-₱20,000/month + tips</p>
+                </div>
+                
+                <h3>Healthcare Services</h3>
+                
+                <div class="course-card">
+                    <h4>Caregiving NC II</h4>
+                    <span class="badge nc2">TESDA NC II</span>
+                    <span class="badge months">6 months</span>
+                    <p><strong>Skills Covered:</strong></p>
+                    <ul style="list-style-type: disc; padding-left: 20px;">
+                        <li>Patient care and assistance</li>
+                        <li>First aid and emergency response</li>
+                        <li>Elderly and special needs care</li>
+                        <li>Health and safety protocols</li>
+                    </ul>
+                    <p><strong>Career Opportunities:</strong> Caregiver (local & abroad), Nursing Aide, Home Health Aide</p>
+                    <p><strong>Average Starting Salary:</strong> ₱15,000-₱20,000/month (PH) | $1,500-$2,500/month (abroad)</p>
+                    <p><strong>Note:</strong> High demand for OFW caregivers in Canada, UK, Middle East</p>
+                </div>
+                
+                <h3>Class Schedules & Tuition</h3>
+                <div class="highlight-box">
+                    <h4>Flexible Learning Options</h4>
+                    <ul style="list-style-type: disc; padding-left: 20px;">
+                        <li><strong>Morning Class:</strong> 8:00 AM - 12:00 PM (Mon-Fri)</li>
+                        <li><strong>Afternoon Class:</strong> 1:00 PM - 5:00 PM (Mon-Fri)</li>
+                        <li><strong>Weekend Class:</strong> 8:00 AM - 5:00 PM (Sat-Sun only)</li>
+                    </ul>
+                    
+                    <h4>Tuition & Fees</h4>
+                    <p><strong>Average Course Fee:</strong> ₱15,000 - ₱25,000 (depends on course)</p>
+                    <p><strong>Includes:</strong> Training materials, tools usage, TESDA assessment fee</p>
+                    <p><strong>Payment Options:</strong> Full payment, installment (3-6 months), TESDA Scholarship</p>
+                </div>
+            </section>
+            
+            <!-- Trainers Section -->
+            <section id="trainers">
+                <h2>Our Expert Trainers</h2>
+                <p>
+                    Learn from industry professionals with years of hands-on experience. All our trainers 
+                    are TESDA-certified, with an average of 10+ years in their respective industries.
+                </p>
+                
+                <img src="https://via.placeholder.com/800x300/fef5e7/e67e22?text=Expert+Industry+Trainers" 
+                     alt="PSDC trainers and instructors" 
+                     class="hero-image">
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trainer Name</th>
+                            <th>Specialization</th>
+                            <th>Industry Experience</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Engr. Ricardo Santos</td>
+                            <td>Welding Technology</td>
+                            <td>Master Welder | 15 years shipyard experience | TESDA Assessor</td>
+                        </tr>
+                        <tr>
+                            <td>Engr. Manuel Cruz</td>
+                            <td>Electrical Installation</td>
+                            <td>Licensed Electrician | 12 years industrial electrician | TESDA Trainer</td>
+                        </tr>
+                        <tr>
+                            <td>Mr. Antonio Reyes</td>
+                            <td>Automotive Servicing</td>
+                            <td>Certified Auto Mechanic | 18 years Toyota service center | TESDA Assessor</td>
+                        </tr>
+                        <tr>
+                            <td>Mr. Roberto Garcia</td>
+                            <td>Plumbing</td>
+                            <td>Master Plumber | 14 years construction | Licensed Contractor</td>
+                        </tr>
+                        <tr>
+                            <td>Mr. Mark Fernandez</td>
+                            <td>Computer Systems</td>
+                            <td>IT Professional | 10 years BPO tech support | TESDA Trainer</td>
+                        </tr>
+                        <tr>
+                            <td>Chef Maria Ramos</td>
+                            <td>Cookery</td>
+                            <td>Professional Chef | 16 years hotel & restaurant | Culinary Arts Graduate</td>
+                        </tr>
+                        <tr>
+                            <td>Ms. Elena Torres</td>
+                            <td>Food & Beverage</td>
+                            <td>Restaurant Manager | 12 years Jollibee & Max's | TESDA Trainer</td>
+                        </tr>
+                        <tr>
+                            <td>Nurse Ana Mendoza, RN</td>
+                            <td>Caregiving</td>
+                            <td>Registered Nurse | 15 years hospital & home care | BLS Instructor</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Training Center Management</h3>
+                <ul>
+                    <li><strong>Center Director:</strong> Dr. Jose P. Villanueva - PhD in Technical Education</li>
+                    <li><strong>Training Manager:</strong> Engr. Sarah L. Cruz - 20 years TVET experience</li>
+                    <li><strong>Placement Officer:</strong> Ms. Linda M. Santos - HR & Career Development Specialist</li>
+                    <li><strong>Registrar:</strong> Mr. Carlos D. Ramos - TESDA Documentation Specialist</li>
+                </ul>
+            </section>
+            
+            <!-- Enrollment Form Section -->
+            <section id="enrollment">
+                <h2>Enroll Now - Start Your Career!</h2>
+                <p>
+                    Ready to learn a valuable skill and start your career? Fill out this enrollment inquiry 
+                    form and our admissions team will contact you within 24 hours with enrollment procedures, 
+                    requirements, and available class schedules.
+                </p>
+                
+                <div class="highlight-box">
+                    <h3>📋 Enrollment Requirements</h3>
+                    <ul style="list-style-type: disc; padding-left: 20px;">
+                        <li>Birth Certificate (original & photocopy)</li>
+                        <li>Valid ID (any government-issued ID)</li>
+                        <li>2x2 ID pictures (4 copies)</li>
+                        <li>High school diploma or Form 138 (for NC II courses)</li>
+                        <li>Medical certificate</li>
+                        <li>Barangay clearance</li>
+                    </ul>
+                </div>
+                
+                <form action="/submit-enrollment" method="POST">
+                    <h3>Personal Information</h3>
+                    
+                    <label for="fullname">Complete Name: <span class="required">*</span></label>
+                    <input type="text" 
+                           id="fullname" 
+                           name="fullname" 
+                           placeholder="Juan Dela Cruz" 
+                           required>
+                    
+                    <label for="birthdate">Date of Birth: <span class="required">*</span></label>
+                    <input type="date" 
+                           id="birthdate" 
+                           name="birthdate" 
+                           required>
+                    
+                    <label for="age">Age: <span class="required">*</span></label>
+                    <input type="number" 
+                           id="age" 
+                           name="age" 
+                           min="16" 
+                           max="65" 
+                           placeholder="18" 
+                           required>
+                    
+                    <label for="gender">Gender:</label>
+                    <select id="gender" name="gender">
+                        <option value="">-- Select --</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                    
+                    <label for="email">Email Address: <span class="required">*</span></label>
+                    <input type="email" 
+                           id="email" 
+                           name="email" 
+                           placeholder="juan@email.com" 
+                           required>
+                    
+                    <label for="phone">Contact Number: <span class="required">*</span></label>
+                    <input type="tel" 
+                           id="phone" 
+                           name="phone" 
+                           placeholder="0912 345 6789" 
+                           required>
+                    
+                    <label for="address">Complete Address: <span class="required">*</span></label>
+                    <textarea id="address" 
+                              name="address" 
+                              rows="3" 
+                              placeholder="House No., Street, Barangay, City, Province" 
+                              required></textarea>
+                    
+                    <h3>Educational Background</h3>
+                    
+                    <label for="education">Highest Educational Attainment:</label>
+                    <select id="education" name="education">
+                        <option value="">-- Select --</option>
+                        <option value="elementary">Elementary Graduate</option>
+                        <option value="highschool">High School Graduate</option>
+                        <option value="senior-high">Senior High School Graduate</option>
+                        <option value="college">College Level/Graduate</option>
+                        <option value="vocational">Previous Vocational Training</option>
+                    </select>
+                    
+                    <label for="school">Last School Attended:</label>
+                    <input type="text" 
+                           id="school" 
+                           name="school" 
+                           placeholder="Name of school">
+                    
+                    <h3>Course Selection</h3>
+                    
+                    <label for="course">Course Interested In: <span class="required">*</span></label>
+                    <select id="course" name="course" required>
+                        <option value="">-- Select Course --</option>
+                        <optgroup label="Construction Trades">
+                            <option value="welding">Welding Technology (SMAW) - NC II</option>
+                            <option value="electrical">Electrical Installation & Maintenance - NC II</option>
+                            <option value="plumbing">Plumbing - NC II</option>
+                        </optgroup>
+                        <optgroup label="Automotive">
+                            <option value="automotive">Automotive Servicing - NC II</option>
+                        </optgroup>
+                        <optgroup label="Information Technology">
+                            <option value="computer">Computer Systems Servicing - NC II</option>
+                        </optgroup>
+                        <optgroup label="Hospitality & Food">
+                            <option value="cookery">Cookery - NC II</option>
+                            <option value="fbs">Food and Beverage Services - NC II</option>
+                        </optgroup>
+                        <optgroup label="Healthcare">
+                            <option value="caregiving">Caregiving - NC II</option>
+                        </optgroup>
+                    </select>
+                    
+                    <label for="schedule">Preferred Class Schedule:</label>
+                    <select id="schedule" name="schedule">
+                        <option value="">-- Select --</option>
+                        <option value="morning">Morning (8AM-12PM, Mon-Fri)</option>
+                        <option value="afternoon">Afternoon (1PM-5PM, Mon-Fri)</option>
+                        <option value="weekend">Weekend (8AM-5PM, Sat-Sun)</option>
+                    </select>
+                    
+                    <label for="start-date">Preferred Start Date:</label>
+                    <input type="month" 
+                           id="start-date" 
+                           name="start_date">
+                    
+                    <h3>Employment Status</h3>
+                    
+                    <label for="employment">Current Employment Status:</label>
+                    <select id="employment" name="employment">
+                        <option value="">-- Select --</option>
+                        <option value="employed">Currently Employed</option>
+                        <option value="unemployed">Unemployed</option>
+                        <option value="student">Student</option>
+                        <option value="ofw">OFW (Returning/On vacation)</option>
+                        <option value="self-employed">Self-Employed</option>
+                    </select>
+                    
+                    <label for="purpose">Purpose of Taking This Course:</label>
+                    <select id="purpose" name="purpose">
+                        <option value="">-- Select --</option>
+                        <option value="employment">For local employment</option>
+                        <option value="ofw">For overseas employment (OFW)</option>
+                        <option value="career-shift">Career shift/change</option>
+                        <option value="upgrade">Skills upgrade</option>
+                        <option value="business">Start own business</option>
+                        <option value="personal">Personal interest</option>
+                    </select>
+                    
+                    <h3>Scholarship Application</h3>
+                    
+                    <label for="scholarship">Applying for TESDA Scholarship?</label>
+                    <select id="scholarship" name="scholarship">
+                        <option value="">-- Select --</option>
+                        <option value="no">No, I will pay tuition</option>
+                        <option value="tesda">Yes, TESDA TWSP Scholarship</option>
+                        <option value="udp">Yes, TESDA UDP Scholarship</option>
+                        <option value="other">Yes, Other scholarship</option>
+                    </select>
+                    
+                    <label for="payment">Payment Option (if not scholarship):</label>
+                    <select id="payment" name="payment">
+                        <option value="">-- Select --</option>
+                        <option value="full">Full payment (5% discount)</option>
+                        <option value="installment-3">3-month installment</option>
+                        <option value="installment-6">6-month installment</option>
+                    </select>
+                    
+                    <h3>Additional Information</h3>
+                    
+                    <label for="questions">Questions or Comments:</label>
+                    <textarea id="questions" 
+                              name="questions" 
+                              rows="4" 
+                              placeholder="Any questions about the course, schedule, or enrollment?"></textarea>
+                    
+                    <label for="referral">How did you hear about PSDC?</label>
+                    <select id="referral" name="referral">
+                        <option value="">-- Select --</option>
+                        <option value="friend">Friend/Graduate recommendation</option>
+                        <option value="facebook">Facebook</option>
+                        <option value="tesda">TESDA website/office</option>
+                        <option value="poster">Poster/Flyer</option>
+                        <option value="radio">Radio advertisement</option>
+                        <option value="walk-in">Walk-in/Passing by</option>
+                        <option value="other">Other</option>
+                    </select>
+                    
+                    <label>
+                        <input type="checkbox" name="newsletter" value="yes">
+                        Send me updates about new courses, schedules, and job opportunities
+                    </label>
+                    
+                    <label>
+                        <input type="checkbox" name="data_privacy" required>
+                        I agree to the Data Privacy Policy and allow PSDC to process my information 
+                        for enrollment and training purposes. <span class="required">*</span>
+                    </label>
+                    
+                    <button type="submit">Submit Enrollment Inquiry</button>
+                    <button type="reset">Clear Form</button>
+                </form>
+            </section>
+        </main>
+        
+        <!-- Sidebar -->
+        <aside>
+            <h3>📢 Latest Updates</h3>
+            <p><strong>Enrollment for March 2025 batch is NOW OPEN!</strong></p>
+            <p>Limited slots. Enroll now!</p>
+            
+            <p><strong>Free TESDA Assessment</strong></p>
+            <p>March 20, 2025<br>
+            For graduating students<br>
+            Register now!</p>
+            
+            <p><strong>Job Fair Partnership</strong></p>
+            <p>April 5, 2025<br>
+            50+ companies hiring<br>
+            Open to all graduates</p>
+            
+            <hr style="margin: 20px 0; border-color: #e67e22;">
+            
+            <h3>💼 Employment Rate</h3>
+            <p><strong>95% of graduates</strong> find employment within 3 months</p>
+            
+            <p><strong>Average Salary:</strong><br>
+            ₱18,000-₱28,000/month</p>
+            
+            <hr style="margin: 20px 0; border-color: #e67e22;">
+            
+            <h3>⏰ Office Hours</h3>
+            <p><strong>Mon-Fri:</strong><br>8:00 AM - 6:00 PM</p>
+            
+            <p><strong>Saturday:</strong><br>8:00 AM - 4:00 PM</p>
+            
+            <p><strong>Sunday:</strong><br>Closed</p>
+            
+            <hr style="margin: 20px 0; border-color: #e67e22;">
+            
+            <h3>📞 Quick Contacts</h3>
+            <p><strong>Admissions:</strong><br>(02) 8888-1234</p>
+            
+            <p><strong>Training Dept:</strong><br>(02) 8888-1235</p>
+            
+            <p><strong>Job Placement:</strong><br>(02) 8888-1236</p>
+            
+            <p><strong>Mobile:</strong><br>0917 555 8888</p>
+        </aside>
+    </div>
+    
+    <footer>
+        <h3>⚙️ Philippine Skills Development Center (PSDC)</h3>
+        <p><strong>TESDA-Accredited Training Institution</strong></p>
+        <p>Registration No: NCR-2010-0123</p>
+        <hr style="margin: 20px 0; border-color: #7f8c8d;">
+        <p>📍 789 EDSA, Barangay Santa Cruz, Quezon City, Metro Manila, Philippines</p>
+        <p>📞 Phone: <a href="tel:+6288881234">(02) 8888-1234</a></p>
+        <p>📱 Mobile: <a href="tel:+639175558888">0917 555 8888</a></p>
+        <p>📧 Email: <a href="mailto:info@psdc.edu.ph">info@psdc.edu.ph</a></p>
+        <p>🌐 Website: <a href="https://www.psdc.edu.ph">www.psdc.edu.ph</a></p>
+        <p>📘 Facebook: <a href="https://facebook.com/PSDCOfficial" target="_blank">@PSDCOfficial</a></p>
+        <hr style="margin: 20px 0; border-color: #7f8c8d;">
+        <p>&copy; 2025 Philippine Skills Development Center. All rights reserved.</p>
+        <p>Accredited by TESDA | Member of Philippine TVET Association</p>
+        <p><em>Building Careers, Empowering Lives</em></p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,207 @@
+┌──────────────────────────────────────────────────────────────┐
+│              BULMA GRID SYSTEM (COLUMNS)                      │
+└──────────────────────────────────────────────────────────────┘
+
+BASIC GRID (Equal Columns)
+══════════════════════════
+
+<div class="columns">
+  <div class="column">Column 1</div>
+  <div class="column">Column 2</div>
+  <div class="column">Column 3</div>
+</div>
+
+Result:
+┌────────────────┬────────────────┬────────────────┐
+│   Column 1     │   Column 2     │   Column 3     │
+│   (33.33%)     │   (33.33%)     │   (33.33%)     │
+└────────────────┴────────────────┴────────────────┘
+     Auto width       Auto width       Auto width
+
+
+SIZED COLUMNS (12-Column System)
+═════════════════════════════════
+
+Bulma uses a 12-column grid:
+
+is-1   = 1/12  (8.33%)      is-7  = 7/12  (58.33%)
+is-2   = 2/12  (16.67%)     is-8  = 8/12  (66.67%)
+is-3   = 3/12  (25%)        is-9  = 9/12  (75%)
+is-4   = 4/12  (33.33%)     is-10 = 10/12 (83.33%)
+is-5   = 5/12  (41.67%)     is-11 = 11/12 (91.67%)
+is-6   = 6/12  (50%)        is-12 = 12/12 (100%)
+
+Also available:
+is-half         = 50%
+is-one-third    = 33.33%
+is-two-thirds   = 66.67%
+is-one-quarter  = 25%
+is-three-quarters = 75%
+
+
+EXAMPLE 1: Two Columns (50% each)
+──────────────────────────────────
+
+<div class="columns">
+  <div class="column is-half">Left (50%)</div>
+  <div class="column">Right (fills remaining)</div>
+</div>
+
+┌──────────────────────┬──────────────────────┐
+│      Left 50%        │      Right 50%       │
+│                      │                      │
+└──────────────────────┴──────────────────────┘
+
+
+EXAMPLE 2: Sidebar Layout (25% + 75%)
+──────────────────────────────────────
+
+<div class="columns">
+  <div class="column is-one-quarter">Sidebar</div>
+  <div class="column">Main Content</div>
+</div>
+
+┌─────────┬──────────────────────────────────┐
+│ Sidebar │       Main Content 75%           │
+│  25%    │                                  │
+└─────────┴──────────────────────────────────┘
+
+
+EXAMPLE 3: Three Equal Columns
+───────────────────────────────
+
+<div class="columns">
+  <div class="column is-4">Column 1 (33%)</div>
+  <div class="column is-4">Column 2 (33%)</div>
+  <div class="column is-4">Column 3 (33%)</div>
+</div>
+
+┌──────────────┬──────────────┬──────────────┐
+│  Column 1    │  Column 2    │  Column 3    │
+│   4/12       │   4/12       │   4/12       │
+└──────────────┴──────────────┴──────────────┘
+
+
+RESPONSIVE COLUMNS (Mobile/Tablet/Desktop)
+═══════════════════════════════════════════
+
+Mobile First (Default: Stacked)
+───────────────────────────────
+<div class="columns">
+  <div class="column">A</div>
+  <div class="column">B</div>
+</div>
+
+Mobile (< 768px):          Desktop (> 1024px):
+┌──────────────┐           ┌─────────┬─────────┐
+│      A       │           │    A    │    B    │
+├──────────────┤           └─────────┴─────────┘
+│      B       │
+└──────────────┘
+
+
+Force Horizontal on Mobile
+──────────────────────────
+<div class="columns is-mobile">
+  <div class="column">A</div>
+  <div class="column">B</div>
+</div>
+
+Mobile (< 768px):
+┌─────────┬─────────┐
+│    A    │    B    │  ← Side by side even on mobile
+└─────────┴─────────┘
+
+
+NESTED COLUMNS
+══════════════
+
+<div class="columns">
+  <div class="column is-8">
+    Main Content
+    
+    <div class="columns">
+      <div class="column">Nested 1</div>
+      <div class="column">Nested 2</div>
+    </div>
+  </div>
+  <div class="column is-4">Sidebar</div>
+</div>
+
+┌────────────────────────────────┬──────────┐
+│        Main Content 8/12       │ Sidebar  │
+│                                │  4/12    │
+│ ┌──────────┬──────────┐        │          │
+│ │ Nested 1 │ Nested 2 │        │          │
+│ └──────────┴──────────┘        │          │
+└────────────────────────────────┴──────────┘
+
+
+COLUMN GAPS
+═══════════
+
+Default: Gap between columns
+
+No Gap:
+<div class="columns is-gapless">
+  ...
+</div>
+
+┌──────┬──────┬──────┐  vs  ┌────┬────┬────┐
+│  A   │  B   │  C   │      │ A  │ B  │ C  │
+└──────┴──────┴──────┘      └────┴────┴────┘
+  With gap (default)         is-gapless
+
+
+MULTILINE COLUMNS (Wrapping)
+════════════════════════════
+
+<div class="columns is-multiline">
+  <div class="column is-4">1</div>
+  <div class="column is-4">2</div>
+  <div class="column is-4">3</div>
+  <div class="column is-4">4</div>
+  <div class="column is-4">5</div>
+  <div class="column is-4">6</div>
+</div>
+
+Result (wraps to new row):
+┌──────┬──────┬──────┐
+│  1   │  2   │  3   │
+├──────┼──────┼──────┤
+│  4   │  5   │  6   │
+└──────┴──────┴──────┘
+
+
+CENTERING COLUMNS
+═════════════════
+
+<div class="columns is-centered">
+  <div class="column is-half">Centered</div>
+</div>
+
+┌─────┬──────────────┬─────┐
+│     │   Centered   │     │
+│     │    (50%)     │     │
+└─────┴──────────────┴─────┘
+
+
+REAL EXAMPLE: Product Catalog
+══════════════════════════════
+
+<div class="columns is-multiline is-mobile">
+  <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+    Product 1
+  </div>
+  <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+    Product 2
+  </div>
+  <!-- More products... -->
+</div>
+
+Mobile:              Tablet:            Desktop:
+┌────┬────┐         ┌───┬───┬───┐      ┌──┬──┬──┬──┐
+│ P1 │ P2 │         │P1 │P2 │P3 │      │P1│P2│P3│P4│
+├────┼────┤         └───┴───┴───┘      └──┴──┴──┴──┘
+│ P3 │ P4 │
+└────┴────┘

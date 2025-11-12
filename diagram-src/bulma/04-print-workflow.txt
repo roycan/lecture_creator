@@ -1,0 +1,313 @@
+┌──────────────────────────────────────────────────────────────┐
+│           PRINT STYLES WORKFLOW (@media print)                │
+└──────────────────────────────────────────────────────────────┘
+
+THE PRINT PROCESS
+═════════════════
+
+Step 1: Screen View      Step 2: Print Preview     Step 3: Printed Output
+┌────────────────┐       ┌────────────────┐        ┌────────────────┐
+│ 🌐 Browser     │       │ 📄 Preview     │        │ 📄 Paper       │
+│ ┌────────────┐ │       │ ┌────────────┐ │        │ ┌────────────┐ │
+│ │Navigation  │ │       │ │            │ │        │ │            │ │
+│ │Home|About  │ │  →    │ │ (hidden)   │ │   →    │ │            │ │
+│ ├────────────┤ │       │ ├────────────┤ │        │ ├────────────┤ │
+│ │Content     │ │       │ │Content     │ │        │ │Content     │ │
+│ │            │ │       │ │            │ │        │ │            │ │
+│ │[PrintBtn] │ │       │ │            │ │        │ │            │ │
+│ └────────────┘ │       │ └────────────┘ │        │ └────────────┘ │
+│ Footer         │       │ Footer         │        │ Footer         │
+└────────────────┘       └────────────────┘        └────────────────┘
+Full color, buttons     Black & white, clean    Actual printed page
+
+
+CSS STRUCTURE
+═════════════
+
+/* Screen styles (default) */
+body {
+  background: #f5f5f5;
+  color: #333;
+  font-family: Arial;
+}
+
+.no-print {
+  display: block;
+}
+
+/* Print styles (when printing) */
+@media print {
+  @page {
+    size: A4;           ← Paper size
+    margin: 15mm;       ← Page margins
+  }
+  
+  .no-print {
+    display: none !important;  ← Hide elements
+  }
+  
+  * {
+    background: white !important;  ← Force white
+    color: black !important;       ← Force black
+  }
+  
+  body {
+    font-size: 12pt;    ← Readable text
+  }
+}
+
+
+THE .no-print CLASS (KILLER FEATURE!)
+══════════════════════════════════════
+
+What Gets Hidden When Printing:
+────────────────────────────────
+✓ Navigation menus
+✓ Buttons (Print, Back, Submit)
+✓ Sidebars
+✓ Advertisements
+✓ Forms (after submission)
+✓ Footer (optional)
+✓ Decorative images
+✓ Social media links
+
+What Stays Visible:
+───────────────────
+✓ Main content
+✓ Document title
+✓ Important text
+✓ Data tables
+✓ Signatures
+✓ Official seals
+✓ Contact information
+
+
+EXAMPLE: Barangay Clearance Form
+═════════════════════════════════
+
+SCREEN VIEW (Browser):
+┌─────────────────────────────────────────┐
+│ 🏠 Home | 📋 Forms | 👤 Profile          │ ← .no-print
+├─────────────────────────────────────────┤
+│                                         │
+│  BARANGAY CLEARANCE                     │
+│                                         │
+│  Name: [___________]                    │ ← .no-print
+│  Age:  [___]                            │ ← .no-print
+│  [Fill Form] [Print] [Clear]            │ ← .no-print
+│                                         │
+│  ─────────────────────────────────────  │
+│                                         │
+│  TO WHOM IT MAY CONCERN:                │
+│                                         │
+│  This is to certify that Juan Cruz...   │
+│                                         │
+│  _____________________                  │
+│  Barangay Captain                       │
+│                                         │
+├─────────────────────────────────────────┤
+│ © 2025 Barangay San Juan                │ ← .no-print
+└─────────────────────────────────────────┘
+
+PRINT OUTPUT (Paper):
+┌─────────────────────────────────────────┐
+│                                         │
+│  BARANGAY CLEARANCE                     │
+│                                         │
+│                                         │
+│                                         │
+│                                         │
+│                                         │
+│  ─────────────────────────────────────  │
+│                                         │
+│  TO WHOM IT MAY CONCERN:                │
+│                                         │
+│  This is to certify that Juan Cruz...   │
+│                                         │
+│  _____________________                  │
+│  Barangay Captain                       │
+│                                         │
+│                                         │
+│                                         │
+└─────────────────────────────────────────┘
+Clean, professional, one-page output!
+
+
+BLACK & WHITE PRINTING
+═══════════════════════
+
+Why Force Black & White?
+────────────────────────
+✓ Saves ink (expensive in Philippines!)
+✓ Better readability (no light gray text)
+✓ Works on any printer
+✓ Professional appearance
+✓ Photocopies well
+
+Code:
+@media print {
+  * {
+    background: white !important;
+    color: black !important;
+  }
+}
+
+BEFORE (Color):           AFTER (B&W):
+┌──────────────┐         ┌──────────────┐
+│ Certificate  │         │ Certificate  │
+│ ┌──────────┐ │         │ ┌──────────┐ │
+│ │Name:Juan │ │         │ │Name:Juan │ │
+│ │ (blue bg)│ │   →     │ │(white bg)│ │
+│ └──────────┘ │         │ └──────────┘ │
+│ (gray bg)    │         │ (white bg)   │
+└──────────────┘         └──────────────┘
+
+
+PAGE BREAKS
+═══════════
+
+Control Where Pages Break:
+───────────────────────────
+
+@media print {
+  .section {
+    page-break-inside: avoid;  ← Keep together
+  }
+  
+  h2 {
+    page-break-after: avoid;   ← Keep with content
+  }
+}
+
+Without page-break:        With page-break-inside:avoid:
+┌────────────┐             ┌────────────┐
+│ Section 1  │             │ Section 1  │
+│ Content... │             │ Content... │
+│ ─────────  │ Page 1      │            │ Page 1
+│ Section 2  │             │            │
+│ Cont───────┤             ├────────────┤
+│───ent...   │ Page 2      │ Section 2  │
+│            │             │ Content... │ Page 2
+└────────────┘             └────────────┘
+     BAD                        GOOD
+
+
+COMPLETE PRINT STYLESHEET
+═════════════════════════
+
+@media print {
+  /* Page settings */
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+  
+  /* Hide unnecessary elements */
+  .no-print,
+  nav,
+  .navbar,
+  button,
+  .footer,
+  .sidebar {
+    display: none !important;
+  }
+  
+  /* Force black & white */
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  /* Remove borders from boxes */
+  .box {
+    border: 1px solid black !important;
+    box-shadow: none !important;
+  }
+  
+  /* Readable text size */
+  body {
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+  
+  /* Keep sections together */
+  section,
+  .card {
+    page-break-inside: avoid;
+  }
+  
+  /* Links - show URLs */
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+}
+
+
+REAL-WORLD USE CASES (Philippines)
+═══════════════════════════════════
+
+1. Government Forms
+   • Barangay clearance
+   • Business permits
+   • Cedula applications
+   
+2. School Documents
+   • Report cards
+   • Enrollment forms
+   • Certificates
+   
+3. Business Documents
+   • Receipts
+   • Invoices
+   • Purchase orders
+   
+4. Medical Documents
+   • Prescriptions
+   • Lab results
+   • Medical certificates
+
+
+TESTING PRINT STYLES
+═════════════════════
+
+Browser Tools:
+──────────────
+1. Chrome DevTools: F12 → ⋮ → More tools → Rendering → Emulate CSS media type → print
+2. Firefox: File → Print Preview
+3. Safari: Develop → Enter Responsive Design Mode → ⚙️ → Print
+
+Physical Testing:
+──────────────────
+1. Print to PDF (saves paper!)
+2. Check one actual print
+3. Verify one-page layout
+4. Test on different printers
+
+
+BEST PRACTICES
+══════════════
+✓ Use .no-print class for UI elements
+✓ Force black & white (saves ink)
+✓ One page layout (avoid page breaks)
+✓ Test with Print Preview
+✓ Use A4 size (standard in Philippines)
+✓ Readable font size (12pt minimum)
+✓ Keep important content visible
+✓ Remove backgrounds and shadows
+✓ Professional appearance
+
+❌ DON'T print:
+• Navigation menus
+• Buttons
+• Forms (after submission)
+• Advertisements
+• Decorative images
+
+✓ DO print:
+• Main content
+• Official information
+• Signatures
+• Seals/logos
+• Contact details

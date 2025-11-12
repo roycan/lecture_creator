@@ -1,0 +1,37 @@
+graph TD
+    A[HTML Document] --> B[&lt;!DOCTYPE html&gt;]
+    A --> C[&lt;html lang='en'&gt;]
+    
+    C --> D[&lt;head&gt;]
+    C --> E[&lt;body&gt;]
+    
+    D --> D1[&lt;meta charset='UTF-8'&gt;]
+    D --> D2[&lt;meta name='viewport'&gt;]
+    D --> D3[&lt;title&gt;Page Title&lt;/title&gt;]
+    D --> D4[&lt;link rel='stylesheet'&gt;]
+    
+    E --> E1[&lt;header&gt;]
+    E --> E2[&lt;main&gt;]
+    E --> E3[&lt;footer&gt;]
+    
+    E1 --> E1A[Navigation]
+    E1 --> E1B[Site Title]
+    
+    E2 --> E2A[Content Sections]
+    E2 --> E2B[Articles]
+    
+    E3 --> E3A[Copyright]
+    E3 --> E3B[Contact Info]
+    
+    style A fill:#e1f5ff
+    style C fill:#fff4e1
+    style D fill:#ffe1e1
+    style E fill:#e1ffe1
+    style D1 fill:#ffd4d4
+    style D2 fill:#ffd4d4
+    style D3 fill:#ffd4d4
+    style D4 fill:#ffd4d4
+    style E1 fill:#d4ffd4
+    style E2 fill:#d4ffd4
+    style E3 fill:#d4ffd4
+

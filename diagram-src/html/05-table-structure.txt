@@ -1,0 +1,126 @@
+┌──────────────────────────────────────────────────────────────┐
+│                    HTML TABLE STRUCTURE                      │
+└──────────────────────────────────────────────────────────────┘
+
+<table>
+│
+├─ <caption>Student Grade Sheet - Grade 9</caption>
+│
+├─ <thead>  ← Table Header (appears on every printed page)
+│  │
+│  └─ <tr>  ← Table Row
+│     ├─ <th>Name</th>         ← Header Cell (bold, centered)
+│     ├─ <th>Subject</th>
+│     ├─ <th>Q1</th>
+│     ├─ <th>Q2</th>
+│     └─ <th>Average</th>
+│
+├─ <tbody>  ← Table Body (main data)
+│  │
+│  ├─ <tr>
+│  │  ├─ <td>Juan Cruz</td>    ← Data Cell
+│  │  ├─ <td>Math</td>
+│  │  ├─ <td>88</td>
+│  │  ├─ <td>90</td>
+│  │  └─ <td>89</td>
+│  │
+│  ├─ <tr>
+│  │  ├─ <td>Maria Santos</td>
+│  │  ├─ <td>Math</td>
+│  │  ├─ <td>92</td>
+│  │  ├─ <td>95</td>
+│  │  └─ <td>93.5</td>
+│  │
+│  └─ <tr>
+│     ├─ <td>Pedro Reyes</td>
+│     ├─ <td>Math</td>
+│     ├─ <td>85</td>
+│     ├─ <td>87</td>
+│     └─ <td>86</td>
+│
+└─ <tfoot>  ← Table Footer (summary, totals)
+   │
+   └─ <tr>
+      ├─ <td colspan="4">Class Average:</td>
+      └─ <td>89.5</td>
+
+
+ROWSPAN & COLSPAN EXAMPLES
+═══════════════════════════
+
+COLSPAN (Merge Columns Horizontally)
+─────────────────────────────────────
+┌──────────┬──────────┬──────────┐
+│  Name    │  Q1      │  Q2      │
+├──────────┴──────────┴──────────┤
+│  Juan Cruz - Absent            │  ← colspan="3"
+└────────────────────────────────┘
+
+<tr>
+  <td colspan="3">Juan Cruz - Absent</td>
+</tr>
+
+
+ROWSPAN (Merge Rows Vertically)
+────────────────────────────────
+┌──────────┬──────────┬──────────┐
+│ Juan     │ Math     │ 90       │
+│ Cruz     ├──────────┼──────────┤
+│          │ Science  │ 88       │
+│          ├──────────┼──────────┤
+│          │ English  │ 92       │
+└──────────┴──────────┴──────────┘
+   ↑
+   rowspan="3"
+
+<tr>
+  <td rowspan="3">Juan Cruz</td>
+  <td>Math</td>
+  <td>90</td>
+</tr>
+<tr>
+  <td>Science</td>
+  <td>88</td>
+</tr>
+<tr>
+  <td>English</td>
+  <td>92</td>
+</tr>
+
+
+REAL EXAMPLE: Class Schedule
+═════════════════════════════
+
+┌──────────┬──────────┬──────────┬──────────┐
+│ Time     │ Monday   │ Tuesday  │ Wednesday│
+├──────────┼──────────┼──────────┼──────────┤
+│ 8:00 AM  │   Math (Room 101)              │  ← colspan="3"
+├──────────┼──────────┼──────────┼──────────┤
+│ 9:00 AM  │ Science  │ English  │ Filipino │
+├──────────┼──────────┼──────────┼──────────┤
+│ 10:00 AM │         Recess Break           │  ← colspan="3"
+└──────────┴──────────┴──────────┴──────────┘
+
+
+TABLE STRUCTURE RULES
+═════════════════════
+✓ Use <thead> for headers (bold, repeats on print)
+✓ Use <tbody> for main data
+✓ Use <tfoot> for totals/summary
+✓ Use <th> for header cells (accessible)
+✓ Use <td> for data cells
+✓ Use <caption> to describe table
+✓ colspan = merge columns (horizontal)
+✓ rowspan = merge rows (vertical)
+
+❌ WRONG: Using tables for layout
+✓ RIGHT: Use tables for DATA ONLY
+
+
+WHY PROPER TABLE STRUCTURE?
+════════════════════════════
+✓ Screen readers can navigate correctly
+✓ Print formatting (thead repeats on pages)
+✓ Data is structured and meaningful
+✓ Easy to style with CSS later
+✓ Mobile-responsive (can stack on small screens)

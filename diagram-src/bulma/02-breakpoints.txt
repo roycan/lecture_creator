@@ -1,0 +1,188 @@
+┌──────────────────────────────────────────────────────────────┐
+│           BULMA RESPONSIVE BREAKPOINTS                        │
+└──────────────────────────────────────────────────────────────┘
+
+BREAKPOINT RANGES
+═════════════════
+
+Mobile          Tablet          Desktop         Widescreen      Fullhd
+0px ────────── 768px ───────── 1024px ──────── 1216px ──────── 1408px ─────→
+
+├─────────────┤├──────────────┤├─────────────┤├─────────────┤├──────────→
+   Mobile         Tablet          Desktop       Widescreen      Fullhd
+  (< 768px)    (769-1023px)   (1024-1215px)  (1216-1407px)    (≥ 1408px)
+
+    📱             💻              🖥️             🖥️ 🖥️           🖥️ 🖥️ 🖥️
+ Phone/         Small           Standard        Large           Very Large
+ Phablet        Laptop          Desktop         Monitor         Monitor
+
+
+DEVICE EXAMPLES (Philippines Context)
+══════════════════════════════════════
+
+MOBILE (< 768px)
+────────────────
+📱 Budget Android phones (most common)
+   • Samsung Galaxy A series
+   • OPPO A series
+   • Xiaomi Redmi
+   • Realme C series
+   Screen: 360x640 to 412x915
+
+📱 iPhone (older models still in use)
+   • iPhone SE, 6, 7, 8
+   Screen: 375x667
+
+
+TABLET (769px - 1023px)
+───────────────────────
+💻 iPad / Android Tablets
+   • iPad (768x1024)
+   • Samsung Tab A
+   • Huawei MatePad
+   Screen: 768x1024 to 800x1280
+
+💻 Small Laptops (portrait)
+   • Chromebooks
+   • Netbooks
+   Screen: ~800px wide
+
+
+DESKTOP (1024px - 1215px)
+─────────────────────────
+🖥️ Standard Laptops
+   • Most Windows laptops
+   • MacBook Air
+   Screen: 1024x768 to 1366x768
+
+🖥️ Desktop Monitors (small)
+   • Office PCs
+   • School computer labs
+   Screen: 1024x768, 1280x1024
+
+
+WIDESCREEN (1216px - 1407px)
+────────────────────────────
+🖥️ Modern Laptops
+   • MacBook Pro
+   • Gaming laptops
+   Screen: 1440x900, 1600x900
+
+
+FULLHD (≥ 1408px)
+─────────────────
+🖥️ Large Monitors
+   • Full HD: 1920x1080
+   • 2K: 2560x1440
+   • 4K: 3840x2160
+
+
+RESPONSIVE CLASS SUFFIXES
+══════════════════════════
+
+-mobile         → Only on mobile (< 768px)
+-tablet         → Tablet and up (≥ 769px)
+-tablet-only    → Only tablet (769-1023px)
+-touch          → Mobile + Tablet (< 1024px)
+-desktop        → Desktop and up (≥ 1024px)
+-desktop-only   → Only desktop (1024-1215px)
+-widescreen     → Widescreen and up (≥ 1216px)
+-fullhd         → Only fullhd (≥ 1408px)
+
+
+COLUMN SIZE EXAMPLES
+════════════════════
+
+Class: is-half-mobile is-one-third-tablet is-one-quarter-desktop
+
+Mobile (< 768px):          Tablet (769-1023px):      Desktop (≥ 1024px):
+┌────────────┐             ┌─────┬─────┬─────┐      ┌───┬───┬───┬───┐
+│ is-half    │             │ is- │     │     │      │is-│   │   │   │
+│   (50%)    │             │one- │     │     │      │one│   │   │   │
+├────────────┤             │third│     │     │      │qtr│   │   │   │
+│ is-half    │             │33% │     │     │      │25%│   │   │   │
+│   (50%)    │             └─────┴─────┴─────┘      └───┴───┴───┴───┘
+└────────────┘
+
+
+VISIBILITY HELPER EXAMPLES
+═══════════════════════════
+
+Class: is-hidden-mobile
+
+Mobile (< 768px):          Tablet/Desktop (≥ 769px):
+┌────────────┐             ┌────────────┐
+│            │             │  VISIBLE   │
+│   HIDDEN   │             │            │
+│            │             │            │
+└────────────┘             └────────────┘
+
+
+Class: is-hidden-tablet-only
+
+Mobile:                    Tablet:                   Desktop:
+┌────────┐                ┌────────┐                ┌────────┐
+│VISIBLE │                │ HIDDEN │                │VISIBLE │
+└────────┘                └────────┘                └────────┘
+
+
+REAL EXAMPLE: Navigation Menu
+══════════════════════════════
+
+Mobile (< 768px) - Hamburger Menu:
+┌──────────────────────────────┐
+│  Logo              ☰         │
+└──────────────────────────────┘
+
+Tablet/Desktop (≥ 769px) - Full Menu:
+┌──────────────────────────────────────────┐
+│  Logo    Home  About  Services  Contact  │
+└──────────────────────────────────────────┘
+
+Code:
+<nav class="navbar">
+  <div class="navbar-brand">
+    Logo
+    <a class="navbar-burger is-hidden-tablet">☰</a>
+  </div>
+  <div class="navbar-menu is-hidden-mobile">
+    <a>Home</a>
+    <a>About</a>
+    <a>Services</a>
+    <a>Contact</a>
+  </div>
+</nav>
+
+
+RESPONSIVE IMAGE SIZES
+══════════════════════
+
+Class: is-16by9 (Aspect Ratio)
+
+Mobile:              Desktop:
+┌────────┐          ┌──────────────────┐
+│  16:9  │          │      16:9        │
+│  Image │          │     Image        │
+└────────┘          └──────────────────┘
+ Smaller             Larger but same ratio
+
+
+WHY THESE BREAKPOINTS?
+══════════════════════
+✓ 768px = Most common phone/tablet boundary
+✓ 1024px = Most common tablet/desktop boundary
+✓ Based on real device statistics
+✓ Matches Bootstrap/other frameworks
+✓ Covers 95% of actual devices in Philippines
+
+
+MOBILE-FIRST APPROACH
+═════════════════════
+
+Start designing for MOBILE, then add larger sizes:
+
+1. Mobile (default)     ← Design this FIRST
+2. Add tablet styles    ← Enhance for larger screens
+3. Add desktop styles   ← Enhance even more
+
+Why? In Philippines, 70% of users are on mobile!

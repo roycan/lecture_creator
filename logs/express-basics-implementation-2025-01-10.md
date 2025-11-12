@@ -1,6 +1,6 @@
-# Web App Basics Part 1 - Implementation Log
+# Express Basics - Implementation Log
 **Date:** January 10, 2025  
-**Project:** Web App Basics Part 1 Comprehensive Curriculum  
+**Project:** Express Basics Comprehensive Curriculum  
 **Scope:** Command Line → Express.js → EJS → Bulma CSS → JSON Files → Railway Deployment
 
 ---
@@ -20,7 +20,7 @@ Successfully created a **complete, production-ready curriculum** for teaching we
 
 ```
 lecture_creator/
-├── web-app-basics-part1-lecture.md    (Main lecture - 13 sections, ~5000 lines)
+├── express-basics-lecture.md           (Main lecture - 13 sections, ~5000 lines)
 │
 ├── practice-apps/                      (6 progressive applications)
 │   ├── 01-hello-express/              (Basic routing)
@@ -55,7 +55,7 @@ lecture_creator/
 │       └── 10-static-files.md
 │
 └── logs/
-    └── web-app-basics-part1-implementation-2025-01-10.md (This file)
+    └── express-basics-implementation-2025-01-10.md (This file)
 ```
 
 ---
@@ -110,7 +110,7 @@ Every diagram includes 3 formats:
 
 ## Main Lecture Structure
 
-### File: `web-app-basics-part1-lecture.md`
+### File: `express-basics-lecture.md`
 
 **13 Comprehensive Sections:**
 
@@ -863,8 +863,8 @@ This curriculum represents a **complete, tested, production-ready** resource for
 ## Appendix: File Inventory
 
 ### Main Files (2)
-1. `web-app-basics-part1-lecture.md`
-2. `logs/web-app-basics-part1-implementation-2025-01-10.md`
+1. `express-basics-lecture.md`
+2. `logs/express-basics-implementation-2025-01-10.md`
 
 ### Practice Apps (75 files)
 - 01-hello-express: 10 files

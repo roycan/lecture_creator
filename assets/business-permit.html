@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Permit Application - Barangay San Juan</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        /* Print styles - Government document must be black & white, one page */
+        @media print {
+            @page {
+                size: A4;
+                margin: 15mm;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+            
+            * {
+                background: white !important;
+                color: black !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+            
+            .box {
+                border: 2px solid black !important;
+                box-shadow: none !important;
+            }
+            
+            .document-seal {
+                border: 3px solid black !important;
+                background: white !important;
+            }
+            
+            .signature-line {
+                border-bottom: 2px solid black !important;
+            }
+            
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            
+            .section {
+                padding: 0 !important;
+            }
+        }
+        
+        /* Screen styles */
+        .document-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .document-seal {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3273dc, #209cee);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 3em;
+        }
+        
+        .signature-line {
+            border-bottom: 2px solid #333;
+            width: 250px;
+            margin: 20px auto;
+            min-height: 40px;
+        }
+        
+        .document-title {
+            text-align: center;
+            margin: 1rem 0;
+        }
+        
+        .certification-text {
+            text-indent: 2em;
+            line-height: 1.8;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar is-primary no-print" role="navigation">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <strong>🏛️ Government Document System</strong>
+            </div>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-light" href="barangay-certificate.html">
+                            Certificate
+                        </a>
+                        <a class="button is-light" href="school-enrollment.html">
+                            Enrollment
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero is-info no-print">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">Business Permit Application</h1>
+                <p class="subtitle">Barangay San Juan Business Registration</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Instructions -->
+    <section class="section no-print">
+        <div class="container">
+            <div class="notification is-info is-light">
+                <h3 class="title is-5">📋 Instructions</h3>
+                <ol>
+                    <li><strong>Fill out all required fields</strong> - Complete all sections with accurate information</li>
+                    <li><strong>Review your information</strong> - Check spelling and details before printing</li>
+                    <li><strong>Print the document</strong> - Click the print button or use Ctrl+P</li>
+                    <li><strong>Submit to Barangay Office</strong> - Bring printed form with requirements (2x2 photo, valid ID, proof of address)</li>
+                    <li><strong>Pay processing fee</strong> - ₱500.00 at the cashier window</li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Document -->
+    <section class="section">
+        <div class="container document-container">
+            <div class="box">
+                <!-- Document Header -->
+                <div class="document-seal">🏛️</div>
+                <div class="has-text-centered">
+                    <p class="is-size-6"><strong>Republic of the Philippines</strong></p>
+                    <p class="is-size-6">Province of Metro Manila</p>
+                    <p class="is-size-6">Municipality of Manila</p>
+                    <p class="is-size-5"><strong>BARANGAY SAN JUAN</strong></p>
+                </div>
+                
+                <h2 class="title is-4 document-title">APPLICATION FOR BUSINESS PERMIT</h2>
+
+                <!-- Form Content -->
+                <div class="content">
+                    <!-- Business Information -->
+                    <div class="mb-5">
+                        <h3 class="title is-5">I. Business Information</h3>
+                        <div class="columns is-multiline">
+                            <div class="column is-full">
+                                <div class="field">
+                                    <label class="label">Business Name</label>
+                                    <div class="control">
+                                        <input class="input" type="text" id="businessName" placeholder="Enter business name">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="column is-half-tablet">
+                                <div class="field">
+                                    <label class="label">Business Type</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select id="businessType">
+                                                <option value="">Select type</option>
+                                                <option value="Sari-sari Store">Sari-sari Store</option>
+                                                <option value="Carinderia">Carinderia (Food Stall)</option>
+                                                <option value="Barber Shop">Barber Shop/Salon</option>
+                                                <option value="Computer Shop">Computer/Internet Shop</option>
+                                                <option value="Online Seller">Online Seller</option>
+                                                <option value="Service Provider">Service Provider</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="column is-half-tablet">
+                                <div class="field">
+                                    <label class="label">Business Location</label>
+                                    <div class="control">
+                                        <input class="input" type="text" id="businessLocation" placeholder="e.g., 123 Mabini St., San Juan">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Owner Information -->
+                    <div class="mb-5">
+                        <h3 class="title is-5">II. Owner Information</h3>
+                        <div class="columns is-multiline">
+                            <div class="column is-full">
+                                <div class="field">
+                                    <label class="label">Full Name</label>
+                                    <div class="control">
+                                        <input class="input" type="text" id="ownerName" placeholder="Last Name, First Name, Middle Name">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="column is-half-tablet">
+                                <div class="field">
+                                    <label class="label">Date of Birth</label>
+                                    <div class="control">
+                                        <input class="input" type="date" id="birthDate">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="column is-half-tablet">
+                                <div class="field">
+                                    <label class="label">Contact Number</label>
+                                    <div class="control">
+                                        <input class="input" type="tel" id="contact" placeholder="09XX-XXX-XXXX">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="column is-full">
+                                <div class="field">
+                                    <label class="label">Residential Address</label>
+                                    <div class="control">
+                                        <input class="input" type="text" id="address" placeholder="Complete address">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Capital and Employment -->
+                    <div class="mb-5">
+                        <h3 class="title is-5">III. Capital and Employment</h3>
+                        <div class="columns is-multiline">
+                            <div class="column is-half-tablet">
+                                <div class="field">
+                                    <label class="label">Initial Capital</label>
+                                    <div class="control">
+                                        <input class="input" type="number" id="capital" placeholder="Amount in pesos">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="column is-half-tablet">
+                                <div class="field">
+                                    <label class="label">Number of Employees</label>
+                                    <div class="control">
+                                        <input class="input" type="number" id="employees" placeholder="0" min="0">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Certification -->
+                    <div class="certification-text">
+                        <p>I hereby certify that the information provided above is true and correct to the best of my knowledge. I understand that any false statement may result in the denial or revocation of this business permit. I agree to comply with all barangay ordinances and regulations regarding business operations.</p>
+                    </div>
+
+                    <!-- Signatures -->
+                    <div class="columns is-multiline mt-5">
+                        <div class="column is-half-tablet has-text-centered">
+                            <div class="signature-line"></div>
+                            <p class="has-text-weight-bold">Applicant Signature</p>
+                            <p class="is-size-7">Date: <span id="appDate"></span></p>
+                        </div>
+                        
+                        <div class="column is-half-tablet has-text-centered">
+                            <div class="signature-line"></div>
+                            <p class="has-text-weight-bold">HON. ROBERTO SANTOS</p>
+                            <p>Barangay Captain</p>
+                            <p class="is-size-7">Barangay San Juan</p>
+                        </div>
+                    </div>
+
+                    <!-- Official Receipt Section -->
+                    <hr>
+                    <div class="columns is-multiline">
+                        <div class="column is-one-third">
+                            <p><strong>Permit No.:</strong> <span class="permit-number"></span></p>
+                        </div>
+                        <div class="column is-one-third">
+                            <p><strong>Amount Paid:</strong> ₱500.00</p>
+                        </div>
+                        <div class="column is-one-third">
+                            <p><strong>OR No.:</strong> __________</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="buttons is-centered mt-5 no-print">
+                <button class="button is-primary is-medium" onclick="window.print()">
+                    🖨️ Print Application
+                </button>
+                <button class="button is-light is-medium" onclick="clearForm()">
+                    🔄 Clear Form
+                </button>
+            </div>
+
+            <!-- Challenge Info -->
+            <div class="notification is-success is-light no-print mt-5">
+                <h3 class="title is-5">🎯 Final Challenge - Business Permit</h3>
+                <p><strong>This demonstrates:</strong></p>
+                <ul>
+                    <li>✅ <strong>Responsive Design</strong> - Form adapts to mobile, tablet, desktop</li>
+                    <li>✅ <strong>Print Styles</strong> - Clean one-page black & white output</li>
+                    <li>✅ <strong>Government Document Structure</strong> - Official format with sections</li>
+                    <li>✅ <strong>Auto-generated Numbers</strong> - Permit numbers created automatically</li>
+                    <li>✅ <strong>Philippine Context</strong> - Barangay San Juan, local businesses</li>
+                </ul>
+                <p class="mt-3"><strong>Try the other variations:</strong> <a href="barangay-certificate.html">Certificate of Residency</a> | <a href="school-enrollment.html">School Enrollment</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer no-print">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Barangay San Juan</strong> - Government Document System<br>
+                <small>For educational purposes - Grade 9 ICT</small>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Auto-fill date
+        document.getElementById('appDate').textContent = new Date().toLocaleDateString('en-PH');
+        
+        // Generate permit number
+        const permitNumber = 'BP-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+        document.querySelectorAll('.permit-number').forEach(el => {
+            el.textContent = permitNumber;
+        });
+        
+        // Clear form function
+        function clearForm() {
+            if (confirm('Are you sure you want to clear all fields?')) {
+                document.querySelectorAll('input, select').forEach(el => {
+                    if (el.type === 'date') {
+                        el.value = '';
+                    } else if (el.tagName === 'SELECT') {
+                        el.selectedIndex = 0;
+                    } else {
+                        el.value = '';
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

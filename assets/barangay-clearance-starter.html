@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Clearance - Mini Project</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        /* TODO: Add print styles here! */
+        /* Hint: Use @media print { } */
+        
+        /* Screen styles */
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .signature-line {
+            border-bottom: 2px solid #333;
+            width: 250px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- TODO 1: Create a navigation bar with .no-print class -->
+    <!-- Hint: Use <nav class="navbar is-primary no-print"> -->
+    
+    
+    <!-- TODO 2: Create a hero section with title and subtitle -->
+    <!-- Hint: Use <section class="hero is-info"> -->
+    
+    
+    <!-- Main Form -->
+    <section class="section">
+        <div class="container form-container">
+            <div class="box">
+                <!-- Document Header -->
+                <div class="has-text-centered mb-5">
+                    <h1 class="title is-3">BARANGAY CLEARANCE</h1>
+                    <h2 class="subtitle is-5">Barangay San Juan, Manila</h2>
+                </div>
+
+                <!-- TODO 3: Add a date field -->
+                <!-- Hint: Use Bulma's .field and .control classes -->
+                
+                
+                <hr>
+
+                <div class="content my-5">
+                    <p><strong>TO WHOM IT MAY CONCERN:</strong></p>
+                    <p>This is to certify that the person whose name appears below is a bonafide resident of Barangay San Juan.</p>
+                </div>
+
+                <!-- TODO 4: Add form fields for: -->
+                <!-- - Full Name (text input) -->
+                <!-- - Age (number input) -->
+                <!-- - Address (text input) -->
+                <!-- - Purpose (select dropdown with options: Employment, Business Permit, School Requirements) -->
+                <!-- Hint: Use Bulma's .field, .label, .control, .input classes -->
+                
+                
+                <hr class="my-5">
+
+                <!-- Signatures -->
+                <div class="columns mt-6">
+                    <div class="column has-text-centered">
+                        <div class="signature-line"></div>
+                        <p><strong>Applicant's Signature</strong></p>
+                    </div>
+                </div>
+
+                <div class="columns mt-6">
+                    <div class="column has-text-centered">
+                        <div class="signature-line"></div>
+                        <p><strong>MARIA P. SANTOS</strong></p>
+                        <p>Punong Barangay</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TODO 5: Add a Print button with .no-print class -->
+            <!-- Hint: Use onclick="window.print()" -->
+            <!-- Button should be large, primary, and centered -->
+            
+        </div>
+    </section>
+
+    <!-- TODO 6: Add a footer with .no-print class -->
+    <!-- Include barangay contact information -->
+    
+</body>
+</html>

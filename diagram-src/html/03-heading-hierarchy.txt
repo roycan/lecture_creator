@@ -1,0 +1,69 @@
+┌─────────────────────────────────────────────────────────────┐
+│              HEADING HIERARCHY IN HTML                      │
+└─────────────────────────────────────────────────────────────┘
+
+Document Title
+├─ <h1> Main Page Title (ONLY ONE PER PAGE)
+│
+├─ <h2> Major Section 1
+│  ├─ <h3> Subsection 1.1
+│  │  ├─ <h4> Detail 1.1.1
+│  │  └─ <h4> Detail 1.1.2
+│  │
+│  └─ <h3> Subsection 1.2
+│     └─ <h4> Detail 1.2.1
+│
+├─ <h2> Major Section 2
+│  ├─ <h3> Subsection 2.1
+│  └─ <h3> Subsection 2.2
+│     ├─ <h4> Detail 2.2.1
+│     ├─ <h4> Detail 2.2.2
+│     └─ <h4> Detail 2.2.3
+│
+└─ <h2> Major Section 3
+   └─ <h3> Subsection 3.1
+      └─ <h4> Detail 3.1.1
+
+
+REAL EXAMPLE: School Website
+═════════════════════════════
+
+<h1> San Juan Elementary School
+│
+├─ <h2> About Us
+│  ├─ <h3> Our History
+│  ├─ <h3> Vision & Mission
+│  └─ <h3> School Facilities
+│
+├─ <h2> Academics
+│  ├─ <h3> Grade Levels
+│  │  ├─ <h4> Grade 1-3 (Primary)
+│  │  └─ <h4> Grade 4-6 (Intermediate)
+│  │
+│  └─ <h3> Curriculum
+│     ├─ <h4> Core Subjects
+│     └─ <h4> Special Programs
+│
+└─ <h2> Admissions
+   ├─ <h3> Requirements
+   ├─ <h3> Enrollment Process
+   └─ <h3> Tuition Fees
+
+
+RULES TO FOLLOW:
+════════════════
+✓ Use ONLY ONE <h1> per page (main title)
+✓ Don't skip levels (h1 → h3 is WRONG)
+✓ Use headings in order (h1 → h2 → h3 → h4)
+✓ Headings show structure, not styling
+✓ Screen readers use headings for navigation
+
+❌ WRONG:
+<h1>Title</h1>
+<h3>Section</h3>  ← Skipped h2!
+<h2>Another</h2>  ← Out of order!
+
+✓ CORRECT:
+<h1>Title</h1>
+<h2>Section</h2>
+<h3>Subsection</h3>

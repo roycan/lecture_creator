@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - San Miguel High School</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #f0f8ff;
+        }
+        h1 {
+            color: #003366;
+            text-align: center;
+        }
+        form {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        textarea {
+            resize: vertical;
+        }
+        .radio-group,
+        .checkbox-group {
+            margin-top: 10px;
+        }
+        .radio-group label,
+        .checkbox-group label {
+            display: inline-block;
+            margin-right: 15px;
+            font-weight: normal;
+        }
+        .required {
+            color: red;
+        }
+        button {
+            margin-top: 20px;
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button[type="submit"] {
+            background-color: #003366;
+            color: white;
+        }
+        button[type="submit"]:hover {
+            background-color: #00509e;
+        }
+        button[type="reset"] {
+            background-color: #999;
+            color: white;
+            margin-left: 10px;
+        }
+        button[type="reset"]:hover {
+            background-color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>📧 Contact Us</h1>
+    
+    <form action="/submit-contact" method="POST">
+        <p>Have a question or concern? Fill out the form below and we'll get back to you as soon as possible.</p>
+        <p>Fields marked with <span class="required">*</span> are required.</p>
+        
+        <!-- Personal Information -->
+        <label for="name">Full Name: <span class="required">*</span></label>
+        <input type="text" 
+               id="name" 
+               name="name" 
+               placeholder="Juan dela Cruz" 
+               required>
+        
+        <label for="email">Email Address: <span class="required">*</span></label>
+        <input type="email" 
+               id="email" 
+               name="email" 
+               placeholder="juan@example.com" 
+               required>
+        
+        <label for="phone">Phone Number: <span class="required">*</span></label>
+        <input type="tel" 
+               id="phone" 
+               name="phone" 
+               placeholder="0912 345 6789" 
+               required>
+        
+        <label for="subject">Subject: <span class="required">*</span></label>
+        <input type="text" 
+               id="subject" 
+               name="subject" 
+               placeholder="What is this about?" 
+               required>
+        
+        <!-- Topic Dropdown -->
+        <label for="topic">Topic: <span class="required">*</span></label>
+        <select id="topic" name="topic" required>
+            <option value="">-- Select a topic --</option>
+            <option value="question">General Question</option>
+            <option value="complaint">Complaint</option>
+            <option value="suggestion">Suggestion</option>
+            <option value="enrollment">Enrollment Inquiry</option>
+            <option value="academic">Academic Concern</option>
+            <option value="technical">Technical Support</option>
+            <option value="other">Other</option>
+        </select>
+        
+        <!-- Message -->
+        <label for="message">Message: <span class="required">*</span></label>
+        <textarea id="message" 
+                  name="message" 
+                  rows="6" 
+                  placeholder="Please provide details about your inquiry..." 
+                  required></textarea>
+        
+        <!-- Preferred Contact Method -->
+        <label>Preferred Contact Method: <span class="required">*</span></label>
+        <div class="radio-group">
+            <label>
+                <input type="radio" name="contact_method" value="email" required>
+                Email
+            </label>
+            <label>
+                <input type="radio" name="contact_method" value="phone">
+                Phone Call
+            </label>
+            <label>
+                <input type="radio" name="contact_method" value="sms">
+                SMS/Text Message
+            </label>
+        </div>
+        
+        <!-- Best Time to Contact -->
+        <label for="best_time">Best Time to Contact (optional):</label>
+        <select id="best_time" name="best_time">
+            <option value="">-- Select --</option>
+            <option value="morning">Morning (8AM-12PM)</option>
+            <option value="afternoon">Afternoon (1PM-5PM)</option>
+            <option value="evening">Evening (6PM-8PM)</option>
+        </select>
+        
+        <!-- Newsletter Subscription -->
+        <div class="checkbox-group">
+            <label>
+                <input type="checkbox" name="newsletter" value="yes">
+                Subscribe to our newsletter for updates and announcements
+            </label>
+        </div>
+        
+        <!-- Terms Agreement -->
+        <div class="checkbox-group">
+            <label>
+                <input type="checkbox" name="agree_terms" required>
+                I agree that my information will be used to respond to my inquiry. <span class="required">*</span>
+            </label>
+        </div>
+        
+        <!-- Privacy Notice -->
+        <div class="checkbox-group">
+            <label>
+                <input type="checkbox" name="privacy" required>
+                I have read and understood the Privacy Policy. <span class="required">*</span>
+            </label>
+        </div>
+        
+        <!-- Buttons -->
+        <button type="submit">Send Message</button>
+        <button type="reset">Clear Form</button>
+    </form>
+    
+    <hr>
+    
+    <footer style="text-align: center; margin-top: 30px;">
+        <h3>Other Ways to Reach Us</h3>
+        <p><strong>Address:</strong> 789 Bonifacio Avenue, San Miguel, Manila</p>
+        <p><strong>Phone:</strong> <a href="tel:+6321234567">(02) 123-4567</a></p>
+        <p><strong>Email:</strong> <a href="mailto:info@sanmiguelhighschool.edu.ph">info@sanmiguelhighschool.edu.ph</a></p>
+        <p><strong>Office Hours:</strong> Monday to Friday, 8:00 AM - 5:00 PM</p>
+        <p>&copy; 2025 San Miguel High School. All rights reserved.</p>
+    </footer>
+</body>
+</html>

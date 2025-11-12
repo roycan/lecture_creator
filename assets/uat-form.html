@@ -1,0 +1,297 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>👥 UAT Form Generator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>👥 User Acceptance Testing (UAT) Form Generator</h2>
+      <p>Create forms for client testing sessions.</p>
+      
+      <div style="margin-top: 20px;">
+        <h3>💡 What is UAT?</h3>
+        <div class="info-box">
+          <p><strong>UAT = Client tests YOUR work to see if it meets THEIR needs</strong></p>
+          <p><strong>When:</strong> 3-5 days before final delivery</p>
+          <p><strong>Why:</strong> Catch issues before deadline, build client confidence</p>
+          <p><strong>Result:</strong> No surprises at final delivery!</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 30px;">
+        <h3>✍️ Create UAT Form</h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div class="form-group">
+            <label for="projectName">Project Name:</label>
+            <input type="text" id="projectName" class="input" placeholder="e.g., Sari-sari Store Inventory">
+          </div>
+          <div class="form-group">
+            <label for="sessionDate">UAT Session Date:</label>
+            <input type="date" id="sessionDate" class="input">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="clientName">Client/Teacher Name:</label>
+          <input type="text" id="clientName" class="input" placeholder="e.g., Mrs. Santos">
+        </div>
+
+        <div class="form-group">
+          <label for="instructions">Custom Instructions (optional):</label>
+          <textarea id="instructions" class="input" rows="2" placeholder="Add any special instructions for the client"></textarea>
+        </div>
+
+        <hr style="margin: 30px 0; border: none; border-top: 2px solid #dee2e6;">
+
+        <h4>🎯 Features to Test</h4>
+        <p style="color: #666;">Add each feature the client should test.</p>
+
+        <div id="featuresContainer"></div>
+
+        <button onclick="addFeature()" class="btn" style="background: #28a745; margin-top: 15px;">➕ Add Feature</button>
+
+        <div style="margin-top: 30px;">
+          <button onclick="generateForm()" class="btn">✨ Generate UAT Form</button>
+          <button onclick="clearAll()" class="btn" style="background: #6c757d;">🔄 Clear</button>
+        </div>
+      </div>
+
+      <div id="result" style="margin-top: 30px; display: none;">
+        <h3>✅ Generated UAT Form</h3>
+        <div class="result-box">
+          <pre id="formOutput" style="white-space: pre-wrap; font-family: 'Courier New', monospace; line-height: 1.6; font-size: 13px;"></pre>
+        </div>
+        
+        <div style="margin-top: 15px;">
+          <button onclick="copyForm()" class="btn">📋 Copy Form</button>
+          <button onclick="printForm()" class="btn" style="background: #17a2b8;">🖨️ Print</button>
+        </div>
+      </div>
+
+      <div style="margin-top: 40px; padding: 20px; background: #fff3cd; border-left: 4px solid #856404; border-radius: 5px;">
+        <h3>📖 UAT Session Tips</h3>
+        
+        <p><strong>✅ Before Session:</strong></p>
+        <ul>
+          <li>Print UAT form (or prepare digital copy)</li>
+          <li>Load realistic demo data (not "test test")</li>
+          <li>Test everything yourself first</li>
+          <li>Have pen ready to take notes</li>
+        </ul>
+
+        <p style="margin-top: 15px;"><strong>✅ During Session:</strong></p>
+        <ul>
+          <li>Let CLIENT use the system (don't do it for them)</li>
+          <li>Watch quietly (only help if they're stuck)</li>
+          <li>Record ALL feedback (good and bad)</li>
+          <li>Don't get defensive about bugs</li>
+        </ul>
+
+        <p style="margin-top: 15px;"><strong>✅ After Session:</strong></p>
+        <ul>
+          <li>Thank client for testing</li>
+          <li>Prioritize fixes (critical vs nice-to-have)</li>
+          <li>Fix critical issues within 1-2 days</li>
+          <li>Quick re-test before final delivery</li>
+        </ul>
+
+        <p style="margin-top: 20px;"><strong>Status Symbols:</strong></p>
+        <ul>
+          <li><strong>✅ Works as expected</strong> - No changes needed</li>
+          <li><strong>⚠️ Works but needs improvement</strong> - Minor fixes</li>
+          <li><strong>❌ Doesn't work / Confusing</strong> - Must fix before delivery</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let featureCount = 0;
+
+    // Set today's date
+    document.getElementById('sessionDate').valueAsDate = new Date();
+
+    // Initialize with 3 features
+    window.onload = function() {
+      addFeature();
+      addFeature();
+      addFeature();
+    };
+
+    function addFeature() {
+      featureCount++;
+      const container = document.getElementById('featuresContainer');
+      const featureDiv = document.createElement('div');
+      featureDiv.className = 'feature-item';
+      featureDiv.style.cssText = 'margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px;';
+      featureDiv.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <strong>Feature ${featureCount}</strong>
+          <button onclick="removeFeature(this)" style="padding: 5px 10px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer;">Remove</button>
+        </div>
+        <input type="text" class="input feature-name" placeholder="Feature name (e.g., Login)" style="margin-bottom: 10px;">
+        <textarea class="input feature-steps" rows="3" placeholder="Steps to test (one per line):&#10;1. Enter username&#10;2. Enter password&#10;3. Click Login"></textarea>
+      `;
+      container.appendChild(featureDiv);
+    }
+
+    function removeFeature(btn) {
+      btn.closest('.feature-item').remove();
+      renumberFeatures();
+    }
+
+    function renumberFeatures() {
+      const features = document.querySelectorAll('.feature-item');
+      features.forEach((feature, index) => {
+        feature.querySelector('strong').textContent = `Feature ${index + 1}`;
+      });
+      featureCount = features.length;
+    }
+
+    function generateForm() {
+      const projectName = document.getElementById('projectName').value.trim();
+      const sessionDate = document.getElementById('sessionDate').value;
+      const clientName = document.getElementById('clientName').value.trim();
+      const instructions = document.getElementById('instructions').value.trim();
+
+      if (!projectName || !clientName) {
+        alert('⚠️ Please enter project name and client name');
+        return;
+      }
+
+      const features = Array.from(document.querySelectorAll('.feature-item')).map(item => {
+        return {
+          name: item.querySelector('.feature-name').value.trim(),
+          steps: item.querySelector('.feature-steps').value.trim()
+        };
+      }).filter(f => f.name);
+
+      if (features.length === 0) {
+        alert('⚠️ Please add at least one feature to test');
+        return;
+      }
+
+      // Generate form
+      let form = '';
+      form += '═'.repeat(65) + '\n';
+      form += 'USER ACCEPTANCE TESTING (UAT) FORM\n';
+      form += '═'.repeat(65) + '\n\n';
+      form += `PROJECT: ${projectName}\n`;
+      form += `UAT SESSION DATE: ${sessionDate || '[Date]'}\n`;
+      form += `TESTED BY: ${clientName}\n\n`;
+      form += '═'.repeat(65) + '\n\n';
+      
+      form += 'INSTRUCTIONS TO CLIENT:\n\n';
+      if (instructions) {
+        form += instructions + '\n\n';
+      } else {
+        form += 'Please test each feature below. Mark whether it:\n';
+        form += '  ✅ Works as expected\n';
+        form += '  ⚠️ Works but needs improvement\n';
+        form += '  ❌ Doesn\'t work or is confusing\n\n';
+        form += 'We will fix all ❌ issues before final delivery.\n\n';
+      }
+
+      form += '═'.repeat(65) + '\n\n';
+
+      features.forEach((feature, index) => {
+        form += `FEATURE ${index + 1}: ${feature.name}\n`;
+        form += '─'.repeat(65) + '\n\n';
+        
+        if (feature.steps) {
+          const steps = feature.steps.split('\n').filter(s => s.trim());
+          steps.forEach(step => {
+            form += `[ ] ${step}\n`;
+          });
+        }
+        
+        form += '\nSTATUS: ___  (✅ / ⚠️ / ❌)\n';
+        form += 'NOTES: ________________________________________________\n';
+        form += '_______________________________________________________\n\n';
+        
+        if (index < features.length - 1) {
+          form += '─'.repeat(65) + '\n\n';
+        }
+      });
+
+      form += '═'.repeat(65) + '\n';
+      form += 'OVERALL FEEDBACK\n';
+      form += '═'.repeat(65) + '\n\n';
+      form += 'What do you LIKE about this system?\n';
+      form += '_______________________________________________________\n';
+      form += '_______________________________________________________\n\n';
+      form += 'What MUST be fixed before you accept this?\n';
+      form += '_______________________________________________________\n';
+      form += '_______________________________________________________\n\n';
+      form += 'What would be NICE to have (not required)?\n';
+      form += '_______________________________________________________\n';
+      form += '_______________________________________________________\n\n';
+      form += '═'.repeat(65) + '\n';
+      form += 'FINAL DECISION: [ ] ACCEPT  [ ] NEEDS FIXES  [ ] REJECT\n';
+      form += '═'.repeat(65) + '\n';
+
+      document.getElementById('formOutput').textContent = form;
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function clearAll() {
+      document.getElementById('projectName').value = '';
+      document.getElementById('sessionDate').valueAsDate = new Date();
+      document.getElementById('clientName').value = '';
+      document.getElementById('instructions').value = '';
+      document.getElementById('featuresContainer').innerHTML = '';
+      featureCount = 0;
+      addFeature();
+      addFeature();
+      addFeature();
+      document.getElementById('result').style.display = 'none';
+    }
+
+    function copyForm() {
+      const text = document.getElementById('formOutput').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ UAT form copied to clipboard!');
+      });
+    }
+
+    function printForm() {
+      const text = document.getElementById('formOutput').textContent;
+      const printWindow = window.open('', '', 'height=600,width=800');
+      printWindow.document.write('<html><head><title>UAT Form</title>');
+      printWindow.document.write('<style>body{font-family:monospace;white-space:pre-wrap;padding:20px;}</style>');
+      printWindow.document.write('</head><body>');
+      printWindow.document.write(text);
+      printWindow.document.write('</body></html>');
+      printWindow.document.close();
+      printWindow.print();
+    }
+  </script>
+
+  <style>
+    .info-box {
+      background: #d1ecf1;
+      padding: 15px;
+      border-left: 4px solid #0c5460;
+      border-radius: 5px;
+    }
+    .info-box p {
+      margin: 5px 0;
+      color: #0c5460;
+    }
+    .result-box {
+      background: #d4edda;
+      padding: 20px;
+      border-left: 4px solid #28a745;
+      border-radius: 5px;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+  </style>
+</body>
+</html>

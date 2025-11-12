@@ -275,6 +275,35 @@ Before marking a lecture complete:
 
 ## 🎬 Examples
 
+### HTML Fundamentals Lecture (2025-11-12)
+
+**Files Created:** 16 total
+- 1 main lecture markdown (700+ lines, 13 sections)
+- 6 practice HTML files (structure, semantic, text, links-images, forms, tables)
+- 6 mini-project files (3 starter + 3 solutions: barangay profile, store catalog, contact form)
+- 4 final challenge files (1 starter + 3 solutions: elementary, high school, vocational)
+
+**Key Features:**
+- Foundation lecture (no prerequisites, structure before style)
+- "When to Use HTML" decision framework (unique to this lecture)
+- Semantic HTML5 emphasis (header, nav, main, section, aside, footer)
+- Philippine contexts: Barangay San Juan, Tindahan ni Aling Rosa, DepEd schools, TESDA training
+- Progressive challenge variations: Elementary (K-6, playful) → High School (7-12, professional, SHS tracks) → Vocational (TESDA certifications, job placement)
+- Accessibility patterns (labels, alt text, heading hierarchy)
+- Forms with validation (required fields, proper input types)
+- Tables for structured data
+
+**Key Difference from Other Lectures:**
+- **No CSS styling** - Pure HTML structure focus
+- **No JavaScript** - Static pages only
+- **Embedded CSS** - For final challenge only, minimal styling to demonstrate sections
+- **Foundation skill** - Required before CSS/Responsive lectures
+- **Three school variations** - Shows adaptation skill (different audiences, contexts, tones)
+
+**See:** `logs/html-lecture-implementation-2025-11-12.md` for full details
+
+---
+
 ### AJAX/Fetch Lecture (2025-11-10)
 
 **Files Created:** 44 total
@@ -319,7 +348,125 @@ Before marking a lecture complete:
 - **Mini-projects:** Complete web applications with forms and JSON storage
 - **Deployment focus:** Railway platform integration
 
-**See:** `logs/web-app-basics-part1-implementation-2025-01-10.md` for full details
+**See:** `logs/express-basics-implementation-2025-01-10.md` for full details
+
+### Example 3: HTML Fundamentals Lecture (Foundation)
+
+**File:** `html-lecture.md` (~700 lines, 13 sections)  
+**Created:** November 12, 2025  
+**Status:** ✅ Complete with practice files, mini-projects, final challenge, diagrams
+
+**Teaching Approach:**
+- Structure-first philosophy (HTML only, no CSS/JS)
+- Semantic HTML5 emphasis (header, nav, main, aside, footer)
+- Accessibility focus (labels, alt text, heading hierarchy)
+- Real-world forms (contact forms, enrollment, registration)
+- Proper table structure (thead/tbody, rowspan/colspan)
+- Three school website variations (elementary, high school, vocational)
+
+**Philippine Context Examples:**
+- San Juan Elementary School
+- Philippine Science High School
+- TESDA Training Center
+- Barangay San Juan (government context)
+- Tindahan ni Aling Rosa (sari-sari store)
+- Filipino names, DepEd curriculum, TESDA certifications
+
+**Practice Files (6):**
+- Basic structure, semantic tags, text content, links, forms, tables
+
+**Mini-Projects (3 pairs: starters + solutions):**
+- Elementary school website (simple)
+- High school website (intermediate, with SHS tracks)
+- Vocational training center (advanced, TESDA context)
+
+**Final Challenge (1 starter + 3 solutions):**
+- Elementary, high school, and vocational school variations
+- Tests adaptation skills with same core concepts
+
+**Diagrams (7 in diagram-src/html/):**
+- Document structure (Mermaid), semantic layout, heading hierarchy
+- Form structure, table structure, link types, attribute syntax
+
+**Key Features:**
+- "When to Use HTML" decision framework section
+- Pure HTML (no styling) - foundation for CSS lectures
+- Complete accessibility patterns demonstrated
+- All practice files work offline
+- Progressive difficulty: simple tags → complex forms/tables
+- Zero prerequisites (true foundation lecture)
+
+**Builds Toward:** `responsive-bulma-lecture.md` (adds CSS styling)
+
+**See:** `logs/html-lecture-implementation-2025-11-12.md` for full details
+
+### Example 4: Responsive Bulma Lecture (CSS Framework)
+
+**File:** `responsive-bulma-lecture.md` (~2,400 lines, 9 sections)  
+**Created:** November 12, 2025  
+**Status:** ✅ Complete with practice files, mini-projects, final challenge, diagrams
+
+**Teaching Approach:**
+- Mobile-first design (Philippine 70% mobile reality)
+- Bulma CSS framework via CDN (no local setup)
+- Viewport meta tag critical importance
+- Responsive grid system (columns, breakpoints)
+- Print styles as KILLER FEATURE (@media print for government forms)
+- Progressive enhancement workflow
+- Testing on real devices (budget Android phones)
+
+**Philippine Context (100%):**
+- Budget Android phones (Samsung A, OPPO, Realme, Xiaomi Redmi)
+- Government forms (barangay clearance, business permits, certificates)
+- Sari-sari store product catalogs (responsive grids)
+- Barangay San Juan government offices
+- Skills training programs (TESDA context)
+- Ink cost savings (black & white printing)
+- Slow internet considerations (3G/4G, outdoor usage)
+
+**Practice Files (6):**
+- Bulma grid demo, responsive helpers, mobile-friendly forms
+- Product catalog (2→3→4 column progression)
+- Responsive dashboard, printable clearance form
+
+**Mini-Projects (3 pairs: starters + solutions):**
+- Barangay clearance (printable government form)
+- Responsive store catalog (sari-sari store, grid mastery)
+- Certificate template (landscape print orientation)
+
+**Final Challenge (1 starter + 3 solutions):**
+- Business permit application (form sections, auto-numbers)
+- Barangay certificate of residency (dynamic text generation)
+- School enrollment form (compact layout, parent info)
+- All combine responsive + printable features
+
+**Diagrams (8 in diagram-src/bulma/):**
+- Grid system, breakpoints (with PH device examples)
+- Responsive helpers (show/hide matrix)
+- Print workflow (complete @media print guide) ← KILLER FEATURE
+- Mobile-first approach, viewport meta tag
+- Media query syntax, column sizing reference
+
+**Key Features:**
+- **Print Styles Emphasis** - Government forms that print clean (black & white, one-page)
+- Mobile-first workflow (start with phone, enhance for desktop)
+- Bulma CDN setup (no npm/build tools needed)
+- Responsive testing guide (Chrome DevTools + real devices)
+- @media query fundamentals
+- "When to Use Bulma" decision framework
+- 70% of files demonstrate print styles
+
+**Unique Feature:** Print styles as primary use case (not just "bonus feature")
+- Real-world problem: Philippine government offices need printable forms
+- Cost savings: Black & white printing saves expensive ink
+- Practical skill: Students can create barangay clearance, certificates, permits
+- Universal need: Schools, businesses, government all need printable documents
+
+**Prerequisites:** HTML lecture (builds on semantic HTML foundation)
+
+**Builds Toward:** CSS custom styling, JavaScript interactivity
+
+**See:** `logs/responsive-bulma-implementation-2025-11-12.md` for full details
 
 ---
 

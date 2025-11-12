@@ -1,8 +1,8 @@
-# Web App Basics - Part 2A Migration Guide
+# Database SQLite Migration Guide
 ## Upgrading from JSON Files to SQLite Database
 
 **Target Audience:** Grade 9 Students  
-**Prerequisites:** Part 1 completed, Part 2A lecture read  
+**Prerequisites:** Express Basics completed, Database SQLite lecture read  
 **Duration:** 2-3 days
 
 ---
@@ -67,8 +67,8 @@ data/
 
 Before upgrading, make sure you have:
 
-- [ ] Completed Part 1 mini-project (Barangay Directory, Class List, or Store Inventory)
-- [ ] Read `web-app-basics-part2a-lecture.md` 
+- [ ] Completed Express Basics mini-project (Barangay Directory, Class List, or Store Inventory)
+- [ ] Read `database-sqlite-lecture.md` 
 - [ ] Understand basic SQL (SELECT, INSERT, UPDATE, DELETE)
 - [ ] Node.js and npm installed
 - [ ] Your Part 1 project files backed up (copy the folder!)
@@ -1065,7 +1065,7 @@ INNER JOIN barangays ON residents.barangay_id = barangays.id
 ## 📚 Additional Resources
 
 ### Reference Materials
-- **Part 2A Lecture:** `web-app-basics-part2a-lecture.md`
+- **Database SQLite Lecture:** `database-sqlite-lecture.md`
 - **SQL Cheat Sheet:** `support-materials/sql-cheat-sheet.md`
 - **SQLite Setup Guide:** `support-materials/sqlite-setup-guide.md`
 - **Schema Templates:** `support-materials/schema-templates/`

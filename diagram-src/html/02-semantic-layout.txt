@@ -1,0 +1,61 @@
+┌─────────────────────────────────────────────────────────┐
+│                      <header>                           │
+│  ┌──────────────────────────────────────────────────┐   │
+│  │  <nav> - Main Navigation Menu                    │   │
+│  │  Home | About | Services | Contact               │   │
+│  └──────────────────────────────────────────────────┘   │
+│                                                         │
+│  <h1>Website Title</h1>                                 │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│                      <main>                             │
+│                                                         │
+│  ┌──────────────────────────────────────────────────┐   │
+│  │  <section>                                       │   │
+│  │    <h2>Section Title</h2>                        │   │
+│  │    <p>Content here...</p>                        │   │
+│  └──────────────────────────────────────────────────┘   │
+│                                                         │
+│  ┌──────────────────────────────────────────────────┐   │
+│  │  <article>                                       │   │
+│  │    <h2>Article Title</h2>                        │   │
+│  │    <p>Article content...</p>                     │   │
+│  └──────────────────────────────────────────────────┘   │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+
+┌───────────────────┐  ┌────────────────────────────────┐
+│    <aside>        │  │                                │
+│                   │  │  Additional <section> or       │
+│  • Related Links  │  │  <article> elements can be     │
+│  • Sidebar Info   │  │  added in <main>               │
+│  • Quick Facts    │  │                                │
+│                   │  │                                │
+└───────────────────┘  └────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│                      <footer>                           │
+│                                                         │
+│  © 2025 School Name                                     │
+│  Contact: info@school.edu.ph                            │
+│  Address: Manila, Philippines                           │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+
+KEY SEMANTIC HTML5 ELEMENTS:
+─────────────────────────────
+<header>  - Top section (logo, nav, title)
+<nav>     - Navigation links
+<main>    - Primary content (only ONE per page)
+<section> - Thematic grouping of content
+<article> - Self-contained content (blog post, news)
+<aside>   - Sidebar, related content
+<footer>  - Bottom section (copyright, contact)
+
+WHY USE SEMANTIC HTML?
+──────────────────────
+✓ Better accessibility (screen readers)
+✓ Improved SEO (search engines understand structure)
+✓ Easier maintenance (clear content organization)
+✓ Meaningful structure (not just <div> soup)

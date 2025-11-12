@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay San Juan - Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            height: 100%;
+        }
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #3273dc;
+        }
+        .stat-label {
+            font-size: 1.2em;
+            color: #7a7a7a;
+            margin-top: 0.5rem;
+        }
+        .stat-icon {
+            font-size: 3em;
+            margin-bottom: 1rem;
+        }
+        
+        /* Mobile: Make table scrollable horizontally */
+        @media screen and (max-width: 768px) {
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            table {
+                min-width: 600px; /* Forces horizontal scroll on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar is-primary" role="navigation">
+        <div class="navbar-brand">
+            <span class="navbar-item">
+                <strong>🏘️ Barangay San Juan</strong>
+            </span>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-end">
+                <span class="navbar-item">
+                    Dashboard
+                </span>
+                <span class="navbar-item">
+                    Reports
+                </span>
+                <span class="navbar-item">
+                    Officials
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero is-info">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">Barangay Dashboard</h1>
+                <h2 class="subtitle">Community Statistics & Information</h2>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="section">
+        <div class="container">
+            <!-- Statistics Cards -->
+            <h2 class="title is-4 mb-4">Key Statistics</h2>
+            
+            <div class="columns is-multiline">
+                <!-- Stat 1: Population -->
+                <div class="column is-half-mobile is-one-quarter-tablet">
+                    <div class="box stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-number">8,542</div>
+                        <div class="stat-label">Total Population</div>
+                    </div>
+                </div>
+
+                <!-- Stat 2: Households -->
+                <div class="column is-half-mobile is-one-quarter-tablet">
+                    <div class="box stat-card">
+                        <div class="stat-icon">🏠</div>
+                        <div class="stat-number">2,156</div>
+                        <div class="stat-label">Households</div>
+                    </div>
+                </div>
+
+                <!-- Stat 3: Area -->
+                <div class="column is-half-mobile is-one-quarter-tablet">
+                    <div class="box stat-card">
+                        <div class="stat-icon">📏</div>
+                        <div class="stat-number">2.8</div>
+                        <div class="stat-label">Square Kilometers</div>
+                    </div>
+                </div>
+
+                <!-- Stat 4: Purok/Sitio -->
+                <div class="column is-half-mobile is-one-quarter-tablet">
+                    <div class="box stat-card">
+                        <div class="stat-icon">🗺️</div>
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Purok/Sitios</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Responsive Behavior Note -->
+            <div class="notification is-info is-light mb-5">
+                <strong>📱 Responsive Cards:</strong>
+                <ul>
+                    <li><strong>Mobile:</strong> 2 cards per row (fits small screens)</li>
+                    <li><strong>Tablet & Desktop:</strong> 4 cards per row (full view)</li>
+                </ul>
+            </div>
+
+            <!-- Demographics Section -->
+            <h2 class="title is-4 mt-6 mb-4">Population Demographics</h2>
+            
+            <div class="columns">
+                <div class="column is-half">
+                    <div class="box">
+                        <h3 class="title is-5">By Age Group</h3>
+                        <table class="table is-fullwidth">
+                            <thead>
+                                <tr>
+                                    <th>Age Group</th>
+                                    <th>Count</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>0-17 years (Children)</td>
+                                    <td>2,563</td>
+                                    <td>30%</td>
+                                </tr>
+                                <tr>
+                                    <td>18-59 years (Adults)</td>
+                                    <td>5,127</td>
+                                    <td>60%</td>
+                                </tr>
+                                <tr>
+                                    <td>60+ years (Seniors)</td>
+                                    <td>852</td>
+                                    <td>10%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="column is-half">
+                    <div class="box">
+                        <h3 class="title is-5">By Gender</h3>
+                        <table class="table is-fullwidth">
+                            <thead>
+                                <tr>
+                                    <th>Gender</th>
+                                    <th>Count</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Male</td>
+                                    <td>4,186</td>
+                                    <td>49%</td>
+                                </tr>
+                                <tr>
+                                    <td>Female</td>
+                                    <td>4,356</td>
+                                    <td>51%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Officials Table -->
+            <h2 class="title is-4 mt-6 mb-4">Barangay Officials</h2>
+            
+            <div class="notification is-warning is-light mb-4">
+                <strong>📱 Mobile Tip:</strong> On small screens, this table scrolls horizontally. Swipe left/right to see all columns!
+            </div>
+
+            <div class="table-container">
+                <table class="table is-striped is-fullwidth is-hoverable">
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Name</th>
+                            <th>Committee</th>
+                            <th>Contact</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Barangay Captain</strong></td>
+                            <td>Maria Santos</td>
+                            <td>Executive</td>
+                            <td>0912-345-6789</td>
+                            <td>captain@brgy-sanjuan.ph</td>
+                        </tr>
+                        <tr>
+                            <td>Kagawad 1</td>
+                            <td>Juan Dela Cruz</td>
+                            <td>Peace & Order</td>
+                            <td>0915-234-5678</td>
+                            <td>juan@brgy-sanjuan.ph</td>
+                        </tr>
+                        <tr>
+                            <td>Kagawad 2</td>
+                            <td>Ana Reyes</td>
+                            <td>Health & Sanitation</td>
+                            <td>0917-345-6789</td>
+                            <td>ana@brgy-sanjuan.ph</td>
+                        </tr>
+                        <tr>
+                            <td>Kagawad 3</td>
+                            <td>Pedro Garcia</td>
+                            <td>Education</td>
+                            <td>0918-456-7890</td>
+                            <td>pedro@brgy-sanjuan.ph</td>
+                        </tr>
+                        <tr>
+                            <td>Kagawad 4</td>
+                            <td>Rosa Martinez</td>
+                            <td>Infrastructure</td>
+                            <td>0919-567-8901</td>
+                            <td>rosa@brgy-sanjuan.ph</td>
+                        </tr>
+                        <tr>
+                            <td>Kagawad 5</td>
+                            <td>Carlos Mendoza</td>
+                            <td>Livelihood</td>
+                            <td>0920-678-9012</td>
+                            <td>carlos@brgy-sanjuan.ph</td>
+                        </tr>
+                        <tr>
+                            <td>Kagawad 6</td>
+                            <td>Linda Torres</td>
+                            <td>Environment</td>
+                            <td>0921-789-0123</td>
+                            <td>linda@brgy-sanjuan.ph</td>
+                        </tr>
+                        <tr>
+                            <td>Kagawad 7</td>
+                            <td>Roberto Cruz</td>
+                            <td>Youth & Sports</td>
+                            <td>0922-890-1234</td>
+                            <td>roberto@brgy-sanjuan.ph</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SK Chairman</strong></td>
+                            <td>Miguel Santos</td>
+                            <td>Youth Affairs</td>
+                            <td>0923-901-2345</td>
+                            <td>sk.chair@brgy-sanjuan.ph</td>
+                        </tr>
+                        <tr>
+                            <td>Barangay Secretary</td>
+                            <td>Elena Ramos</td>
+                            <td>Administrative</td>
+                            <td>0924-012-3456</td>
+                            <td>secretary@brgy-sanjuan.ph</td>
+                        </tr>
+                        <tr>
+                            <td>Barangay Treasurer</td>
+                            <td>Antonio Lopez</td>
+                            <td>Finance</td>
+                            <td>0925-123-4567</td>
+                            <td>treasurer@brgy-sanjuan.ph</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Services Section -->
+            <h2 class="title is-4 mt-6 mb-4">Available Services</h2>
+            
+            <div class="columns is-multiline">
+                <div class="column is-full-mobile is-half-tablet is-one-third-desktop">
+                    <div class="box">
+                        <h3 class="title is-5">📄 Barangay Clearance</h3>
+                        <p>Required for employment, business permits, and other purposes.</p>
+                        <p class="mt-3"><strong>Fee:</strong> ₱50</p>
+                        <p><strong>Processing:</strong> Same day</p>
+                    </div>
+                </div>
+
+                <div class="column is-full-mobile is-half-tablet is-one-third-desktop">
+                    <div class="box">
+                        <h3 class="title is-5">🆔 Barangay ID</h3>
+                        <p>Official identification card for residents.</p>
+                        <p class="mt-3"><strong>Fee:</strong> ₱30</p>
+                        <p><strong>Processing:</strong> 3-5 days</p>
+                    </div>
+                </div>
+
+                <div class="column is-full-mobile is-half-tablet is-one-third-desktop">
+                    <div class="box">
+                        <h3 class="title is-5">📝 Cedula</h3>
+                        <p>Community Tax Certificate for residents.</p>
+                        <p class="mt-3"><strong>Fee:</strong> ₱5-₱500 (income-based)</p>
+                        <p><strong>Processing:</strong> Same day</p>
+                    </div>
+                </div>
+
+                <div class="column is-full-mobile is-half-tablet is-one-third-desktop">
+                    <div class="box">
+                        <h3 class="title is-5">🏢 Business Permit</h3>
+                        <p>Required for operating businesses in the barangay.</p>
+                        <p class="mt-3"><strong>Fee:</strong> Varies</p>
+                        <p><strong>Processing:</strong> 5-7 days</p>
+                    </div>
+                </div>
+
+                <div class="column is-full-mobile is-half-tablet is-one-third-desktop">
+                    <div class="box">
+                        <h3 class="title is-5">🏗️ Building Permit</h3>
+                        <p>Endorsement for construction projects.</p>
+                        <p class="mt-3"><strong>Fee:</strong> Varies</p>
+                        <p><strong>Processing:</strong> 7-10 days</p>
+                    </div>
+                </div>
+
+                <div class="column is-full-mobile is-half-tablet is-one-third-desktop">
+                    <div class="box">
+                        <h3 class="title is-5">⚖️ Mediation Services</h3>
+                        <p>Conflict resolution and dispute settlement.</p>
+                        <p class="mt-3"><strong>Fee:</strong> Free</p>
+                        <p><strong>Processing:</strong> Scheduled</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Responsive Layout Info -->
+            <div class="notification is-success is-light mt-5">
+                <h3 class="title is-5">✅ Dashboard Responsiveness</h3>
+                <p><strong>This dashboard demonstrates responsive design:</strong></p>
+                <ul class="mt-3">
+                    <li>✅ <strong>Stat cards:</strong> 2 per row (mobile) → 4 per row (desktop)</li>
+                    <li>✅ <strong>Demographics tables:</strong> Stack on mobile, side-by-side on tablet/desktop</li>
+                    <li>✅ <strong>Officials table:</strong> Scrolls horizontally on mobile (too many columns)</li>
+                    <li>✅ <strong>Services:</strong> 1 per row (mobile) → 2 (tablet) → 3 (desktop)</li>
+                </ul>
+                <p class="mt-3"><strong>Try resizing your browser window to see the adaptations! 🪄</strong></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Barangay San Juan</strong> 🏘️<br>
+                456 Maligaya Avenue, Manila, Philippines<br>
+                📞 (02) 8123-4567 | 📧 info@brgy-sanjuan.ph<br>
+                Office Hours: Monday-Friday, 8:00 AM - 5:00 PM
+            </p>
+            <p class="mt-3">
+                <em>"Matatag na Pamayanan, Maunlad na Kinabukasan"</em><br>
+                (Strong Community, Prosperous Future)
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        console.log('Barangay Dashboard loaded!');
+        console.log('Responsive features demonstrated:');
+        console.log('1. Stat cards adapt: 2 → 4 columns');
+        console.log('2. Tables stack on mobile, side-by-side on desktop');
+        console.log('3. Wide table scrolls horizontally on mobile');
+        console.log('4. Service boxes: 1 → 2 → 3 columns');
+    </script>
+</body>
+</html>

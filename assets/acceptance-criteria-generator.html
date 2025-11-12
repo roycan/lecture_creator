@@ -1,0 +1,454 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>✅ Acceptance Criteria Generator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>✅ Acceptance Criteria Generator</h2>
+      <p>Create clear acceptance criteria using Given/When/Then format.</p>
+      
+      <div style="margin-top: 20px;">
+        <h3>💡 What are Acceptance Criteria?</h3>
+        <div class="info-box">
+          <p><strong>Format:</strong> GIVEN [context] / WHEN [action] / THEN [result]</p>
+          <p><strong>Purpose:</strong> Defines exactly when a feature is "done"</p>
+          <p><strong>Example:</strong></p>
+          <ul style="margin-top: 10px;">
+            <li>GIVEN I am logged in as admin</li>
+            <li>WHEN I add a product with name, price, stock</li>
+            <li>THEN I should see the product in the catalog</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="margin-top: 30px;">
+        <h3>✍️ Create Acceptance Criteria</h3>
+        
+        <div class="form-group">
+          <label for="userStory">User Story (optional context):</label>
+          <textarea id="userStory" class="input" rows="2" placeholder="As a store owner, I want to add products, so that I can track inventory"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="scenarioName">Scenario Name:</label>
+          <input type="text" id="scenarioName" class="input" placeholder="e.g., Successfully add product">
+          <small style="color: #666; display: block; margin-top: 5px;">
+            💡 Name this test scenario (happy path, error case, edge case)
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="scenarioType">Scenario Type:</label>
+          <select id="scenarioType" class="input">
+            <option value="happy">✅ Happy Path (everything works)</option>
+            <option value="error">❌ Error Case (validation, failure)</option>
+            <option value="edge">🔍 Edge Case (special situations)</option>
+          </select>
+        </div>
+
+        <hr style="margin: 30px 0; border: none; border-top: 2px solid #dee2e6;">
+
+        <h4>📋 GIVEN (Initial Context)</h4>
+        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">What's the starting situation? What must be true before the test?</p>
+        
+        <div id="givenList">
+          <div class="given-item">
+            <input type="text" class="input given-input" placeholder="e.g., I am logged in as admin">
+            <button onclick="removeGiven(this)" class="btn-small btn-danger">✖</button>
+          </div>
+        </div>
+        <button onclick="addGiven()" class="btn-small">➕ Add GIVEN</button>
+
+        <hr style="margin: 30px 0; border: none; border-top: 2px solid #dee2e6;">
+
+        <h4>⚡ WHEN (Action)</h4>
+        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">What action does the user take?</p>
+        
+        <div id="whenList">
+          <div class="when-item">
+            <input type="text" class="input when-input" placeholder="e.g., I click the Save button">
+            <button onclick="removeWhen(this)" class="btn-small btn-danger">✖</button>
+          </div>
+        </div>
+        <button onclick="addWhen()" class="btn-small">➕ Add WHEN</button>
+
+        <hr style="margin: 30px 0; border: none; border-top: 2px solid #dee2e6;">
+
+        <h4>✨ THEN (Expected Result)</h4>
+        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">What should happen? What's the expected outcome?</p>
+        
+        <div id="thenList">
+          <div class="then-item">
+            <input type="text" class="input then-input" placeholder="e.g., I should see success message">
+            <button onclick="removeThen(this)" class="btn-small btn-danger">✖</button>
+          </div>
+        </div>
+        <button onclick="addThen()" class="btn-small">➕ Add THEN</button>
+
+        <div style="margin-top: 30px;">
+          <button onclick="generateCriteria()" class="btn">✨ Generate Acceptance Criteria</button>
+          <button onclick="clearForm()" class="btn" style="background: #6c757d;">🔄 Clear</button>
+        </div>
+      </div>
+
+      <div id="result" style="margin-top: 30px; display: none;">
+        <h3>✅ Generated Acceptance Criteria</h3>
+        <div class="result-box">
+          <pre id="criteriaOutput" style="white-space: pre-wrap; font-family: 'Courier New', monospace; line-height: 1.8;"></pre>
+        </div>
+        
+        <div style="margin-top: 15px;">
+          <button onclick="copyToClipboard()" class="btn">📋 Copy to Clipboard</button>
+          <button onclick="addToList()" class="btn" style="background: #28a745;">➕ Add to List</button>
+        </div>
+      </div>
+
+      <div id="criteriaList" style="margin-top: 30px; display: none;">
+        <h3>📚 Your Acceptance Criteria</h3>
+        <div id="criteriaListContent"></div>
+        <button onclick="exportCriteria()" class="btn" style="margin-top: 15px;">💾 Export All Criteria</button>
+        <button onclick="clearListAll()" class="btn" style="background: #dc3545; margin-top: 15px;">🗑️ Clear List</button>
+      </div>
+
+      <div style="margin-top: 40px; padding: 20px; background: #fff3cd; border-left: 4px solid #856404; border-radius: 5px;">
+        <h3>📖 Examples</h3>
+        
+        <p><strong>Example 1: Add Product (Happy Path)</strong></p>
+        <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; font-size: 14px;">
+Scenario: Successfully add product
+──────────────────────────────────
+GIVEN I am logged in as admin
+  AND I am on the "Add Product" page
+WHEN I enter product name "Skyflakes"
+  AND I enter price "10"
+  AND I enter stock "50"
+  AND I click "Save Product"
+THEN I should see success message "Product added"
+  AND the product should appear in product list
+  AND QR code should be generated</pre>
+
+        <p style="margin-top: 20px;"><strong>Example 2: Add Product (Error Case)</strong></p>
+        <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; font-size: 14px;">
+Scenario: Prevent negative price
+─────────────────────────────────
+GIVEN I am logged in as admin
+  AND I am on the "Add Product" page
+WHEN I enter price "-10"
+  AND I click "Save Product"
+THEN I should see error "Price cannot be negative"
+  AND the product should NOT be saved</pre>
+
+        <p style="margin-top: 20px;"><strong>Example 3: Search Residents (Happy Path)</strong></p>
+        <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; font-size: 14px;">
+Scenario: Search residents by name
+───────────────────────────────────
+GIVEN I am on the Residents page
+  AND there are 100 residents in the system
+WHEN I type "Juan" in the search box
+THEN I should see all residents with "Juan" in their name
+  AND results should update as I type (debounced)
+  AND result count should display correctly</pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let criteriaListArray = [];
+
+    function addGiven() {
+      const div = document.createElement('div');
+      div.className = 'given-item';
+      div.innerHTML = `
+        <input type="text" class="input given-input" placeholder="e.g., I am on the Products page">
+        <button onclick="removeGiven(this)" class="btn-small btn-danger">✖</button>
+      `;
+      document.getElementById('givenList').appendChild(div);
+    }
+
+    function removeGiven(button) {
+      if (document.querySelectorAll('.given-item').length > 1) {
+        button.parentElement.remove();
+      } else {
+        alert('⚠️ Must have at least one GIVEN statement');
+      }
+    }
+
+    function addWhen() {
+      const div = document.createElement('div');
+      div.className = 'when-item';
+      div.innerHTML = `
+        <input type="text" class="input when-input" placeholder="e.g., I enter a value">
+        <button onclick="removeWhen(this)" class="btn-small btn-danger">✖</button>
+      `;
+      document.getElementById('whenList').appendChild(div);
+    }
+
+    function removeWhen(button) {
+      if (document.querySelectorAll('.when-item').length > 1) {
+        button.parentElement.remove();
+      } else {
+        alert('⚠️ Must have at least one WHEN statement');
+      }
+    }
+
+    function addThen() {
+      const div = document.createElement('div');
+      div.className = 'then-item';
+      div.innerHTML = `
+        <input type="text" class="input then-input" placeholder="e.g., I should see a result">
+        <button onclick="removeThen(this)" class="btn-small btn-danger">✖</button>
+      `;
+      document.getElementById('thenList').appendChild(div);
+    }
+
+    function removeThen(button) {
+      if (document.querySelectorAll('.then-item').length > 1) {
+        button.parentElement.remove();
+      } else {
+        alert('⚠️ Must have at least one THEN statement');
+      }
+    }
+
+    function generateCriteria() {
+      const scenarioName = document.getElementById('scenarioName').value.trim();
+      const scenarioType = document.getElementById('scenarioType').value;
+      const userStory = document.getElementById('userStory').value.trim();
+
+      // Collect GIVEN statements
+      const givenInputs = document.querySelectorAll('.given-input');
+      const givenStatements = Array.from(givenInputs)
+        .map(input => input.value.trim())
+        .filter(val => val !== '');
+
+      // Collect WHEN statements
+      const whenInputs = document.querySelectorAll('.when-input');
+      const whenStatements = Array.from(whenInputs)
+        .map(input => input.value.trim())
+        .filter(val => val !== '');
+
+      // Collect THEN statements
+      const thenInputs = document.querySelectorAll('.then-input');
+      const thenStatements = Array.from(thenInputs)
+        .map(input => input.value.trim())
+        .filter(val => val !== '');
+
+      // Validation
+      if (!scenarioName) {
+        alert('⚠️ Please enter a scenario name');
+        return;
+      }
+      if (givenStatements.length === 0) {
+        alert('⚠️ Please enter at least one GIVEN statement');
+        return;
+      }
+      if (whenStatements.length === 0) {
+        alert('⚠️ Please enter at least one WHEN statement');
+        return;
+      }
+      if (thenStatements.length === 0) {
+        alert('⚠️ Please enter at least one THEN statement');
+        return;
+      }
+
+      // Build acceptance criteria text
+      let text = '';
+      
+      if (userStory) {
+        text += `User Story:\n${userStory}\n\n`;
+      }
+      
+      text += `Scenario: ${scenarioName}\n`;
+      text += '─'.repeat(scenarioName.length + 10) + '\n';
+      
+      // GIVEN section
+      text += `GIVEN ${givenStatements[0]}\n`;
+      for (let i = 1; i < givenStatements.length; i++) {
+        text += `  AND ${givenStatements[i]}\n`;
+      }
+      
+      // WHEN section
+      text += `WHEN ${whenStatements[0]}\n`;
+      for (let i = 1; i < whenStatements.length; i++) {
+        text += `  AND ${whenStatements[i]}\n`;
+      }
+      
+      // THEN section
+      text += `THEN ${thenStatements[0]}\n`;
+      for (let i = 1; i < thenStatements.length; i++) {
+        text += `  AND ${thenStatements[i]}\n`;
+      }
+
+      // Display result
+      document.getElementById('criteriaOutput').textContent = text;
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function clearForm() {
+      document.getElementById('scenarioName').value = '';
+      document.getElementById('userStory').value = '';
+      document.getElementById('scenarioType').value = 'happy';
+      
+      // Reset GIVEN
+      document.getElementById('givenList').innerHTML = `
+        <div class="given-item">
+          <input type="text" class="input given-input" placeholder="e.g., I am logged in as admin">
+          <button onclick="removeGiven(this)" class="btn-small btn-danger">✖</button>
+        </div>
+      `;
+      
+      // Reset WHEN
+      document.getElementById('whenList').innerHTML = `
+        <div class="when-item">
+          <input type="text" class="input when-input" placeholder="e.g., I click the Save button">
+          <button onclick="removeWhen(this)" class="btn-small btn-danger">✖</button>
+        </div>
+      `;
+      
+      // Reset THEN
+      document.getElementById('thenList').innerHTML = `
+        <div class="then-item">
+          <input type="text" class="input then-input" placeholder="e.g., I should see success message">
+          <button onclick="removeThen(this)" class="btn-small btn-danger">✖</button>
+        </div>
+      `;
+      
+      document.getElementById('result').style.display = 'none';
+    }
+
+    function copyToClipboard() {
+      const text = document.getElementById('criteriaOutput').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ Acceptance criteria copied to clipboard!');
+      });
+    }
+
+    function addToList() {
+      const criteria = document.getElementById('criteriaOutput').textContent;
+      criteriaListArray.push(criteria);
+      updateCriteriaList();
+      document.getElementById('criteriaList').style.display = 'block';
+      clearForm();
+      alert('✅ Criteria added to list!');
+    }
+
+    function updateCriteriaList() {
+      const listDiv = document.getElementById('criteriaListContent');
+      if (criteriaListArray.length === 0) {
+        listDiv.innerHTML = '<p style="color: #666;">No criteria yet.</p>';
+        return;
+      }
+
+      let html = '';
+      criteriaListArray.forEach((criteria, index) => {
+        html += `
+          <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-left: 3px solid #007bff; border-radius: 3px;">
+            <pre style="white-space: pre-wrap; font-family: 'Courier New', monospace; margin: 0; font-size: 13px;">${criteria}</pre>
+            <button onclick="removeCriteria(${index})" style="margin-top: 10px; padding: 5px 10px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer;">🗑️ Remove</button>
+          </div>
+        `;
+      });
+      
+      listDiv.innerHTML = html;
+    }
+
+    function removeCriteria(index) {
+      criteriaListArray.splice(index, 1);
+      updateCriteriaList();
+      if (criteriaListArray.length === 0) {
+        document.getElementById('criteriaList').style.display = 'none';
+      }
+    }
+
+    function exportCriteria() {
+      if (criteriaListArray.length === 0) {
+        alert('⚠️ No criteria to export');
+        return;
+      }
+
+      let text = '═══════════════════════════════════════\n';
+      text += '✅ ACCEPTANCE CRITERIA\n';
+      text += '═══════════════════════════════════════\n\n';
+      
+      criteriaListArray.forEach((criteria, index) => {
+        text += criteria + '\n\n';
+      });
+      
+      text += `Total Scenarios: ${criteriaListArray.length}\n`;
+      text += `Generated: ${new Date().toLocaleString()}\n`;
+      
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ All criteria copied to clipboard!');
+      });
+    }
+
+    function clearListAll() {
+      if (confirm('⚠️ Clear all criteria? This cannot be undone.')) {
+        criteriaListArray = [];
+        updateCriteriaList();
+        document.getElementById('criteriaList').style.display = 'none';
+      }
+    }
+  </script>
+
+  <style>
+    .info-box {
+      background: #d1ecf1;
+      padding: 15px;
+      border-left: 4px solid #0c5460;
+      border-radius: 5px;
+    }
+    .info-box p {
+      margin: 5px 0;
+      color: #0c5460;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+    }
+    .result-box {
+      background: #d4edda;
+      padding: 20px;
+      border-left: 4px solid #28a745;
+      border-radius: 5px;
+    }
+    .given-item, .when-item, .then-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+    .given-item input, .when-item input, .then-item input {
+      flex: 1;
+    }
+    .btn-small {
+      padding: 5px 15px;
+      font-size: 14px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-small:hover {
+      background: #0056b3;
+    }
+    .btn-danger {
+      background: #dc3545;
+    }
+    .btn-danger:hover {
+      background: #c82333;
+    }
+  </style>
+</body>
+</html>

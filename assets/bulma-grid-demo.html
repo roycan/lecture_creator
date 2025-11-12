@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bulma Grid System Demo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        /* Custom styles to visualize columns */
+        .demo-column {
+            background-color: #3273dc;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            border: 2px solid white;
+            border-radius: 4px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .demo-section {
+            margin-bottom: 3rem;
+        }
+        .code-label {
+            background-color: #f5f5f5;
+            padding: 0.5rem 1rem;
+            border-left: 4px solid #3273dc;
+            margin-bottom: 1rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <section class="hero is-primary">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">📏 Bulma Grid System Demo</h1>
+                <p class="subtitle">Resize your browser window to see columns adapt!</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <!-- Demo 1: Basic Equal Columns -->
+            <div class="demo-section">
+                <h2 class="title is-3">1. Basic Equal Columns</h2>
+                <p class="content">On mobile, these stack vertically. On tablet/desktop, they're side-by-side.</p>
+                <div class="code-label">&lt;div class="columns"&gt;</div>
+                
+                <div class="columns">
+                    <div class="column">
+                        <div class="demo-column">Column 1</div>
+                    </div>
+                    <div class="column">
+                        <div class="demo-column">Column 2</div>
+                    </div>
+                    <div class="column">
+                        <div class="demo-column">Column 3</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo 2: Mobile Columns -->
+            <div class="demo-section">
+                <h2 class="title is-3">2. Mobile Columns (Always Side-by-Side)</h2>
+                <p class="content">These stay side-by-side even on phones!</p>
+                <div class="code-label">&lt;div class="columns is-mobile"&gt;</div>
+                
+                <div class="columns is-mobile">
+                    <div class="column">
+                        <div class="demo-column">Column A</div>
+                    </div>
+                    <div class="column">
+                        <div class="demo-column">Column B</div>
+                    </div>
+                    <div class="column">
+                        <div class="demo-column">Column C</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo 3: Sized Columns -->
+            <div class="demo-section">
+                <h2 class="title is-3">3. Sized Columns (Main Content + Sidebar)</h2>
+                <p class="content">Common layout: 8/12 for main content, 4/12 for sidebar</p>
+                <div class="code-label">&lt;div class="column is-8"&gt; + &lt;div class="column is-4"&gt;</div>
+                
+                <div class="columns">
+                    <div class="column is-8">
+                        <div class="demo-column">Main Content (is-8)</div>
+                    </div>
+                    <div class="column is-4">
+                        <div class="demo-column">Sidebar (is-4)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo 4: Fractional Sizes -->
+            <div class="demo-section">
+                <h2 class="title is-3">4. Fractional Column Sizes</h2>
+                <p class="content">Use halves, thirds, and quarters</p>
+                <div class="code-label">is-half, is-one-third, is-one-quarter</div>
+                
+                <div class="columns">
+                    <div class="column is-half">
+                        <div class="demo-column">Half (50%)</div>
+                    </div>
+                    <div class="column is-half">
+                        <div class="demo-column">Half (50%)</div>
+                    </div>
+                </div>
+                
+                <div class="columns">
+                    <div class="column is-one-third">
+                        <div class="demo-column">One Third (33%)</div>
+                    </div>
+                    <div class="column is-two-thirds">
+                        <div class="demo-column">Two Thirds (66%)</div>
+                    </div>
+                </div>
+                
+                <div class="columns">
+                    <div class="column is-one-quarter">
+                        <div class="demo-column">Quarter (25%)</div>
+                    </div>
+                    <div class="column is-three-quarters">
+                        <div class="demo-column">Three Quarters (75%)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo 5: Multiline Columns -->
+            <div class="demo-section">
+                <h2 class="title is-3">5. Multiline Columns (Wrapping)</h2>
+                <p class="content">Columns automatically wrap to next row</p>
+                <div class="code-label">&lt;div class="columns is-multiline"&gt;</div>
+                
+                <div class="columns is-multiline">
+                    <div class="column is-one-quarter">
+                        <div class="demo-column">1</div>
+                    </div>
+                    <div class="column is-one-quarter">
+                        <div class="demo-column">2</div>
+                    </div>
+                    <div class="column is-one-quarter">
+                        <div class="demo-column">3</div>
+                    </div>
+                    <div class="column is-one-quarter">
+                        <div class="demo-column">4</div>
+                    </div>
+                    <div class="column is-one-quarter">
+                        <div class="demo-column">5</div>
+                    </div>
+                    <div class="column is-one-quarter">
+                        <div class="demo-column">6</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo 6: Centered Columns -->
+            <div class="demo-section">
+                <h2 class="title is-3">6. Centered Columns</h2>
+                <p class="content">Perfect for login forms or focused content</p>
+                <div class="code-label">&lt;div class="columns is-centered"&gt;</div>
+                
+                <div class="columns is-centered">
+                    <div class="column is-half">
+                        <div class="demo-column">Centered Half-Width Column</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo 7: Philippine Example - Sari-Sari Store Products -->
+            <div class="demo-section">
+                <h2 class="title is-3">🇵🇭 Real Example: Tindahan ni Aling Rosa</h2>
+                <p class="content">Product grid that adapts to screen size</p>
+                <div class="code-label">is-half-mobile is-one-third-tablet is-one-quarter-desktop</div>
+                
+                <div class="columns is-multiline">
+                    <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+                        <div class="card">
+                            <div class="card-content">
+                                <p class="title is-4">🍪 Skyflakes</p>
+                                <p class="subtitle is-6">₱8.00</p>
+                                <p>Crispy crackers</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+                        <div class="card">
+                            <div class="card-content">
+                                <p class="title is-4">🍜 Lucky Me</p>
+                                <p class="subtitle is-6">₱12.50</p>
+                                <p>Pancit Canton</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+                        <div class="card">
+                            <div class="card-content">
+                                <p class="title is-4">☕ Kopiko</p>
+                                <p class="subtitle is-6">₱2.00</p>
+                                <p>Coffee candy</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+                        <div class="card">
+                            <div class="card-content">
+                                <p class="title is-4">🥤 C2</p>
+                                <p class="subtitle is-6">₱15.00</p>
+                                <p>Apple tea drink</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+                        <div class="card">
+                            <div class="card-content">
+                                <p class="title is-4">🍫 Oishi</p>
+                                <p class="subtitle is-6">₱10.00</p>
+                                <p>Prawn crackers</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+                        <div class="card">
+                            <div class="card-content">
+                                <p class="title is-4">🥛 Milo</p>
+                                <p class="subtitle is-6">₱35.00</p>
+                                <p>Chocolate drink</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="notification is-info">
+                    <p><strong>Notice how products adapt:</strong></p>
+                    <ul>
+                        <li>📱 <strong>Mobile:</strong> 2 products per row (easier to tap)</li>
+                        <li>📲 <strong>Tablet:</strong> 3 products per row</li>
+                        <li>💻 <strong>Desktop:</strong> 4 products per row (more screen space)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Demo 8: Gap Control -->
+            <div class="demo-section">
+                <h2 class="title is-3">8. Gap Control (Spacing Between Columns)</h2>
+                <p class="content">Adjust spacing with gap modifiers</p>
+                
+                <h4 class="title is-5">No Gap (is-gapless)</h4>
+                <div class="code-label">&lt;div class="columns is-gapless"&gt;</div>
+                <div class="columns is-gapless">
+                    <div class="column">
+                        <div class="demo-column">No gap</div>
+                    </div>
+                    <div class="column">
+                        <div class="demo-column">No gap</div>
+                    </div>
+                    <div class="column">
+                        <div class="demo-column">No gap</div>
+                    </div>
+                </div>
+                
+                <h4 class="title is-5">Small Gap (is-variable is-1)</h4>
+                <div class="code-label">&lt;div class="columns is-variable is-1"&gt;</div>
+                <div class="columns is-variable is-1">
+                    <div class="column">
+                        <div class="demo-column">Small gap</div>
+                    </div>
+                    <div class="column">
+                        <div class="demo-column">Small gap</div>
+                    </div>
+                    <div class="column">
+                        <div class="demo-column">Small gap</div>
+                    </div>
+                </div>
+                
+                <h4 class="title is-5">Large Gap (is-variable is-8)</h4>
+                <div class="code-label">&lt;div class="columns is-variable is-8"&gt;</div>
+                <div class="columns is-variable is-8">
+                    <div class="column">
+                        <div class="demo-column">Large gap</div>
+                    </div>
+                    <div class="column">
+                        <div class="demo-column">Large gap</div>
+                    </div>
+                    <div class="column">
+                        <div class="demo-column">Large gap</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips -->
+            <div class="box">
+                <h3 class="title is-4">💡 Grid System Tips</h3>
+                <div class="content">
+                    <ol>
+                        <li><strong>Start with mobile:</strong> Design for small screens first, then expand</li>
+                        <li><strong>Use <code>is-mobile</code> for icon grids:</strong> Small elements look better side-by-side even on phones</li>
+                        <li><strong>Main content + sidebar:</strong> Use <code>is-8</code> + <code>is-4</code> or <code>is-9</code> + <code>is-3</code></li>
+                        <li><strong>Product grids:</strong> Use <code>is-half-mobile is-one-third-tablet is-one-quarter-desktop</code></li>
+                        <li><strong>Centered forms:</strong> Use <code>is-centered</code> with <code>is-half</code> or <code>is-two-thirds</code></li>
+                        <li><strong>Always test:</strong> Resize your browser window to see how columns adapt!</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Try It Yourself -->
+            <div class="notification is-primary">
+                <h3 class="title is-5">🎯 Try It Yourself!</h3>
+                <p><strong>Step 1:</strong> Resize your browser window right now - watch how columns adapt!</p>
+                <p><strong>Step 2:</strong> Open DevTools (F12) and use Device Toolbar to simulate phones</p>
+                <p><strong>Step 3:</strong> Try creating your own column layouts using Bulma's classes</p>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

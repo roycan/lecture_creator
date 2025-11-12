@@ -1,0 +1,138 @@
+┌──────────────────────────────────────────────────────────────┐
+│                     HTML LINK TYPES                          │
+└──────────────────────────────────────────────────────────────┘
+
+1. INTERNAL LINKS (Same Website)
+═══════════════════════════════
+
+Relative Paths (Recommended)
+────────────────────────────
+<a href="about.html">About Us</a>
+<a href="pages/contact.html">Contact</a>
+<a href="../index.html">Go Back</a>
+
+File Structure:
+website/
+├── index.html
+├── about.html
+└── pages/
+    └── contact.html
+
+From index.html:
+  href="about.html"           → about.html
+  href="pages/contact.html"   → pages/contact.html
+
+From pages/contact.html:
+  href="../index.html"        → Go up one level
+  href="../about.html"        → Go up, then to about.html
+
+
+Anchor Links (Jump to Section)
+───────────────────────────────
+<a href="#section1">Jump to Section 1</a>
+<a href="#contact">Jump to Contact</a>
+
+<section id="section1">
+  <h2>Section 1</h2>
+</section>
+
+<section id="contact">
+  <h2>Contact Us</h2>
+</section>
+
+
+2. EXTERNAL LINKS (Other Websites)
+═══════════════════════════════════
+
+Absolute URLs
+─────────────
+<a href="https://www.deped.gov.ph">DepEd</a>
+<a href="https://www.facebook.com">Facebook</a>
+
+Always use target="_blank" for external links:
+<a href="https://www.google.com" target="_blank">
+  Search Google
+</a>
+       └─ Opens in new tab/window
+
+
+3. EMAIL LINKS
+══════════════
+<a href="mailto:info@school.edu.ph">Email Us</a>
+<a href="mailto:principal@school.edu.ph?subject=Inquiry">
+  Contact Principal
+</a>
+
+
+4. PHONE LINKS (Mobile-Friendly)
+═════════════════════════════════
+<a href="tel:+639123456789">Call Us: 0912-345-6789</a>
+
+On mobile → triggers phone call
+On desktop → may open Skype/calling app
+
+
+REAL EXAMPLE: School Navigation
+════════════════════════════════
+
+<nav>
+  <ul>
+    <!-- Internal Links -->
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="academics.html">Academics</a></li>
+    
+    <!-- Anchor Links -->
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#admissions">Admissions</a></li>
+    
+    <!-- External Links -->
+    <li>
+      <a href="https://www.deped.gov.ph" target="_blank">
+        DepEd Portal
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<!-- Anchor Target -->
+<section id="contact">
+  <h2>Contact Us</h2>
+  <p>Email: <a href="mailto:info@school.edu.ph">
+    info@school.edu.ph
+  </a></p>
+  <p>Phone: <a href="tel:+639123456789">
+    0912-345-6789
+  </a></p>
+</section>
+
+
+LINK ATTRIBUTES
+═══════════════
+href          - Destination URL (required)
+target        - Where to open (_blank = new tab)
+title         - Tooltip text (appears on hover)
+rel           - Relationship (noopener, nofollow)
+
+Example with all attributes:
+<a href="https://google.com" 
+   target="_blank"
+   title="Opens in new tab"
+   rel="noopener noreferrer">
+  Search Google
+</a>
+
+
+ACCESSIBILITY TIPS
+══════════════════
+✓ Use descriptive link text (not "click here")
+✓ Add title for additional context
+✓ Use target="_blank" for external links
+✓ Include rel="noopener" for security
+✓ Make sure links have visible text
+
+❌ BAD:
+<a href="apply.html">Click here</a>
+
+✓ GOOD:
+<a href="apply.html">Apply for Admission</a>

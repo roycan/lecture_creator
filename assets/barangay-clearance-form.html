@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Clearance Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        fieldset {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 2px solid #0066cc;
+        }
+        legend {
+            font-weight: bold;
+            color: #0066cc;
+            padding: 0 10px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            border: none;
+        }
+        button[type="submit"] {
+            background-color: #0066cc;
+            color: white;
+        }
+        button[type="reset"] {
+            background-color: #cc0000;
+            color: white;
+        }
+        .required {
+            color: red;
+        }
+        .checkbox-label {
+            display: inline;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+    <h1>Barangay Clearance Application</h1>
+    <p>Please fill out all required fields marked with <span class="required">*</span></p>
+    
+    <form action="/submit-clearance" method="POST">
+        <!-- Personal Information -->
+        <fieldset>
+            <legend>Personal Information</legend>
+            
+            <label for="fullname">Full Name: <span class="required">*</span></label>
+            <input type="text" 
+                   id="fullname" 
+                   name="fullname" 
+                   placeholder="Juan dela Cruz" 
+                   required>
+            
+            <label for="bday">Birthdate: <span class="required">*</span></label>
+            <input type="date" 
+                   id="bday" 
+                   name="birthdate" 
+                   required>
+            
+            <label for="age">Age:</label>
+            <input type="number" 
+                   id="age" 
+                   name="age" 
+                   min="1" 
+                   max="120" 
+                   placeholder="25">
+            
+            <label for="address">Complete Address: <span class="required">*</span></label>
+            <textarea id="address" 
+                      name="address" 
+                      rows="3" 
+                      placeholder="House No., Street, Barangay, City" 
+                      required></textarea>
+            
+            <label for="phone">Contact Number: <span class="required">*</span></label>
+            <input type="tel" 
+                   id="phone" 
+                   name="phone" 
+                   placeholder="0912 345 6789" 
+                   required>
+            
+            <label for="email">Email Address (optional):</label>
+            <input type="email" 
+                   id="email" 
+                   name="email" 
+                   placeholder="juan.delacruz@email.com">
+        </fieldset>
+        
+        <!-- Purpose of Clearance -->
+        <fieldset>
+            <legend>Purpose of Clearance</legend>
+            
+            <label for="purpose">Purpose: <span class="required">*</span></label>
+            <select id="purpose" name="purpose" required>
+                <option value="">-- Select Purpose --</option>
+                <option value="employment">Employment</option>
+                <option value="local-employment">Local Employment</option>
+                <option value="overseas-employment">Overseas Employment (OFW)</option>
+                <option value="travel">Travel/Visa Application</option>
+                <option value="school">School Requirements</option>
+                <option value="loan">Loan Application</option>
+                <option value="government">Government Transaction</option>
+                <option value="business">Business Permit</option>
+                <option value="other">Other</option>
+            </select>
+            
+            <label for="other-purpose">If Other, please specify:</label>
+            <input type="text" 
+                   id="other-purpose" 
+                   name="other_purpose" 
+                   placeholder="Specify purpose">
+        </fieldset>
+        
+        <!-- Civil Status -->
+        <fieldset>
+            <legend>Civil Status</legend>
+            
+            <label>
+                <input type="radio" name="civil_status" value="single" required>
+                Single
+            </label>
+            <label>
+                <input type="radio" name="civil_status" value="married">
+                Married
+            </label>
+            <label>
+                <input type="radio" name="civil_status" value="widowed">
+                Widowed
+            </label>
+            <label>
+                <input type="radio" name="civil_status" value="separated">
+                Separated
+            </label>
+        </fieldset>
+        
+        <!-- Valid ID Presented -->
+        <fieldset>
+            <legend>Valid ID Presented</legend>
+            
+            <label>
+                <input type="checkbox" name="id_type" value="postal">
+                Postal ID
+            </label>
+            <label>
+                <input type="checkbox" name="id_type" value="voters">
+                Voter's ID
+            </label>
+            <label>
+                <input type="checkbox" name="id_type" value="drivers">
+                Driver's License
+            </label>
+            <label>
+                <input type="checkbox" name="id_type" value="philhealth">
+                PhilHealth ID
+            </label>
+            <label>
+                <input type="checkbox" name="id_type" value="sss">
+                SSS ID
+            </label>
+            <label>
+                <input type="checkbox" name="id_type" value="umid">
+                UMID
+            </label>
+            <label>
+                <input type="checkbox" name="id_type" value="prc">
+                PRC License
+            </label>
+            <label>
+                <input type="checkbox" name="id_type" value="school">
+                School ID
+            </label>
+            <label>
+                <input type="checkbox" name="id_type" value="company">
+                Company ID
+            </label>
+        </fieldset>
+        
+        <!-- Community Tax Certificate -->
+        <fieldset>
+            <legend>Community Tax Certificate (Cedula)</legend>
+            
+            <label for="cedula-no">CTC Number (if available):</label>
+            <input type="text" 
+                   id="cedula-no" 
+                   name="cedula_number" 
+                   placeholder="12345678">
+            
+            <label for="cedula-date">Date Issued:</label>
+            <input type="date" 
+                   id="cedula-date" 
+                   name="cedula_date">
+            
+            <label for="cedula-place">Place Issued:</label>
+            <input type="text" 
+                   id="cedula-place" 
+                   name="cedula_place" 
+                   placeholder="Barangay San Juan">
+        </fieldset>
+        
+        <!-- Certification -->
+        <fieldset>
+            <legend>Certification</legend>
+            
+            <label>
+                <input type="checkbox" name="confirm" required>
+                <span class="checkbox-label">
+                    I certify that all information provided is true and correct to the best of my knowledge.
+                    <span class="required">*</span>
+                </span>
+            </label>
+            
+            <label>
+                <input type="checkbox" name="agree_terms" required>
+                <span class="checkbox-label">
+                    I agree to the terms and conditions, and I understand that providing false information 
+                    is punishable by law.
+                    <span class="required">*</span>
+                </span>
+            </label>
+        </fieldset>
+        
+        <!-- Notes -->
+        <fieldset>
+            <legend>Additional Notes (Optional)</legend>
+            
+            <label for="notes">Any additional information:</label>
+            <textarea id="notes" 
+                      name="notes" 
+                      rows="4" 
+                      placeholder="Enter any additional information here..."></textarea>
+        </fieldset>
+        
+        <!-- Buttons -->
+        <button type="submit">Submit Application</button>
+        <button type="reset">Clear Form</button>
+    </form>
+    
+    <hr>
+    
+    <footer>
+        <h3>Processing Information</h3>
+        <p><strong>Processing Fee:</strong> ₱50.00</p>
+        <p><strong>Processing Time:</strong> 15 minutes</p>
+        <p><strong>Requirements:</strong></p>
+        <ul>
+            <li>Valid ID (original and photocopy)</li>
+            <li>1x1 ID Picture (1 copy)</li>
+            <li>Community Tax Certificate (if available)</li>
+        </ul>
+        <p><strong>Office Hours:</strong> Monday to Friday, 8:00 AM - 5:00 PM</p>
+        <p><strong>Contact:</strong> (02) 123-4567 | info@barangaysanjuan.ph</p>
+    </footer>
+</body>
+</html>

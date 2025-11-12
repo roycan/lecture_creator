@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate of Residency - Barangay San Juan</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        /* Print styles - Certificate must be black & white, one page */
+        @media print {
+            @page {
+                size: A4;
+                margin: 15mm;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+            
+            * {
+                background: white !important;
+                color: black !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+            
+            .box {
+                border: 2px solid black !important;
+                box-shadow: none !important;
+            }
+            
+            .document-seal {
+                border: 3px solid black !important;
+                background: white !important;
+            }
+            
+            .signature-line {
+                border-bottom: 2px solid black !important;
+            }
+            
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            
+            .section {
+                padding: 0 !important;
+            }
+        }
+        
+        /* Screen styles */
+        .document-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .document-seal {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #48c774, #3ec46d);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 3em;
+        }
+        
+        .signature-line {
+            border-bottom: 2px solid #333;
+            width: 250px;
+            margin: 20px auto;
+            min-height: 40px;
+        }
+        
+        .document-title {
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .certification-paragraph {
+            text-align: justify;
+            text-indent: 3em;
+            line-height: 2;
+            font-size: 1.1rem;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar is-success no-print" role="navigation">
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <strong>🏛️ Government Document System</strong>
+            </div>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-light" href="business-permit.html">
+                            Business Permit
+                        </a>
+                        <a class="button is-light" href="school-enrollment.html">
+                            Enrollment
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero is-success no-print">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">Certificate of Residency</h1>
+                <p class="subtitle">Barangay San Juan Official Certificate</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Instructions -->
+    <section class="section no-print">
+        <div class="container">
+            <div class="notification is-success is-light">
+                <h3 class="title is-5">📋 Instructions</h3>
+                <ol>
+                    <li><strong>Fill personal information</strong> - Enter your complete legal name and details</li>
+                    <li><strong>Select purpose</strong> - Choose why you need this certificate</li>
+                    <li><strong>Specify residency period</strong> - How long you've lived in the barangay</li>
+                    <li><strong>Print the certificate</strong> - Click the print button or use Ctrl+P</li>
+                    <li><strong>Submit to requesting party</strong> - Use for employment, scholarship, government transactions, etc.</li>
+                </ol>
+                <p class="mt-3"><strong>Processing fee:</strong> ₱50.00 at the Barangay Hall cashier</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Document -->
+    <section class="section">
+        <div class="container document-container">
+            <div class="box">
+                <!-- Document Header -->
+                <div class="document-seal">🏛️</div>
+                <div class="has-text-centered">
+                    <p class="is-size-6"><strong>Republic of the Philippines</strong></p>
+                    <p class="is-size-6">Province of Metro Manila</p>
+                    <p class="is-size-6">Municipality of Manila</p>
+                    <p class="is-size-5"><strong>BARANGAY SAN JUAN</strong></p>
+                    <p class="is-size-6 mt-2">Office of the Barangay Captain</p>
+                </div>
+                
+                <h2 class="title is-3 document-title">CERTIFICATE OF RESIDENCY</h2>
+
+                <!-- Personal Information Form -->
+                <div class="content no-print">
+                    <div class="columns is-multiline">
+                        <div class="column is-full">
+                            <div class="field">
+                                <label class="label">Full Name</label>
+                                <div class="control">
+                                    <input class="input is-medium" type="text" id="fullName" placeholder="Last Name, First Name, Middle Name">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="column is-half-tablet">
+                            <div class="field">
+                                <label class="label">Date of Birth</label>
+                                <div class="control">
+                                    <input class="input" type="date" id="birthDate">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="column is-half-tablet">
+                            <div class="field">
+                                <label class="label">Civil Status</label>
+                                <div class="control">
+                                    <div class="select is-fullwidth">
+                                        <select id="civilStatus">
+                                            <option value="Single">Single</option>
+                                            <option value="Married">Married</option>
+                                            <option value="Widowed">Widowed</option>
+                                            <option value="Separated">Separated</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="column is-full">
+                            <div class="field">
+                                <label class="label">Complete Address</label>
+                                <div class="control">
+                                    <input class="input" type="text" id="address" placeholder="House/Block/Lot No., Street, Barangay San Juan, Manila">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="column is-half-tablet">
+                            <div class="field">
+                                <label class="label">Years of Residency</label>
+                                <div class="control">
+                                    <input class="input" type="number" id="yearsResidency" placeholder="Number of years" min="0">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="column is-half-tablet">
+                            <div class="field">
+                                <label class="label">Purpose</label>
+                                <div class="control">
+                                    <div class="select is-fullwidth">
+                                        <select id="purpose">
+                                            <option value="Employment">Employment Requirements</option>
+                                            <option value="Scholarship">Scholarship Application</option>
+                                            <option value="Government Transaction">Government Transaction</option>
+                                            <option value="School Requirements">School Requirements</option>
+                                            <option value="Travel">Travel/Passport Requirements</option>
+                                            <option value="Other">Other Legal Purpose</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certificate Body -->
+                <div class="certification-paragraph">
+                    <p><strong>TO WHOM IT MAY CONCERN:</strong></p>
+                    <p class="mt-4">
+                        This is to certify that <strong><span id="certName" class="has-text-primary">________________</span></strong>, 
+                        <span id="certAge">__</span> years old, <span id="certStatus">________</span>, 
+                        is a bonafide resident of <strong><span id="certAddress">________________</span></strong>, 
+                        Barangay San Juan, Manila, and has been residing in this barangay for <strong><span id="certYears">__</span> year(s)</strong>.
+                    </p>
+                    <p class="mt-4">
+                        This certification is issued upon the request of the above-named person for 
+                        <strong><span id="certPurpose" class="has-text-primary">________________</span></strong> and for whatever legal purpose it may serve.
+                    </p>
+                    <p class="mt-4">
+                        Issued this <strong><span id="certDay">__</span></strong> day of 
+                        <strong><span id="certMonth">________</span></strong>, <strong><span id="certYear">____</span></strong> 
+                        at Barangay San Juan, Manila, Philippines.
+                    </p>
+                </div>
+
+                <!-- Signatures -->
+                <div class="columns is-multiline mt-6">
+                    <div class="column is-offset-6-tablet is-6-tablet has-text-centered">
+                        <div class="signature-line"></div>
+                        <p class="has-text-weight-bold">HON. ROBERTO SANTOS</p>
+                        <p>Barangay Captain</p>
+                        <p class="is-size-7">Barangay San Juan, Manila</p>
+                    </div>
+                </div>
+
+                <!-- Official Details -->
+                <hr class="mt-5">
+                <div class="columns is-multiline is-size-7">
+                    <div class="column is-one-third">
+                        <p><strong>Certificate No.:</strong><br><span class="cert-number"></span></p>
+                    </div>
+                    <div class="column is-one-third">
+                        <p><strong>Amount Paid:</strong><br>₱50.00</p>
+                    </div>
+                    <div class="column is-one-third">
+                        <p><strong>OR No.:</strong><br>__________</p>
+                    </div>
+                </div>
+                
+                <div class="has-text-centered mt-3 is-size-7">
+                    <p><strong>NOT VALID WITHOUT OFFICIAL DRY SEAL</strong></p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="buttons is-centered mt-5 no-print">
+                <button class="button is-success is-medium" onclick="updateCertificate(); window.print();">
+                    🖨️ Print Certificate
+                </button>
+                <button class="button is-light is-medium" onclick="clearForm()">
+                    🔄 Clear Form
+                </button>
+            </div>
+
+            <!-- Challenge Info -->
+            <div class="notification is-info is-light no-print mt-5">
+                <h3 class="title is-5">🎯 Final Challenge - Certificate of Residency</h3>
+                <p><strong>This demonstrates:</strong></p>
+                <ul>
+                    <li>✅ <strong>Dynamic Certificate Generation</strong> - Form inputs populate certificate text</li>
+                    <li>✅ <strong>Formal Document Structure</strong> - Official government certificate format</li>
+                    <li>✅ <strong>Responsive Design</strong> - Works on all devices (mobile, tablet, desktop)</li>
+                    <li>✅ <strong>Print-Optimized</strong> - Clean one-page black & white output</li>
+                    <li>✅ <strong>Auto-generated Numbers</strong> - Certificate numbers created automatically</li>
+                </ul>
+                <p class="mt-3"><strong>Compare with:</strong> <a href="business-permit.html">Business Permit</a> | <a href="school-enrollment.html">School Enrollment</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer no-print">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Barangay San Juan</strong> - Government Document System<br>
+                <small>For educational purposes - Grade 9 ICT</small>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Generate certificate number
+        const certNumber = 'CR-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+        document.querySelectorAll('.cert-number').forEach(el => {
+            el.textContent = certNumber;
+        });
+        
+        // Auto-fill date parts
+        const now = new Date();
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        document.getElementById('certDay').textContent = now.getDate();
+        document.getElementById('certMonth').textContent = months[now.getMonth()];
+        document.getElementById('certYear').textContent = now.getFullYear();
+        
+        // Update certificate with form data
+        function updateCertificate() {
+            const name = document.getElementById('fullName').value || '________________';
+            const birthDate = document.getElementById('birthDate').value;
+            const civilStatus = document.getElementById('civilStatus').value;
+            const address = document.getElementById('address').value || '________________';
+            const years = document.getElementById('yearsResidency').value || '__';
+            const purpose = document.getElementById('purpose').value;
+            
+            // Calculate age
+            let age = '__';
+            if (birthDate) {
+                const birth = new Date(birthDate);
+                age = now.getFullYear() - birth.getFullYear();
+                const monthDiff = now.getMonth() - birth.getMonth();
+                if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
+                    age--;
+                }
+            }
+            
+            // Update certificate text
+            document.getElementById('certName').textContent = name;
+            document.getElementById('certAge').textContent = age;
+            document.getElementById('certStatus').textContent = civilStatus;
+            document.getElementById('certAddress').textContent = address;
+            document.getElementById('certYears').textContent = years;
+            document.getElementById('certPurpose').textContent = purpose;
+        }
+        
+        // Clear form function
+        function clearForm() {
+            if (confirm('Are you sure you want to clear all fields?')) {
+                document.querySelectorAll('input, select').forEach(el => {
+                    if (el.type === 'date') {
+                        el.value = '';
+                    } else if (el.tagName === 'SELECT') {
+                        el.selectedIndex = 0;
+                    } else {
+                        el.value = '';
+                    }
+                });
+                
+                // Reset certificate text
+                document.getElementById('certName').textContent = '________________';
+                document.getElementById('certAge').textContent = '__';
+                document.getElementById('certStatus').textContent = document.getElementById('civilStatus').value;
+                document.getElementById('certAddress').textContent = '________________';
+                document.getElementById('certYears').textContent = '__';
+                document.getElementById('certPurpose').textContent = document.getElementById('purpose').value;
+            }
+        }
+        
+        // Update certificate on form changes
+        document.querySelectorAll('input, select').forEach(el => {
+            el.addEventListener('change', updateCertificate);
+            el.addEventListener('input', updateCertificate);
+        });
+    </script>
+</body>
+</html>

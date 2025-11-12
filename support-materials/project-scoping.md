@@ -614,10 +614,11 @@ fetch('https://api.exchangerate-api.com/v4/latest/PHP')
 ## 📚 Related Documents
 
 - `support-materials/railway-deployment-guide.md` - How to deploy your projects
-- `web-app-basics-part1-lecture.md` - Foundation concepts
-- `web-app-basics-part2a-lecture.md` - Database and CRUD (coming soon)
-- `web-app-basics-part2b-lecture.md` - Authentication (coming soon)
-- `web-app-basics-part2c-lecture.md` - Advanced features (coming soon)
+- `express-basics-lecture.md` - Foundation concepts
+- `database-sqlite-lecture.md` - Database and CRUD
+- `authentication-sessions-lecture.md` - Authentication and sessions
+- `csv-datatables-qr-lecture.md` - CSV import, DataTables, QR codes
+- `json-api-audit-lecture.md` - JSON backup, REST API, audit logs
 
 ---
 

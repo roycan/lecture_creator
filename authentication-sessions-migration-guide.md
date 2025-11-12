@@ -1,8 +1,8 @@
-# Building Web Applications - Part 2B Migration Guide
+# Authentication Sessions Migration Guide
 ## Adding Authentication to Your Projects
 
 **Target Audience:** Grade 9 Students  
-**Prerequisites:** Completed Part 2A projects (SQLite databases)  
+**Prerequisites:** Completed Database SQLite projects (SQLite databases)  
 **What You'll Build:** Upgrade your v2 projects to v3 with user authentication
 
 ---
@@ -25,8 +25,8 @@ You'll learn to add authentication to your existing projects by:
 
 ### What Changes?
 
-**From Part 2A (v2):** Open access, no users  
-**To Part 2B (v3):** Authenticated, role-based access
+**From Database SQLite (v2):** Open access, no users  
+**To Authentication Sessions (v3):** Authenticated, role-based access
 
 ### The Three Projects
 
@@ -1160,12 +1160,12 @@ Your v3 projects will become v4 with features like:
 
 ## 📚 Additional Resources
 
-- See `web-app-basics-part2b-lecture.md` for detailed authentication concepts
+- See `authentication-sessions-lecture.md` for detailed authentication concepts
 - See `support-materials/session-config-guide.md` for session troubleshooting
 - See `support-materials/security-checklist.md` before deploying
 
 ---
 
-**Ready for Part 2C advanced features!** 🚀
+**Ready for advanced features!** 🚀
 
 *Last updated: November 11, 2025*

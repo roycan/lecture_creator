@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate of Completion - Mini Project</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        /* TODO: Add print styles! */
+        /* Requirements: */
+        /* - Hide .no-print elements */
+        /* - Black and white colors */
+        /* - A4 page size */
+        /* - Landscape orientation (hint: @page { size: A4 landscape; }) */
+        
+        
+        /* Screen styles */
+        .certificate-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        
+        .certificate-border {
+            border: 10px double #3273dc;
+            padding: 40px;
+        }
+        
+        .certificate-seal {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3273dc, #209cee);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            font-size: 4em;
+        }
+        
+        .signature-line {
+            border-top: 2px solid #333;
+            width: 250px;
+            margin: 20px auto 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- TODO 1: Add a navbar with .no-print class -->
+    
+    
+    <!-- TODO 2: Add instructions section with .no-print class -->
+    <!-- Should explain: Fill out the certificate and print in landscape mode -->
+    
+    
+    <!-- Main Certificate -->
+    <section class="section">
+        <div class="certificate-container">
+            <div class="box certificate-border">
+                <!-- Seal -->
+                <div class="certificate-seal mb-5">🏆</div>
+                
+                <!-- Header -->
+                <div class="has-text-centered mb-5">
+                    <h1 class="title is-2">CERTIFICATE OF COMPLETION</h1>
+                    <h2 class="subtitle is-5">Barangay Skills Training Program</h2>
+                </div>
+
+                <hr>
+
+                <!-- TODO 3: Add certificate text -->
+                <!-- Should say: "This certifies that" -->
+                <!-- Then add an input field for the person's name -->
+                <!-- Then: "has successfully completed the training program in" -->
+                <!-- Then add a select dropdown for the program (options: Web Development, Culinary Arts, Electronics Repair) -->
+                <!-- Hint: Use .field, .control, .input classes -->
+                
+                
+                <hr class="my-5">
+
+                <!-- TODO 4: Add date and location fields -->
+                <!-- Date issued (date input) -->
+                <!-- Location: Barangay San Juan, Manila -->
+                
+                
+                <!-- Signatures -->
+                <div class="columns mt-6">
+                    <div class="column has-text-centered">
+                        <div class="signature-line"></div>
+                        <p><strong>MARIA P. SANTOS</strong></p>
+                        <p>Barangay Captain</p>
+                    </div>
+                    <div class="column has-text-centered">
+                        <div class="signature-line"></div>
+                        <p><strong>JUAN R. REYES</strong></p>
+                        <p>Program Coordinator</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TODO 5: Add a Print button with .no-print class -->
+            <!-- Should use onclick="window.print()" -->
+            
+        </div>
+    </section>
+
+    <!-- TODO 6: Add footer with .no-print class -->
+    
+</body>
+</html>
