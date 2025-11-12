@@ -54,6 +54,11 @@ Add this to the `<head>` section of **every** HTML page:
 <meta name="viewport" content="width=device-width, initial-scale=1">
 ```
 
+### **Visual Guide: Viewport Meta Tag**
+
+![Viewport Meta Tag](diagrams/bulma/viewport-meta-tag.png)
+*Figure 1: How viewport meta tag transforms mobile display from zoomed-out desktop view to proper mobile rendering*
+
 **What it means:**
 - `width=device-width` - Use the actual width of the device (not fake 980px)
 - `initial-scale=1` - Don't zoom in or out by default (1 = 100%)
@@ -111,6 +116,11 @@ Add this to the `<head>` section of **every** HTML page:
 ```
 
 Bulma handles all the responsive magic for you! 🪄
+
+### **Visual Guide: Mobile-First Approach**
+
+![Mobile-First Approach](diagrams/bulma/mobile-first-approach.png)
+*Figure 2: Mobile-first design philosophy - start with mobile layout, then enhance for larger screens*
 
 ### Adding Bulma to Your Project
 
@@ -175,6 +185,11 @@ Add this `<link>` in your `<head>` section:
 
 The most important feature of Bulma is its **grid system** using **columns**. This lets you arrange content side-by-side on large screens, but stack vertically on mobile.
 
+### **Visual Guide: Grid System**
+
+![Grid System](diagrams/bulma/grid-system.png)
+*Figure 3: Bulma's 12-column grid system showing how columns adapt from desktop to tablet to mobile*
+
 ### Basic Columns
 
 ```html
@@ -233,6 +248,11 @@ You can control how much space each column takes (12-column system):
 - `is-two-thirds` (8/12 = 66%)
 - `is-one-quarter` (3/12 = 25%)
 - `is-three-quarters` (9/12 = 75%)
+
+### **Visual Guide: Column Sizing Reference**
+
+![Column Sizing Reference](diagrams/bulma/column-sizing-reference.png)
+*Figure 4: Complete reference of Bulma column sizes from is-1 to is-12 and fractional sizes*
 
 ### 🇵🇭 Philippine Example: Sari-Sari Store Layout
 
@@ -311,6 +331,11 @@ Let columns wrap to multiple rows:
 ## 👁️ Section 4: Responsive Helpers (Show/Hide on Different Screens)
 
 Sometimes you want to show different content on mobile vs desktop. Bulma provides **responsive helper classes** for this.
+
+### **Visual Guide: Responsive Helpers**
+
+![Responsive Helpers](diagrams/bulma/responsive-helpers.png)
+*Figure 5: Bulma responsive helper classes showing which elements display at different screen sizes*
 
 ### Hide on Specific Breakpoints
 
@@ -1161,6 +1186,11 @@ You create a **Barangay Clearance** web form. Users fill it out online, but they
 
 **Solution: Print Styles!** 🎉
 
+### **Visual Guide: Print Workflow**
+
+![Print Workflow](diagrams/bulma/print-workflow.png)
+*Figure 8: Print styles workflow showing how web forms transform from screen display to clean printable documents*
+
 ---
 
 ### Print Styles in Action
@@ -1635,6 +1665,11 @@ Bulma uses these screen size breakpoints:
 }
 ```
 
+### **Visual Guide: Breakpoints**
+
+![Breakpoints](diagrams/bulma/breakpoints.png)
+*Figure 6: Bulma's responsive breakpoints showing screen size ranges for mobile, tablet, desktop, and widescreen*
+
 **This is how Bulma makes `.is-hidden-mobile` work!**
 
 ---
@@ -1673,6 +1708,11 @@ Bulma uses these screen size breakpoints:
 ```
 
 **Translation:** "On screens between 769px and 1023px, make `.my-element` have 16px font"
+
+### **Visual Guide: Media Query Syntax**
+
+![Media Query Syntax](diagrams/bulma/media-query-syntax.png)
+*Figure 7: Anatomy of CSS media queries showing screen keyword, min-width, max-width, and how to combine conditions*
 
 ---
 
