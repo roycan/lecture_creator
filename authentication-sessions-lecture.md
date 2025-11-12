@@ -629,7 +629,15 @@ app.get('/admin', securityGuard, actualRoute);
               (checks first)   (runs if allowed)
 ```
 
+### **Visual Guide: Middleware Execution Flow**
+
 ![Middleware Execution Flow](diagrams/authentication/middleware-flow.png)
+*Figure 1: How middleware intercepts requests and controls access to route handlers*
+
+### **Visual Guide: Middleware Stack Architecture**
+
+![Middleware Stack](diagrams/supplementary/middleware-stack.png)
+*Figure 2: Complete middleware execution stack showing order of operations from request to response*
 
 ---
 

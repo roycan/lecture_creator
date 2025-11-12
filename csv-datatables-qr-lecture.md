@@ -67,9 +67,18 @@ With 500 products in your database:
 
 **Best part:** Just add 3 lines of JavaScript!
 
+### **Visual Guide: DataTables Decision & Flow**
+
 ![DataTables Decision Tree](diagrams/advanced-features/datatables-decision.png)
+*Figure 1: Decision tree for when to use DataTables vs basic HTML tables*
 
 ![DataTables Flow Diagram](diagrams/advanced-features/datatables-flow.png)
+*Figure 2: How DataTables transforms a basic HTML table into an interactive data grid*
+
+### **Visual Guide: DataTables Features Overview**
+
+![DataTables Features](diagrams/supplementary/datatables-features.png)
+*Figure 3: Comprehensive overview of all DataTables features - search, sort, pagination, export, and filtering*
 
 ---
 
