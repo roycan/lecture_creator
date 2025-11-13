@@ -294,6 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
             --subtle-bg: rgba(255, 255, 255, 0.05);
             --shadow-light: rgba(255, 255, 255, 0.2);
             --shadow-dark: rgba(0, 0, 0, 0.3);
+            --progress-bg: rgba(0, 0, 0, 0.85);
         }
         
         :root[data-theme="light"] {
@@ -309,6 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
             --subtle-bg: rgba(0, 0, 0, 0.05);
             --shadow-light: rgba(0, 0, 0, 0.1);
             --shadow-dark: rgba(0, 0, 0, 0.2);
+            --progress-bg: rgba(255, 255, 255, 0.90);
         }
         
         * { box-sizing: border-box; }
@@ -520,7 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
         #nav-controls.visible { display: flex; }
         
         #progress-indicator {
-            background: rgba(0, 0, 0, 0.8);
+            background: var(--progress-bg);
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 0.9em;
@@ -565,7 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         /* Speed Control */
         .speed-control {
-            background: rgba(0, 0, 0, 0.8);
+            background: var(--progress-bg);
             padding: 8px 16px;
             border-radius: 20px;
             border: 1px solid var(--border-color);
