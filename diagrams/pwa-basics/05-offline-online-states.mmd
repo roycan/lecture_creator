@@ -1,0 +1,463 @@
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'fontSize':'16px'}}}%%
+stateDiagram-v2
+    [*] --> Online: App loads with<br/>internet connection
+    
+    Online --> Offline: Connection lost<br/>(navigator.onLine = false)
+    Offline --> Online: Connection restored<br/>(navigator.onLine = true)
+    
+    Online --> CheckingConnection: Fetch request fails
+    CheckingConnection --> Online: Server responds
+    CheckingConnection --> Offline: Timeout/No response
+    
+    state Online {
+        [*] --> FetchingFresh: Network request
+        FetchingFresh --> CachingResponse: Save to cache
+        CachingResponse --> DisplayingContent: Show fresh data
+        DisplayingContent --> [*]
+    }
+    
+    state Offline {
+        [*] --> CheckingCache: User requests content
+        CheckingCache --> ServingCached: Found in cache
+        CheckingCache --> ShowingOfflinePage: Not in cache
+        ServingCached --> QueuingSync: User submits data
+        ShowingOfflinePage --> [*]
+        QueuingSync --> [*]: Background Sync<br/>will send when online
+    }
+    
+    note right of Online
+        ✅ Full functionality
+        📡 Fresh data from server
+        💾 Cache updates
+        📤 Immediate sync
+        🔔 Push notifications work
+    end note
+    
+    note right of Offline
+        ⚡ Cached content only
+        📦 Read from Cache Storage
+        💾 Write to IndexedDB
+        📥 Queue for Background Sync
+        🔕 No push notifications
+    end note
+```
+
+## Export Command
+```bash
+mmdc -i 05-offline-online-states.mmd -o ../../diagrams/offline-online-states.png -b transparent
+```
+
+## State Transitions
+
+### Online → Offline
+**Triggers:**
+- User loses WiFi/mobile data
+- Airplane mode enabled
+- Brownout (power/ISP outage)
+- Goes through tunnel/poor signal area
+
+**App Response:**
+```javascript
+window.addEventListener('offline', () => {
+  console.log('Connection lost');
+  showOfflineBanner();
+  disableNetworkFeatures();
+  enableOfflineMode();
+});
+
+function showOfflineBanner() {
+  document.getElementById('status').innerHTML = `
+    <div class="notification is-warning">
+      📡 Offline - Using cached content
+    </div>
+  `;
+}
+```
+
+**Philippine Example:**
+- Brownout hits during use
+- App keeps working from cache
+- User can still view inventory
+- Changes queued for sync when power returns
+
+---
+
+### Offline → Online
+**Triggers:**
+- WiFi/mobile data reconnects
+- Airplane mode disabled
+- Power restored (brownout ends)
+- Signal improves
+
+**App Response:**
+```javascript
+window.addEventListener('online', () => {
+  console.log('Connection restored');
+  hideOfflineBanner();
+  syncQueuedData();
+  fetchLatestUpdates();
+});
+
+async function syncQueuedData() {
+  // Send queued form submissions
+  const queue = await getQueuedRequests();
+  for (let request of queue) {
+    await fetch(request.url, request.options);
+  }
+  clearQueue();
+}
+```
+
+**Philippine Example:**
+- Power returns after brownout
+- App detects connection
+- Automatically syncs inventory changes
+- Updates prices from server
+
+---
+
+### Online State Behaviors
+
+**Full Functionality:**
+1. **Fetching Fresh Data**
+   - API calls work normally
+   - Images load from CDN
+   - Real-time updates possible
+
+2. **Caching Responses**
+   ```javascript
+   // Service worker caches responses
+   self.addEventListener('fetch', (event) => {
+     event.respondWith(
+       fetch(event.request).then(response => {
+         // Clone and cache response
+         const responseClone = response.clone();
+         caches.open('dynamic-v1').then(cache => {
+           cache.put(event.request, responseClone);
+         });
+         return response;
+       })
+     );
+   });
+   ```
+
+3. **Immediate Sync**
+   - Form submissions go through instantly
+   - No queue needed
+   - User sees immediate feedback
+
+4. **Push Notifications**
+   - Server can send notifications
+   - User gets real-time alerts
+
+**Cost in Philippines:**
+- Each API call uses data
+- 10 KB per request typical
+- 100 requests = ₱100 in data costs
+
+---
+
+### Offline State Behaviors
+
+**Limited but Functional:**
+
+1. **Serving Cached Content**
+   ```javascript
+   // Service worker returns cache
+   self.addEventListener('fetch', (event) => {
+     event.respondWith(
+       caches.match(event.request).then(response => {
+         if (response) {
+           return response; // From cache
+         }
+         return caches.match('/offline.html'); // Fallback
+       })
+     );
+   });
+   ```
+
+2. **Queuing Background Sync**
+   ```javascript
+   // Queue data for later sync
+   async function saveForLater(data) {
+     const db = await openDB('myApp', 1);
+     await db.add('syncQueue', {
+       data: data,
+       timestamp: Date.now(),
+       synced: false
+     });
+     
+     // Register background sync
+     if ('sync' in registration) {
+       await registration.sync.register('sync-data');
+     }
+   }
+   ```
+
+3. **Showing Offline Page**
+   ```html
+   <!-- offline.html -->
+   <div class="hero is-warning is-fullheight">
+     <div class="hero-body">
+       <div class="container has-text-centered">
+         <h1 class="title">📡 You're Offline</h1>
+         <p class="subtitle">
+           Don't worry! You can still:
+         </p>
+         <ul>
+           <li>✅ View cached inventory</li>
+           <li>✅ Add new products</li>
+           <li>✅ Update quantities</li>
+         </ul>
+         <p class="mt-4">
+           Changes will sync when connection returns.
+         </p>
+       </div>
+     </div>
+   </div>
+   ```
+
+4. **Local Storage Only**
+   - All writes go to IndexedDB
+   - Reads from Cache Storage
+   - No network calls attempted
+
+**Cost in Philippines:**
+- Zero data used offline
+- Infinite usage time
+- Perfect for brownouts
+
+---
+
+## Detection Methods
+
+### 1. navigator.onLine (Basic)
+
+```javascript
+if (navigator.onLine) {
+  console.log('Online');
+} else {
+  console.log('Offline');
+}
+```
+
+**Limitations:**
+- Only detects network interface (not actual internet)
+- Can show "online" when WiFi connected but no internet
+- Can show "offline" when connection is just slow
+
+---
+
+### 2. Fetch with Timeout (Reliable)
+
+```javascript
+async function checkConnection() {
+  const timeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('Timeout')), 5000)
+  );
+  
+  const request = fetch('/ping', { method: 'HEAD' });
+  
+  try {
+    await Promise.race([request, timeout]);
+    return true; // Online
+  } catch (error) {
+    return false; // Offline or slow
+  }
+}
+```
+
+**Philippine Optimization:**
+- 5 second timeout (accounts for slow 2G)
+- HEAD request (tiny, saves data)
+- Pings your own server (reliable)
+
+---
+
+### 3. Service Worker + Fetch (Best)
+
+```javascript
+// Service worker
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        // Success = online
+        broadcastOnlineStatus(true);
+        return response;
+      })
+      .catch(error => {
+        // Failure = offline
+        broadcastOnlineStatus(false);
+        return caches.match(event.request);
+      })
+  );
+});
+
+function broadcastOnlineStatus(isOnline) {
+  self.clients.matchAll().then(clients => {
+    clients.forEach(client => {
+      client.postMessage({
+        type: 'CONNECTION_STATUS',
+        online: isOnline
+      });
+    });
+  });
+}
+```
+
+```javascript
+// App.js - Listen for SW messages
+navigator.serviceWorker.addEventListener('message', (event) => {
+  if (event.data.type === 'CONNECTION_STATUS') {
+    updateUI(event.data.online);
+  }
+});
+```
+
+---
+
+## Philippine Context Example
+
+### Brownout Scenario (Sari-Sari Store)
+
+**Before Brownout (Online):**
+```
+╔════════════════════════════════════╗
+║  Inventory System         📡 Online ║
+╠════════════════════════════════════╣
+║  Product: Lucky Me Pancit Canton   ║
+║  Stock: 48 packs                   ║
+║  Price: ₱15.00                     ║
+║  [Update] [Add Sale] [Reorder]     ║
+╚════════════════════════════════════╝
+```
+
+**During Brownout (Offline):**
+```
+╔════════════════════════════════════╗
+║  Inventory System    ⚠️ Offline     ║
+║  Working from cache - changes      ║
+║  will sync when power returns      ║
+╠════════════════════════════════════╣
+║  Product: Lucky Me Pancit Canton   ║
+║  Stock: 48 packs → 45 packs ✏️     ║
+║  Price: ₱15.00                     ║
+║  [Update] [Add Sale] [Reorder]     ║
+║                                    ║
+║  📥 3 changes queued for sync      ║
+╚════════════════════════════════════╝
+```
+
+**Power Returns (Online):**
+```
+╔════════════════════════════════════╗
+║  Inventory System         📡 Online ║
+║  ✅ Synced 3 changes successfully   ║
+╠════════════════════════════════════╣
+║  Product: Lucky Me Pancit Canton   ║
+║  Stock: 45 packs                   ║
+║  Price: ₱15.00                     ║
+║  [Update] [Add Sale] [Reorder]     ║
+╚════════════════════════════════════╝
+```
+
+---
+
+## Complete Implementation
+
+```javascript
+// app.js - Offline/Online state management
+
+class ConnectionManager {
+  constructor() {
+    this.isOnline = navigator.onLine;
+    this.statusElement = document.getElementById('connectionStatus');
+    this.syncQueue = [];
+    
+    this.init();
+  }
+  
+  init() {
+    // Listen for online/offline events
+    window.addEventListener('online', () => this.handleOnline());
+    window.addEventListener('offline', () => this.handleOffline());
+    
+    // Initial state
+    this.updateUI();
+  }
+  
+  handleOnline() {
+    console.log('Connection restored');
+    this.isOnline = true;
+    this.updateUI();
+    this.syncQueuedData();
+  }
+  
+  handleOffline() {
+    console.log('Connection lost');
+    this.isOnline = false;
+    this.updateUI();
+  }
+  
+  updateUI() {
+    if (this.isOnline) {
+      this.statusElement.innerHTML = `
+        <div class="notification is-success is-light">
+          📡 Online - All features available
+        </div>
+      `;
+    } else {
+      this.statusElement.innerHTML = `
+        <div class="notification is-warning">
+          ⚠️ Offline - Using cached content
+          <br>
+          <small>Changes will sync when connection returns</small>
+        </div>
+      `;
+    }
+  }
+  
+  async syncQueuedData() {
+    const db = await this.openDB();
+    const queue = await db.getAll('syncQueue');
+    
+    for (let item of queue) {
+      try {
+        await fetch(item.url, item.options);
+        await db.delete('syncQueue', item.id);
+        console.log('Synced:', item);
+      } catch (error) {
+        console.error('Sync failed:', error);
+        // Will try again next time
+      }
+    }
+    
+    this.showSyncSuccess(queue.length);
+  }
+  
+  showSyncSuccess(count) {
+    if (count > 0) {
+      const notification = document.createElement('div');
+      notification.className = 'notification is-success';
+      notification.innerHTML = `✅ Synced ${count} changes successfully`;
+      document.body.prepend(notification);
+      setTimeout(() => notification.remove(), 5000);
+    }
+  }
+  
+  async openDB() {
+    return await idb.openDB('myApp', 1, {
+      upgrade(db) {
+        db.createObjectStore('syncQueue', { keyPath: 'id', autoIncrement: true });
+      }
+    });
+  }
+}
+
+// Initialize on page load
+const connectionManager = new ConnectionManager();
+```
+
+**Referenced in Lecture:** Section 6 (Offline Detection), Section 5 (Caching Strategies)

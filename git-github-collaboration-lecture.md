@@ -131,11 +131,15 @@ Git has three main "places" your code can be:
 2. **Staging Area** = Changes marked to save (preparing for snapshot)
 3. **Repository** = Saved snapshots (commit history)
 
+![Git Three-Tree Architecture](diagrams/git-github/three-tree-architecture.png)
+
 **Workflow:**
 ```
 Edit files → Add to staging → Commit to repository
 (Working)  →  (git add)   →  (git commit)
 ```
+
+![Git Basic Workflow](diagrams/git-github/git-workflow.png)
 
 ### **Essential Git Commands**
 
@@ -806,6 +810,8 @@ You've learned:
 - You get ALL commits, ALL branches, ALL files
 - Connected to original GitHub repo (can pull updates)
 
+![GitHub Collaboration Flow](diagrams/git-github/github-flow.png)
+
 ### **When Do You Clone?**
 
 **Common scenarios:**
@@ -1140,6 +1146,8 @@ git pull
 - Try risky changes safely
 - If it works, merge back to main
 - If it fails, delete branch (no harm done!)
+
+![Branching Strategy](diagrams/git-github/branching-strategy.png)
 
 ### **Why Use Branches?**
 
@@ -1490,6 +1498,8 @@ git switch feature-from-teammate
 
 <a name="section-7"></a>
 ## 7. Merge Conflicts: When Timelines Collide
+
+![Merge Conflict Resolution](diagrams/git-github/merge-conflicts.png)
 
 ### **What is a Merge Conflict?**
 
@@ -1868,6 +1878,8 @@ git push
 <a name="section-8"></a>
 ## 8. Pull Requests: Code Review Culture
 
+![Pull Request Review Process](diagrams/git-github/pull-request-review.png)
+
 ### **What is a Pull Request?**
 
 **Pull Request (PR)** = "Please review my changes and merge them into main branch"
@@ -2191,6 +2203,8 @@ LGTM! (looks good to me) ✅
 - Merge commit message: "Add enrollment form (#13)"
 - Delete feature branch
 - Project updated! 🎉
+
+![Team Collaboration Workflow](diagrams/git-github/team-collaboration.png)
 
 ### **Draft Pull Requests**
 

@@ -412,6 +412,239 @@ Bonus: save to `localStorage`, search box, export CSV
 
 ---
 
+## When to Use DOM Manipulation (vs Other Approaches)
+
+### ✅ Use DOM When:
+
+**1. Making Pages Interactive (Client-Side)**
+```javascript
+// Perfect for immediate user feedback
+button.addEventListener('click', () => {
+    counter++;
+    display.textContent = counter;  // Updates instantly!
+});
+```
+**Why:** No server needed, instant response, works offline
+
+**Philippine Example:** Sari-sari store calculator - add items, see total immediately
+
+**2. Form Validation (Before Submitting)**
+```javascript
+// Check inputs before sending to server
+submitBtn.addEventListener('click', () => {
+    if (nameInput.value.trim() === '') {
+        errorMsg.textContent = 'Pangalan ay kailangan!';
+        errorMsg.style.display = 'block';
+        return;  // Don't submit
+    }
+});
+```
+**Why:** Saves data costs (don't send invalid requests)
+
+**3. Dynamic UI Updates (Without Page Reload)**
+```javascript
+// Show/hide sections without reloading
+function showSection(sectionId) {
+    document.querySelectorAll('.section').forEach(s => {
+        s.classList.add('hidden');
+    });
+    document.getElementById(sectionId).classList.remove('hidden');
+}
+```
+**Philippine Context:** Works during brownouts, no server needed
+
+**4. Simple Client-Side Calculations**
+```javascript
+// Grade calculator - all calculations in browser
+function calculateAverage(grades) {
+    const sum = grades.reduce((a, b) => a + b, 0);
+    return (sum / grades.length).toFixed(2);
+}
+```
+**Why:** Free, instant, works offline
+
+---
+
+### ❌ Don't Use DOM When:
+
+**1. Data Needs to Persist (Use Server/Database)**
+```javascript
+// ❌ BAD: Refreshing page loses data
+let students = [];  // Lost on refresh!
+
+// ✅ BETTER: Save to server
+fetch('/api/students', {
+    method: 'POST',
+    body: JSON.stringify(student)
+});
+```
+**Philippine Example:** Barangay records must be saved permanently (use database)
+
+**2. Multiple Users Need Same Data (Use Server)**
+```javascript
+// ❌ BAD: Each user has their own copy
+localStorage.setItem('inventory', JSON.stringify(items));
+
+// ✅ BETTER: Shared server database
+// Multiple store branches see same inventory
+```
+
+**3. Secure/Sensitive Operations (Use Server)**
+```javascript
+// ❌ NEVER: Password checking in browser
+if (password === 'secret123') {  // Visible in source code!
+    allow Access();
+}
+
+// ✅ ALWAYS: Check on server
+// Server validates, never trust client
+```
+
+**4. Heavy Computations (Use Server)**
+```javascript
+// ❌ BAD: Processing 10,000 records in browser
+// Freezes browser, crashes on budget phones
+
+// ✅ BETTER: Server processes, sends results
+// Browser just displays the data
+```
+
+---
+
+### 🤔 DOM vs Alternatives: Decision Framework
+
+| Need | Use DOM | Use Server | Use Both |
+|------|---------|------------|----------|
+| Instant feedback on click | ✅ Yes | ❌ Too slow | - |
+| Save data permanently | ❌ No | ✅ Yes | - |
+| Form validation | ✅ Yes (client) | ✅ Yes (server) | ✅ Both! |
+| Password checking | ❌ Never | ✅ Always | - |
+| Shopping cart | ✅ Yes (display) | ✅ Yes (save) | ✅ Both! |
+| Animations/transitions | ✅ Yes (CSS better) | ❌ No | - |
+| Calculate totals | ✅ Yes (simple) | ✅ Yes (complex) | Depends |
+| Multi-user collaboration | ❌ No | ✅ Yes | - |
+
+---
+
+### 📱 Philippine Context Examples
+
+**Sari-Sari Store Calculator (DOM Only):**
+```javascript
+// Perfect for DOM - instant calculations, works offline
+let total = 0;
+
+function addItem(name, price) {
+    total += price;
+    updateDisplay();  // Instant update!
+}
+```
+**Why DOM:** No internet needed, instant feedback, works during brownouts
+
+**Barangay Clearance System (DOM + Server):**
+```javascript
+// DOM for form validation
+if (!validateForm()) {
+    showError('Please fill all fields');
+    return;
+}
+
+// Server for saving
+fetch('/api/clearance', {
+    method: 'POST',
+    body: JSON.stringify(formData)
+});
+```
+**Why Both:** Validate fast (DOM), save permanently (server)
+
+**Student Grade Portal (Server > DOM):**
+```javascript
+// Server provides grades (secure, persistent)
+fetch('/api/grades')
+    .then(res => res.json())
+    .then(grades => {
+        // DOM displays grades (fast, interactive)
+        displayGrades(grades);
+    });
+```
+**Why Both:** Server stores grades securely, DOM makes viewing interactive
+
+---
+
+### 💡 Quick Decision Guide
+
+**Ask yourself:**
+
+1. **Does data need to survive page refresh?**
+   - No → DOM only (e.g., calculator)
+   - Yes → Need server/localStorage
+
+2. **Will multiple users access same data?**
+   - No → DOM + localStorage okay
+   - Yes → Must use server
+
+3. **Is it sensitive (passwords, payments)?**
+   - Yes → Server only, never trust client
+   - No → DOM is fine
+
+4. **Does it need internet?**
+   - No → DOM perfect (works offline)
+   - Yes → Server needed
+
+5. **Is it a slow operation?**
+   - No (<100ms) → DOM is fine
+   - Yes (seconds+) → Consider server
+
+---
+
+### 🎯 Philippine-Specific Considerations
+
+**Limited Internet (DOM Advantages):**
+```javascript
+// Calculator works without internet
+// No data costs
+// Works during brownouts
+// Instant results
+```
+
+**Shared Devices (Server Advantages):**
+```javascript
+// Computer shop scenario
+// Multiple students use same PC
+// Each needs their own saved data
+// Must use server + authentication
+```
+
+**Budget Phones (Keep DOM Light):**
+```javascript
+// ✅ Good: Simple DOM operations
+document.getElementById('result').textContent = total;
+
+// ❌ Bad: Heavy DOM operations
+for (let i = 0; i < 10000; i++) {
+    div.appendChild(document.createElement('p'));
+}
+// Crashes phone!
+```
+
+---
+
+### ✅ Best Practices Summary
+
+**DO:**
+- Use DOM for instant, client-side interactions
+- Validate forms with DOM before sending to server
+- Use DOM for offline-capable features
+- Keep DOM operations simple (budget phones!)
+- Combine DOM + server for best experience
+
+**DON'T:**
+- Store sensitive data in DOM/localStorage
+- Trust client-side validation alone (also validate on server)
+- Process huge datasets in browser (use server)
+- Forget about users with old phones (test performance!)
+
+---
+
 ## Troubleshooting & Tips (for class handout)
 
 - If nothing happens: check console (F12) for errors

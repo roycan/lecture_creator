@@ -473,6 +473,212 @@ footer {
 .main-navigation { ... }
 ```
 
+---
+
+## When to Use CSS (vs Inline Styles, Frameworks, or JavaScript)
+
+### ✅ Use CSS When:
+
+**1. Styling Multiple Elements**
+```html
+<!-- ❌ BAD: Inline styles repeated everywhere -->
+<h1 style="color: blue; font-size: 32px;">Title 1</h1>
+<h1 style="color: blue; font-size: 32px;">Title 2</h1>
+<h1 style="color: blue; font-size: 32px;">Title 3</h1>
+
+<!-- ✅ GOOD: One CSS rule for all -->
+<style>
+h1 { color: blue; font-size: 32px; }
+</style>
+<h1>Title 1</h1>
+<h1>Title 2</h1>
+<h1>Title 3</h1>
+```
+**Why:** Changes in one place, not 100 places!
+
+**2. Creating Visual Consistency**
+```css
+/* All buttons look the same */
+.btn {
+    background: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+```
+**Philippine Example:** Barangay clearance forms - same font, colors, spacing throughout
+
+**3. Separating Content from Presentation**
+```html
+<!-- ✅ HTML focuses on WHAT -->
+<article class="product-card">
+    <h2>Lucky Me Pancit Canton</h2>
+    <p class="price">₱15.00</p>
+</article>
+
+<!-- CSS focuses on HOW IT LOOKS -->
+<style>
+.product-card { border: 1px solid #ddd; }
+.price { color: #e74c3c; font-weight: bold; }
+</style>
+```
+**Why:** Easier to maintain, change design without touching HTML
+
+**4. Responsive Design (Mobile to Desktop)**
+```css
+/* Adjusts for different screen sizes */
+.container {
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .container { width: 750px; }
+}
+
+@media (min-width: 1200px) {
+    .container { width: 1170px; }
+}
+```
+**Philippine Context:** 70% of Filipinos browse on mobile - CSS makes it responsive!
+
+---
+
+### ❌ Don't Use CSS When:
+
+**1. One-Time Styling (Use Inline)**
+```html
+<!-- Inline is okay for unique, one-off styling -->
+<div style="margin-top: 100px;">
+    <!-- This specific spacing only here -->
+</div>
+```
+**But:** If you use it twice, move to CSS!
+
+**2. Dynamic Styles (Use JavaScript)**
+```javascript
+// JavaScript for styles that change based on user actions
+button.addEventListener('click', () => {
+    box.style.backgroundColor = 'red';  // Changes on click
+});
+```
+**Philippine Example:** Sari-sari store - highlight out-of-stock items in real-time
+
+**3. Quick Prototypes (Use CSS Frameworks)**
+```html
+<!-- Bulma CSS framework for rapid development -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma">
+<button class="button is-primary">Click me</button>
+```
+**Trade-off:** Faster development, but larger file size, less control
+
+---
+
+### 🤔 CSS vs Alternatives: Decision Framework
+
+| Scenario | Use This | Why |
+|----------|----------|-----|
+| Styling 5+ similar elements | **External CSS** | Consistency, maintainability |
+| One unique element | **Inline style** | Simpler, no extra CSS rule |
+| Style changes on click | **JavaScript** | CSS can't respond to events |
+| Building UI fast | **CSS Framework (Bulma)** | Pre-built components |
+| Full control over design | **Custom CSS** | No framework overhead |
+| Mobile-first design | **CSS + media queries** | Responsive without JS |
+| Animations/transitions | **CSS animations** | Faster than JavaScript |
+| Complex interactive effects | **JavaScript** | CSS has limitations |
+
+---
+
+### 📱 Philippine Context Examples
+
+**Sari-Sari Store Inventory:**
+```css
+/* Use CSS for consistent product cards */
+.product {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px;
+}
+
+/* Use JavaScript for stock warnings */
+// if (stock < 5) item.classList.add('low-stock');
+```
+
+**Barangay Clearance Form:**
+```css
+/* CSS for form layout and styling */
+.form-section {
+    background: #f5f5f5;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+/* CSS for print styles (very important!) */
+@media print {
+    .form-section { page-break-inside: avoid; }
+}
+```
+
+**School Grade Portal:**
+```css
+/* CSS for responsive table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Mobile: hide less important columns */
+@media (max-width: 600px) {
+    .grade-date { display: none; }
+}
+```
+
+---
+
+### 💡 Quick Decision Guide
+
+**Ask yourself:**
+
+1. **Will this style be reused?**
+   - Yes → External CSS
+   - No, unique → Inline style
+
+2. **Does it need to change based on user action?**
+   - Yes → JavaScript
+   - No, static → CSS
+
+3. **Do I need it working in 10 minutes?**
+   - Yes → CSS Framework (Bulma/Bootstrap)
+   - No, I have time → Custom CSS (better performance)
+
+4. **Is this for mobile users?**
+   - Yes → CSS with media queries
+   - Desktop only → Simple CSS
+
+5. **Will it be printed?**
+   - Yes → CSS with `@media print`
+   - Web only → Regular CSS
+
+---
+
+### 🎯 Best Practices Summary
+
+**✅ DO:**
+- Use external CSS for site-wide styles
+- Use classes for reusable styles
+- Use IDs sparingly (one per page max)
+- Group related styles together
+- Add comments to explain complex styles
+- Test on mobile devices (70% of PH users!)
+
+**❌ DON'T:**
+- Use inline styles everywhere
+- Mix CSS and JavaScript unnecessarily
+- Use frameworks without understanding CSS basics
+- Forget about print styles (government forms!)
+- Ignore mobile users
+
+---
+
 ## Summary: Key Takeaways
 
 **Remember these CSS essentials:**

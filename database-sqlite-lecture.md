@@ -1193,6 +1193,445 @@ db.prepare(sql).get(userInput);
 
 ---
 
+## 🤔 When to Use SQLite (vs JSON Files, Other Databases)
+
+### ✅ Use SQLite When
+
+#### 1. **You Have Related Data (Relationships Matter)**
+```javascript
+// JSON - Hard to keep in sync ❌
+// students.json
+[{id: 1, name: "Juan", barangay: "San Roque"}]
+
+// barangays.json  
+[{name: "San Roque", captain: "Pedro"}]
+
+// What if barangay name changes? Must update BOTH files!
+
+// SQLite - Relationships enforced ✅
+CREATE TABLE barangays (
+  id INTEGER PRIMARY KEY,
+  name TEXT UNIQUE
+);
+
+CREATE TABLE students (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  barangay_id INTEGER REFERENCES barangays(id)
+);
+
+// Change barangay name once, students automatically see new name!
+```
+
+**Real example:** Barangay system (residents belong to barangays, clearances belong to residents)
+
+#### 2. **You Need to Search or Filter Data Efficiently**
+```javascript
+// JSON - Load ALL data, filter in JavaScript ❌
+const data = JSON.parse(fs.readFileSync('students.json'));
+const result = data.filter(s => s.age > 18 && s.grade > 85);
+// Slow with 1000+ students! Loads EVERYTHING into memory.
+
+// SQLite - Database does the filtering ✅
+const result = db.prepare(`
+  SELECT * FROM students 
+  WHERE age > ? AND grade > ?
+`).all(18, 85);
+// Fast! Only returns matching rows.
+```
+
+**Real example:** School library with 500+ books - search by title, author, availability
+
+#### 3. **Multiple Users Accessing Same Data**
+```javascript
+// JSON - Race condition disaster ❌
+// User A reads file
+const data = JSON.parse(fs.readFileSync('data.json'));
+// User B reads file (same data)
+const data2 = JSON.parse(fs.readFileSync('data.json'));
+// User A adds item, saves
+fs.writeFileSync('data.json', JSON.stringify([...data, newItem]));
+// User B adds item, saves (OVERWRITES User A's change!)
+fs.writeFileSync('data.json', JSON.stringify([...data2, newItem2]));
+// User A's item is LOST!
+
+// SQLite - Handles concurrency ✅
+// User A inserts
+db.prepare('INSERT INTO items VALUES (?)').run(newItem);
+// User B inserts
+db.prepare('INSERT INTO items VALUES (?)').run(newItem2);
+// BOTH items saved! Database handles locking.
+```
+
+**Real example:** Sari-sari store where owner and helper both record sales
+
+#### 4. **You Need Data Validation**
+```javascript
+// JSON - Must validate manually ❌
+const newStudent = { name: req.body.name, age: req.body.age };
+if (!newStudent.name) return res.send('Name required!');
+if (newStudent.age < 0) return res.send('Invalid age!');
+// Easy to forget checks!
+
+// SQLite - Database enforces rules ✅
+CREATE TABLE students (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,        -- Can't be empty
+  age INTEGER CHECK(age > 0), -- Must be positive
+  email TEXT UNIQUE          -- No duplicates
+);
+
+// Try to insert bad data?
+db.prepare('INSERT INTO students VALUES (?, ?, ?)').run(null, -5, 'duplicate@email');
+// Error! Database rejects it automatically.
+```
+
+### ❌ Don't Use SQLite When
+
+#### 1. **Simple Configuration or Settings (Small, Rarely Changes)**
+```javascript
+// Overkill for SQLite ❌
+CREATE TABLE settings (key TEXT, value TEXT);
+INSERT INTO settings VALUES ('siteName', 'My Store');
+INSERT INTO settings VALUES ('currency', 'PHP');
+
+// JSON is simpler ✅
+// config.json
+{
+  "siteName": "My Store",
+  "currency": "PHP"
+}
+
+// Read settings
+const config = require('./config.json');
+```
+
+**Rule of thumb:** < 10 settings that rarely change? Use JSON.
+
+#### 2. **Temporary Data or Cache (Doesn't Need to Persist)**
+```javascript
+// Don't need database for temporary data ❌
+CREATE TABLE cache (key TEXT, value TEXT, expires INTEGER);
+
+// Just use variables or files ✅
+const cache = new Map();
+cache.set('weather', weatherData);
+
+// Or use Redis for serious caching
+```
+
+#### 3. **Very Large Scale (Millions of Users Simultaneously)**
+```markdown
+SQLite is file-based, one writer at a time.
+
+✅ GOOD: Barangay system (50 households, 100 requests/day)
+✅ GOOD: School system (500 students, 1000 requests/day)
+❌ BAD: National ID system (100 million citizens, 10,000 requests/second)
+
+For massive scale: PostgreSQL, MySQL, or cloud databases (Firebase, Supabase)
+```
+
+#### 4. **You Need Advanced Features**
+```markdown
+SQLite is lightweight - doesn't have everything:
+
+❌ No user accounts/permissions (anyone with file access can read)
+❌ No stored procedures (can't write SQL functions in database)
+❌ Limited data types (no native date, boolean types)
+❌ No full-text search (basic LIKE only, no ranking)
+
+If you need these: PostgreSQL or MySQL
+```
+
+### 📊 Decision Framework
+
+| Data Characteristics | Use SQLite? | Alternative |
+|----------------------|-------------|-------------|
+| **< 10 simple settings** | ❌ NO | JSON file |
+| **10-1000 records, related** | ✅ YES | SQLite |
+| **1000+ records, need search** | ✅ YES | SQLite |
+| **Multiple users editing** | ✅ YES | SQLite |
+| **Millions of users** | ❌ NO | PostgreSQL, MySQL, cloud DB |
+| **Temporary data/cache** | ❌ NO | Variables, Redis |
+| **Static content (blog posts)** | ⚠️ MAYBE | Markdown files or SQLite |
+| **Need user permissions** | ❌ NO | PostgreSQL/MySQL |
+
+### 🇵🇭 Philippine Context Examples
+
+#### Example 1: Sari-Sari Store Inventory (50 Products)
+
+**NEEDS:**
+- Track products (name, price, stock)
+- Record sales (who bought what, when)
+- Generate reports (best-selling items, daily revenue)
+- Owner and helper both use system
+
+**JSON vs SQLite:**
+
+```javascript
+// JSON approach ❌ PROBLEMS:
+// 1. Can't easily relate sales to products
+// 2. Owner and helper might overwrite each other's changes
+// 3. Searching for "products below 10 stock" = load everything
+// 4. No validation (can set stock to -5!)
+
+// SQLite approach ✅ BETTER:
+CREATE TABLE products (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  price REAL CHECK(price > 0),
+  stock INTEGER CHECK(stock >= 0)
+);
+
+CREATE TABLE sales (
+  id INTEGER PRIMARY KEY,
+  product_id INTEGER REFERENCES products(id),
+  quantity INTEGER CHECK(quantity > 0),
+  sold_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+// Benefits:
+// ✅ Sales automatically link to products
+// ✅ Both users can add sales safely
+// ✅ Fast queries: "SELECT * FROM products WHERE stock < 10"
+// ✅ Database prevents negative stock
+```
+
+**DECISION: Use SQLite ✅**
+
+**Cost:** 30 minutes learning SQL
+**Benefit:** Reliable data, multiple users, easy reports
+**Hosting:** Railway free tier (500MB database = plenty for store)
+
+#### Example 2: Barangay Clearance System
+
+**NEEDS:**
+- Track residents (name, address, contact)
+- Track clearance requests (who, when, status, purpose)
+- Generate reports for captain (requests this month, pending count)
+
+**Why SQLite over JSON:**
+
+```sql
+-- Relationships matter:
+CREATE TABLE residents (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  address TEXT,
+  contact TEXT
+);
+
+CREATE TABLE clearance_requests (
+  id INTEGER PRIMARY KEY,
+  resident_id INTEGER REFERENCES residents(id),
+  purpose TEXT NOT NULL,
+  status TEXT DEFAULT 'Pending',
+  requested_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Easy queries:
+-- How many requests this month?
+SELECT COUNT(*) FROM clearance_requests 
+WHERE requested_at >= date('now', 'start of month');
+
+-- Which residents have pending requests?
+SELECT r.name, c.purpose 
+FROM residents r 
+JOIN clearance_requests c ON c.resident_id = r.id
+WHERE c.status = 'Pending';
+
+-- Try doing this efficiently with JSON! ❌
+```
+
+**DECISION: Use SQLite ✅**
+
+**Reality:** 100 residents, 30 requests/month = easy for SQLite
+
+#### Example 3: Student Portfolio Website
+
+**NEEDS:**
+- Display 5 projects
+- Show skills list
+- Contact form (send email)
+
+**JSON vs SQLite:**
+
+```json
+// projects.json ✅ SIMPLE
+[
+  {
+    "title": "Sari-sari Store App",
+    "description": "Built with Express",
+    "image": "store.jpg"
+  }
+]
+
+// In EJS:
+<% projects.forEach(project => { %>
+  <div><%= project.title %></div>
+<% }) %>
+```
+
+**DECISION: DON'T use SQLite ❌**
+
+**Why:**
+- Only 5 projects (small data)
+- YOU are the only editor (no concurrency)
+- No relationships (projects don't relate to anything)
+- Data rarely changes (update once per month)
+
+**Better:** Keep using JSON, save hosting resources
+
+**Cost:** JSON = 0 setup time, SQLite = 20 minutes
+**Benefit:** No real benefit for this use case
+
+#### Example 4: School Library (300 Books)
+
+**NEEDS:**
+- Track books (title, author, ISBN, copies)
+- Track students (name, grade, section)
+- Track borrowing (who borrowed what, when, returned?)
+- Generate reports (overdue books, most borrowed)
+
+**This SCREAMS for SQLite:**
+
+```sql
+CREATE TABLE books (
+  id INTEGER PRIMARY KEY,
+  title TEXT NOT NULL,
+  author TEXT,
+  isbn TEXT UNIQUE,
+  copies INTEGER CHECK(copies >= 0)
+);
+
+CREATE TABLE students (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  grade INTEGER,
+  section TEXT
+);
+
+CREATE TABLE borrowings (
+  id INTEGER PRIMARY KEY,
+  book_id INTEGER REFERENCES books(id),
+  student_id INTEGER REFERENCES students(id),
+  borrowed_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  due_date TEXT NOT NULL,
+  returned_at TEXT
+);
+
+-- Powerful queries:
+-- Overdue books
+SELECT s.name, b.title, br.due_date
+FROM borrowings br
+JOIN students s ON br.student_id = s.id
+JOIN books b ON br.book_id = b.id
+WHERE br.returned_at IS NULL AND br.due_date < date('now');
+
+-- How many copies of a book are available?
+SELECT 
+  b.title,
+  b.copies - COUNT(br.id) as available
+FROM books b
+LEFT JOIN borrowings br ON br.book_id = b.id AND br.returned_at IS NULL
+GROUP BY b.id;
+```
+
+**DECISION: MUST use SQLite ✅**
+
+**Why JSON would FAIL:**
+- ❌ Can't efficiently track relationships (books ↔ students ↔ borrowings)
+- ❌ Searching 300 books in JSON = slow
+- ❌ Multiple librarians = data conflicts
+- ❌ Complex reports = tons of JavaScript array filtering
+
+**Reality:** This is what databases were made for!
+
+### 🎯 Quick Decision Guide
+
+**Ask these questions:**
+
+1. **"How many records will I have?"**
+   - < 10 → JSON is fine
+   - 10-1000 → SQLite is better
+   - 1000+ → SQLite is essential
+   - 1 million+ → Consider PostgreSQL/MySQL
+
+2. **"Do I need to search/filter/sort data?"**
+   - YES → SQLite (efficient queries)
+   - NO (just display all) → JSON is OK
+
+3. **"Do records relate to each other?"**
+   - YES (students ↔ clearances, books ↔ borrowings) → SQLite
+   - NO (just a list of items) → JSON might work
+
+4. **"How many users will edit data?"**
+   - 1 user → JSON works
+   - 2+ users → SQLite (handles concurrency)
+
+5. **"Do I need validation (prevent bad data)?"**
+   - YES (prices must be positive, emails unique) → SQLite
+   - NO (you manually check) → JSON
+
+6. **"How often does data change?"**
+   - Hourly/daily → SQLite (better for writes)
+   - Weekly/monthly → JSON might be fine
+   - Never (static data) → JSON or Markdown
+
+### 🎓 Learning Path Recommendations
+
+**For Grade 9 students:**
+
+```markdown
+PROJECT 1: Portfolio (5 pages, 3 projects)
+→ Use JSON ✅
+→ Why: Learn basics without database complexity
+
+PROJECT 2: Todo List with Categories
+→ Use JSON ✅
+→ Why: Simple relationships, good practice for SQL later
+
+PROJECT 3: Sari-Sari Store (inventory + sales)
+→ NOW use SQLite ✅
+→ Why: Multiple tables, relationships, real-world complexity
+
+PROJECT 4: Library/Barangay System
+→ Definitely SQLite ✅
+→ Why: Complex relationships, multiple users, reports
+
+❌ DON'T: Start with SQLite on day 1
+✅ DO: Master Express + JSON first, then add SQLite
+```
+
+### 📋 Best Practices Summary
+
+**DO:**
+- ✅ Use SQLite when data has relationships (foreign keys)
+- ✅ Use SQLite when multiple users edit data
+- ✅ Use SQLite for 100+ records that need searching
+- ✅ Use prepared statements ALWAYS (prevent SQL injection)
+- ✅ Enable foreign keys: `db.pragma('foreign_keys = ON')`
+- ✅ Start simple: One table, then add relationships
+- ✅ Test queries in DB Browser for SQLite first
+
+**DON'T:**
+- ❌ Use SQLite for simple config files (< 10 settings)
+- ❌ Use SQLite for temporary/cache data
+- ❌ Forget to close connections: `db.close()`
+- ❌ Use string concatenation for queries (SQL injection!)
+- ❌ Make it too complex: Start with 2-3 tables max
+- ❌ Skip learning JSON first (understand basics before databases)
+
+**🇵🇭 Reality Check:**
+- JSON: Quick to learn, good for small projects
+- SQLite: 2x effort to learn, 10x better for real projects
+- Most REAL client projects need SQLite (data relationships matter)
+- Railway free tier: 500MB database = enough for most barangay/school projects
+
+**When in doubt:** Start with JSON, migrate to SQLite when you feel the pain (slow searches, data conflicts, relationship problems).
+
+---
+
 ## 🐛 Section 7: Troubleshooting Guide
 
 ![Database Error Handling Patterns](diagrams/database-basics/error-handling.png)

@@ -1,0 +1,144 @@
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'fontSize':'14px'}}}%%
+flowchart TD
+    subgraph CacheFirst["Strategy 1: Cache First (Offline First)"]
+        CF_Request[Request for resource]
+        CF_CheckCache{Is it in<br/>cache?}
+        CF_ReturnCache[Return from cache<br/>⚡ INSTANT]
+        CF_Fetch[Fetch from network]
+        CF_SaveCache[Save to cache<br/>for next time]
+        CF_Return[Return from network]
+        CF_Error[Return error or<br/>offline page]
+        
+        CF_Request --> CF_CheckCache
+        CF_CheckCache -->|Yes ✅| CF_ReturnCache
+        CF_CheckCache -->|No ❌| CF_Fetch
+        CF_Fetch -->|Success| CF_SaveCache
+        CF_SaveCache --> CF_Return
+        CF_Fetch -->|Network error| CF_Error
+    end
+    
+    subgraph NetworkFirst["Strategy 2: Network First"]
+        NF_Request[Request for resource]
+        NF_Fetch[Try network first]
+        NF_Return[Return fresh data<br/>📡 LATEST]
+        NF_UpdateCache[Update cache<br/>with new data]
+        NF_CheckCache{Is it in<br/>cache?}
+        NF_ReturnCache[Return from cache<br/>🔄 STALE]
+        NF_Error[Return error]
+        
+        NF_Request --> NF_Fetch
+        NF_Fetch -->|Success| NF_UpdateCache
+        NF_UpdateCache --> NF_Return
+        NF_Fetch -->|Timeout/Error| NF_CheckCache
+        NF_CheckCache -->|Yes ✅| NF_ReturnCache
+        NF_CheckCache -->|No ❌| NF_Error
+    end
+    
+    subgraph StaleWhileRevalidate["Strategy 3: Stale While Revalidate"]
+        SWR_Request[Request for resource]
+        SWR_CheckCache{Is it in<br/>cache?}
+        SWR_ReturnCache[Return from cache<br/>⚡ INSTANT]
+        SWR_FetchBackground[Fetch from network<br/>in background]
+        SWR_UpdateCache[Update cache for<br/>next request]
+        SWR_Fetch[Fetch from network]
+        SWR_SaveCache[Save to cache]
+        SWR_Return[Return from network]
+        
+        SWR_Request --> SWR_CheckCache
+        SWR_CheckCache -->|Yes ✅| SWR_ReturnCache
+        SWR_ReturnCache -.->|Async update| SWR_FetchBackground
+        SWR_FetchBackground -->|Success| SWR_UpdateCache
+        SWR_CheckCache -->|No ❌| SWR_Fetch
+        SWR_Fetch --> SWR_SaveCache
+        SWR_SaveCache --> SWR_Return
+    end
+    
+    style CF_ReturnCache fill:#e8f5e9
+    style NF_Return fill:#e8f5e9
+    style SWR_ReturnCache fill:#e8f5e9
+    style CF_Error fill:#ffebee
+    style NF_Error fill:#ffebee
+```
+
+## Export Command
+```bash
+mmdc -i 02-caching-strategies.mmd -o ../../diagrams/caching-strategies.png -b transparent -w 2400
+```
+
+## When to Use Each Strategy
+
+### 1. Cache First (Offline First)
+**Best for:**
+- Static assets (CSS, JS, images, fonts)
+- Content that rarely changes
+- Speed is priority over freshness
+
+**Philippine Use Cases:**
+- Sari-sari store inventory app (product images, app shell)
+- Barangay directory (official forms, logos)
+- Student portal (course materials, PDFs)
+
+**Trade-offs:**
+- ✅ Works offline completely
+- ✅ Instant loading
+- ✅ Zero data cost after first load
+- ❌ Might show outdated content
+
+### 2. Network First
+**Best for:**
+- Dynamic content (news feeds, prices)
+- User-specific data (profiles, messages)
+- Content that changes frequently
+
+**Philippine Use Cases:**
+- Price checker app (current prices from database)
+- News portal (latest articles)
+- Weather app (current conditions)
+
+**Trade-offs:**
+- ✅ Always shows latest data when online
+- ✅ Falls back to cache when offline
+- ❌ Slower (waits for network)
+- ❌ Uses data on every request
+
+### 3. Stale While Revalidate
+**Best for:**
+- Content that updates but old is acceptable
+- Balance between speed and freshness
+- Social media, comments, likes
+
+**Philippine Use Cases:**
+- School announcements (show old, update quietly)
+- Community bulletin board
+- Product reviews and ratings
+
+**Trade-offs:**
+- ✅ Shows something immediately (cache)
+- ✅ Updates in background (stays fresh)
+- ✅ Good balance for spotty connections
+- ❌ Might briefly show outdated content
+
+## Philippine Context Examples
+
+### Budget: ₱50 load per week
+
+**Cache First (Recommended):**
+- Download app assets once
+- All images/CSS cached
+- Works perfectly during brownouts
+- Total cost: ₱50 for initial download only
+
+**Network First (Not recommended):**
+- Fetches every time
+- 100 KB per page load
+- At 10 visits/day × 7 days = ₱280 in data
+- Exceeds weekly budget by 5x!
+
+**Stale While Revalidate (Balanced):**
+- Instant load from cache
+- Background update uses ~20 KB
+- 10 visits/day × 20 KB × 7 = ₱56
+- Slightly over budget but acceptable
+
+**Referenced in Lecture:** Section 5 (Caching Strategies), Section 6 (Offline Detection)

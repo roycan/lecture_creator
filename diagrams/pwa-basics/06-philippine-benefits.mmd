@@ -1,0 +1,480 @@
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'fontSize':'14px'}}}%%
+flowchart TB
+    subgraph Regular["🌐 Regular Website (Without PWA)"]
+        direction TB
+        RW_Load["Every page load<br/>downloads everything"]
+        RW_Cost["Data cost: ₱10-20<br/>per page load"]
+        RW_Offline["❌ Doesn't work offline<br/>(brownouts = no access)"]
+        RW_Speed["⏳ Slow on 2G/3G<br/>(3-10 seconds)"]
+        RW_Install["❌ No home screen icon<br/>(must remember URL)"]
+        RW_Storage["💾 No storage<br/>(fresh download each time)"]
+        
+        RW_Load --> RW_Cost
+        RW_Cost --> RW_Offline
+        RW_Offline --> RW_Speed
+        RW_Speed --> RW_Install
+        RW_Install --> RW_Storage
+    end
+    
+    subgraph PWA["📱 Progressive Web App"]
+        direction TB
+        PWA_Load["First load: downloads<br/>Next loads: from cache"]
+        PWA_Cost["Data cost: ₱50 once<br/>then FREE forever"]
+        PWA_Offline["✅ Works fully offline<br/>(brownouts ok!)"]
+        PWA_Speed["⚡ Instant loading<br/>(< 1 second)"]
+        PWA_Install["✅ Home screen icon<br/>(tap to open)"]
+        PWA_Storage["💾 50-100 MB storage<br/>(saves everything)"]
+        
+        PWA_Load --> PWA_Cost
+        PWA_Cost --> PWA_Offline
+        PWA_Offline --> PWA_Speed
+        PWA_Speed --> PWA_Install
+        PWA_Install --> PWA_Storage
+    end
+    
+    subgraph Savings["💰 Philippine Context Savings"]
+        direction TB
+        S_Data["Data Cost Savings<br/>Regular: ₱300/month<br/>PWA: ₱50/month<br/>💵 Save ₱250/month"]
+        S_Time["Time Savings<br/>Regular: 10s per load<br/>PWA: <1s per load<br/>⏰ Save 90% time"]
+        S_Reliability["Reliability<br/>Regular: Down during brownouts<br/>PWA: Always works<br/>✅ 100% uptime"]
+        
+        S_Data --> S_Time
+        S_Time --> S_Reliability
+    end
+    
+    Regular -->|"Upgrade to"| PWA
+    PWA -->|"Results in"| Savings
+    
+    style Regular fill:#ffebee
+    style PWA fill:#e8f5e9
+    style Savings fill:#fff9e6
+```
+
+## Export Command
+```bash
+mmdc -i 06-philippine-benefits.mmd -o ../../diagrams/philippine-benefits.png -b transparent -w 2400
+```
+
+## Detailed Benefits Comparison
+
+### 1. Data Cost Savings 💰
+
+#### Regular Website:
+```
+Sari-Sari Store Inventory Website
+- Homepage: 500 KB = ₱50
+- View product: 200 KB = ₱20
+- Add product: 150 KB = ₱15
+- Update stock: 100 KB = ₱10
+- Generate report: 300 KB = ₱30
+
+Daily usage (10 visits): ₱125/day
+Monthly cost: ₱3,750/month
+```
+
+#### PWA Version:
+```
+Sari-Sari Store Inventory PWA
+- Initial install: 500 KB = ₱50 (ONE TIME)
+- View product: 0 KB = ₱0 (cached)
+- Add product: 5 KB = ₱0.50 (API only)
+- Update stock: 3 KB = ₱0.30 (API only)
+- Generate report: 0 KB = ₱0 (cached + local data)
+
+Daily usage (10 visits): ₱8/day
+Monthly cost: ₱240/month
+
+SAVINGS: ₱3,510/month (93% reduction!)
+```
+
+**Real Filipino Example:**
+- ₱50 load lasts 1 week with PWA
+- Same ₱50 lasts 2 days with regular website
+- Annual savings: ₱42,120 per year!
+
+---
+
+### 2. Offline Functionality 🔌
+
+#### Regular Website:
+```
+Brownout Schedule in Barangay:
+6:00 AM - 9:00 AM = ❌ Website down (3 hours)
+12:00 PM - 2:00 PM = ❌ Website down (2 hours)
+6:00 PM - 10:00 PM = ❌ Website down (4 hours)
+
+Total downtime: 9 hours/day
+Business lost: 37.5% of operating hours
+```
+
+#### PWA Version:
+```
+Brownout Schedule in Barangay:
+6:00 AM - 9:00 AM = ✅ PWA works (cached)
+12:00 PM - 2:00 PM = ✅ PWA works (cached)
+6:00 PM - 10:00 PM = ✅ PWA works (cached)
+
+Total uptime: 24 hours/day
+Business impact: 0% downtime
+```
+
+**Real Filipino Example:**
+- Store owner can check inventory during brownout
+- Students can access lessons without WiFi
+- Tricycle drivers can view schedule offline
+- Community board shows announcements always
+
+---
+
+### 3. Speed & Performance ⚡
+
+#### Load Time Comparison:
+
+**Regular Website on 2G (Common in PH):**
+```
+Connection: 2G (50 Kbps)
+Homepage: 500 KB ÷ 50 Kbps = 10 seconds
+Every. Single. Time.
+
+User experience:
+0s:  Click link
+1s:  White screen... ⏳
+2s:  White screen... ⏳
+3s:  White screen... ⏳
+4s:  White screen... ⏳
+5s:  White screen... ⏳
+6s:  White screen... ⏳
+7s:  White screen... ⏳
+8s:  White screen... ⏳
+9s:  White screen... ⏳
+10s: Page loads! 😩
+```
+
+**PWA on 2G:**
+```
+Connection: 2G (50 Kbps)
+Cached homepage: 0 KB ÷ anything = <1 second
+
+User experience:
+0s:  Tap icon
+0.5s: App loads! 🎉
+
+10x faster, even on slow connection!
+```
+
+---
+
+### 4. Storage & Caching 💾
+
+#### Regular Website:
+```
+Browser Cache (temporary):
+- 5-10 MB max
+- Cleared frequently
+- Not reliable
+- Lost on browser clear
+
+Result:
+- Re-downloads everything often
+- Wastes data
+- Inconsistent performance
+```
+
+#### PWA:
+```
+Service Worker + Cache Storage:
+- 50-100 MB typical
+- Persistent (survives browser clear)
+- Controlled by developer
+- Reliable offline storage
+
+IndexedDB:
+- 100 MB - 1 GB possible
+- Structured data storage
+- Perfect for forms, user data
+- Syncs when online
+
+Result:
+- Everything cached efficiently
+- Zero re-downloads
+- Consistent fast performance
+```
+
+**Philippine Phone Context:**
+- Budget phones: 16-32 GB storage
+- PWA: ~100 MB typical
+- Native app alternative: 50-200 MB
+- PWA uses 50-80% less storage!
+
+---
+
+### 5. Installation & Access 📱
+
+#### Regular Website:
+```
+User must:
+1. Remember URL (hard!)
+2. Open browser
+3. Type or search URL
+4. Wait for load
+5. Navigate to page
+
+Steps: 5
+Time: 15-30 seconds
+Easy to forget/lose
+```
+
+#### PWA:
+```
+User must:
+1. Tap home screen icon
+
+Steps: 1
+Time: 1-2 seconds
+Just like native app!
+```
+
+**Filipino User Benefit:**
+- Icon next to Facebook, Messenger
+- No browser UI (looks professional)
+- Opens in fullscreen
+- Splash screen on launch
+- Feels native (builds trust)
+
+---
+
+### 6. Development & Maintenance 🛠️
+
+#### Regular Website:
+```
+Technologies:
+- HTML, CSS, JavaScript
+- Responsive design
+- Server-side rendering
+
+Updates:
+- Deploy to server
+- Users get instantly
+- No app store review
+
+Maintenance:
+- Easy to fix bugs
+- Can update anytime
+```
+
+#### PWA:
+```
+Technologies:
+- HTML, CSS, JavaScript (SAME!)
+- Responsive design
+- Service Worker (+ 50 lines)
+- manifest.json (+ 20 lines)
+
+Updates:
+- Deploy to server (SAME!)
+- Users get on next visit
+- No app store review
+
+Maintenance:
+- Easy to fix bugs (SAME!)
+- Can update anytime
+- Plus: offline benefits!
+
+Additional effort: ~5% more code
+Benefits: 300% better UX
+```
+
+---
+
+## Real Philippine Use Cases
+
+### Use Case 1: Student Portal 🎓
+
+**Regular Website:**
+- Student visits portal: ₱10 data
+- Checks 5 subjects: ₱50 data
+- Downloads 3 PDFs: ₱30 data
+- Total per visit: ₱90
+- Weekly cost (5 visits): ₱450
+
+**PWA Version:**
+- Initial install: ₱50 (once)
+- Checks 5 subjects: ₱0 (cached)
+- Downloads 3 PDFs: ₱30 (once, then cached)
+- Total first visit: ₱80
+- Weekly cost (5 visits): ₱80 (reuses cache)
+
+**Monthly Savings:** ₱1,520 per student
+**For 1,000 students:** ₱1,520,000 saved!
+
+---
+
+### Use Case 2: Barangay Services 🏛️
+
+**Problem:**
+- Brownouts: 4-6 hours daily
+- Officials need access to records
+- Residents need forms 24/7
+- Spotty internet in remote areas
+
+**PWA Solution:**
+```
+Services Available Offline:
+✅ View resident directory
+✅ Download barangay forms
+✅ Submit clearance requests (syncs later)
+✅ View announcements
+✅ Access emergency contacts
+✅ View maps and services
+
+Impact:
+- Officials work during brownouts
+- Residents access forms anytime
+- Zero data cost after install
+- Professional image
+```
+
+---
+
+### Use Case 3: Tricycle Drivers 🛺
+
+**Regular Website:**
+- Check schedule: ₱5 (10x/day = ₱50)
+- View routes: ₱8 (5x/day = ₱40)
+- Report location: ₱3 (20x/day = ₱60)
+- Daily cost: ₱150
+- Monthly cost: ₱4,500
+
+**PWA Version:**
+- Install app: ₱20 (once)
+- Check schedule: ₱0 (cached)
+- View routes: ₱0 (cached)
+- Report location: ₱0.50 (API only, 20x = ₱10)
+- Daily cost: ₱10
+- Monthly cost: ₱300
+
+**Savings:** ₱4,200/month per driver
+**For 100 drivers:** ₱420,000 saved monthly!
+
+---
+
+## Philippine Network Conditions
+
+### Typical Connection Speeds:
+
+```
+Metro Manila:
+- 4G LTE: 10-20 Mbps (good areas)
+- 3G: 2-5 Mbps (common)
+- 2G: 50-100 Kbps (congested areas)
+
+Provincial:
+- 3G: 1-3 Mbps (towns)
+- 2G: 50 Kbps (rural)
+- Edge: 20 Kbps (remote)
+
+PWA Benefits:
+- First load: slow (any website)
+- Subsequent loads: instant (from cache)
+- Works on ANY connection speed
+- Even works on NO connection!
+```
+
+---
+
+## Storage Comparison
+
+### Budget Phone (16 GB):
+```
+System: 5 GB
+Apps (FB, Messenger, etc): 6 GB
+Photos: 3 GB
+Available: 2 GB
+
+Native App: 50-200 MB each
+PWA: 10-50 MB each
+
+Can install:
+- 10 native apps, OR
+- 40 PWAs!
+
+PWA advantage: 4x more apps fit!
+```
+
+---
+
+## Monthly Cost Breakdown
+
+### Heavy User (50 visits/month):
+
+**Regular Website:**
+```
+- Homepage loads: 50 × ₱10 = ₱500
+- API calls: 200 × ₱2 = ₱400
+- Images: 100 × ₱5 = ₱500
+Total: ₱1,400/month
+```
+
+**PWA:**
+```
+- Initial install: ₱50 (month 1 only)
+- Homepage loads: 50 × ₱0 = ₱0
+- API calls: 200 × ₱2 = ₱400
+- Images: 100 × ₱0 = ₱0 (cached)
+Total: ₱450 first month, ₱400 after
+```
+
+**Annual Savings:**
+```
+Year 1: ₱1,400 × 12 - (₱450 + ₱400 × 11) = ₱12,050
+Year 2+: ₱1,400 × 12 - ₱400 × 12 = ₱12,000/year
+
+5-year savings: ₱60,050 per user!
+```
+
+---
+
+## Adoption Impact
+
+### If 10,000 Filipinos use your PWA:
+
+**Data Savings:**
+- Per user: ₱250/month
+- 10,000 users: ₱2,500,000/month
+- Annual: ₱30,000,000 saved!
+
+**Time Savings:**
+- Per user: 90 seconds/day = 45 minutes/month
+- 10,000 users: 450,000 minutes/month
+- That's 7,500 hours/month saved!
+
+**Reliability:**
+- Regular website: 62.5% uptime (brownouts)
+- PWA: 100% uptime
+- 37.5% more productivity!
+
+---
+
+## Decision Framework: PWA or Regular Website?
+
+### Choose PWA if:
+✅ Users have limited data (₱50-300/month)
+✅ Frequent brownouts in target area
+✅ Users visit frequently (daily/weekly)
+✅ Offline functionality needed
+✅ Mobile-first audience
+✅ Budget phones common
+
+### Choose Regular Website if:
+❌ Single-visit use case (rarely return)
+❌ Always online environment
+❌ Desktop-only users
+❌ Tiny website (< 50 KB total)
+❌ No repeat visits
+
+**Philippine Verdict:**
+For 95% of Filipino web apps → **Choose PWA!**
+The benefits far outweigh the tiny extra development cost.
+
+**Referenced in Lecture:** Section 2 (Why PWAs Matter in Philippines), Section 9 (When to Use PWAs)

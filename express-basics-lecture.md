@@ -54,6 +54,257 @@ A complete web application that:
 
 ---
 
+## 🌉 Section 0: The Frontend → Backend Bridge
+
+Before we dive into backend code, let's understand **why** we need it and **what changes** when we move from frontend to backend development.
+
+### What You Already Know (Frontend)
+
+You've learned to build websites with:
+- **HTML** - Structure and content
+- **CSS** - Styling and layout
+- **JavaScript** - Interactivity and behavior
+- **fetch()** - Getting data from somewhere else
+
+**Where these run:** In the **browser** (Chrome, Firefox, Edge)
+
+**What you could build:**
+- Static portfolios
+- Interactive calculators
+- Weather dashboards (fetching from APIs)
+- Games
+- Form validation
+
+**Limitations:**
+- Can't save data permanently (only in browser's localStorage)
+- Can't protect secrets (API keys visible in source code)
+- Can't handle multiple users
+- Can't create custom URLs (stuck with files like `index.html`, `about.html`)
+- Can't process payments, send emails, etc.
+
+### What Backend Adds
+
+**Backend = Server-side code** that runs on a computer (your laptop or a hosting server), not in the browser.
+
+**New capabilities:**
+1. **Permanent Data Storage** - Save to files or databases
+2. **Secret Management** - Hide API keys, passwords safely
+3. **Custom URLs** - `/about`, `/products/123`, `/users/profile`
+4. **User Accounts** - Login, sessions, authentication
+5. **Server-Side Processing** - Calculations, image resizing, etc.
+6. **Real-Time Features** - Chat, notifications, live updates
+7. **Email/SMS** - Send messages automatically
+8. **Payment Processing** - Accept payments securely
+
+### The Mental Shift
+
+| Frontend Mindset | Backend Mindset |
+|------------------|-----------------|
+| "User clicked button" | "Server received request" |
+| `onClick` event handlers | Routes (URL patterns) |
+| DOM manipulation | Sending HTML/JSON |
+| `fetch()` to get data | **Being** the API that sends data |
+| Files opened directly | Server serves files |
+| One user (you) | Many users simultaneously |
+| Browser console for debugging | Terminal/logs for debugging |
+
+**Key insight:** You're switching from **consuming APIs** to **creating APIs**.
+
+### Philippine Example: Sari-Sari Store Evolution
+
+**Frontend only (what you've built so far):**
+```
+Store Catalog Website
+- HTML page with products
+- JavaScript to filter/search
+- Data hardcoded in JavaScript or loaded from static JSON
+- Each customer opens the file directly
+```
+
+**Limitations:**
+- Aling Rosa can't update inventory (needs to edit HTML/JSON)
+- No shopping cart that saves
+- No order tracking
+- No customer accounts
+- Can't show "in stock" vs "out of stock" in real-time
+
+**With Backend (what we're building now):**
+```
+Store Management System
+- Server runs on a computer
+- Products stored in JSON file (or database)
+- Aling Rosa can add/edit/delete products through web forms
+- Shopping cart saves to server
+- Order history tracked
+- Customer accounts with login
+- Real-time inventory updates
+```
+
+**The flow:**
+1. Customer visits `http://localhost:3000/products`
+2. Express server receives request
+3. Server reads `products.json` file
+4. Server generates HTML page with current data
+5. Server sends HTML to customer's browser
+6. Customer sees up-to-date product list
+
+### What Changes in Your Code
+
+**Frontend JavaScript (runs in browser):**
+```javascript
+// Get data
+const response = await fetch('products.json');
+const products = await response.json();
+
+// Show data
+products.forEach(product => {
+  const div = document.createElement('div');
+  div.textContent = product.name;
+  document.body.appendChild(div);
+});
+```
+
+**Backend JavaScript with Express (runs on server):**
+```javascript
+// Import Express
+const express = require('express');
+const app = express();
+
+// Define what happens when someone visits /products
+app.get('/products', (req, res) => {
+  // Read products.json
+  const products = [
+    { name: 'Pancit Canton', price: 15 },
+    { name: 'Lucky Me', price: 12 }
+  ];
+  
+  // Send HTML response
+  res.send(`
+    <h1>Products</h1>
+    ${products.map(p => `<div>${p.name} - ₱${p.price}</div>`).join('')}
+  `);
+});
+
+// Start server (listen for requests)
+app.listen(3000, () => {
+  console.log('Server running on http://localhost:3000');
+});
+```
+
+**Key differences:**
+- No DOM manipulation (`document.getElementById()` doesn't exist on server!)
+- No `fetch()` - you're the one **receiving** requests now
+- `require()` instead of `<script>` tags
+- Server must **always be running** to work
+- Terminal output instead of browser console
+
+### New Concepts to Learn
+
+**1. Server**
+- A program that listens for requests and sends responses
+- Runs continuously (doesn't stop after one page load)
+- Handles multiple requests simultaneously
+
+**2. Routes**
+- URL patterns that trigger different code
+- `/` = home page
+- `/products` = products list
+- `/about` = about page
+
+**3. Request/Response Cycle**
+- **Request:** Browser asks for something (`GET /products`)
+- **Response:** Server sends back HTML, JSON, or files
+
+**4. Template Engines (EJS)**
+- Like HTML with superpowers
+- Can use variables, loops, conditionals
+- Server fills in data before sending to browser
+
+**5. Middleware**
+- Code that runs between request and response
+- Examples: logging, authentication, parsing form data
+
+**6. Environment**
+- Development: Your laptop (`localhost:3000`)
+- Production: Online server (Railway, Heroku, etc.)
+
+### The Learning Path
+
+```
+┌─────────────────────────────────────────┐
+│ Where You Are Now (Frontend Complete)   │
+├─────────────────────────────────────────┤
+│ HTML → CSS → JavaScript → fetch()       │
+│ Everything runs in the browser          │
+└─────────────────────────────────────────┘
+                  ↓
+┌─────────────────────────────────────────┐
+│ What We're Learning (Backend Basics)    │
+├─────────────────────────────────────────┤
+│ Command Line → Node.js → Express        │
+│ → EJS Templates → JSON Storage          │
+│ → Railway Deployment                    │
+│ Everything runs on a server             │
+└─────────────────────────────────────────┘
+                  ↓
+┌─────────────────────────────────────────┐
+│ Future Lectures (Full-Stack)            │
+├─────────────────────────────────────────┤
+│ Databases → Authentication → APIs       │
+│ → Real-time → Payment Integration       │
+│ Frontend + Backend working together     │
+└─────────────────────────────────────────┘
+```
+
+### Common Questions
+
+**Q: Do I stop using HTML/CSS/JavaScript?**
+- No! You still use them. Backend generates HTML and serves CSS/JS files.
+- Think: "Backend prepares the food (data), frontend presents it nicely (styling)"
+
+**Q: Can I build everything with just frontend?**
+- Simple sites: Yes (portfolios, landing pages)
+- Web apps with data: Need backend (stores, directories, social networks)
+
+**Q: Is backend harder than frontend?**
+- Different, not harder
+- Less visual (can't "see" results in browser immediately)
+- More about data flow and logic
+- Debugging with console.log() and terminal output
+
+**Q: Do I need to buy hosting now?**
+- Not yet! We'll run servers on our own laptop first
+- Later: Railway offers free tier perfect for learning
+
+**Q: What about databases?**
+- We'll use JSON files first (simpler)
+- Next lecture: SQLite database (more powerful)
+
+### Your Mindset Shift
+
+**Before (Frontend Developer thinking):**
+> "How do I display this data on the page?"
+
+**Now (Backend Developer thinking):**
+> "Where does this data come from? How do I store it? How do I send it to the browser?"
+
+**Soon (Full-Stack Developer thinking):**
+> "How do frontend and backend work together to create a complete experience?"
+
+### Ready?
+
+Take a breath. This is a **big shift** in how you think about web development. It's normal to feel confused at first.
+
+**Remember:**
+- You're not starting from zero (you know JavaScript!)
+- Backend JavaScript uses the same syntax (variables, functions, loops)
+- We'll build up gradually (simple servers → complex apps)
+- Every concept has a "Try It" section
+
+Let's start with the foundation: **the command line**.
+
+---
+
 ## 📁 Section 1: Command Line Basics
 
 Before we build web apps, we need to learn to "talk" to our computer using text commands.
@@ -990,6 +1241,294 @@ In **Part 2**, we'll learn about **SQLite** - a real database that solves all th
 - ✅ Fast and scalable
 
 ![JSON vs Database](diagrams/json-vs-database.png)
+
+---
+
+## 🤔 When to Use Express (vs Static Sites, Other Frameworks)
+
+### ✅ Use Express When
+
+#### 1. **You Need Dynamic Content (Changes Based on User/Data)**
+```javascript
+// Static HTML - SAME for everyone
+<h1>Welcome to my store</h1>
+
+// Express + EJS - DIFFERENT for each user
+<h1>Welcome back, <%= username %>!</h1>
+<p>You have <%= itemCount %> items in cart</p>
+
+✅ GOOD: Sari-sari store with customer accounts
+❌ BAD: Simple "About Me" page (just use HTML)
+```
+
+#### 2. **You Need Forms That Save Data**
+```javascript
+// Without Express:
+<form action="mailto:you@email.com">  // Opens email app ❌
+  <input name="name">
+</form>
+
+// With Express:
+app.post('/submit', (req, res) => {
+  // Save to file/database ✅
+  // Send confirmation email ✅
+  // Redirect to thank you page ✅
+});
+
+✅ GOOD: Barangay clearance request system
+❌ BAD: Contact form that just sends one email (use Formspree)
+```
+
+#### 3. **You Have Multiple Pages That Share Layout**
+```html
+<!-- WITHOUT Express - Copy header/footer to every page ❌ -->
+<!-- about.html -->
+<header>Logo, Menu</header>
+<main>About content</main>
+<footer>Copyright</footer>
+
+<!-- contact.html -->
+<header>Logo, Menu</header>  <!-- DUPLICATED! -->
+<main>Contact content</main>
+<footer>Copyright</footer>   <!-- DUPLICATED! -->
+
+<!-- WITH Express + EJS - Write once ✅ -->
+<!-- layout.ejs -->
+<header>Logo, Menu</header>
+<%- body %>  <!-- Different for each page -->
+<footer>Copyright</footer>
+
+✅ GOOD: 10+ page website with consistent design
+❌ BAD: Single landing page (just use HTML)
+```
+
+#### 4. **You Need to Work With External APIs or Databases**
+```javascript
+// Can't do this in plain HTML ❌
+fetch('https://api.weather.com')  // CORS blocks you!
+
+// Express can fetch from server-side ✅
+app.get('/weather', async (req, res) => {
+  const data = await fetch('https://api.weather.com');
+  res.render('weather', { data });
+});
+
+✅ GOOD: Show barangay's weather forecast (API requires secret key)
+❌ BAD: Simple calculator (use JavaScript in browser)
+```
+
+### ❌ Don't Use Express When
+
+#### 1. **Simple Static Website (No Forms, No Data)**
+```markdown
+Project: Personal portfolio with 3 pages (home, projects, contact)
+- Just HTML, CSS, images
+- No user login, no database
+- Contact form uses Formspree or mailto
+
+❌ DON'T: Set up Node, Express, EJS
+✅ DO: Just write HTML files, host on GitHub Pages (FREE!)
+```
+
+#### 2. **You Need Real-Time Features**
+```javascript
+// Express is request/response - NOT real-time ❌
+app.get('/messages', (req, res) => {
+  res.json(messages);  // User must REFRESH to see new messages
+});
+
+// Use Socket.io or Supabase for real-time ✅
+✅ BETTER: Chat app needs WebSocket, not Express alone
+```
+
+#### 3. **Very High Traffic (Thousands of Users)**
+```markdown
+Express is single-threaded - one request at a time
+
+✅ GOOD: Barangay system (20 households, 100 requests/day)
+❌ BAD: National election voting system (millions of users)
+      → Use Next.js, serverless, or load balancers
+```
+
+#### 4. **Complex React/Vue Frontend**
+```markdown
+If you're building a modern SPA (Single Page Application):
+
+❌ DON'T: Express serving EJS templates
+✅ DO: React frontend + Express API backend (separate concerns)
+   OR: Next.js (React with server-side rendering built-in)
+```
+
+### 📊 Decision Framework
+
+| Need | Express? | Alternative |
+|------|----------|-------------|
+| **Static pages** | ❌ NO | Plain HTML + GitHub Pages |
+| **1-2 simple forms** | ❌ NO | HTML + Formspree/Netlify Forms |
+| **Dynamic content** | ✅ YES | Express + EJS |
+| **User accounts + data** | ✅ YES | Express + SQLite |
+| **Real-time chat** | ⚠️ MAYBE | Express + Socket.io OR Supabase |
+| **Complex SPA** | ⚠️ API ONLY | React frontend, Express API backend |
+| **Blog/CMS** | ❌ NO | WordPress, Ghost, or static site generator |
+| **E-commerce** | ❌ NO | Shopify, WooCommerce (unless learning) |
+
+### 🇵🇭 Philippine Context Examples
+
+#### Example 1: Sari-Sari Store Inventory
+```markdown
+FEATURES NEEDED:
+- ✅ Show inventory (read JSON)
+- ✅ Add new items (form + save to JSON)
+- ✅ Update stock (edit JSON)
+- ✅ Owner login (different view from customers)
+
+DECISION: Use Express ✅
+Why?
+- Dynamic content (different for owner vs customer)
+- Forms that save data
+- Multiple related pages (products, add, edit)
+- Can start with JSON, upgrade to SQLite later
+
+ALTERNATIVE if NO Express:
+- ❌ Can't save data (without server)
+- ❌ Can't have owner login (no sessions)
+- ❌ Must manually edit JSON file (not user-friendly)
+```
+
+#### Example 2: Barangay Announcements
+```markdown
+FEATURES NEEDED:
+- ✅ Show latest announcements
+- ✅ Captain can post new announcements
+- ✅ Residents can view only (no login)
+
+VERSION 1 (No Express): Static HTML
+- Captain updates HTML file manually
+- Re-upload to host every time
+- ❌ Not practical for daily updates
+
+VERSION 2 (Express + JSON): Dynamic
+- Captain fills form, Express saves to JSON
+- Announcements auto-display from JSON
+- ✅ Easy to update, no coding needed
+
+DECISION: Use Express ✅ (saves captain's time)
+```
+
+#### Example 3: Student Portfolio Website
+```markdown
+FEATURES NEEDED:
+- 5 pages: Home, About, Projects, Skills, Contact
+- Contact form sends email
+- No database, no user accounts
+
+DECISION: DON'T use Express ❌
+Why?
+- All content is static (doesn't change)
+- Contact form can use Formspree (free, no server)
+- GitHub Pages hosting = FREE (Express needs Railway = ₱5/month)
+
+REALITY CHECK:
+- Setting up Express: 30 minutes
+- Writing plain HTML: 30 minutes
+- Deployment: GitHub Pages (1 click) vs Railway (more complex)
+
+✅ Better choice: Plain HTML + CSS + Formspree
+💰 Savings: ₱5/month, simpler deployment
+```
+
+#### Example 4: School Library Book Tracking
+```markdown
+FEATURES NEEDED:
+- ✅ List all books (300+ books)
+- ✅ Librarian adds/edits books
+- ✅ Students search by title/author
+- ✅ Track borrowed books (who, when)
+
+DECISION: Use Express + SQLite ✅
+Why?
+- 300 books = too much for manual HTML
+- Search functionality needs database
+- Relational data: Books ↔ Students ↔ Borrowed
+- Multiple users (librarian + students)
+
+DON'T use plain JSON because:
+- ❌ JSON can't relate books to students easily
+- ❌ Search is slow with large JSON files
+- ❌ Multiple users = data conflicts
+
+✅ Best: Express + SQLite (covered in Part 2)
+```
+
+### 🎯 Quick Decision Guide
+
+**Ask these questions:**
+
+1. **"Does content change based on who's viewing?"**
+   - YES → Express
+   - NO → Static HTML
+
+2. **"Do I need to save user data?"**
+   - YES (complex data) → Express + Database
+   - YES (simple data) → Express + JSON
+   - NO → Static HTML
+
+3. **"How many pages share the same design?"**
+   - 10+ pages → Express + EJS (use layouts)
+   - 1-5 pages → HTML (just copy/paste)
+
+4. **"What's my budget for hosting?"**
+   - ₱0 → GitHub Pages (static only)
+   - ₱5/month → Railway (can run Express)
+   - ₱10+/month → More options
+
+5. **"How often does content change?"**
+   - Daily → Express (easy to update)
+   - Monthly → Could be static (manual edit OK)
+   - Yearly → Definitely static
+
+### 🎓 Learning Path Recommendations
+
+**If you're Grade 9 learning web dev:**
+
+```markdown
+WEEK 1-2: Start with Static HTML/CSS ✅
+- Build: Personal portfolio, simple landing pages
+- Learn: HTML structure, CSS styling
+- Host: GitHub Pages (free)
+- WHY: Understand basics before adding complexity
+
+WEEK 3-4: Add JavaScript ✅
+- Build: Calculator, to-do list (client-side only)
+- Learn: DOM manipulation, events
+- WHY: Learn programming logic
+
+WEEK 5-6: NOW learn Express ✅
+- Build: Blog, inventory system (with forms)
+- Learn: Server-side programming, templates
+- WHY: Ready to handle dynamic content
+
+❌ DON'T: Start with Express on day 1
+```
+
+### 📋 Best Practices Summary
+
+**DO:**
+- ✅ Use Express when you need forms that save data
+- ✅ Use Express when content changes based on user
+- ✅ Start with JSON, upgrade to database later
+- ✅ Consider hosting cost (Railway ₱5/month vs GitHub Pages free)
+- ✅ Use EJS templates for sites with 5+ pages
+- ✅ Keep it simple: Express + EJS is enough for most school projects
+
+**DON'T:**
+- ❌ Use Express for static sites (waste of time + money)
+- ❌ Use Express if free hosting is priority (use GitHub Pages)
+- ❌ Use JSON for complex data (books ↔ students) - use database
+- ❌ Overcomplicate: Don't add Express just because "it's professional"
+- ❌ Skip learning static HTML first (understand basics before Express)
+
+**🇵🇭 Reality Check:** Most Grade 9 projects DON'T need Express. But when you DO need it (forms, dynamic content, user accounts), Express is the simplest server solution to learn.
 
 ---
 

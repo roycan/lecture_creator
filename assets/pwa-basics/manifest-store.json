@@ -1,0 +1,113 @@
+{
+  "name": "Tindahan ni Aling Rosa - Sari-Sari Store",
+  "short_name": "Store PH",
+  "description": "Inventory and sales tracker for sari-sari store owners",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2196F3",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity", "utilities"],
+  "screenshots": [
+    {
+      "src": "screenshot-home.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "label": "Store inventory dashboard"
+    },
+    {
+      "src": "screenshot-products.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "label": "Product management"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Add Sale",
+      "short_name": "Sale",
+      "description": "Quickly record a sale",
+      "url": "/add-sale",
+      "icons": [
+        {
+          "src": "icon-sale.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Check Inventory",
+      "short_name": "Inventory",
+      "description": "View current stock levels",
+      "url": "/inventory",
+      "icons": [
+        {
+          "src": "icon-inventory.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "lang": "tl-PH",
+  "dir": "ltr"
+}

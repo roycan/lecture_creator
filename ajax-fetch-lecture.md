@@ -675,6 +675,335 @@ Students pick one theme and build a data dashboard with multiple fetch calls, ag
 
 ---
 
+## When to Use Fetch/AJAX (vs Other Approaches)
+
+### ✅ Use Fetch When:
+
+**1. Loading Data Without Page Reload**
+```javascript
+// Perfect: Update content dynamically
+async function loadLatestNews() {
+    const news = await fetch('/api/news').then(r => r.json());
+    displayNews(news);  // Page stays, content updates!
+}
+```
+**Why:** Better UX, faster, no page flicker
+
+**Philippine Example:** Load latest announcements without refreshing entire barangay website
+
+**2. Submitting Forms Asynchronously**
+```javascript
+// Send data without leaving page
+async function submitClearance(formData) {
+    const response = await fetch('/api/clearance', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(formData)
+    });
+    
+    if (response.ok) {
+        showSuccess('Application submitted!');
+    }
+}
+```
+**Why:** User sees confirmation instantly, no page reload
+
+**3. Real-Time Data Updates**
+```javascript
+// Poll for updates every 30 seconds
+setInterval(async () => {
+    const prices = await fetch('/api/prices').then(r => r.json());
+    updatePriceDisplay(prices);
+}, 30000);
+```
+**Philippine Example:** Sari-sari store price checker - updates prices from supplier API
+
+**4. Multiple Independent Data Sources**
+```javascript
+// Load from different sources in parallel
+const [students, grades, attendance] = await Promise.all([
+    fetch('/api/students').then(r => r.json()),
+    fetch('/api/grades').then(r => r.json()),
+    fetch('/api/attendance').then(r => r.json())
+]);
+```
+**Why:** Faster than sequential requests
+
+---
+
+### ❌ Don't Use Fetch When:
+
+**1. Initial Page Load (Use Server-Side Rendering)**
+```html
+<!-- ❌ BAD: Slow, SEO-unfriendly -->
+<script>
+    fetch('/api/products').then(r => r.json())
+        .then(products => displayProducts(products));
+</script>
+
+<!-- ✅ BETTER: Server renders HTML directly -->
+<ul>
+    <li>Product 1</li>
+    <li>Product 2</li>
+</ul>
+```
+**Why:** Faster first paint, better for SEO, works without JavaScript
+
+**2. Large File Downloads**
+```javascript
+// ❌ BAD: Downloading 500 MB file with fetch
+// Loads entire file into memory, crashes browser on budget phones
+
+// ✅ BETTER: Direct <a> download link
+<a href="/files/large-video.mp4" download>Download Video</a>
+```
+
+**3. User Already Expects Full Page Reload**
+```javascript
+// ❌ Overengineered: Using fetch for simple links
+<a href="#" onclick="fetchAndDisplay('/about')">About</a>
+
+// ✅ Simpler: Just use normal link
+<a href="/about">About</a>
+```
+**When:** Navigation between completely different pages
+
+**4. No Internet Connection Required**
+```javascript
+// ❌ BAD: Fetching data that could be embedded
+fetch('cities.json').then(r => r.json());
+
+// ✅ BETTER: Include data directly in page
+const cities = ['Manila', 'Cebu', 'Davao', 'Quezon City'];
+```
+**Philippine Context:** Avoid fetch for static data - works during brownouts!
+
+---
+
+### 🤔 Fetch vs Alternatives: Decision Framework
+
+| Scenario | Use Fetch | Use Regular Link/Form | Use WebSocket |
+|----------|-----------|----------------------|---------------|
+| Update part of page | ✅ Yes | ❌ Reloads whole page | - |
+| Submit form with feedback | ✅ Yes | ❌ No instant feedback | - |
+| Navigate to new page | ❌ No | ✅ Yes | - |
+| Real-time chat | ❌ Too slow | ❌ No | ✅ Yes |
+| Polling every 5 seconds | ✅ Yes | ❌ No | ⚠️ WebSocket better |
+| One-time data load | ✅ Yes | ✅ Either works | - |
+| Download large file | ❌ No | ✅ Yes | - |
+| Offline-first app | ❌ Not alone | - | - |
+| SEO important | ❌ No (client-side) | ✅ Yes (server-side) | - |
+
+---
+
+### 📱 Philippine Context Examples
+
+**Barangay Clearance System:**
+```javascript
+// ✅ Use Fetch: Check application status without reload
+async function checkStatus(referenceNumber) {
+    const status = await fetch(`/api/clearance/${referenceNumber}`)
+        .then(r => r.json());
+    
+    statusDisplay.textContent = status.message;
+    // User sees update without reloading form
+}
+
+// ❌ Don't Use Fetch: Initial form display
+// Server should render the form directly (faster, works without JS)
+```
+
+**Sari-Sari Store Inventory:**
+```javascript
+// ✅ Use Fetch: Update stock quantity
+async function updateStock(productId, quantity) {
+    await fetch(`/api/products/${productId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({quantity})
+    });
+    
+    // Update display immediately
+    stockDisplay.textContent = quantity;
+}
+
+// ✅ Use Fetch: Search products as user types
+searchInput.addEventListener('input', debounce(async () => {
+    const results = await fetch(`/api/search?q=${searchInput.value}`)
+        .then(r => r.json());
+    displayResults(results);
+}, 300));
+```
+
+**Student Grade Portal:**
+```javascript
+// ✅ Use Fetch: Load grades for selected quarter
+async function loadGrades(quarter) {
+    const grades = await fetch(`/api/grades?quarter=${quarter}`)
+        .then(r => r.json());
+    displayGrades(grades);
+    // No page reload, instant switch between quarters
+}
+
+// ❌ Don't Use Fetch: Download grade report PDF
+// Just use: <a href="/reports/grades.pdf" download>Download</a>
+```
+
+---
+
+### 💡 Quick Decision Guide
+
+**Ask yourself:**
+
+1. **Does data change frequently?**
+   - Yes, real-time → Fetch + polling or WebSocket
+   - No, static → Embed in page (no fetch)
+
+2. **Is it critical for first page load?**
+   - Yes → Server-side render (no fetch)
+   - No, can load later → Fetch
+
+3. **Will it work offline?**
+   - Must work offline → Don't rely on fetch alone
+   - Online only → Fetch is fine
+
+4. **Is the data large (>1 MB)?**
+   - Yes → Direct download link, not fetch
+   - No → Fetch is fine
+
+5. **Does user expect page to stay?**
+   - Yes (updating cart, checking status) → Fetch
+   - No (navigating to About page) → Regular link
+
+---
+
+### 🎯 Philippine-Specific Considerations
+
+**Slow Internet (3G/4G):**
+```javascript
+// ✅ Good: Show loading state immediately
+button.textContent = 'Loading...';
+const data = await fetch('/api/data').then(r => r.json());
+
+// ✅ Good: Add timeout for slow connections
+const controller = new AbortController();
+const timeout = setTimeout(() => controller.abort(), 5000);
+
+try {
+    const response = await fetch('/api/data', {
+        signal: controller.signal
+    });
+} catch (error) {
+    if (error.name === 'AbortError') {
+        showError('Connection too slow. Try again?');
+    }
+} finally {
+    clearTimeout(timeout);
+}
+```
+
+**Data Costs (₱1-5 per MB):**
+```javascript
+// ✅ Good: Cache responses to save data
+const cache = {};
+
+async function fetchWithCache(url) {
+    if (cache[url]) {
+        return cache[url];  // Free! No data cost
+    }
+    
+    const data = await fetch(url).then(r => r.json());
+    cache[url] = data;
+    return data;
+}
+
+// ❌ Bad: Fetching same data repeatedly
+// User pays ₱5 for each fetch!
+```
+
+**Brownouts (No Power/Internet):**
+```javascript
+// ✅ Good: Provide offline fallback
+async function loadData() {
+    try {
+        const data = await fetch('/api/data').then(r => r.json());
+        localStorage.setItem('cachedData', JSON.stringify(data));
+        return data;
+    } catch (error) {
+        // Use cached data during brownout
+        const cached = localStorage.getItem('cachedData');
+        if (cached) {
+            showWarning('Using offline data');
+            return JSON.parse(cached);
+        }
+        throw error;
+    }
+}
+```
+
+**Budget Phones (Limited Memory):**
+```javascript
+// ✅ Good: Load data in chunks
+async function loadStudents(page = 1, perPage = 20) {
+    const data = await fetch(`/api/students?page=${page}&limit=${perPage}`)
+        .then(r => r.json());
+    return data;
+}
+
+// ❌ Bad: Load 10,000 students at once
+// Crashes phone, uses all data allowance
+```
+
+---
+
+### ✅ Best Practices Summary
+
+**DO:**
+- Use fetch for dynamic content updates
+- Show loading states (slow Philippine internet)
+- Handle errors gracefully (spotty connections)
+- Cache responses when possible (save data costs)
+- Provide offline fallbacks (brownouts common)
+- Use async/await for readable code
+- Set reasonable timeouts (3-5 seconds)
+
+**DON'T:**
+- Fetch data that could be embedded in HTML
+- Forget error handling (networks fail!)
+- Fetch large files (use direct downloads)
+- Rely solely on fetch for critical content (SEO, first paint)
+- Fetch repeatedly without caching (wastes data)
+- Forget about users without internet
+
+---
+
+### 📊 Data Cost Comparison
+
+**Without Fetch (Server-Side Render):**
+```
+Barangay clearance form:
+- Initial page load: 100 KB = ₱10
+- Submit form: 5 KB = ₱0.50
+- View result: 100 KB = ₱10 (full page reload)
+Total: 210 KB = ₱21 per submission
+```
+
+**With Fetch (Client-Side Updates):**
+```
+Barangay clearance form:
+- Initial page load: 100 KB = ₱10 (once)
+- Submit form: 5 KB = ₱0.50 (fetch)
+- View result: 2 KB = ₱0.20 (JSON only)
+Total: 107 KB = ₱10.70 per submission
+SAVINGS: ₱10.30 per submission (49% less!)
+```
+
+**For 100 monthly users:**
+- Without fetch: ₱2,100
+- With fetch: ₱1,070
+- **Total savings: ₱1,030/month!**
+
+---
+
 ## Troubleshooting & Tips
 
 ### CORS Errors

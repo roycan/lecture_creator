@@ -1,0 +1,67 @@
+%% Git Three-Tree Architecture
+%% Shows Working Directory, Staging Area, and Repository relationship
+
+graph LR
+    subgraph Working_Directory[Working Directory]
+        Files[Your Files<br/>index.html<br/>style.css<br/>app.js]
+    end
+    
+    subgraph Staging_Area[Staging Area<br/>Index]
+        Staged[Staged Changes<br/>Ready to commit]
+    end
+    
+    subgraph Local_Repo[Local Repository<br/>.git directory]
+        Commits[Commit History<br/>Snapshots of project]
+    end
+    
+    subgraph Remote_Repo[Remote Repository<br/>GitHub]
+        Origin[origin/main<br/>Shared history]
+    end
+    
+    Files --> |git add| Staged
+    Staged --> |git commit| Commits
+    Commits --> |git push| Origin
+    Origin --> |git pull| Commits
+    Commits --> |git checkout| Files
+    Origin --> |git clone| Local_Repo
+    
+    style Working_Directory fill:#e3f2fd
+    style Staging_Area fill:#fff9e6
+    style Local_Repo fill:#e8f5e9
+    style Remote_Repo fill:#fce4ec
+
+%% Alternative D2 version below:
+%% 
+%% Working Directory: {
+%%   shape: rectangle
+%%   Files: |md
+%%     Your Files
+%%     - index.html
+%%     - style.css
+%%     - app.js
+%%   |
+%% }
+%% 
+%% Staging Area: {
+%%   shape: rectangle
+%%   Staged: "Staged Changes\nReady to commit"
+%% }
+%% 
+%% Local Repository: {
+%%   shape: cylinder
+%%   Commits: "Commit History\nSnapshots"
+%% }
+%% 
+%% Remote Repository: {
+%%   shape: cloud
+%%   Origin: "origin/main\nShared history"
+%% }
+%% 
+%% Working Directory.Files -> Staging Area.Staged: git add
+%% Staging Area.Staged -> Local Repository.Commits: git commit
+%% Local Repository.Commits -> Remote Repository.Origin: git push
+%% Remote Repository.Origin -> Local Repository.Commits: git pull
+%% Local Repository.Commits -> Working Directory.Files: git checkout
+
+%% Usage: mermaid-cli
+%% Export: mmdc -i 06-three-tree-architecture.mmd -o ../diagrams/three-tree-architecture.png

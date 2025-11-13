@@ -1,0 +1,251 @@
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'fontSize':'14px'}}}%%
+flowchart TB
+    subgraph Browser["🌐 User's Browser"]
+        WebApp[Web Application<br/>HTML + CSS + JavaScript]
+        
+        subgraph ServiceWorkerScope["Service Worker Scope"]
+            SW[Service Worker<br/>sw.js]
+            
+            subgraph Events["Event Handlers"]
+                InstallEvent[install event<br/>💾 Cache assets]
+                ActivateEvent[activate event<br/>🧹 Clean old caches]
+                FetchEvent[fetch event<br/>🔄 Intercept requests]
+                SyncEvent[sync event<br/>📤 Background sync]
+                PushEvent[push event<br/>🔔 Notifications]
+            end
+        end
+        
+        CacheStorage[(Cache Storage<br/>📦 Offline assets)]
+        IndexedDB[(IndexedDB<br/>💾 Offline data)]
+    end
+    
+    subgraph ClientSide["Client-Side Files"]
+        Manifest[manifest.json<br/>📱 App metadata]
+        Icons[App Icons<br/>🖼️ 192x192, 512x512]
+        HTML[index.html<br/>📄 App shell]
+        CSS[styles.css<br/>🎨 Styling]
+        JS[app.js<br/>⚙️ Application logic]
+    end
+    
+    Network[🌍 Network/Internet<br/>API, Images, Data]
+    
+    %% Connections
+    WebApp -->|Registers| SW
+    Manifest -->|Links to| Icons
+    HTML -->|Links to| Manifest
+    HTML -->|Loads| CSS
+    HTML -->|Loads| JS
+    
+    SW -->|Handles| InstallEvent
+    SW -->|Handles| ActivateEvent
+    SW -->|Handles| FetchEvent
+    SW -->|Handles| SyncEvent
+    SW -->|Handles| PushEvent
+    
+    InstallEvent -->|Caches files| CacheStorage
+    ActivateEvent -->|Cleans up| CacheStorage
+    FetchEvent -->|Reads from| CacheStorage
+    FetchEvent -->|Requests from| Network
+    
+    WebApp -->|Stores data| IndexedDB
+    WebApp -->|Reads data| IndexedDB
+    
+    Network -.->|Response| FetchEvent
+    FetchEvent -.->|Saves| CacheStorage
+    
+    SyncEvent -.->|When online| Network
+    PushEvent -.->|From server| Network
+    
+    style WebApp fill:#e3f2fd
+    style SW fill:#fff9e6
+    style CacheStorage fill:#e8f5e9
+    style IndexedDB fill:#e8f5e9
+    style Manifest fill:#fce4ec
+    style Network fill:#f3e5f5
+```
+
+## Export Command
+```bash
+mmdc -i 03-pwa-architecture.mmd -o ../../diagrams/pwa-architecture.png -b transparent -w 2400
+```
+
+## Architecture Components
+
+### 1. Web Application (HTML + CSS + JS)
+**Purpose:** The visible part users interact with
+
+**Key Files:**
+- `index.html` - App shell structure
+- `styles.css` - Visual styling
+- `app.js` - Application logic and interactivity
+
+**Philippine Context:**
+- Must be lightweight (budget phones: 1-2GB RAM)
+- Optimized for 2G/3G speeds
+- Touch-friendly (mobile-first)
+
+---
+
+### 2. Service Worker (`sw.js`)
+**Purpose:** Runs in background, intercepts network requests
+
+**Event Handlers:**
+- **install** - Caches files when first installed
+- **activate** - Cleans up old cache versions
+- **fetch** - Intercepts network requests (cache/network logic)
+- **sync** - Sends data when connection returns
+- **push** - Receives push notifications
+
+**Philippine Benefits:**
+- Works during brownouts (cached content)
+- Saves data costs (serves from cache)
+- Background sync (sends data when online)
+
+---
+
+### 3. manifest.json
+**Purpose:** Tells browser how to install and display the app
+
+**Required Fields:**
+```json
+{
+  "name": "Sari-Sari Store Inventory",
+  "short_name": "Store PH",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2196F3",
+  "icons": [...]
+}
+```
+
+**Makes App:**
+- Installable on home screen
+- Look native (no browser UI)
+- Have custom splash screen
+
+---
+
+### 4. Cache Storage
+**Purpose:** Stores cached files and responses
+
+**What's Stored:**
+- HTML files (app shell)
+- CSS files (styling)
+- JavaScript files (app logic)
+- Images (icons, photos)
+- API responses (optional)
+
+**Philippine Impact:**
+- 500 KB app cached = works fully offline
+- Saves ₱200-300/month in data costs
+- Instant loading (no network wait)
+
+---
+
+### 5. IndexedDB
+**Purpose:** Stores structured data (user data, offline forms)
+
+**Use Cases:**
+- Student grades (offline view)
+- Inventory items (store app)
+- Draft messages (send when online)
+- Form submissions (background sync)
+
+**Advantages:**
+- Large storage (50-100 MB typical)
+- Works completely offline
+- Syncs when connection returns
+
+---
+
+### 6. Network/Internet
+**Purpose:** Fetches fresh data and updates
+
+**When Used:**
+- Fetching latest prices/news
+- Sending form submissions
+- Downloading new content
+- Receiving push notifications
+
+**PWA Optimization:**
+- Service worker decides: cache or network?
+- Falls back to cache when offline
+- Background sync queues requests
+
+---
+
+## How They Work Together
+
+### Initial Load (First Visit):
+1. User visits URL
+2. Browser loads `index.html`
+3. HTML loads `manifest.json`, CSS, JS
+4. JS registers `sw.js`
+5. Service worker installs, caches files
+6. App fully functional
+
+### Subsequent Loads (Cache):
+1. User opens app
+2. Service worker intercepts request
+3. Returns cached `index.html` (instant!)
+4. App loads from cache (no network)
+5. SW checks for updates in background
+
+### Offline Usage:
+1. User opens app (no internet)
+2. Service worker serves from cache
+3. App works fully offline
+4. User creates data (stored in IndexedDB)
+5. Background sync queues network requests
+6. When online, sync sends data automatically
+
+### Update Flow:
+1. New `sw.js` deployed to server
+2. Browser detects new service worker
+3. Downloads and installs new SW
+4. On next visit, new SW activates
+5. Cleans up old caches
+6. User gets updated app
+
+---
+
+## Philippine Context Example
+
+**Scenario:** Barangay Announcement Board App
+
+### Files:
+- `index.html` (10 KB) - App structure
+- `style.css` (15 KB) - Bulma CSS
+- `app.js` (20 KB) - Logic
+- `sw.js` (5 KB) - Service worker
+- Icons (50 KB) - 192x192, 512x512
+- **Total:** 100 KB initial download
+
+### manifest.json:
+```json
+{
+  "name": "Barangay Announcements",
+  "short_name": "Brgy Board",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192"},
+    {"src": "icon-512.png", "sizes": "512x512"}
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#0066cc"
+}
+```
+
+### Cache Strategy:
+- **Cache First:** HTML, CSS, JS, icons (never refetch)
+- **Network First:** Announcements API (fresh data)
+- **Stale While Revalidate:** User profiles
+
+### Cost Analysis:
+- Initial download: 100 KB = ₱10
+- Daily API call: 5 KB/day × 30 = 150 KB = ₱15/month
+- **Total:** ₱25/month vs ₱280 without caching!
+
+**Referenced in Lecture:** Section 1 (What is PWA), Section 3 (manifest.json), Section 4 (Service Workers)

@@ -1,0 +1,64 @@
+%% Pull Request Review Process
+%% Shows complete PR workflow from creation to merge
+
+graph TB
+    Start([Developer completes feature]) --> Push[git push origin<br/>feature-branch]
+    Push --> CreatePR[Create Pull Request<br/>on GitHub]
+    
+    CreatePR --> FillPR[Fill PR Template:<br/>- Title<br/>- Description<br/>- Screenshots<br/>- Testing notes]
+    
+    FillPR --> RequestReview[Request reviewers:<br/>- Team lead<br/>- Senior dev<br/>- QA tester]
+    
+    RequestReview --> AutoChecks[Automated Checks:<br/>✓ Tests pass<br/>✓ Build succeeds<br/>✓ No conflicts]
+    
+    AutoChecks --> |Checks fail| FixIssues[Fix issues<br/>Push new commits]
+    FixIssues --> AutoChecks
+    
+    AutoChecks --> |Checks pass| CodeReview[Code Review]
+    
+    CodeReview --> Reviewer1{Reviewer 1<br/>checks code}
+    CodeReview --> Reviewer2{Reviewer 2<br/>checks code}
+    
+    Reviewer1 --> |Request changes| Changes1[Add comments:<br/>- Code style<br/>- Logic issues<br/>- Suggestions]
+    Reviewer2 --> |Request changes| Changes2[Add comments:<br/>- Missing tests<br/>- Documentation]
+    
+    Changes1 --> Respond[Developer responds:<br/>- Makes changes<br/>- Explains decisions<br/>- Pushes updates]
+    Changes2 --> Respond
+    
+    Respond --> ReReview[Re-review changes]
+    ReReview --> Reviewer1
+    
+    Reviewer1 --> |Approve| Approve1[✓ Approved by<br/>Reviewer 1]
+    Reviewer2 --> |Approve| Approve2[✓ Approved by<br/>Reviewer 2]
+    
+    Approve1 --> AllApproved{All reviewers<br/>approved?}
+    Approve2 --> AllApproved
+    
+    AllApproved --> |No| WaitMore[Wait for more<br/>approvals]
+    WaitMore --> CodeReview
+    
+    AllApproved --> |Yes| MergeStrategy{Choose merge<br/>strategy}
+    
+    MergeStrategy --> |Clean history| Squash[Squash and merge<br/>Combine all commits]
+    MergeStrategy --> |Keep commits| Merge[Create merge commit<br/>Preserve history]
+    MergeStrategy --> |Linear history| Rebase[Rebase and merge<br/>Replay commits]
+    
+    Squash --> Merged[Merged to main!]
+    Merge --> Merged
+    Rebase --> Merged
+    
+    Merged --> ClosePR[PR closed automatically]
+    ClosePR --> DeleteBranch[Delete feature branch<br/>Keep repo clean]
+    DeleteBranch --> Done([Feature deployed!<br/>Team syncs changes])
+    
+    style Start fill:#e1f5ff
+    style CreatePR fill:#fff3e0
+    style CodeReview fill:#fff9e6
+    style Reviewer1 fill:#e3f2fd
+    style Reviewer2 fill:#e3f2fd
+    style AllApproved fill:#fffde7
+    style Merged fill:#c8e6c9
+    style Done fill:#a5d6a7
+
+%% Usage: mermaid-cli
+%% Export: mmdc -i 07-pull-request-review.mmd -o ../diagrams/pull-request-review.png

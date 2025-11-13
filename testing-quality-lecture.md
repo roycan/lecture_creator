@@ -1866,6 +1866,274 @@ Prepare for demos:
 
 ---
 
+## 🤔 When to Use Testing (vs Just Building and Hoping)
+
+### ✅ Use Testing When
+
+#### 1. **Project Has Real Users**
+```markdown
+✅ GOOD: Barangay clearance system (20 households will use it)
+- Test all edge cases (special characters, long names)
+- UAT with barangay captain before launch
+- Edge case: What if someone has no middle name?
+
+❌ BAD: Personal study notes app (only you use it)
+- Just build and fix bugs as you find them
+- No need for formal test cases
+```
+
+#### 2. **Data is Important**
+```javascript
+// Student grades - ONE mistake affects future
+✅ GOOD: Test thoroughly
+- Test adding grade: 75, 85, 95
+- Test edge case: 100, 0, decimal grades
+- Test calculation: average, passing/failing status
+- Write 10+ test cases before showing teacher
+
+// Display current time - if wrong, just refresh
+❌ BAD: No need for extensive testing
+- Just check if it shows time
+- Users can reload if it breaks
+```
+
+#### 3. **You're Working with a Client**
+```markdown
+✅ MUST DO:
+1. Write user stories based on client's description
+2. Get approval on acceptance criteria BEFORE coding
+3. Smoke test before showing to client
+4. Let client do UAT - don't just show them a demo
+5. Prepare demo script for final presentation
+
+Why? Client pays for what they ASKED FOR, not what you BUILT.
+If user stories don't match what client wanted = rework (unpaid).
+```
+
+#### 4. **Project Will Grow Over Time**
+```javascript
+// Sari-sari store system v1: Just sales recording
+// Future plans: Inventory, credit tracking, reports
+
+✅ GOOD: Build test case library now
+- Test: Record sale (happy path)
+- Test: Delete wrong sale (error handling)
+- Test: Daily total calculation (edge cases)
+- When you add inventory later, old features still work!
+
+// One-time school project - submit and forget
+❌ BAD: Just test manually once
+```
+
+### ❌ Don't Spend Too Much Time Testing When
+
+#### 1. **Learning/Experimenting**
+```javascript
+// Trying out a new JavaScript array method
+❌ DON'T: Write formal test cases
+
+✅ DO: Just console.log() and see what happens
+```
+
+#### 2. **Throwaway Prototype**
+```markdown
+Building quick mockup to show client what layout could look like:
+❌ DON'T: Test button clicks, form validation, edge cases
+✅ DO: Just make it look good, client will give feedback first
+```
+
+#### 3. **Very Simple, Obvious Code**
+```javascript
+// Showing/hiding a div
+function toggle() {
+  element.classList.toggle('hidden');
+}
+
+❌ DON'T: Write 10 test cases
+✅ DO: Click button once, check if it works
+```
+
+#### 4. **Deadline is Tomorrow and It's 90% Done**
+```markdown
+Reality check:
+❌ DON'T: Start writing test case library at 11pm
+✅ DO: Smoke test (2 minutes) + test the NEW feature you just added
+      Save formal testing for after initial launch
+```
+
+### 📊 Decision Framework
+
+| Situation | Testing Needed | Tools to Use |
+|-----------|---------------|--------------|
+| **Client project** | HIGH | User stories, acceptance criteria, UAT form, demo script |
+| **Team project** | HIGH | Smoke test, test cases, bug reports (teammates need to understand) |
+| **Personal project (will publish)** | MEDIUM | Smoke test, edge case testing, self-UAT |
+| **School assignment (one-time)** | MEDIUM | Smoke test, teacher = client (check rubric) |
+| **Learning/experimenting** | LOW | Just try it, console.log(), fix as you go |
+| **Prototype (will rebuild)** | VERY LOW | Manual click-through, don't document |
+
+### 🇵🇭 Philippine Context Examples
+
+#### Example 1: Barangay Clearance System
+```markdown
+SITUATION: Barangay captain asks you to build clearance request system.
+20 households will use it. Captain will pay ₱500 if it works well.
+
+✅ MUST DO:
+1. Write user stories WITH the captain
+   - "As a resident, I want to request clearance online"
+   - Get captain to confirm: "Yes, that's what I need"
+
+2. Define acceptance criteria BEFORE coding
+   - GIVEN resident fills out form WHEN submits THEN captain gets notification
+   - Show captain: "Is this what you meant?"
+
+3. Smoke test before showing captain (2 min)
+   - Does page load?
+   - Can I submit a request?
+   - Does captain see requests?
+
+4. Let captain do UAT (give UAT form)
+   - Don't just demo it - let captain TRY to break it
+   - Captain finds: "What if resident has really long name?"
+
+5. Test edge cases YOU didn't think of
+   - Name with Ñ, special characters
+   - Resident has no middle name
+   - Multiple requests from same person
+
+6. Demo day: Prepare script
+   - Show features captain cares about
+   - Have backup plan if brownout happens
+
+COST: 2 hours of testing
+BENEFIT: Captain pays ₱500, recommends you to other barangays (₱500 × 3 = ₱1,500)
+RISK IF YOU SKIP: Captain finds bugs, doesn't pay, tells others your work is sloppy
+```
+
+#### Example 2: School Group Project (4 members)
+```markdown
+SITUATION: Build appointment booking for school clinic.
+You're assigned the "cancel appointment" feature.
+
+✅ MUST DO:
+1. Write user story (share with team)
+   - "As a student, I want to cancel my appointment if I'm absent"
+
+2. Write test cases (teammates will test YOUR code)
+   - Test: Cancel within 24 hours - should work
+   - Test: Cancel on same day - should show warning
+   - Test: Cancel already cancelled - should show error
+
+3. Write bug report if you find issues in TEAMMATE's code
+   - Don't just say "booking doesn't work"
+   - Say: "GIVEN I have appointment today WHEN I try to cancel THEN it freezes"
+   - Teammate can fix it FAST with good bug report
+
+❌ DON'T: Skip documentation because "we can just ask each other"
+   - Someone gets sick, rest of team can't continue
+   - Teacher asks "who did what?" - no proof
+```
+
+#### Example 3: Personal Portfolio Website
+```markdown
+SITUATION: Building your portfolio to show future clients.
+5 pages, contact form, project showcase.
+
+✅ GOOD BALANCE:
+1. Smoke test (2 minutes)
+   - All pages load?
+   - Links work?
+   - Form submits?
+
+2. Test on ACTUAL device you expect clients to use
+   - Philippines: Most users on mobile (70%)
+   - Test on your Android phone (budget phone = real-world test)
+   - Brownout simulation: Turn off WiFi, check if it loads
+
+3. Edge cases for contact form
+   - Very long message (500 words)
+   - Email with weird format: "juan@test@mail.com"
+   - Phone number: 11 digits vs 10 digits vs with +63
+
+4. Ask friend to UAT (5 minutes)
+   - "Try to contact me using the form"
+   - Friend finds: "Submit button is hidden on my phone"
+
+❌ DON'T: Write 50 test cases for a 5-page site
+✅ DO: Focus on what clients will try first (contact form)
+```
+
+### 🎯 Quick Decision Guide
+
+**Ask these questions:**
+
+1. **"Will someone other than me use this?"**
+   - YES → Write user stories, test thoroughly
+   - NO → Just test the main functionality
+
+2. **"Is there money involved (payment/client/job)?"**
+   - YES → Do UAT, prepare demo, test edge cases
+   - NO → Smoke test is enough
+
+3. **"What happens if this breaks?"**
+   - USER LOSES DATA → Test extensively, write test cases
+   - USER JUST RELOADS PAGE → Basic testing is fine
+   - EMBARRASS YOURSELF IN DEMO → Prepare demo script, practice
+
+4. **"Do I need to prove I tested this (grade/client/team)?"**
+   - YES → Document everything (test cases, bug reports, UAT form)
+   - NO → Test, but don't need to document
+
+5. **"Will I update this later?"**
+   - YES → Build test case library (you'll forget what works)
+   - NO → Just test before submitting, done
+
+### 🎓 Philippine Student Reality
+
+**Time available:** 2 hours after school (before chores, homework, brownout at 9pm)
+
+**Good time investment:**
+```markdown
+✅ 15 minutes: Write user stories with client (saves hours of rework)
+✅ 2 minutes: Smoke test before showing teacher/client
+✅ 10 minutes: Test on your phone (70% of PH users on mobile)
+✅ 5 minutes: Write bug report teammate can actually understand
+
+❌ 30 minutes: Writing test cases for hello world program
+❌ 20 minutes: Testing spelling on every page (use browser spell-check)
+❌ 1 hour: Perfect demo script for 2-minute presentation
+```
+
+**Smart testing = Less debugging**
+- 10 minutes testing edge cases NOW
+- vs 1 hour fixing bugs client found later
+- vs Losing client because "it doesn't work"
+
+### 📋 Best Practices Summary
+
+**DO:**
+- ✅ Test with REAL devices (your budget Android phone = most of your users)
+- ✅ Test during brownout simulation (offline mode)
+- ✅ Let someone ELSE test (you're too familiar with your code)
+- ✅ Write down bugs WHILE testing (not from memory later)
+- ✅ Test on slow internet (2G/3G simulation in DevTools)
+- ✅ Test NEW features more than old features
+- ✅ Check client's acceptance criteria BEFORE saying "done"
+
+**DON'T:**
+- ❌ Test only on fast computer with good internet (not realistic)
+- ❌ Test only the happy path (users will find edge cases)
+- ❌ Skip testing because "it's simple" (simple code breaks too)
+- ❌ Test AFTER client sees it (test BEFORE demo)
+- ❌ Say "it works on my machine" (test on user's device)
+- ❌ Write test cases for EVERYTHING (focus on critical features)
+- ❌ Forget to test forms with realistic data (300-word message, not "test")
+
+**🇵🇭 Remember:** Testing saves money (no rework), saves data (fewer bugs = fewer deploys), saves reputation (clients recommend you to others).
+
+---
+
 ## 🎯 Practice Exercises (Session 2)
 
 **Session 2 focuses on professional workflows and client-facing testing:**

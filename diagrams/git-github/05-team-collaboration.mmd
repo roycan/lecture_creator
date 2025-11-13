@@ -1,0 +1,70 @@
+%% Team Collaboration Workflow
+%% Shows how multiple developers work together on one project
+
+graph TB
+    subgraph GitHub
+        Remote[Main Repository<br/>github.com/team/project<br/>Branch: main]
+    end
+    
+    subgraph Developer_1[Developer 1 - Frontend]
+        Clone1[git clone] --> Local1[Local Repo]
+        Local1 --> Branch1[git checkout -b<br/>feature-navbar]
+        Branch1 --> Work1[Code navbar]
+        Work1 --> Commit1[git commit]
+        Commit1 --> Push1[git push]
+    end
+    
+    subgraph Developer_2[Developer 2 - Backend]
+        Clone2[git clone] --> Local2[Local Repo]
+        Local2 --> Branch2[git checkout -b<br/>feature-api]
+        Branch2 --> Work2[Code API]
+        Work2 --> Commit2[git commit]
+        Commit2 --> Push2[git push]
+    end
+    
+    subgraph Developer_3[Developer 3 - Testing]
+        Clone3[git clone] --> Local3[Local Repo]
+        Local3 --> Branch3[git checkout -b<br/>fix-bugs]
+        Branch3 --> Work3[Fix bugs]
+        Work3 --> Commit3[git commit]
+        Commit3 --> Push3[git push]
+    end
+    
+    Remote --> Clone1
+    Remote --> Clone2
+    Remote --> Clone3
+    
+    Push1 --> PR1[Pull Request:<br/>feature-navbar]
+    Push2 --> PR2[Pull Request:<br/>feature-api]
+    Push3 --> PR3[Pull Request:<br/>fix-bugs]
+    
+    PR1 --> Review1{Code Review}
+    PR2 --> Review2{Code Review}
+    PR3 --> Review3{Code Review}
+    
+    Review1 --> |Approved| Merge1[Merge to main]
+    Review2 --> |Approved| Merge2[Merge to main]
+    Review3 --> |Approved| Merge3[Merge to main]
+    
+    Merge1 --> Remote
+    Merge2 --> Remote
+    Merge3 --> Remote
+    
+    Remote --> Pull1[Developer 1:<br/>git pull origin main]
+    Remote --> Pull2[Developer 2:<br/>git pull origin main]
+    Remote --> Pull3[Developer 3:<br/>git pull origin main]
+    
+    Pull1 --> Local1
+    Pull2 --> Local2
+    Pull3 --> Local3
+    
+    style Remote fill:#fce4ec
+    style Developer_1 fill:#e3f2fd
+    style Developer_2 fill:#e8f5e9
+    style Developer_3 fill:#fff9e6
+    style PR1 fill:#e1bee7
+    style PR2 fill:#e1bee7
+    style PR3 fill:#e1bee7
+
+%% Usage: mermaid-cli
+%% Export: mmdc -i 05-team-collaboration.mmd -o ../diagrams/team-collaboration.png

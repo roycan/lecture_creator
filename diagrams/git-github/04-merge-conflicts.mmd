@@ -1,0 +1,51 @@
+%% Merge Conflict Resolution Process
+%% Shows step-by-step conflict resolution
+
+graph TB
+    Start([Two developers editing<br/>same file]) --> Dev1[Developer 1<br/>edits index.html<br/>line 10: 'Hello World']
+    Start --> Dev2[Developer 2<br/>edits index.html<br/>line 10: 'Kumusta Mundo']
+    
+    Dev1 --> Commit1[Developer 1<br/>commits & pushes first]
+    Dev2 --> Commit2[Developer 2<br/>commits & tries to push]
+    
+    Commit1 --> Remote[GitHub Repository<br/>line 10: 'Hello World']
+    Commit2 --> Pull[Developer 2:<br/>git pull origin main]
+    
+    Remote --> Pull
+    Pull --> Conflict{Merge Conflict!}
+    
+    Conflict --> VSCode[Open in VS Code<br/>See conflict markers]
+    VSCode --> Markers["<<<<<<< HEAD<br/>Hello World<br/>=======<br/>Kumusta Mundo<br/>>>>>>>> incoming"]
+    
+    Markers --> Choose{Choose resolution}
+    Choose --> |Keep current| Option1[Accept Current Change]
+    Choose --> |Keep incoming| Option2[Accept Incoming Change]
+    Choose --> |Keep both| Option3[Accept Both Changes]
+    Choose --> |Manual edit| Option4[Edit manually]
+    
+    Option1 --> Resolve[Resolved:<br/>'Hello World']
+    Option2 --> Resolve2[Resolved:<br/>'Kumusta Mundo']
+    Option3 --> Resolve3[Resolved:<br/>'Hello World<br/>Kumusta Mundo']
+    Option4 --> Resolve4[Resolved:<br/>'Hello World / Kumusta Mundo']
+    
+    Resolve --> Stage[git add index.html]
+    Resolve2 --> Stage
+    Resolve3 --> Stage
+    Resolve4 --> Stage
+    
+    Stage --> CommitMerge[git commit -m<br/>'Resolve merge conflict']
+    CommitMerge --> PushFinal[git push origin main]
+    PushFinal --> Done([Conflict Resolved!<br/>Changes merged])
+    
+    style Start fill:#ffebee
+    style Conflict fill:#ff6b6b,color:#fff
+    style VSCode fill:#e3f2fd
+    style Choose fill:#fff9e6
+    style Option1 fill:#e8f5e9
+    style Option2 fill:#e8f5e9
+    style Option3 fill:#e8f5e9
+    style Option4 fill:#e8f5e9
+    style Done fill:#c8e6c9
+
+%% Usage: mermaid-cli
+%% Export: mmdc -i 04-merge-conflicts.mmd -o ../diagrams/merge-conflicts.png

@@ -1,0 +1,71 @@
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'fontSize':'16px'}}}%%
+stateDiagram-v2
+    [*] --> Installing: register()<br/>navigator.serviceWorker.register()
+    
+    Installing --> Installed: install event<br/>completes successfully
+    Installing --> Error: install event<br/>fails
+    
+    Installed --> Activating: waiting ends<br/>(no old SW or<br/>skipWaiting() called)
+    
+    Activating --> Activated: activate event<br/>completes
+    Activating --> Error: activate event<br/>fails
+    
+    Activated --> Idle: No fetch events
+    Activated --> Fetching: fetch event<br/>triggered
+    Fetching --> Idle: Response sent
+    
+    Idle --> Terminated: Browser closes<br/>or timeout
+    Terminated --> Fetching: New fetch event<br/>(SW wakes up)
+    
+    Activated --> Redundant: New SW<br/>takes over
+    Error --> [*]
+    Redundant --> [*]
+    
+    note right of Installing
+        📥 Downloading SW file
+        🔧 Parsing JavaScript
+        ⏳ Running install event
+        💾 Caching assets
+    end note
+    
+    note right of Activated
+        ✅ SW is in control
+        🌐 Intercepting fetches
+        🔄 Handling sync
+        📬 Processing messages
+    end note
+    
+    note right of Terminated
+        💤 SW sleeps to save memory
+        ⚡ Wakes up on events
+        🔄 Resumes from Activated state
+    end note
+```
+
+## Export Command
+```bash
+mmdc -i 01-service-worker-lifecycle.mmd -o ../../diagrams/service-worker-lifecycle.png -b transparent
+```
+
+## Description
+This diagram shows the complete lifecycle of a service worker, from initial registration to termination.
+
+**Key States:**
+1. **Installing** - Service worker is being downloaded and set up
+2. **Installed/Waiting** - Ready but waiting for old service worker to finish
+3. **Activating** - Taking control, good time for cache cleanup
+4. **Activated** - Fully in control, intercepting network requests
+5. **Idle** - Active but no current work
+6. **Fetching** - Actively handling network requests
+7. **Terminated** - Stopped to save memory (can wake up)
+8. **Redundant** - Replaced by newer service worker
+9. **Error** - Failed during install or activate
+
+**Philippine Context:**
+- Service workers help apps work offline (brownouts, spotty connections)
+- Once installed, app loads instantly (saves data)
+- Caching during install means fewer downloads (saves money)
+- Terminated state is memory-efficient (works on budget phones)
+
+**Referenced in Lecture:** Section 4 (Service Workers), Section 5 (Caching Strategies)
