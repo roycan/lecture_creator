@@ -1,0 +1,54 @@
+%% Git Branching Strategy Diagram
+%% Shows: main branch, feature branches, merging
+
+gitGraph
+    commit id: "Initial commit"
+    commit id: "Add HTML structure"
+    commit id: "Add CSS styling"
+    
+    branch feature-navbar
+    checkout feature-navbar
+    commit id: "Create navbar HTML"
+    commit id: "Style navbar"
+    commit id: "Add mobile menu"
+    
+    checkout main
+    branch feature-footer
+    checkout feature-footer
+    commit id: "Create footer"
+    commit id: "Style footer"
+    
+    checkout main
+    merge feature-navbar tag: "v1.1"
+    commit id: "Update README"
+    
+    checkout feature-footer
+    commit id: "Add social links"
+    
+    checkout main
+    merge feature-footer tag: "v1.2"
+    commit id: "Final polish"
+
+%% Alternative text description:
+%% 
+%% main branch (horizontal):
+%%   ├─ Initial commit
+%%   ├─ Add HTML structure
+%%   ├─ Add CSS styling
+%%   │
+%%   ├─ feature-navbar branch (splits off):
+%%   │  ├─ Create navbar HTML
+%%   │  ├─ Style navbar
+%%   │  └─ Add mobile menu
+%%   │  └─ (merged back to main) v1.1
+%%   │
+%%   ├─ feature-footer branch (splits off):
+%%   │  ├─ Create footer
+%%   │  ├─ Style footer
+%%   │  ├─ Add social links
+%%   │  └─ (merged back to main) v1.2
+%%   │
+%%   └─ Final polish
+
+%% Usage: mermaid-cli
+%% Export: mmdc -i 02-branching-strategy.mmd -o ../diagrams/branching-strategy.png

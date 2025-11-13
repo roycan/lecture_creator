@@ -1,0 +1,41 @@
+%% GitHub Collaboration Flow (Fork → Clone → Branch → PR → Merge)
+%% Shows complete open source contribution workflow
+
+graph TB
+    Original[Original Repository<br/>github.com/teacher/project] --> Fork[Fork Button]
+    Fork --> YourFork[Your Fork<br/>github.com/student/project]
+    
+    YourFork --> Clone[git clone]
+    Clone --> Local[Local Repository<br/>on your computer]
+    
+    Local --> Branch[git checkout -b<br/>feature-new-button]
+    Branch --> Edit[Make changes<br/>Edit files]
+    Edit --> Add[git add .]
+    Add --> Commit[git commit -m<br/>'Add new button']
+    Commit --> Push[git push origin<br/>feature-new-button]
+    
+    Push --> YourForkBranch[Your Fork<br/>feature-new-button branch]
+    YourForkBranch --> PR[Create Pull Request]
+    PR --> Review{Code Review}
+    
+    Review --> |Request changes| Edit
+    Review --> |Approve| Merge[Merge to Original]
+    Merge --> Original
+    
+    Original --> Sync[Keep fork synced<br/>git pull upstream main]
+    Sync --> Local
+    
+    style Original fill:#fce4ec
+    style YourFork fill:#e8f5e9
+    style Local fill:#f0f7ff
+    style Branch fill:#fff3e0
+    style Edit fill:#fff3e0
+    style Add fill:#fff3e0
+    style Commit fill:#fff3e0
+    style Push fill:#fff3e0
+    style PR fill:#fff9e6
+    style Review fill:#fffde7
+    style Merge fill:#e8f5e9
+
+%% Usage: mermaid-cli
+%% Export: mmdc -i 03-github-flow.mmd -o ../diagrams/github-flow.png

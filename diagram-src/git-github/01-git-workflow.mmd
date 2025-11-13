@@ -1,0 +1,38 @@
+%% Git Basic Workflow Diagram
+%% Shows: init → add → commit → push cycle
+
+graph TB
+    Start([Start New Project]) --> Init[git init]
+    Init --> |Creates .git folder| Working[Working Directory]
+    
+    Working --> |Make changes| Files[Edit Files]
+    Files --> Add[git add .]
+    Add --> |Files moved to| Staging[Staging Area]
+    
+    Staging --> Commit[git commit -m 'message']
+    Commit --> |Saved to| Local[Local Repository]
+    
+    Local --> Push[git push origin main]
+    Push --> |Uploaded to| Remote[GitHub Repository]
+    
+    Remote --> |Others can| Clone[git clone]
+    Clone --> |Download to| Working2[Their Working Directory]
+    
+    Remote --> |Get updates| Pull[git pull]
+    Pull --> Working
+    
+    style Start fill:#e1f5ff
+    style Init fill:#fff3e0
+    style Add fill:#fff3e0
+    style Commit fill:#fff3e0
+    style Push fill:#fff3e0
+    style Working fill:#f0f7ff
+    style Staging fill:#fff9e6
+    style Local fill:#e8f5e9
+    style Remote fill:#fce4ec
+    style Working2 fill:#f0f7ff
+    style Clone fill:#fff3e0
+    style Pull fill:#fff3e0
+
+%% Usage: mermaid-cli or Mermaid Live Editor
+%% Export: mmdc -i 01-git-workflow.mmd -o ../diagrams/git-workflow.png
