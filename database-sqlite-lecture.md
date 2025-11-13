@@ -48,7 +48,418 @@ Remember in Part 1 when we stored data in JSON files? It worked great for learni
 
 ---
 
-## 📊 Section 1: Understanding Databases vs JSON Files
+## � Section 0: Database Design Basics - Thinking in Tables
+
+Before we write any code, let's learn to **think like a database designer**. Good design = easier coding later!
+
+### From Spreadsheet to Database
+
+You already know spreadsheets (Excel, Google Sheets). Databases work similarly!
+
+**Spreadsheet thinking:**
+- Each sheet = one type of thing (students, products, orders)
+- Each row = one item
+- Each column = one property
+
+**Database thinking:**
+- Each table = one type of thing (same!)
+- Each row = one record
+- Each column = one field/attribute
+
+### The Golden Rules of Table Design
+
+#### Rule 1: One Table = One Type of Thing
+
+**Good:**
+- `students` table - only student info
+- `products` table - only product info
+- `orders` table - only order info
+
+**Bad:**
+- Mixing students and products in one table ❌
+- Putting orders inside the students table ❌
+
+#### Rule 2: Each Row Must Be Unique
+
+Every table needs an **ID column** (primary key) to identify each row.
+
+**Example: Students Table**
+```
+id   name           section    grade_level
+---  -------------  ---------  -----------
+1    Maria Santos   Einstein   9
+2    Juan Cruz      Newton     9
+3    Maria Santos   Darwin     9  ← Different person, different ID!
+```
+
+**Why IDs matter:**
+- Names can be duplicated (two Marias)
+- IDs are always unique
+- Easy to reference (Student #1 ordered Product #5)
+
+#### Rule 3: Keep It Simple - One Value Per Cell
+
+**Bad Design:** Cramming multiple values
+```
+id   name          subjects
+---  ------------  -----------------------
+1    Maria         Math, Science, English  ❌ Multiple values!
+```
+
+**Good Design:** Separate table for relationships
+```
+students table:
+id   name
+---  ------
+1    Maria
+
+student_subjects table:
+student_id  subject
+----------  -------
+1           Math
+1           Science
+1           English
+```
+
+#### Rule 4: Don't Repeat Data
+
+**Bad: Repeating teacher info**
+```
+students table:
+id   name     teacher        teacher_email
+---  -------  -------------  ------------------
+1    Maria    Ms. Reyes      reyes@school.ph
+2    Juan     Ms. Reyes      reyes@school.ph  ← Repeated!
+3    Pedro    Ms. Santos     santos@school.ph
+```
+
+**Good: Separate teachers table**
+```
+students table:
+id   name     teacher_id
+---  -------  ----------
+1    Maria    1
+2    Juan     1
+3    Pedro    2
+
+teachers table:
+id   name        email
+---  ----------  -----------------
+1    Ms. Reyes   reyes@school.ph
+2    Ms. Santos  santos@school.ph
+```
+
+**Benefits:**
+- Update teacher email once, not 50 times
+- No typos ("reyes@school.ph" vs "reyes@schhol.ph")
+- Saves space
+
+### Choosing Column Types
+
+SQL has different types for different kinds of data:
+
+| Type | What It Stores | Examples |
+|------|----------------|----------|
+| `INTEGER` | Whole numbers | Age: 15, Count: 100 |
+| `REAL` | Decimals | Price: 99.50, Grade: 88.5 |
+| `TEXT` | Words/sentences | Name, Address, Email |
+| `BLOB` | Binary data | Images, PDFs (advanced) |
+
+**Rules of thumb:**
+- IDs → `INTEGER`
+- Names, emails, descriptions → `TEXT`
+- Ages, counts → `INTEGER`
+- Prices, grades, percentages → `REAL`
+- True/false → `INTEGER` (0 = false, 1 = true)
+
+### Planning a Table: The 4-Step Method
+
+Let's design a **products table** for a sari-sari store:
+
+**Step 1: List what you need to track**
+- Product name
+- Price
+- Category (snacks, drinks, toiletries)
+- Stock count
+- Date added
+
+**Step 2: Choose column names** (lowercase, underscores for spaces)
+- `name`
+- `price`
+- `category`
+- `stock`
+- `date_added`
+
+**Step 3: Choose types**
+- `name` → TEXT (words)
+- `price` → REAL (decimals like ₱15.50)
+- `category` → TEXT (words)
+- `stock` → INTEGER (whole numbers)
+- `date_added` → TEXT (SQLite stores dates as text)
+
+**Step 4: Add ID column** (always!)
+- `id` → INTEGER PRIMARY KEY AUTOINCREMENT
+
+**Final table design:**
+```sql
+CREATE TABLE products (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  price REAL NOT NULL,
+  category TEXT NOT NULL,
+  stock INTEGER DEFAULT 0,
+  date_added TEXT DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### Common Design Patterns
+
+#### Pattern 1: Directory/List (Simple)
+
+**Use case:** Barangay officials, class list, contact directory
+
+**One table is enough:**
+```
+officials table:
+id   name               position         phone
+---  -----------------  ---------------  ------------
+1    Kapitan Ramos      Barangay Captain 09171234567
+2    Kagawad Santos     Councilor        09187654321
+```
+
+**When to use:**
+- No relationships needed
+- Simple list of items
+- 10-500 records
+
+#### Pattern 2: Categories (One-to-Many)
+
+**Use case:** Products with categories, students with sections
+
+**Two tables with link:**
+```
+categories table:
+id   name
+---  -----------
+1    Snacks
+2    Drinks
+
+products table:
+id   name          category_id
+---  ------------  -----------
+1    Skyflakes     1
+2    Lucky Me      1
+3    Coke          2
+```
+
+**Relationship:** One category → Many products
+
+#### Pattern 3: Transactions (Parent-Child)
+
+**Use case:** Orders with items, enrollments with subjects
+
+**Three tables:**
+```
+orders table (parent):
+id   customer_name   order_date
+---  --------------  ----------
+1    Maria           2025-11-13
+
+order_items table (child):
+id   order_id   product   quantity
+---  --------   --------  --------
+1    1          Coke      2
+2    1          Chips     1
+
+products table:
+id   name     price
+---  -------  -----
+1    Coke     20
+2    Chips    15
+```
+
+**Relationship:** One order → Many items
+
+### Philippine Examples to Practice
+
+#### Example 1: School Grading System
+
+**What to track:**
+- Students (name, section, grade level)
+- Subjects (name, teacher)
+- Grades (student, subject, quarter, score)
+
+**Tables needed:**
+1. `students` (id, name, section, grade_level)
+2. `subjects` (id, name, teacher)
+3. `grades` (id, student_id, subject_id, quarter, score)
+
+#### Example 2: Barangay Clearance System
+
+**What to track:**
+- Residents (name, address, birth_date)
+- Clearance requests (resident, date_requested, purpose, status)
+
+**Tables needed:**
+1. `residents` (id, name, address, birth_date)
+2. `clearances` (id, resident_id, date_requested, purpose, status)
+
+#### Example 3: Sari-Sari Store Inventory
+
+**What to track:**
+- Products (name, price, category, stock)
+- Sales transactions (date, total)
+- Sale items (which products, quantities)
+
+**Tables needed:**
+1. `products` (id, name, price, category, stock)
+2. `sales` (id, date, total)
+3. `sale_items` (id, sale_id, product_id, quantity, price_at_sale)
+
+### Before You Code: Draw It Out!
+
+**Pen and paper exercise:**
+
+1. **Write down what you need to track**
+   - Students? Products? Orders?
+
+2. **Group related info**
+   - Student info (name, age, section)
+   - Product info (name, price, stock)
+   - Order info (date, customer, items)
+
+3. **Draw tables**
+   ```
+   students
+   --------
+   id
+   name
+   section
+   grade_level
+   ```
+
+4. **Draw arrows for relationships**
+   ```
+   students ----<  grades  >---- subjects
+   (one)        (many)      (one)
+   ```
+
+5. **Now you're ready to write SQL!**
+
+### Design Checklist
+
+Before creating tables, ask:
+- [ ] Does each table represent ONE type of thing?
+- [ ] Does each table have an `id` column?
+- [ ] Are there any columns with multiple values? (Fix with new table)
+- [ ] Is any data repeated across rows? (Fix with relationships)
+- [ ] Did I choose appropriate column types?
+- [ ] Did I name columns clearly (lowercase, underscores)?
+
+### Common Beginner Mistakes
+
+**❌ Mistake 1: Everything in one table**
+```
+mega_table:
+id, student_name, student_section, teacher_name, 
+teacher_email, subject_name, grade, ...
+```
+**Fix:** Separate into students, teachers, subjects, grades tables
+
+**❌ Mistake 2: No ID column**
+```
+students:
+name, section  ← How to tell two "Juan Santos" apart?
+```
+**Fix:** Add `id INTEGER PRIMARY KEY AUTOINCREMENT`
+
+**❌ Mistake 3: Storing lists in text**
+```
+students:
+id, name, subjects  ← "Math, Science, English" as text
+```
+**Fix:** Create `student_subjects` linking table
+
+**❌ Mistake 4: Wrong types**
+```
+age TEXT,      ← Should be INTEGER
+price INTEGER  ← Should be REAL (decimals!)
+```
+**Fix:** Match type to data nature
+
+### Practice Exercise: Design First, Code Later
+
+**Scenario:** Design tables for a school library system.
+
+**What to track:**
+- Books (title, author, ISBN, copies available)
+- Students (name, grade level, section)
+- Borrowing (who borrowed what, when, returned?)
+
+**Your task:**
+1. List all tables needed
+2. For each table:
+   - Column names
+   - Column types
+   - Primary key
+3. Draw relationships
+
+**Solution (Don't peek until you try!):**
+
+```sql
+-- Table 1: Books
+CREATE TABLE books (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  author TEXT NOT NULL,
+  isbn TEXT UNIQUE,
+  copies_available INTEGER DEFAULT 1
+);
+
+-- Table 2: Students
+CREATE TABLE students (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  grade_level INTEGER NOT NULL,
+  section TEXT NOT NULL
+);
+
+-- Table 3: Borrowing transactions
+CREATE TABLE borrowings (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  student_id INTEGER NOT NULL,
+  book_id INTEGER NOT NULL,
+  borrowed_date TEXT DEFAULT CURRENT_TIMESTAMP,
+  due_date TEXT NOT NULL,
+  returned_date TEXT,
+  status TEXT DEFAULT 'borrowed',
+  FOREIGN KEY (student_id) REFERENCES students(id),
+  FOREIGN KEY (book_id) REFERENCES books(id)
+);
+```
+
+**Relationships:**
+- One student → Many borrowings
+- One book → Many borrowings (over time)
+- Borrowings links students and books
+
+### Key Takeaway
+
+**Design before code!**
+
+Spend 10 minutes planning tables = Save 2 hours of refactoring later.
+
+**The best database design:**
+- Simple (as few tables as needed)
+- Clear (column names make sense)
+- Normalized (no repeated data)
+- Flexible (easy to add features later)
+
+Now that you know how to **think** in tables, let's learn how databases solve the problems we saw with JSON files.
+
+---
+
+## �📊 Section 1: Understanding Databases vs JSON Files
 
 ### What is a Database?
 

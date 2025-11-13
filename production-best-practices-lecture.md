@@ -118,6 +118,8 @@ app.use((err, req, res, next) => {
 | **Speed** | Can be slow | Must be fast |
 | **Who sees it** | Just you | Everyone |
 
+![Development vs Production Comparison](diagrams/production-best-practices/dev-vs-production.png)
+
 ### The Golden Rule
 
 > **Never put real passwords, API keys, or sensitive data directly in your code.**
@@ -142,6 +144,8 @@ app.use((err, req, res, next) => {
 - Your notebook (code) is public - anyone can read it
 - Your locker (environment) is private - only you have the key
 - You write in your notebook: "Password is in my locker" (not the actual password!)
+
+![Environment Variables Flow](diagrams/production-best-practices/environment-variables-flow.png)
 
 ### The `.env` File
 
@@ -709,6 +713,8 @@ Imagine your Express app is a sari-sari store. Customers (users) come in, ask fo
 
 **Security hardening** = adding locks, cameras, and guards to your store.
 
+![Security Layers Overview](diagrams/production-best-practices/security-layers.png)
+
 ### Security Package: Helmet.js
 
 **What it does:** Adds security headers to HTTP responses
@@ -817,6 +823,8 @@ app.use('/residents', browseLimiter);
 5. Unwanted action happens (like deleting residents!)
 
 **Solution:** CSRF tokens
+
+![CSRF Protection Guide](diagrams/production-best-practices/csrf-protection-guide.png)
 
 **Install:**
 ```bash
@@ -1060,6 +1068,8 @@ app.post('/residents/add', validateResident, (req, res) => {
 ### Complete Security Setup Example
 
 **Sari-Sari Store with ALL Security Features**
+
+![Security Packages Guide](diagrams/production-best-practices/security-packages-guide.png)
 
 **File: `app.js`**
 ```javascript

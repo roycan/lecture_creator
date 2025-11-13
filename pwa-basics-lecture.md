@@ -108,6 +108,8 @@ By the end of this lecture, you will be able to:
 - Works full-screen
 - No browser UI clutter
 
+![PWA Architecture Overview](diagrams/pwa-basics/pwa-architecture.png)
+
 ### **PWA vs Native App vs Regular Website**
 
 | Feature | Native App | PWA | Regular Website |
@@ -230,6 +232,8 @@ PWA:
 
 <a name="section-2"></a>
 ## 2. Why PWAs Matter in the Philippines
+
+![Philippine PWA Benefits Comparison](diagrams/pwa-basics/philippine-benefits.png)
 
 ### **The Philippine Internet Reality**
 
@@ -564,6 +568,8 @@ Sari-sari store owner:
 - Configuration file
 - Metadata about your web app
 - Required for installation prompt
+
+![PWA Installation Flow](diagrams/pwa-basics/installation-flow-1.png)
 
 **Contains:**
 - App name
@@ -1024,6 +1030,8 @@ You've learned:
 
 <a name="section-4"></a>
 ## 4. Service Worker Basics
+
+![Service Worker Lifecycle](diagrams/pwa-basics/service-worker-lifecycle.png)
 
 ### **What is a Service Worker?**
 
@@ -1593,6 +1601,8 @@ python3 -m http.server 8000
 <a name="section-5"></a>
 ## 5. Caching Strategies
 
+![Caching Strategies Comparison](diagrams/pwa-basics/caching-strategies.png)
+
 ### **Why Multiple Strategies?**
 
 **Different content needs different caching:**
@@ -2087,6 +2097,8 @@ store-pwa/
 
 <a name="section-6"></a>
 ## 6. Offline Detection and UI
+
+![Offline/Online States](diagrams/pwa-basics/offline-online-states.png)
 
 ### **Why Detect Offline Status?**
 
@@ -2920,6 +2932,8 @@ You've learned:
 
 <a name="section-7"></a>
 ## 7. Making Your App Installable
+
+![Installation Process Details](diagrams/pwa-basics/installation-flow-2.png)
 
 ### **What Does "Installable" Mean?**
 
