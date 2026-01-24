@@ -3,7 +3,7 @@
 # API Testing Quick Reference Handout
 ### YMSAT 2026 — For Teachers
 
----
+
 
 ## What is an API?
 
@@ -19,7 +19,7 @@ APIs are the invisible messengers that make websites work.
 
 ![analogy](diagrams/api-testing/analogy.png)
 
----
+
 
 ## Opening Browser DevTools
 
@@ -36,7 +36,7 @@ APIs are the invisible messengers that make websites work.
 4. Perform your action (submit form, click button, etc.)
 5. Find the request and examine the response
 
----
+
 
 ## HTTP Status Codes
 
@@ -54,9 +54,9 @@ APIs are the invisible messengers that make websites work.
 - **4xx** = Yellow (you made a mistake)
 - **5xx** = Red (server problem)
 
-![response-codes](../diagrams/api-testing/response-codes.png)
+![response-codes](diagrams/api-testing/response-codes.png)
 
----
+
 
 ## Network Tab Quick Guide
 
@@ -67,7 +67,7 @@ APIs are the invisible messengers that make websites work.
 | XHR | Show only API calls | Filter row button |
 | Preserve log | Keep requests after navigation | Checkbox at top |
 
----
+
 
 ## Test 1: Watch a Form Submission
 
@@ -89,7 +89,7 @@ APIs are the invisible messengers that make websites work.
 ![flowchart](diagrams/api-testing/flowchart.png)
 
 
----
+
 
 ## Test 2: Trigger an Error
 
@@ -102,9 +102,9 @@ APIs are the invisible messengers that make websites work.
 
 
 
-[!page-not-found](diagrams/api-testing/page-not-found.png)
+![page-not-found](diagrams/api-testing/page-not-found.png)
 
----
+
 
 ## Classroom Activity Ideas
 
@@ -115,7 +115,7 @@ APIs are the invisible messengers that make websites work.
 | Screenshot Challenge | Capture a successful registration response | 10 min |
 | Real-World Detective | What APIs run when you like an Instagram post? | 10 min |
 
----
+
 
 ## Common Student Issues & Solutions
 
@@ -126,7 +126,7 @@ APIs are the invisible messengers that make websites work.
 | "What does 400 mean?" | Point to status code chart above |
 | "DevTools looks scary" | Reassure: it's read-only, can't break anything |
 
----
+
 
 ## Suggested 1-Hour Session Plan
 
@@ -140,7 +140,7 @@ APIs are the invisible messengers that make websites work.
 
 ![Gannt chart](diagrams/api-testing/gannt.png)
 
----
+
 
 ## JSON Cheat Sheet
 
@@ -155,7 +155,7 @@ APIs are the invisible messengers that make websites work.
 
 **Reading tip:** Look for the field name on the left, value on the right.
 
----
+
 
 ## Before Your Session Checklist
 
@@ -166,7 +166,7 @@ APIs are the invisible messengers that make websites work.
 - [ ] Have this quick reference ready
 - [ ] Plan pairs/groups for collaborative work
 
----
+
 
 ## Key Takeaways for Students
 
@@ -176,7 +176,7 @@ APIs are the invisible messengers that make websites work.
 4. **JSON is just labeled data** — Read it like a form
 5. **Anyone can observe APIs** — No programming required
 
----
+
 
 **YMSAT 2026 | Philippine Science High School**  
 *Teaching the next generation to understand the technology they use*
