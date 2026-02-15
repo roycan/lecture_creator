@@ -6,6 +6,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.3.0] - February 15, 2026
+
+### Added
+- **Code syntax highlighting** using Highlight.js (11.9.0)
+- **Mermaid diagram rendering** using Mermaid.js (10.9.0)
+- **Theme-aware code highlighting** - Highlight.js theme switches with presentation theme
+- **Graceful degradation** for mermaid errors - Shows code block with error message if rendering fails
+- **Feature flags** - `mermaidEnabled` variable for safe rollout and quick disabling
+- **Error handling** - Try-catch blocks around mermaid initialization
+- **Mermaid error CSS** - Visual feedback when diagram rendering fails
+
+### Changed
+- Updated Marked.js configuration for better code block handling
+- Enhanced `setTheme()` function to switch Highlight.js themes
+- Enhanced `displaySlide()` function to render mermaid diagrams on each slide
+
+### Technical Details
+- Highlight.js CDN: github-dark.min.css (dark), github.min.css (light)
+- Mermaid.js: Version 10.9.0 (latest stable)
+- Theme variables configured for mermaid diagrams
+- Error messages styled with red border and warning icon
+
+### Testing
+- Created test markdown file: `test-code-highlighting-mermaid.md`
+- Test file includes JavaScript, CSS, Python, HTML, Bash code blocks
+- Test file includes multiple mermaid diagram types (flowchart, sequence, class, state, Gantt)
+- Testing instructions for code highlighting, mermaid rendering, and theme switching
+
+---
+
 ## [2.2.0] - October 28, 2025
 
 ### Added

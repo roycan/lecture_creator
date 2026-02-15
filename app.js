@@ -279,6 +279,11 @@ document.addEventListener('DOMContentLoaded', () => {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Lecture Presentation</title>
+    <!-- Code Highlighting: Highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="hljs-theme">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- Mermaid Diagram Rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
     <style>
         /* Theme Variables */
         :root {
@@ -730,6 +735,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 font-size: 1.5em;
                 padding: 1rem 2rem;
             }
+            
+            /* Mermaid Error Messages */
+            .mermaid-error {
+                background: rgba(244, 67, 54, 0.1);
+                border-left: 4px solid #f44336;
+                padding: 10px 15px;
+                margin: 10px 0;
+                border-radius: 4px;
+                color: #f44336;
+                font-size: 0.9em;
+                text-align: left;
+            }
+            
+            .mermaid-error::before {
+                content: '⚠️ ';
+                font-weight: bold;
+            }
         }
     </style>
 </head>
@@ -825,16 +847,25 @@ document.addEventListener('DOMContentLoaded', () => {
         setTheme(savedTheme);
         
         function setTheme(theme) {
+            var hljsThemeLink = document.getElementById('hljs-theme');
             if (theme === 'light') {
                 root.setAttribute('data-theme', 'light');
                 themeIcon.textContent = '🌙';
                 themeText.textContent = 'Dark';
                 localStorage.setItem('lecture-theme', 'light');
+                // Switch to light theme for code highlighting
+                if (hljsThemeLink) {
+                    hljsThemeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css';
+                }
             } else {
                 root.removeAttribute('data-theme');
                 themeIcon.textContent = '☀️';
                 themeText.textContent = 'Light';
                 localStorage.setItem('lecture-theme', 'dark');
+                // Switch to dark theme for code highlighting
+                if (hljsThemeLink) {
+                    hljsThemeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css';
+                }
             }
         }
         
@@ -958,6 +989,43 @@ document.addEventListener('DOMContentLoaded', () => {
         updateStatus('Failed to load presentation', 'error');
         startButton.textContent = 'Error: No Slides';
         return;
+    }
+    
+    // Initialize Code Highlighting (Highlight.js)
+    if (typeof hljs !== 'undefined') {
+        hljs.highlightAll();
+        log('Code highlighting initialized', 'success');
+    } else {
+        log('Highlight.js not loaded - code blocks will not be highlighted', 'warn');
+    }
+    
+    // Initialize Mermaid Diagram Rendering with feature flag
+    var mermaidEnabled = true; // Feature flag for safe rollout
+    if (typeof mermaid !== 'undefined') {
+        try {
+            mermaid.initialize({
+                startOnLoad: false,  // We'll trigger manually
+                theme: 'default',
+                securityLevel: 'loose',  // Allow more flexibility
+                themeVariables: {
+                    darkMode: true,
+                    background: '#1a1a1a',
+                    primaryColor: '#4CAF50',
+                    primaryTextColor: '#fff',
+                    primaryBorderColor: '#4CAF50',
+                    lineColor: '#666',
+                    secondaryColor: '#ff9900',
+                    tertiaryColor: '#f0f0f0'
+                }
+            });
+            log('Mermaid initialized successfully', 'success');
+        } catch (error) {
+            log('Mermaid initialization error: ' + error.message, 'error');
+            mermaidEnabled = false; // Disable mermaid if init fails
+        }
+    } else {
+        log('Mermaid.js not loaded - diagrams will show as code blocks', 'warn');
+        mermaidEnabled = false;
     }
     
     // Update status message
@@ -1152,6 +1220,28 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             container.innerHTML = slide.html;
             progressIndicator.textContent = 'Slide ' + (index + 1) + ' of ' + slides.length;
+            
+            // Render mermaid diagrams in the current slide with graceful degradation
+            if (mermaidEnabled && typeof mermaid !== 'undefined') {
+                // Marked.js creates <pre><code class="language-mermaid"> for mermaid blocks
+                // Look for both patterns to handle different markdown parsers
+                var mermaidBlocks = container.querySelectorAll('pre.mermaid, div.mermaid, pre code.language-mermaid, div code.language-mermaid');
+                if (mermaidBlocks.length > 0) {
+                    mermaid.run({
+                        nodes: mermaidBlocks
+                    }).then(function() {
+                        log('Mermaid diagrams rendered for slide ' + index, 'success');
+                    }).catch(function(error) {
+                        // Graceful degradation: Show error and keep code block
+                        log('Mermaid render error: ' + error.message, 'error');
+                        // Add error message above failed diagram
+                        for (var i = 0; i < mermaidBlocks.length; i++) {
+                            mermaidBlocks[i].insertAdjacentHTML('beforebegin',
+                                '<div class="mermaid-error">⚠️ Diagram could not be rendered. Showing code instead.</div>');
+                        }
+                    });
+                }
+            }
             
             // Update navigation buttons
             prevButton.disabled = (index === 0);
