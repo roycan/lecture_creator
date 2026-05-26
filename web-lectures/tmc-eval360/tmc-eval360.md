@@ -16,7 +16,7 @@
 - Focus on **strategic clarity** (clear objectives)
 
 # Student Evaluation of Teachers
-![alt text](tmc-eval360/set2024.png)
+![alt text](assets/tmc-eval360/set2024.png)
 
 
 # Pillar 1: Strategic Clarity & Execution
@@ -37,7 +37,7 @@ Credibility is the currency of leadership. You demonstrate deep technical expert
 
 # Student Ratings (out of 5)
 
-![alt text](tmc-eval360/ratings5.png)
+![alt text](assets/tmc-eval360/ratings5.png)
 
 # Pillar 3: Psychological Safety & Inclusive Culture
 
@@ -58,7 +58,7 @@ Authentic leaders are transparent about their growth areas. By addressing studen
 
 # "Whole-Leader" profile
 
-![alt text](tmc-eval360/profile.png)
+![alt text](../assets/tmc-eval360/profile.png)
 
 
 # *"Leadership is the art of making the difficult seem 'fun' and the 'impossible' feel achievable"*
@@ -68,26 +68,26 @@ By maintaining a *4.91* performance standard while being described as a 'GOAT' (
 
 # 360 Evaluation for Leaders 
 
-![alt text](tmc-eval360/login360.png)
+![alt text](assets/tmc-eval360/login360.png)
 
 
 # After every leadership term... 
 
-![alt text](tmc-eval360/cycles360.png)
+![alt text](assets/tmc-eval360/cycles360.png)
 
 
 # Questions...
 
-![alt text](tmc-eval360/questions360.png)
+![alt text](assets/tmc-eval360/questions360.png)
 
 # Users...
 
-![alt text](tmc-eval360/users360.png)
+![alt text](assets/tmc-eval360/users360.png)
 
 
 # Report...
 
-![alt text](tmc-eval360/report360.png)
+![alt text](../assets/tmc-eval360/report360.png)
 
 # You can focus on *"Innovation"* or be focusing on those *"unconventional methods"*
 
