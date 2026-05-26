@@ -2,7 +2,7 @@
 
 > Roy Vincent L. Canseco, MSEE, PhD Cand. CS
 
-![alt text](assets/full-stack.png)
+![](diagrams/full-stack/full-stack.png)
 
 # Full Stack Web Development Analogy
 
