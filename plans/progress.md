@@ -2,15 +2,15 @@
 
 > **Living document.** Update at the end of every session. New sessions: read [`inceptions/context.md`](../inceptions/context.md) first, then find **▶ RESUME HERE** below.
 
-**Last updated:** 2026-06-13 · **Overall:** Phase 2b complete → ready for Phase 2c (lib bundling).
+**Last updated:** 2026-06-13 · **Overall:** Phase 2c complete → ready for Phase 3 (CLI build.js + check.js).
 
 ---
 
 ## ▶ RESUME HERE
 
-**Next action:** Phase 2c — core: bundle highlight.js locally (always) + mermaid (only when a lecture uses it) into `renderPresentation`, replacing the CDN `<script>`/`<link>` tags so exports are fully offline. Reuses `scripts/lib/`.
-**Mode:** Code · **Confidence:** 91%
-**Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (2b done; next: 2c → 3 → 7a → 7b → 4 → 5 → 8 → 9).
+**Next action:** Phase 3 — wire the CLI: `scripts/build.js` (`--slug <slug>` / `--all`) → `dist/<slug>.html`, and `scripts/check.js` integrity linter (scan lectures for missing `![]()`/asset refs; CI gate). Both call the shared core in `scripts/lib/`.
+**Mode:** Code · **Confidence:** 94%
+**Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (2c done; next: 3 → 7a → 7b → 4 → 5 → 8 → 9).
 
 ---
 
@@ -24,7 +24,7 @@
 | 6 | Restructure: dry-run mover, then `git mv` lectures → `lectures/<slug>/`; `shared/styles.css`; de-dup tmc-eval360; relocate stray `database-sqlite-lecture.md` | 95% | ✅ Done | 2026-06-13 |
 | 2a | Core: `splitSlides` (marked.lexer) + port `createSingleHTML` template | 92% | ✅ Done | 2026-06-13 |
 | 2b | Core: data-URI image inlining (MIME png/svg/jpg, clear errors) | 95% | ✅ Done | 2026-06-13 |
-| 2c | Core: bundle highlight.js always; mermaid only when used | 91% | ⏳ Next | — |
+| 2c | Core: bundle highlight.js always; mermaid only when used | 94% | ✅ Done | 2026-06-13 |
 | 3 | CLI: `build.js` (`--slug`/`--all`) + `check.js` linter | 94% | ⬜ Pending | — |
 | 7a | Rewire image/asset refs with valid target (fix 3 typos + repaths) | 97% | ⬜ Pending | — |
 | 7b | Truly-missing images: render from sources or log TODO (non-blocking) | 85% | ⬜ Pending | — |
@@ -95,6 +95,15 @@ Legend: ✅ Done · ⏳ Next · 🔄 In progress · ⬜ Pending · ⚠️ Blocke
 - Out of scope (next phases): bundle highlight.js + mermaid (2c); wire `build.js`/`check.js` (Phase 3); editor `/export` (Phase 4).
 - Commit(s): `<phase-2b core commit>` — "feat(core): inlineImages + buildLecture data-URI inlining (Phase 2b)"; this docs commit.
 - **Next:** Phase 2c (bundle highlight.js always; mermaid only when used).
+
+### Session 7 — 2026-06-13 (Phase 2c)
+- Did: Made the presentation shell **fully offline** by bundling highlight.js (always) + mermaid (only when a lecture uses a ```mermaid fence) — decision D4. Added [`scripts/lib/bundle-libs.mjs`](../scripts/lib/bundle-libs.mjs): `bundleLibs({mermaid})` returns inline-ready strings (`hljsScript`/`hljsStyleDark`/`hljsStyleLight` + `mermaidScript` when mermaid) read from **vendored UMD bundles** under `scripts/lib/vendor/` (`highlight.min.js` 11.9.0, `github-dark.min.css`/`github.min.css` 11.9.0, `mermaid.min.js` 10.9.0 — the EXACT CDN versions the template referenced); `hasMermaid(md)` scans the source `md` for a fenced ```mermaid block; `safeInlineJs`/`safeInlineCss` escape `</script>`/`</style>` for safe inlining. Modified [`renderPresentation`](../scripts/lib/template.mjs) `(slides,{title,bundle})`: when `bundle` is supplied it inlines the libs as two switchable `<style>` sheets (light-before-dark for a correct default-dark cascade) + `<script>`s and emits **no** CDN tags, and rewired the `setTheme()` runtime to toggle the inlined hljs sheets via `.sheet.disabled` (the easy-to-miss part — it previously swapped a CDN `<link>` href). Omitting `bundle` keeps the original CDN tags verbatim (2a backward-compat path; keeps `template.test.js` green). [`buildLecture`](../scripts/lib/index.mjs) now computes `bundleLibs({ mermaid: hasMermaid(md) })` and passes it through; `bundleLibs`+`hasMermaid` barrel-exported.
+- Decision (confirmed with user): **source the browser bundles by vendoring prebuilt UMD** (option a) over reading `node_modules` or adding a bundler — deterministic, no runtime module resolution. Pinned **hljs 11.9.0 + mermaid 10.9.0** (the exact CDN versions) rather than `package.json`'s mermaid ^11.0.0, for a faithful offline mirror; `mermaid.run({nodes})` is v10/v11-compatible. Vendored files committed (new additions, not gitignored); provenance + re-fetch steps in [`scripts/lib/vendor/README.md`](../scripts/lib/vendor/README.md).
+- Verified: `npm test` green (**37 pass, 0 fail**: scaffold 1 + split-slides 7 + template 6 + inline-images 13 + bundle-libs 10). Manual build of a real **non-mermaid** lecture `git-github` → `dist/git-github.html` (3.52 MB) and a synthetic **mermaid** fixture → `dist/mermaid-fixture.html` (3.34 MB): **both have zero** `cdnjs.cloudflare.com`/`cdn.jsdelivr.net` URLs; the mermaid bundle string appears **only** in the mermaid one; hljs `<style>` inlined in both; the offline theme toggle (`hljsDarkSheet.sheet.disabled`) is present and the CDN `<link id="hljs-theme">`/`hljsThemeLink` swap is absent.
+- File-size impact (expected, D2/D4): inlining mermaid (~3 MB) makes a mermaid lecture's HTML large — the explicit offline trade-off. Most lectures embed pre-rendered PNGs and have no live mermaid fence, so they stay smaller and mermaid-free.
+- Out of scope (next phases): wire `build.js`/`check.js` (Phase 3); Express `/export` (Phase 4).
+- Commit(s): `<phase-2c core commit>` — "feat(core): bundle highlight.js + mermaid offline (Phase 2c)"; this docs commit.
+- **Next:** Phase 3 (CLI `build.js` + `check.js`).
 
 <!-- Append new sessions below using this template:
 ### Session N — YYYY-MM-DD (Phase X)
