@@ -10,20 +10,49 @@
 //   - Renamed createSingleHTML -> renderPresentation.
 //   - Title is now a parameter (was hard-coded "Lecture Presentation").
 //   - The dead GitHub-Pages base-URL path (app.js:239-262) is NOT ported (D6):
-//     images will be inlined as data URIs in Phase 2b instead.
-//   - CDN <script> tags for highlight.js + mermaid are KEPT here; Phase 2c
-//     replaces them with bundled local copies (this phase's output is not yet
-//     offline — that is expected and tracked as later work).
+//     images are inlined as data URIs (Phase 2b) instead.
+//   - Phase 2c: when a `bundle` is supplied, highlight.js (always) + mermaid
+//     (only when used) are INLINED from vendored UMD copies and NO CDN tags are
+//     emitted. The theme toggle switches the two inlined hljs <style> sheets
+//     via .sheet.disabled (no CDN href swap). Omitting `bundle` keeps the
+//     original CDN tags verbatim (2a backward-compat path).
 
 /**
  * Render slides into a standalone presentation HTML document.
  *
  * @param {{ html: string }[]} slides - output of splitSlides() (each item is
  *   `{ html }` where html is the rendered slide markup).
- * @param {{ title?: string }} [opts] - optional document <title>.
+ * @param {{ title?: string, bundle?: object }} [opts] - `title`: document
+ *   <title>. `bundle`: inline-ready lib strings from bundleLibs() (Phase 2c);
+ *   when supplied the shell inlines vendored highlight.js + (optionally)
+ *   mermaid and emits NO CDN tags. When omitted, the original CDN tags are used
+ *   (Phase 2a behavior; keeps template.test.js green).
  * @returns {string} Complete HTML document string.
  */
-export function renderPresentation(slides, { title } = {}) {
+// --- Phase 2c: vendored lib injection --------------------------------------
+// The original CDN tags (verbatim) for the backward-compat path (template.test.js
+// + any non-bundled caller). When a bundle is supplied, buildHeadLibs() inlines
+// vendored highlight.js + (optionally) mermaid instead.
+const CDN_HEAD_LIBS = `    <!-- Code Highlighting: Highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="hljs-theme">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- Mermaid Diagram Rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>`;
+
+// Inlined lib block for the bundled (offline) shell. Light theme precedes dark
+// in source order so the default-dark cascade is correct even before setTheme()
+// runs; setTheme() then disables the inactive sheet via .sheet.disabled.
+function buildHeadLibs({ hljsScript, hljsStyleDark, hljsStyleLight, mermaidScript }) {
+  const mermaidTag = mermaidScript
+    ? `\n    <!-- Mermaid Diagram Rendering (bundled offline) -->\n    <script>${mermaidScript}</script>`
+    : `\n    <!-- Mermaid: not used by this lecture; bundle omitted for size -->`;
+  return `    <!-- Code Highlighting: Highlight.js (bundled offline) -->
+    <style id="hljs-style-light">${hljsStyleLight}</style>
+    <style id="hljs-style-dark">${hljsStyleDark}</style>
+    <script>${hljsScript}</script>${mermaidTag}`;
+}
+
+export function renderPresentation(slides, { title, bundle } = {}) {
   const slidesArr = Array.isArray(slides) ? slides : [];
   // Escape </script> and opening <script so embedded JSON can't break out.
   const safeSlidesJson = JSON.stringify(slidesArr)
@@ -31,17 +60,29 @@ export function renderPresentation(slides, { title } = {}) {
     .replace(/<script/gi, '<\\script');
   const pageTitle = title || 'Lecture Presentation';
 
+  // --- Library asset injection (Phase 2c) --------------------------------
+  // A `bundle` (from bundleLibs()) => inline vendored libs (fully offline, no
+  // CDN tags). No bundle => original CDN tags (2a backward-compat). The same
+  // switch rewires setTheme()'s hljs theme logic below.
+  const useBundle = !!bundle;
+  const headLibs = useBundle ? buildHeadLibs(bundle) : CDN_HEAD_LIBS;
+  const hljsThemeInit = useBundle
+    ? "var hljsDarkSheet = document.getElementById('hljs-style-dark');\n            var hljsLightSheet = document.getElementById('hljs-style-light');"
+    : "var hljsThemeLink = document.getElementById('hljs-theme');";
+  const hljsThemeLight = useBundle
+    ? "if (hljsDarkSheet && hljsDarkSheet.sheet) { hljsDarkSheet.sheet.disabled = true; }\n            if (hljsLightSheet && hljsLightSheet.sheet) { hljsLightSheet.sheet.disabled = false; }"
+    : "if (hljsThemeLink) {\n                hljsThemeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css';\n            }";
+  const hljsThemeDark = useBundle
+    ? "if (hljsDarkSheet && hljsDarkSheet.sheet) { hljsDarkSheet.sheet.disabled = false; }\n            if (hljsLightSheet && hljsLightSheet.sheet) { hljsLightSheet.sheet.disabled = true; }"
+    : "if (hljsThemeLink) {\n                hljsThemeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css';\n            }";
+
   return `<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>${pageTitle}</title>
-    <!-- Code Highlighting: Highlight.js -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="hljs-theme">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <!-- Mermaid Diagram Rendering -->
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+${headLibs}
     <style>
         /* Theme Variables */
         :root {
@@ -605,25 +646,21 @@ export function renderPresentation(slides, { title } = {}) {
         setTheme(savedTheme);
         
         function setTheme(theme) {
-            var hljsThemeLink = document.getElementById('hljs-theme');
+            ${hljsThemeInit}
             if (theme === 'light') {
                 root.setAttribute('data-theme', 'light');
                 themeIcon.textContent = '🌙';
                 themeText.textContent = 'Dark';
                 localStorage.setItem('lecture-theme', 'light');
                 // Switch to light theme for code highlighting
-                if (hljsThemeLink) {
-                    hljsThemeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css';
-                }
+                ${hljsThemeLight}
             } else {
                 root.removeAttribute('data-theme');
                 themeIcon.textContent = '☀️';
                 themeText.textContent = 'Light';
                 localStorage.setItem('lecture-theme', 'dark');
                 // Switch to dark theme for code highlighting
-                if (hljsThemeLink) {
-                    hljsThemeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css';
-                }
+                ${hljsThemeDark}
             }
         }
         

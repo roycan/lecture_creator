@@ -7,7 +7,8 @@
 //
 // Phase 2a: splitSlides + renderPresentation.
 // Phase 2b: inlineImages + buildLecture orchestrator (split -> inline -> render).
-// Later: lib bundling (2c) plugs into buildLecture here.
+// Phase 2c: bundleLibs + hasMermaid plug into buildLecture (inline highlight.js
+// always + mermaid only when used), so exports are fully offline.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -16,10 +17,12 @@ import { fileURLToPath } from 'node:url';
 import { splitSlides } from './split-slides.mjs';
 import { renderPresentation } from './template.mjs';
 import { inlineImages } from './inline-images.mjs';
+import { bundleLibs, hasMermaid } from './bundle-libs.mjs';
 
 export { splitSlides } from './split-slides.mjs';
 export { renderPresentation } from './template.mjs';
 export { inlineImages } from './inline-images.mjs';
+export { bundleLibs, hasMermaid } from './bundle-libs.mjs';
 
 const REPO_ROOT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -70,7 +73,13 @@ export function buildLecture({
   const md = markdown ?? fs.readFileSync(path.join(dir, 'lecture.md'), 'utf8');
   const slides = splitSlides(md, { splitDepth });
   const inlined = inlineImages(slides, { lectureDir: dir, onMissing });
-  return renderPresentation(inlined, { title: title || extractTitle(slides) });
+  // Phase 2c: bundle highlight.js always + mermaid only when the lecture uses a
+  // ```mermaid fence (decision D4). Inlining here makes the export fully offline.
+  const bundle = bundleLibs({ mermaid: hasMermaid(md) });
+  return renderPresentation(inlined, {
+    title: title || extractTitle(slides),
+    bundle,
+  });
 }
 
 export default buildLecture;
