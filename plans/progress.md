@@ -2,15 +2,15 @@
 
 > **Living document.** Update at the end of every session. New sessions: read [`inceptions/context.md`](../inceptions/context.md) first, then find **▶ RESUME HERE** below.
 
-**Last updated:** 2026-06-12 · **Overall:** Phase 1 complete → ready for Phase 6 (restructure).
+**Last updated:** 2026-06-13 · **Overall:** Phase 6 complete → ready for Phase 2a (core build).
 
 ---
 
 ## ▶ RESUME HERE
 
-**Next action:** Phase 6 — restructure: dry-run mover, then `git mv` lectures → `lectures/<slug>/`; canonical `shared/styles.css`; de-dup tmc-eval360; relocate stray root `.md` files.
-**Mode:** Code · **Confidence:** 95%
-**Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (restructure right after scaffold so the linter validates it).
+**Next action:** Phase 2a — core: `splitSlides` (marked.lexer) + port `createSingleHTML` template into `scripts/build.js`.
+**Mode:** Code · **Confidence:** 92%
+**Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (restructure done; building the core next: 2a → 2b → 2c → 3 → 7a → 7b → 4 → 5 → 8 → 9).
 
 ---
 
@@ -21,8 +21,8 @@
 | — | Planning (context, architecture, decisions, inventory) | — | ✅ Done | 2026-06-12 |
 | 0 | Snapshot: archive stray root files (`git mv` → `archive/reorg-2026-06/`) | 96% | ✅ Done | 2026-06-12 |
 | 1 | Scaffold: `package.json`, `server/`, `scripts/lib`, `shared/`, `dist/`, `.gitignore`, npm scripts | 95% | ✅ Done | 2026-06-12 |
-| 6 | Restructure: dry-run mover, then `git mv` lectures → `lectures/<slug>/`; `shared/styles.css`; de-dup tmc-eval360; relocate stray `database-sqlite-lecture.md` | 95% | ⏳ Next | — |
-| 2a | Core: `splitSlides` (marked.lexer) + port `createSingleHTML` template | 92% | ⬜ Pending | — |
+| 6 | Restructure: dry-run mover, then `git mv` lectures → `lectures/<slug>/`; `shared/styles.css`; de-dup tmc-eval360; relocate stray `database-sqlite-lecture.md` | 95% | ✅ Done | 2026-06-13 |
+| 2a | Core: `splitSlides` (marked.lexer) + port `createSingleHTML` template | 92% | ⏳ Next | — |
 | 2b | Core: data-URI image inlining (MIME png/svg/jpg, clear errors) | 93% | ⬜ Pending | — |
 | 2c | Core: bundle highlight.js always; mermaid only when used | 91% | ⬜ Pending | — |
 | 3 | CLI: `build.js` (`--slug`/`--all`) + `check.js` linter | 94% | ⬜ Pending | — |
@@ -66,6 +66,19 @@ Legend: ✅ Done · ⏳ Next · 🔄 In progress · ⬜ Pending · ⚠️ Blocke
 - Commit(s): `<phase-1 scaffold commit>` — "feat: scaffold node/express app skeleton (Phase 1)".
 - **Next:** Phase 6 (restructure).
 
+### Session 4 — 2026-06-13 (Phase 6)
+- Did: Executed the full structural restructure. Built a non-destructive dry-run mover ([`scripts/reorg/dry-run.mjs`](../scripts/reorg/dry-run.mjs)) with a declarative manifest ([`scripts/reorg/move-manifest.mjs`](../scripts/reorg/move-manifest.mjs)), a reference-coverage scanner, and `--apply`/`--only=` batch flags. Moved all **20 lectures** into `lectures/<slug>/` (each carrying `lecture.md` + owned `assets/`/`diagrams/`/`diagram-src/`); established `shared/` (`styles.css` + `challenges/`); de-duped tmc-eval360; relocated stray root `.md` companions. ~190 `git mv` operations (history preserved). `diagrams/` + `web-lectures/` source roots drained.
+- Decisions made (on-disk evidence):
+  - **D7 revised** — `assets/styles.css` is the real file (root `style.css` is EMPTY); moved → `shared/styles.css`.
+  - **D12 revised** — top-level `web-lectures/tmc-eval360.md` is canonical (cleaner refs); nested dup archived → `archive/reorg-2026-06/tmc-eval360-duplicate.md` (D13 — never delete).
+  - **D9** — CSS lecture PNGs moved `assets/` → `lectures/css/diagrams/` for consistency.
+  - **D8** — starter/solution challenge sets → canonical `shared/challenges/` (copy-on-build).
+- Inventory corrections found (see [`plans/reorg-inventory.md`](reorg-inventory.md) §0): `weather.html`+`weather-data.json` DO exist → `lectures/ajax-fetch/assets/`; `practice-apps/{barangay-directory,store-inventory,class-list}-v2/` DO exist → `lectures/database-sqlite/assets/`; tmc-eval360's 8 PNGs lived at `web-lectures/tmc-eval360/tmc-eval360/` (not `assets/tmc-eval360/`) → `lectures/tmc-eval360/assets/`.
+- Issues/TODOs: 36 unreferenced orphans intentionally left in `assets/` (non-blocking, later pass); 3 meta `.md` remain in `diagram-src/` (INTEGRATION-GUIDE/README/RENDERING-CHECKLIST — not lecture-owned); 2 supplementary diagram-source `.md` were missed by the manifest (PNGs only) and relocated manually.
+- Verified: `npm test` green (1 pass, 0 fail); `npm run check` lists all 20 slugs; dry-run scanner reports 0 real misses after manifest fixes.
+- Commit(s): `3ca4327` (mover + manifest), `993c9f1` (establish `shared/`), `77d3e09` (batch A), `8f7854d` (batch B + relocate + dedup) — all `refactor(reorg):`; this docs commit `docs(reorg): progress + inventory notes`.
+- **Next:** Phase 2a (core: `splitSlides`).
+
 <!-- Append new sessions below using this template:
 ### Session N — YYYY-MM-DD (Phase X)
 - Did: ...
@@ -89,9 +102,10 @@ See [`inceptions/context.md`](../inceptions/context.md) §6 (D1–D13) for the f
 
 ## Open TODOs / Known Gaps (non-blocking)
 
-- Content gaps to author later: `assets/weather.html`(+json), `user-story-template.html`, `debugging-practice.html`, `uat-form.html`, `support-materials/auth-patterns.md`, `support-materials/session-config-guide.md`, `practice-apps/*-v2/-v3`.
+- Content gaps to author later: `user-story-template.html`, `debugging-practice.html`, `uat-form.html`, `support-materials/auth-patterns.md`, `support-materials/session-config-guide.md`, `practice-apps/authentication-sessions/*-v3`. **(Corrected 2026-06-13: `weather.html`+`weather-data.json` and `practice-apps/{barangay-directory,store-inventory,class-list}-v2/` DO exist — moved during Phase 6; see [`plans/reorg-inventory.md`](reorg-inventory.md) §0.)**
 - Truly-missing PNGs to render from `.mmd`/`.d2`/`.txt` sources (Phase 7b): testing-quality ×6, responsive-bulma ×4, express-basics ×1, production-best-practices ×2.
-- Verify tmc-eval360 image locations during Phase 6.
+- ~~Verify tmc-eval360 image locations during Phase 6.~~ ✅ Done — 8 PNGs were at `web-lectures/tmc-eval360/tmc-eval360/` (not `assets/tmc-eval360/`); moved → `lectures/tmc-eval360/assets/` (commit `8f7854d`).
+- 36 unreferenced orphan files intentionally left in `assets/` (non-blocking — decide archive vs. assign in a later pass).
 
 ---
 

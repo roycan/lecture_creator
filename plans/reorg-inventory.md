@@ -6,6 +6,23 @@
 
 ---
 
+## 0. Post-Move Corrections (Phase 6, 2026-06-13)
+
+On-disk verification during Phase 6 found these errors in §1/§3 below. **This section supersedes the marked rows.**
+
+| Where | Inventory said | Reality (confirmed on disk) | Action taken |
+|---|---|---|---|
+| §1 / §3 — `ajax-fetch` | `weather.html` + `weather-data.json` ❌ MISSING | ✅ Both EXIST at `assets/` | Moved → `lectures/ajax-fetch/assets/` |
+| §1 / §3 — `database-sqlite` | `practice-apps/{barangay-directory,store-inventory}-v2/` 🚧 NOT YET CREATED | ✅ Both EXIST (+ `class-list-v2/`) | Moved → `lectures/database-sqlite/assets/` |
+| §1 / §6 — `tmc-eval360` | 8 PNGs "🔍 VERIFY" at `assets/tmc-eval360/` | ✅ Physically at `web-lectures/tmc-eval360/tmc-eval360/` | Moved → `lectures/tmc-eval360/assets/` |
+| §6 — `tmc-eval360` duplicate | Two `.md` copies, pick one | Top-level `web-lectures/tmc-eval360.md` is canonical (cleaner refs) — **D12 revised** | Nested dup → `archive/reorg-2026-06/tmc-eval360-duplicate.md` (D13) |
+| §1 — `dom`/global | `assets/styles.css` shared | Root `style.css` is EMPTY; `assets/styles.css` is the real file — **D7 confirmed** | Moved → `shared/styles.css` (canonical, copy-on-build) |
+| §5 — orphans | ~36 listed as candidates | Confirmed unreferenced | **Left in `assets/` intentionally** (non-blocking; later pass) |
+
+> §8 "Open Decisions" are now all resolved: see [`inceptions/context.md`](../inceptions/context.md) §6 (D7 revised, D8, D9, D12 revised, D13) + the table above.
+
+---
+
 ## 1. Lecture → Owned Assets Map
 
 Each lecture becomes `lectures/<slug>/` carrying its `assets/`, `diagrams/`, and `diagram-src/`. Items marked **SHARED** are referenced by 2+ lectures → go to top-level `shared/`.
@@ -104,11 +121,13 @@ To confirm during Phase 6 (the dry-run mover will list these): e.g. `assets/inne
 
 ## 8. Open Decisions for You
 
-1. **tmc-eval360**: which copy is canonical, and where do its 8 PNGs actually live? (I can verify with one more listing.)
-2. **Shared starters/solutions**: canonical-in-`shared/` + copy-on-build (recommended) vs. duplicate per lecture?
-3. **CSS PNGs**: move from `assets/` to `diagrams/` for consistency (recommended)?
-4. **CHANGELOG.md**: keep at root or archive?
-5. **Content gaps (§3)**: track as TODOs now, or skip those references entirely until you author them?
+> **All resolved during Phase 6 (2026-06-13).** Outcomes:
+
+1. ✅ **tmc-eval360** — canonical = top-level `web-lectures/tmc-eval360.md`; 8 PNGs were at `web-lectures/tmc-eval360/tmc-eval360/` → `lectures/tmc-eval360/assets/`.
+2. ✅ **Shared starters/solutions** — canonical-in-`shared/challenges/` + copy-on-build (D8).
+3. ✅ **CSS PNGs** — moved `assets/` → `lectures/css/diagrams/` (D9).
+4. ✅ **CHANGELOG.md** — kept at root.
+5. ✅ **Content gaps (§3)** — tracked as TODOs; note weather/practice-apps-v2 were false alarms (see §0).
 
 ---
 
