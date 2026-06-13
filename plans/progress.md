@@ -2,15 +2,15 @@
 
 > **Living document.** Update at the end of every session. New sessions: read [`inceptions/context.md`](../inceptions/context.md) first, then find **▶ RESUME HERE** below.
 
-**Last updated:** 2026-06-13 · **Overall:** Phase 2a complete → ready for Phase 2b (image inlining).
+**Last updated:** 2026-06-13 · **Overall:** Phase 2b complete → ready for Phase 2c (lib bundling).
 
 ---
 
 ## ▶ RESUME HERE
 
-**Next action:** Phase 2b — core: data-URI image inlining (`inlineImages` in `scripts/lib/`); MIME detection for png/svg/jpg + clear missing-file errors; resolve refs relative to each `lectures/<slug>/`.
-**Mode:** Code · **Confidence:** 93%
-**Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (core split+template done; next: 2b → 2c → 3 → 7a → 7b → 4 → 5 → 8 → 9).
+**Next action:** Phase 2c — core: bundle highlight.js locally (always) + mermaid (only when a lecture uses it) into `renderPresentation`, replacing the CDN `<script>`/`<link>` tags so exports are fully offline. Reuses `scripts/lib/`.
+**Mode:** Code · **Confidence:** 91%
+**Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (2b done; next: 2c → 3 → 7a → 7b → 4 → 5 → 8 → 9).
 
 ---
 
@@ -23,8 +23,8 @@
 | 1 | Scaffold: `package.json`, `server/`, `scripts/lib`, `shared/`, `dist/`, `.gitignore`, npm scripts | 95% | ✅ Done | 2026-06-12 |
 | 6 | Restructure: dry-run mover, then `git mv` lectures → `lectures/<slug>/`; `shared/styles.css`; de-dup tmc-eval360; relocate stray `database-sqlite-lecture.md` | 95% | ✅ Done | 2026-06-13 |
 | 2a | Core: `splitSlides` (marked.lexer) + port `createSingleHTML` template | 92% | ✅ Done | 2026-06-13 |
-| 2b | Core: data-URI image inlining (MIME png/svg/jpg, clear errors) | 93% | ⏳ Next | — |
-| 2c | Core: bundle highlight.js always; mermaid only when used | 91% | ⬜ Pending | — |
+| 2b | Core: data-URI image inlining (MIME png/svg/jpg, clear errors) | 95% | ✅ Done | 2026-06-13 |
+| 2c | Core: bundle highlight.js always; mermaid only when used | 91% | ⏳ Next | — |
 | 3 | CLI: `build.js` (`--slug`/`--all`) + `check.js` linter | 94% | ⬜ Pending | — |
 | 7a | Rewire image/asset refs with valid target (fix 3 typos + repaths) | 97% | ⬜ Pending | — |
 | 7b | Truly-missing images: render from sources or log TODO (non-blocking) | 85% | ⬜ Pending | — |
@@ -87,6 +87,15 @@ Legend: ✅ Done · ⏳ Next · 🔄 In progress · ⬜ Pending · ⚠️ Blocke
 - Commit(s): `193c0ae` — "feat(core): splitSlides + presentation template (Phase 2a)"; this docs commit.
 - **Next:** Phase 2b (data-URI image inlining).
 
+### Session 6 — 2026-06-13 (Phase 2b)
+- Did: Added data-URI image inlining to the shared core. [`scripts/lib/inline-images.mjs`](../scripts/lib/inline-images.mjs) `inlineImages(slides,{lectureDir,onMissing='throw'})` rewrites each relative `<img src>` to a base64 data URI (`data:${mime};base64,…`) read from the owning lecture folder; MIME by extension (`.png/.jpg/.jpeg/.gif/.webp/.svg` → base64, one consistent path incl. SVG); skips `http(s)://`, protocol-relative `//`, and existing `data:` srcs untouched; mutates **only** `src` (robust to attribute order via a whitespace-anchored `src=` regex so `data-src` is never touched); unknown extension → clear `Error`. [`scripts/lib/index.mjs`](../scripts/lib/index.mjs) gains the orchestrator `buildLecture({slug,lectureDir,splitDepth=2,title,markdown,onMissing})` composing `splitSlides → inlineImages → renderPresentation` (title auto-extracted from the first H1/H2), and re-exports `inlineImages`.
+- Decision (confirmed with user via scored review): **missing-image handling = Option A** — an `onMissing` option. `'throw'` (default) raises a loud `Error` naming **slide index + resolved path + original src** (feeds the Phase-3 `check.js` CI gate and `buildLecture`); `'warn'` does `console.warn` with the same detail and leaves the original `<img src>` (for the Phase-4 editor live-preview where an image may not exist yet). Scores: **A 96/95** vs **B 98/82** (B's confidence gap = the editor-preview "warn" would need a resolve+exist wrapper that duplicates `inlineImages`); B's simplification converges on A, so A wins.
+- Verified: `npm test` green (**27 pass, 0 fail**: scaffold 1 + split-slides 7 + template 6 + inline-images 13). Manual build of a *clean* lecture `git-github` → `dist/git-github.html` (3.57 MB), **7** images inlined as `data:image/…` and **zero** relative `<img src>` left. Missing-image path confirmed loud: building `css` throws `inlineImages: missing image in slide 2: …/lectures/css/assets/css-cascade-flow.png (src: "assets/css-cascade-flow.png")` — expected & non-blocking.
+- Findings: the bootstrap's suggested `css` example is currently **broken** — D9 moved its PNGs `assets/` → `diagrams/` but [`lectures/css/lecture.md`](../lectures/css/lecture.md) still says `assets/…`; used `git-github` for the success build instead. That `assets/` → `diagrams/` rewire is **Phase 7a** (out of 2b scope). The Phase-2a CDN refs (highlight.js/mermaid) remain by design — bundling is **Phase 2c**.
+- Out of scope (next phases): bundle highlight.js + mermaid (2c); wire `build.js`/`check.js` (Phase 3); editor `/export` (Phase 4).
+- Commit(s): `<phase-2b core commit>` — "feat(core): inlineImages + buildLecture data-URI inlining (Phase 2b)"; this docs commit.
+- **Next:** Phase 2c (bundle highlight.js always; mermaid only when used).
+
 <!-- Append new sessions below using this template:
 ### Session N — YYYY-MM-DD (Phase X)
 - Did: ...
@@ -114,6 +123,7 @@ See [`inceptions/context.md`](../inceptions/context.md) §6 (D1–D13) for the f
 - Truly-missing PNGs to render from `.mmd`/`.d2`/`.txt` sources (Phase 7b): testing-quality ×6, responsive-bulma ×4, express-basics ×1, production-best-practices ×2.
 - ~~Verify tmc-eval360 image locations during Phase 6.~~ ✅ Done — 8 PNGs were at `web-lectures/tmc-eval360/tmc-eval360/` (not `assets/tmc-eval360/`); moved → `lectures/tmc-eval360/assets/` (commit `8f7854d`).
 - 36 unreferenced orphan files intentionally left in `assets/` (non-blocking — decide archive vs. assign in a later pass).
+- **Phase-2b confirmed broken refs (fix in 7a/7b, non-blocking):** `css` still points at `assets/css-*.png` after D9 moved them to `diagrams/`; `csv-datatables-qr` `datables`/`datatables` typo; `tmc-eval360` uses `tmc-eval360/*.png`; plus the truly-missing PNGs (testing-quality ×6, responsive-bulma ×4, express-basics ×1, production-best-practices ×2). All surface as clear `inlineImages` errors — by design.
 
 ---
 
