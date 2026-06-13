@@ -2,13 +2,13 @@
 
 > **Living document.** Update at the end of every session. New sessions: read [`inceptions/context.md`](../inceptions/context.md) first, then find **▶ RESUME HERE** below.
 
-**Last updated:** 2026-06-12 · **Overall:** Phase 0 complete → ready for Phase 1.
+**Last updated:** 2026-06-12 · **Overall:** Phase 1 complete → ready for Phase 6 (restructure).
 
 ---
 
 ## ▶ RESUME HERE
 
-**Next action:** Phase 1 — scaffold the new app (`package.json`, `server/`, `scripts/lib`, `shared/`, `dist/`, `.gitignore`, npm scripts).
+**Next action:** Phase 6 — restructure: dry-run mover, then `git mv` lectures → `lectures/<slug>/`; canonical `shared/styles.css`; de-dup tmc-eval360; relocate stray root `.md` files.
 **Mode:** Code · **Confidence:** 95%
 **Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (restructure right after scaffold so the linter validates it).
 
@@ -20,8 +20,8 @@
 |---|---|---|---|---|
 | — | Planning (context, architecture, decisions, inventory) | — | ✅ Done | 2026-06-12 |
 | 0 | Snapshot: archive stray root files (`git mv` → `archive/reorg-2026-06/`) | 96% | ✅ Done | 2026-06-12 |
-| 1 | Scaffold: `package.json`, `server/`, `scripts/lib`, `shared/`, `dist/`, `.gitignore`, npm scripts | 95% | ⏳ Next | — |
-| 6 | Restructure: dry-run mover, then `git mv` lectures → `lectures/<slug>/`; `shared/styles.css`; de-dup tmc-eval360; relocate stray `database-sqlite-lecture.md` | 95% | ⬜ Pending | — |
+| 1 | Scaffold: `package.json`, `server/`, `scripts/lib`, `shared/`, `dist/`, `.gitignore`, npm scripts | 95% | ✅ Done | 2026-06-12 |
+| 6 | Restructure: dry-run mover, then `git mv` lectures → `lectures/<slug>/`; `shared/styles.css`; de-dup tmc-eval360; relocate stray `database-sqlite-lecture.md` | 95% | ⏳ Next | — |
 | 2a | Core: `splitSlides` (marked.lexer) + port `createSingleHTML` template | 92% | ⬜ Pending | — |
 | 2b | Core: data-URI image inlining (MIME png/svg/jpg, clear errors) | 93% | ⬜ Pending | — |
 | 2c | Core: bundle highlight.js always; mermaid only when used | 91% | ⬜ Pending | — |
@@ -55,6 +55,16 @@ Legend: ✅ Done · ⏳ Next · 🔄 In progress · ⬜ Pending · ⚠️ Blocke
 - Verified: `archive/reorg-2026-06/` holds exactly 15 files; root clean of all archived files; `git status` clean post-commit.
 - Commit(s): `ed6488d` (docs: planning second-brain docs) + Phase 0 archive commit — "chore: archive stray temp/summary/test files (Phase 0)".
 - **Next:** Phase 1 (scaffold).
+
+### Session 3 — 2026-06-12 (Phase 1)
+- Scaffolded the Node/Express app skeleton (ESM, `type:"module"`): `package.json`, `.gitignore`, `server/app.js` (bootable Express+EJS stub + `/health`), `scripts/{build.js,check.js}` stubs, `scripts/test/scaffold.test.js`, `shared/README.md`, and `.gitkeep` placeholders for `server/{routes,views}`, `scripts/lib`, `shared`, `lectures`.
+- npm scripts wired: `start` → `node server/app.js`, `build`/`build:all` → `scripts/build.js`, `check` → `scripts/check.js`, `test` → `node --test "scripts/test/**/*.test.js"`.
+- `npm install` clean: 210 packages, 0 vulnerabilities; committed `package-lock.json`. Deps: express, ejs, marked, highlight.js, mermaid (prod) + supertest (dev). `node_modules/` + `dist/` gitignored.
+- Decisions: ESM over CJS; bootable + green scaffold (not files-only); `npm install` now; `style.css` → `shared/styles.css` move deferred to Phase 6 (per D7).
+- Issue found + fixed: `node --test scripts/test/` (directory arg) failed on Node 22.22 (treated the dir as a module to run) → switched test script to the quoted glob `"scripts/test/**/*.test.js"` (Node expands it; future-proofs nested tests).
+- Verified: `npm test` green (1 pass), `npm run check` exit 0, `npm run build` exit 0, `npm start` boots and serves `/health` + `/`; `git status` clean post-commit.
+- Commit(s): `<phase-1 scaffold commit>` — "feat: scaffold node/express app skeleton (Phase 1)".
+- **Next:** Phase 6 (restructure).
 
 <!-- Append new sessions below using this template:
 ### Session N — YYYY-MM-DD (Phase X)
