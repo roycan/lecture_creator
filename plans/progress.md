@@ -2,15 +2,15 @@
 
 > **Living document.** Update at the end of every session. New sessions: read [`inceptions/context.md`](../inceptions/context.md) first, then find **▶ RESUME HERE** below.
 
-**Last updated:** 2026-06-13 · **Overall:** Phase 6 complete → ready for Phase 2a (core build).
+**Last updated:** 2026-06-13 · **Overall:** Phase 2a complete → ready for Phase 2b (image inlining).
 
 ---
 
 ## ▶ RESUME HERE
 
-**Next action:** Phase 2a — core: `splitSlides` (marked.lexer) + port `createSingleHTML` template into `scripts/build.js`.
-**Mode:** Code · **Confidence:** 92%
-**Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (restructure done; building the core next: 2a → 2b → 2c → 3 → 7a → 7b → 4 → 5 → 8 → 9).
+**Next action:** Phase 2b — core: data-URI image inlining (`inlineImages` in `scripts/lib/`); MIME detection for png/svg/jpg + clear missing-file errors; resolve refs relative to each `lectures/<slug>/`.
+**Mode:** Code · **Confidence:** 93%
+**Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (core split+template done; next: 2b → 2c → 3 → 7a → 7b → 4 → 5 → 8 → 9).
 
 ---
 
@@ -22,8 +22,8 @@
 | 0 | Snapshot: archive stray root files (`git mv` → `archive/reorg-2026-06/`) | 96% | ✅ Done | 2026-06-12 |
 | 1 | Scaffold: `package.json`, `server/`, `scripts/lib`, `shared/`, `dist/`, `.gitignore`, npm scripts | 95% | ✅ Done | 2026-06-12 |
 | 6 | Restructure: dry-run mover, then `git mv` lectures → `lectures/<slug>/`; `shared/styles.css`; de-dup tmc-eval360; relocate stray `database-sqlite-lecture.md` | 95% | ✅ Done | 2026-06-13 |
-| 2a | Core: `splitSlides` (marked.lexer) + port `createSingleHTML` template | 92% | ⏳ Next | — |
-| 2b | Core: data-URI image inlining (MIME png/svg/jpg, clear errors) | 93% | ⬜ Pending | — |
+| 2a | Core: `splitSlides` (marked.lexer) + port `createSingleHTML` template | 92% | ✅ Done | 2026-06-13 |
+| 2b | Core: data-URI image inlining (MIME png/svg/jpg, clear errors) | 93% | ⏳ Next | — |
 | 2c | Core: bundle highlight.js always; mermaid only when used | 91% | ⬜ Pending | — |
 | 3 | CLI: `build.js` (`--slug`/`--all`) + `check.js` linter | 94% | ⬜ Pending | — |
 | 7a | Rewire image/asset refs with valid target (fix 3 typos + repaths) | 97% | ⬜ Pending | — |
@@ -78,6 +78,14 @@ Legend: ✅ Done · ⏳ Next · 🔄 In progress · ⬜ Pending · ⚠️ Blocke
 - Verified: `npm test` green (1 pass, 0 fail); `npm run check` lists all 20 slugs; dry-run scanner reports 0 real misses after manifest fixes.
 - Commit(s): `3ca4327` (mover + manifest), `993c9f1` (establish `shared/`), `77d3e09` (batch A), `8f7854d` (batch B + relocate + dedup) — all `refactor(reorg):`; this docs commit `docs(reorg): progress + inventory notes`.
 - **Next:** Phase 2a (core: `splitSlides`).
+
+### Session 5 — 2026-06-13 (Phase 2a)
+- Did: Ported the slide core into the Node shared lib. [`scripts/lib/split-slides.mjs`](../scripts/lib/split-slides.mjs) `splitSlides(md,{splitDepth=2})` uses `marked.lexer` tokens (no DOM) — splits on heading tokens with depth ≤ splitDepth and keeps `###`/`####` as content inside the section slide; carries the token list's `.links` onto each bucket so inline refs resolve. [`scripts/lib/template.mjs`](../scripts/lib/template.mjs) `renderPresentation(slides,{title})` is a faithful verbatim port of `createSingleHTML` (theme CSS + body + runtime player JS); title now parametric, dead github.io base-URL path dropped (D6), CDN lib tags kept (bundling = Phase 2c). [`scripts/lib/index.mjs`](../scripts/lib/index.mjs) barrel export so CLI + server share one core (D5).
+- Decision: **split depth ≤ 2** (`#`/`##` split; `###`/`####` stay inside). Validated on real lectures — depth-2 yields presentable decks (css 21, database-sqlite 18, express-basics 24, html 17 slides) vs the original all-headings split's 49/105/108/139 micro-slides. `splitDepth` stays configurable for per-lecture overrides later.
+- Verified: `npm test` green (14 pass, 0 fail: scaffold 1 + split-slides 7 + template 6); end-to-end render of `css` → `dist/css.html` (gitignored), 21 slides, title auto-extracted "Introduction to CSS".
+- Out of scope (next phases): image data-URI inlining (2b), highlight.js/mermaid bundling (2c), `build.js`/`check.js` wiring (Phase 3). The 2a output still references CDNs by design — "zero external URLs" is the Phase 5/9 acceptance gate.
+- Commit(s): `193c0ae` — "feat(core): splitSlides + presentation template (Phase 2a)"; this docs commit.
+- **Next:** Phase 2b (data-URI image inlining).
 
 <!-- Append new sessions below using this template:
 ### Session N — YYYY-MM-DD (Phase X)
