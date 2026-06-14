@@ -1,0 +1,27 @@
+{
+  "name": "lecture-creator",
+  "version": "0.1.0",
+  "description": "Converts Markdown lecture notes into self-contained, narrated HTML presentation slides for offline classroom use.",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server/app.js",
+    "build": "node scripts/build.js",
+    "build:all": "node scripts/build.js --all",
+    "check": "node scripts/check.js",
+    "test": "node --test \"scripts/test/**/*.test.js\""
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "highlight.js": "^11.9.0",
+    "marked": "^15.0.0",
+    "mermaid": "^11.0.0"
+  },
+  "devDependencies": {
+    "supertest": "^7.0.0"
+  }
+}

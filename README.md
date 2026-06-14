@@ -1,248 +1,181 @@
-# Lecture Creator - Student-Friendly HTML Presentation Exporter
+# Lecture Creator
 
-A simple tool to convert Markdown lectures into self-contained HTML presentations with text-to-speech narration.
+> Converts **Markdown lecture notes** into **self-contained, narrated HTML presentation slides**
+> for offline classroom use — one `.html` file per lecture, with images embedded and code
+> highlighting bundled in. Built for a public high-school Computer Science classroom where student
+> internet is often unreliable or expensive.
 
-## Recent Improvements (October 2025)
-
-### Latest: Manual Mode Toggle (October 19, 2025)
-- **New Feature**: Choose between auto-play and manual navigation modes
-- **Problem Solved**: Slides advancing too fast on Linux/Chromium when speech fails
-- **User Control**: Students can now select their preferred playback mode before starting
-- **Platform Hint**: Manual mode recommended for Linux + Chrome users
-
-### Previous Updates
-- **Removed ZIP Export**: Simplified to single HTML file export only
-- **Robust Voice Loading**: Better handling of browser voice initialization
-- **Manual Controls**: Students can now navigate slides manually with buttons or keyboard
-- **Progress Indicator**: Shows current slide number (e.g., "Slide 3 of 10")
-- **Error Handling**: Clear status messages and graceful fallbacks
-- **Better UI**: Loading spinner, status messages, improved mobile support
-
-### Why These Changes
-The previous ZIP export required students to:
-1. Extract the ZIP file
-2. Run a local web server (or deal with CORS errors)
-3. Have specific browser permissions enabled
-
-The new single HTML export is much simpler:
-- ✅ Students just double-click the HTML file
-- ✅ Works offline from file:/// URLs
-- ✅ No server or special setup needed
-- ✅ Works even if text-to-speech is unavailable
-
-## How to Use
-
-### For Teachers (Creating Lectures)
-
-1. **Open `index.html` in a web browser**
-
-2. **Write or paste your Markdown lecture**
-   - Use `#` for titles (these create new slides)
-   - Use `##` and `###` for subtitles
-   - Include lists, code blocks, images, etc.
-   - See `test-lecture.md` for examples
-
-3. **Preview the lecture**
-   - Click "Play Preview" to test the narration
-   - Adjust voice, rate, and pitch as desired
-
-4. **Export for students**
-   - Click "Export for Students"
-   - Save the `presentation.html` file
-   - Share this single file with your students
-
-### For Students (Viewing Lectures)
-
-1. **Download the HTML file** your teacher shared
-
-2. **Double-click to open** in any modern web browser
-   - Chrome, Firefox, Edge, Safari all work
-
-3. **Choose your playback mode**:
-   - **Auto-play with voice**: Slides advance automatically with narration (recommended for Windows/Mac)
-   - **Manual navigation**: You control slide advancement with buttons (recommended for Linux + Chrome)
-
-4. **Customize settings** (auto-play mode only):
-   - Select preferred voice
-   - Adjust speed (rate) and tone (pitch)
-
-5. **Click "Start Presentation"** or **"Start (Manual Navigation)"**
-
-6. **Navigation Options**:
-   - **Auto mode**: Listen to narration, slides advance automatically
-     - Use Next/Previous to skip or review
-   - **Manual mode**: Click Next to advance at your own pace
-   - **Keyboard shortcuts** (both modes):
-     - **Spacebar** or **→ arrow**: Next slide
-     - **← arrow**: Previous slide
-     - **Esc**: Stop speech (auto mode)
-
-## Markdown Format Guide
-
-### Creating Slides
-
-Each heading level 1 (`#`) or level 2 (`##`) creates a new slide:
-
-```markdown
-# Introduction
-Welcome to the lecture!
-
-## Main Topic
-This becomes slide 2
-
-### Subtopic
-This is still part of slide 2
-
-## Another Topic
-This becomes slide 3
-```
-
-### Formatting Options
-
-```markdown
-**Bold text** for emphasis
-*Italic text* for subtle emphasis
-`inline code` for technical terms
-
-- Bullet point 1
-- Bullet point 2
-
-1. Numbered item
-2. Another item
-
-![Image description](image-url.jpg)
-
-```
-
-### Code Blocks
-
-Use triple backticks for code:
-
-````markdown
-```python
-def hello():
-    print("Hello, students!")
-```
-````
-
-## Voice Customization
-
-### In the Editor
-- **Voice**: Select your preferred narration voice
-- **Rate**: Adjust speed (0.6 = slower, 1.3 = faster)
-  - Recommended: 0.9-1.0 for teaching
-- **Pitch**: Adjust tone (usually leave at 1.0)
-
-### In Exported Files
-Students can also adjust these settings before starting the presentation.
-
-## Troubleshooting
-
-### Slides advancing too fast (Linux + Chrome)
-- **Symptom**: Slides move every 1-2 seconds, no time to read
-- **Cause**: Speech synthesis unavailable on Linux/Chromium from file:/// URLs
-- **Solution**: 
-  1. When opening the lecture, select **"Manual navigation"** mode
-  2. Use Next/Previous buttons to control pace at your own speed
-  3. **Alternative**: Use Firefox instead (has better Linux speech support)
-
-### "Loading voices..." never completes
-- **Solution**: Wait 3-5 seconds, then click "Start Anyway"
-- The browser will use its default voice
-- **Better option**: Switch to manual navigation mode
-- This is normal on some Linux systems or older browsers
-
-### Speech doesn't work
-- **Check**: Is your system volume on?
-- **Check**: Does your browser support text-to-speech?
-- **Solution**: Use **manual navigation mode** - no voice needed
-- **Fallback**: Use the Next/Previous buttons for manual navigation
-
-### Exported file shows blank page
-- **Check**: Make sure you opened the HTML file in a browser
-- **Try**: Right-click → Open With → Browser name
-- **Check**: Browser console for errors (F12 → Console tab)
-
-### File:/// URL restrictions
-Modern browsers should work fine with file:/// URLs for this tool. If you encounter issues:
-- Try a different browser (Chrome/Firefox recommended)
-- Or serve via a simple HTTP server
-
-## Technical Details
-
-### Browser Compatibility
-- **Chrome/Chromium**: ✅ Excellent support (Windows/Mac), ⚠️ Use manual mode on Linux
-- **Firefox**: ✅ Excellent support (all platforms including Linux)
-- **Safari**: ✅ Good support
-- **Edge**: ✅ Excellent support
-- **Mobile browsers**: ⚠️ Limited voice selection, manual mode recommended
-
-### File Size
-- Small lecture (10 slides): ~50-100 KB
-- Medium lecture (30 slides): ~150-300 KB
-- Large lecture (100 slides): ~500KB-1MB
-
-Images are NOT embedded, only referenced by URL.
-
-### Privacy & Offline Use
-- ✅ Works completely offline
-- ✅ No external dependencies after export
-- ✅ No tracking or analytics
-- ✅ No internet connection required
-
-### Voice API
-Uses the Web Speech API (speechSynthesis) built into modern browsers:
-- Free and built-in
-- Quality depends on your operating system
-- Windows/Mac have excellent voices
-- Linux voices may be more robotic
-
-## Development Notes
-
-### Architecture
-- **Frontend only**: No backend server needed
-- **ES5 compatible**: Works in older browsers
-- **No build step**: Plain HTML/CSS/JS
-- **Self-contained exports**: Everything in one file
-
-### Key Files
-- `index.html`: Main application interface
-- `app.js`: Application logic and export functionality
-- `style.css`: (Optional) Additional styling
-- `test-lecture.md`: Example lecture for testing
-
-### Dependencies
-- [Marked.js](https://marked.js.org/): Markdown parsing
-- [FileSaver.js](https://github.com/eligrey/FileSaver.js): File download
-
-### Recent Code Changes
-See `plan-export-fix.md` for the detailed implementation plan.
-
-## Future Enhancements
-
-Possible improvements:
-- [ ] Pause/Resume button during playback
-- [ ] Jump to specific slide
-- [ ] Embedded images (base64 encoding)
-- [ ] PDF export option
-- [ ] Slide notes (visible to teacher only)
-- [ ] Timer/duration estimates
-
-## License
-
-This project is free to use for educational purposes.
-
-## Support
-
-If students or teachers encounter issues:
-1. Check the Troubleshooting section above
-2. Try the `test-lecture.md` example
-3. Test in a different browser
-4. Check browser console for error messages (F12)
+[![tests](https://img.shields.io/badge/tests-68%20pass%20%2F%200%20fail-brightgreen)](#quality-gates)
+[![check](https://img.shields.io/badge/npm%20run%20check-clean-brightgreen)](#quality-gates)
+[![node](https://img.shields.io/badge/node-%E2%89%A520-green)](#requirements)
 
 ---
 
-**Version**: 2.1.0 (October 2025)  
-**Status**: Production ready  
-**Latest Feature**: Manual mode toggle for platform compatibility  
-**Tested on**: Chrome 119, Firefox 120, Edge 119 (Linux/Windows/Mac)
+## Why this exists
+
+Two problems forced a rebuild:
+
+1. **GitHub Pages hotlinking stopped working.** The old tool turned relative image paths into
+   `github.io` absolute URLs — that delivery path is dead.
+2. **The repo was disorganized** — scattered assets, duplicated files, and broken image links.
+
+The fix: each lecture becomes a **portable folder**, and a **Node build** embeds images as data URIs
+and bundles highlight.js (+ mermaid when used), so the student file has **zero external URLs** and
+works fully offline. An **Express + EJS editor** (`npm start`) lets you author, live-preview, and
+export on `localhost`. Full design + rationale: [`inceptions/context.md`](inceptions/context.md).
+
+---
+
+## Quick start
+
+```bash
+npm install          # one time
+npm start            # editor → http://localhost:3000
+```
+
+Prefer the command line? Build a lecture straight to a file:
+
+```bash
+npm run build -- git-github     # → dist/git-github.html  (one self-contained file)
+```
+
+Then share `dist/git-github.html` with students — they just double-click it. No server, no internet.
+
+---
+
+## npm scripts
+
+| Command | What it does |
+|---|---|
+| [`npm start`](package.json#L11) | Run the **editor** on `localhost` (author / live-preview / export). |
+| [`npm run build -- <slug>`](package.json#L12) | **CLI build** one lecture → `dist/<slug>.html`. |
+| [`npm run build:all`](package.json#L13) | Build **every** lecture (per-lecture error isolation). |
+| [`npm run check`](package.json#L14) | **Integrity linter** — fails if any lecture has a missing image ref. The ship gate. |
+| [`npm test`](package.json#L15) | Run the test suite (`node --test`, 68 tests). |
+
+---
+
+## Author a lecture (the short version)
+
+1. Each lecture lives in its own folder: `lectures/<slug>/lecture.md` (kebab-case slug).
+2. Write Markdown. **`#` and `##` start new slides**; `###`/`####` stay inside the current slide.
+3. Reference images with **relative paths** (`diagrams/foo.png`, `assets/bar.html`) — the build
+   inlines them. Never use `https://` / `github.io` URLs.
+4. Build it: `npm run check && npm run build -- <slug>` → `dist/<slug>.html`.
+
+```markdown
+# Introduction            ← slide 1
+Welcome!
+
+## Main Topic             ← slide 2
+- A point
+- ![diagram](diagrams/flow.png)
+
+```js
+console.log('highlighted code');
+```
+```
+
+For the full pipeline, the editor round-trip, and "adding a new lecture" step-by-step, see
+**[`logs/LECTURE-CREATION-PATTERN.md`](logs/LECTURE-CREATION-PATTERN.md)**.
+
+---
+
+## Architecture
+
+The CLI and the editor share **one build core** ([`scripts/lib/`](scripts/lib)) — there is never a
+second copy of the export logic (decision D5). One pipeline turns `lecture.md` into a single HTML:
+
+```
+lecture.md ─▶ splitSlides ─▶ inlineImages ─▶ bundleLibs ─▶ renderPresentation ─▶ self-contained .html
+              (slide breaks)   (data-URI imgs) (offline libs)  (themed deck + voice)
+```
+
+```mermaid
+flowchart LR
+  T[Teacher browser] -->|npm start localhost| S[Express + EJS editor]
+  S -->|EJS editor UI| T
+  S -->|reads| L[lectures/ source folders]
+  T -->|POST export| S
+  S --> C[Shared core scripts/lib]
+  C -->|inline images + bundle libs| S
+  S -->|download single HTML| T
+  CLI[npm run build / check] --> C
+  TEST[npm test] -. validates .-> C
+```
+
+| Where | What |
+|---|---|
+| [`lectures/`](lectures) | **Source** — one portable folder per lecture (what you author). |
+| [`scripts/lib/`](scripts/lib) | **Shared core** — [`buildLecture()`](scripts/lib/index.mjs), `splitSlides`, `inlineImages`, `bundleLibs`, `renderPresentation`. |
+| [`server/`](server) | The **Express + EJS editor** (author / preview / export). |
+| [`shared/`](shared) | Cross-lecture assets (`styles.css`, practice challenges). |
+| [`dist/`](dist) | **Generated** exports — gitignored. |
+
+Full folder map: **[`logs/FOLDER-STRUCTURE.md`](logs/FOLDER-STRUCTURE.md)**.
+
+---
+
+## Viewing exported lectures (for students)
+
+Students don't need Node or this repo — they only need the **one `.html` file**.
+
+1. **Double-click** the `.html` file to open it in any modern browser (Chrome, Firefox, Edge, Safari).
+2. **Choose a playback mode** before starting:
+   - **Auto-play** — slides advance with text-to-speech narration (best on Windows/Mac).
+   - **Manual** — you advance slides yourself (best on **Linux + Chrome**, see below).
+3. **Keyboard shortcuts** (both modes): `Space` / `→` next slide · `←` previous · `Esc` stop speech.
+
+> The exported file is fully self-contained: images, code highlighting, and the voice player are all
+> embedded — **no internet required**.
+
+### Troubleshooting (student side)
+
+- **Slides advance too fast / no narration (Linux + Chrome):** speech synthesis can be unavailable
+  from `file://`. Choose **Manual mode** and use Next/Previous, or open the file in **Firefox**
+  (better Linux speech support).
+- **"Loading voices…" never finishes:** wait a few seconds, then click **Start Anyway** (uses the
+  default voice), or switch to Manual mode.
+- **Blank page:** make sure the file opened in a browser (right-click → Open With), and check the
+  browser console (`F12`).
+
+---
+
+## Quality gates
+
+Three commands must be green before shipping:
+
+| Gate | Command | Expected |
+|---|---|---|
+| Regression | `npm test` | **68 pass / 0 fail** (unit + integration + supertest routes) |
+| Integrity | `npm run check` | **exit 0** (0 missing image refs) |
+| Build | `npm run build:all` | **20 ok / 0 failed** |
+
+The test suite also proves the core guarantee: a built lecture contains **zero external `http(s)://`
+URLs** (the offline proof). See [`scripts/test/`](scripts/test).
+
+---
+
+## Requirements
+
+- **Node.js ≥ 20** (ESM, `"type": "module"`).
+- Dependencies (installed via `npm install`): `express`, `ejs`, `marked`, `highlight.js`, `mermaid`;
+  dev: `supertest`.
+
+---
+
+## Project docs
+
+| Doc | Purpose |
+|---|---|
+| [`inceptions/context.md`](inceptions/context.md) | The project "second brain" — identity, problem, locked decisions (D1–D15). **Read first.** |
+| [`logs/FOLDER-STRUCTURE.md`](logs/FOLDER-STRUCTURE.md) | Where everything lives after the restructure. |
+| [`logs/LECTURE-CREATION-PATTERN.md`](logs/LECTURE-CREATION-PATTERN.md) | The `lecture.md` → self-contained `.html` workflow end-to-end. |
+| [`CHANGELOG.md`](CHANGELOG.md) | Release history. |
+| `plans/progress.md` | Phase tracker (where we are). |
+
+---
+
+## License
+
+Free to use for educational purposes.
