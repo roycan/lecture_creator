@@ -2,15 +2,15 @@
 
 > **Living document.** Update at the end of every session. New sessions: read [`inceptions/context.md`](../inceptions/context.md) first, then find **▶ RESUME HERE** below.
 
-**Last updated:** 2026-06-14 · **Overall:** Phase 7a complete (21/22 broken image refs rewired; only `express-basics/add-data-flow.png` remains → Phase 7b).
+**Last updated:** 2026-06-14 · **Overall:** Phase 7b complete — every image ref resolves; `npm run check` is GREEN (0 misses) for the first time. Next: Phase 4 (Express+EJS editor).
 
 ---
 
 ## ▶ RESUME HERE
 
-**Next action:** Phase 7b — render or stub the **one** truly-missing PNG: `lectures/express-basics/diagrams/add-data-flow.png` (no `.mmd`/`.txt` source in its `diagramSrc/`; author a source + render, or drop/log the ref as a non-blocking TODO). After 7b, `npm run check` should exit **0**. ⚠️ The inventory §2b "truly-missing ×13" set (testing-quality/responsive-bulma/production-best-practices) is **STALE** — all those PNGs exist on disk (verified Phase 7a); they never appeared in the live `check`. Re-scope 7b against live `check`, not the inventory.
-**Mode:** Code · **Confidence:** ~90% (Phase 7a landed clean: `check` 22→1 miss, build 8→1 fail, 53 tests green; remaining ~10% = how to source `add-data-flow.png` in 7b).
-**Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (7a done; next: 7b → 4 → 5 → 8 → 9).
+**Next action:** Phase 4 — Express+EJS editor: reuse `app.js` preview/TTS; list the 20 lectures; same-origin preview; `POST /export` (write the built HTML to `dist/`); drop the base-URL field. The build/check core is complete and green (Phase 7b closed the last missing image ref), so Phase 4 can lean on `buildLecture` + `checkAll` from [`scripts/lib/index.mjs`](../scripts/lib/index.mjs).
+**Mode:** Code · **Confidence:** ~92% (Phase 7b landed clean: `check` 1→0 misses — **first green check**; `build --all` 20 ok / 0 failed; 53 tests green. Remaining uncertainty for Phase 4 = the `/export` round-trip design + same-origin preview wiring).
+**Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (7a + 7b done; next: 4 → 5 → 8 → 9).
 
 ---
 
@@ -27,7 +27,7 @@
 | 2c | Core: bundle highlight.js always; mermaid only when used | 94% | ✅ Done | 2026-06-13 |
 | 3 | CLI: `build.js` (`--slug`/`--all`) + `check.js` linter | 94% | ✅ Done | 2026-06-14 |
 | 7a | Rewire image/asset refs with valid target (fix 3 typos + repaths) | 97% | ✅ Done | 2026-06-14 |
-| 7b | Render/stub the 1 truly-missing PNG (express-basics add-data-flow); §2b set is stale | 85% | ⏳ Next | — |
+| 7b | Resolve the 1 truly-missing image ref (express-basics add-data-flow → inline mermaid) | 96% | ✅ Done | 2026-06-14 |
 | 4 | Express+EJS editor: reuse `app.js` preview/TTS; list lectures; same-origin preview; `POST /export`; drop base-URL field | 92% | ⬜ Pending | — |
 | 5 | Tests: unit + integration (zero external URLs) + routes (supertest); wire `check` | 93% | ⬜ Pending | — |
 | 8 | Docs: update README, FOLDER-STRUCTURE, LECTURE-CREATION-PATTERN | 95% | ⬜ Pending | — |
@@ -122,6 +122,14 @@ Legend: ✅ Done · ⏳ Next · 🔄 In progress · ⬜ Pending · ⚠️ Blocke
 - Commit(s): `<phase-7a lecture commit>` — "fix(lectures): rewire broken image refs (Phase 7a)"; this docs commit.
 - **Next:** Phase 7b (render/stub the 1 truly-missing PNG: express-basics add-data-flow; §2b inventory set is stale).
 
+### Session 10 — 2026-06-14 (Phase 7b)
+- Did: Resolved the **last** missing image ref — `express-basics/diagrams/add-data-flow.png` — flipping `npm run check` GREEN for the first time. The only genuinely-missing PNG in the whole tree (confirmed on disk: no `.png` in [`diagrams/`](../lectures/express-basics/diagrams/), no `.mmd`/`.txt` source in `diagramSrc/web-server-basics/` — it has `01`–`10`; the §2b "truly-missing ×13" set is STALE and was NOT chased, per the brief). **Decision (a) inline mermaid fence (user-confirmed, recommended):** replaced `![Add Data Flow](diagrams/add-data-flow.png)` at [`lectures/express-basics/lecture.md`](../lectures/express-basics/lecture.md):996 with a fenced ```` ```mermaid ```` `sequenceDiagram` adapted from the existing [`diagramSrc/web-server-basics/06-form-submission.md`](../lectures/express-basics/diagramSrc/web-server-basics/06-form-submission.md) and mapped 1:1 to the slide's 8 numbered "Understanding the Flow" steps (visit `/add` → form → POST → read JSON → add → write → redirect → updated list). No PNG file, no new dependency, stays self-contained (D2); `buildLecture` auto-bundles mermaid because the fence now exists (D4).
+- Decisions: **(a) inline mermaid** over (b) render-to-PNG (would add a mermaid-CLI/puppeteer renderer — a new dep + build step the repo deliberately lacks) and over (c) drop (loses the figure, against D13). Trade-off (D2/D4): `express-basics` previously had NO mermaid fence, so `dist/express-basics.html` grows ~3 MB to 4.85 MB (mermaid bundle inlined) — acceptable for offline-first.
+- Issues/TODOs: None. The miss was self-contained to one ref; `check` was NOT weakened. `/images/logo.png` (line ~567, inside a ```` ```html ```` code fence) left as escaped text (not a real `<img>`, never flagged).
+- Verified: `npm run check` → exit **0** ("clean — no missing local image refs") — **first green check** (22 → 1 → 0 misses across 7a→7b). `npm run build -- express-basics` → clean, `dist/express-basics.html` (4,882,018 bytes). `npm run build -- --all` → **20 ok, 0 failed (of 20)**. `npm test` → **53 pass, 0 fail** (no regression). `git status` clean pre-commit on branch `reorg`.
+- Commit(s): `<phase-7b lecture commit>` — "fix(lectures): inline mermaid for add-data-flow (Phase 7b)"; this docs commit.
+- **Next:** Phase 4 (Express+EJS editor).
+
 <!-- Append new sessions below using this template:
 ### Session N — YYYY-MM-DD (Phase X)
 - Did: ...
@@ -146,7 +154,7 @@ See [`inceptions/context.md`](../inceptions/context.md) §6 (D1–D13) for the f
 ## Open TODOs / Known Gaps (non-blocking)
 
 - Content gaps to author later: `user-story-template.html`, `debugging-practice.html`, `uat-form.html`, `support-materials/auth-patterns.md`, `support-materials/session-config-guide.md`, `practice-apps/authentication-sessions/*-v3`. **(Corrected 2026-06-13: `weather.html`+`weather-data.json` and `practice-apps/{barangay-directory,store-inventory,class-list}-v2/` DO exist — moved during Phase 6; see [`plans/reorg-inventory.md`](reorg-inventory.md) §0.)**
-- Truly-missing PNGs to render/stub (Phase 7b): **express-basics ×1 only** (`diagrams/add-data-flow.png`, no source). ⚠️ The testing-quality ×6 / responsive-bulma ×4 / production-best-practices ×2 counts in the inventory are **STALE** — those PNGs all exist on disk (verified Phase 7a); re-scope 7b against live `npm run check`, not the inventory.
+- ~~Truly-missing PNGs to render/stub (Phase 7b): express-basics ×1 only (`diagrams/add-data-flow.png`, no source).~~ ✅ Done (Phase 7b, Session 10) — replaced with an inline ```` ```mermaid ```` `sequenceDiagram`; `check` is GREEN. ⚠️ The testing-quality ×6 / responsive-bulma ×4 / production-best-practices ×2 counts in the inventory were **STALE** — those PNGs all exist on disk (verified Phase 7a); they never appeared in the live `check`.
 - ~~Verify tmc-eval360 image locations during Phase 6.~~ ✅ Done — 8 PNGs were at `web-lectures/tmc-eval360/tmc-eval360/` (not `assets/tmc-eval360/`); moved → `lectures/tmc-eval360/assets/` (commit `8f7854d`).
 - 36 unreferenced orphan files intentionally left in `assets/` (non-blocking — decide archive vs. assign in a later pass).
 - **Phase-2b confirmed broken refs (fix in 7a/7b, non-blocking):** `css` still points at `assets/css-*.png` after D9 moved them to `diagrams/`; `csv-datatables-qr` `datables`/`datatables` typo; `tmc-eval360` uses `tmc-eval360/*.png`; plus the truly-missing PNGs (testing-quality ×6, responsive-bulma ×4, express-basics ×1, production-best-practices ×2). All surface as clear `inlineImages` errors — by design. **As of Phase 3, `npm run check` is the authoritative LIVE worklist** (currently 22 misses / 8 lectures — see Session 8; broader than this snapshot, which predates the move). Reconcile 7a against `check`'s output, not this list.
