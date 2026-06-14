@@ -2,15 +2,15 @@
 
 > **Living document.** Update at the end of every session. New sessions: read [`inceptions/context.md`](../inceptions/context.md) first, then find **▶ RESUME HERE** below.
 
-**Last updated:** 2026-06-14 · **Overall:** Phase 7b complete — every image ref resolves; `npm run check` is GREEN (0 misses) for the first time. Next: Phase 4 (Express+EJS editor).
+**Last updated:** 2026-06-14 · **Overall:** Phase 4 complete — Express+EJS editor live (server-core preview A1). All gates green (`check` 0 misses; `build --all` 20 ok; 53 tests). Next: Phase 5 (supertest routes + zero-external-URL integration + wire check).
 
 ---
 
 ## ▶ RESUME HERE
 
-**Next action:** Phase 4 — Express+EJS editor: reuse `app.js` preview/TTS; list the 20 lectures; same-origin preview; `POST /export` (write the built HTML to `dist/`); drop the base-URL field. The build/check core is complete and green (Phase 7b closed the last missing image ref), so Phase 4 can lean on `buildLecture` + `checkAll` from [`scripts/lib/index.mjs`](../scripts/lib/index.mjs).
-**Mode:** Code · **Confidence:** ~92% (Phase 7b landed clean: `check` 1→0 misses — **first green check**; `build --all` 20 ok / 0 failed; 53 tests green. Remaining uncertainty for Phase 4 = the `/export` round-trip design + same-origin preview wiring).
-**Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (7a + 7b done; next: 4 → 5 → 8 → 9).
+**Next action:** Phase 5 — Tests: supertest route tests (`GET /`, `GET /api/lectures`, `GET /api/lectures/:slug`, `GET /preview/:slug`, `POST /preview`, `POST /export`, 404/400 error paths); zero-external-URL integration test on the *exported* HTML (note: the editor *page* uses CDN Bulma — the Phase 9 gate targets exports, which already pass); wire `npm run check` into the test runner if not already. The Phase 4 editor is live on `npm start` (server-core preview A1): editor + CLI share `buildLecture` (D5); preview via `POST /preview` → `iframe.srcdoc`; export via `POST /export` + `Content-Disposition`; `onMissing:'warn'` on editor routes (CLI stays fail-loud).
+**Mode:** Code · **Confidence:** ~94% (Phase 4 landed clean: editor boots, all 20 lectures listed, preview/export via shared `buildLecture`, base-URL field dropped (D6), `npm test` 53 / `check` 0 / `build --all` 20 ok all green. Remaining uncertainty for Phase 5 = supertest wiring details + the exact zero-URL assertion approach).
+**Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (Phase 4 done; next: 5 → 8 → 9).
 
 ---
 
@@ -28,7 +28,7 @@
 | 3 | CLI: `build.js` (`--slug`/`--all`) + `check.js` linter | 94% | ✅ Done | 2026-06-14 |
 | 7a | Rewire image/asset refs with valid target (fix 3 typos + repaths) | 97% | ✅ Done | 2026-06-14 |
 | 7b | Resolve the 1 truly-missing image ref (express-basics add-data-flow → inline mermaid) | 96% | ✅ Done | 2026-06-14 |
-| 4 | Express+EJS editor: reuse `app.js` preview/TTS; list lectures; same-origin preview; `POST /export`; drop base-URL field | 92% | ⬜ Pending | — |
+| 4 | Express+EJS editor (server-core preview A1): list lectures; same-origin `iframe` preview; `POST /export`; dropped base-URL field (D6) | 94% | ✅ Done | 2026-06-14 |
 | 5 | Tests: unit + integration (zero external URLs) + routes (supertest); wire `check` | 93% | ⬜ Pending | — |
 | 8 | Docs: update README, FOLDER-STRUCTURE, LECTURE-CREATION-PATTERN | 95% | ⬜ Pending | — |
 | 9 | Verify acceptance: `npm test` green, `check` clean, zero external URLs, offline open OK, `npm start` round-trip | 92% | ⬜ Pending | — |
@@ -130,6 +130,14 @@ Legend: ✅ Done · ⏳ Next · 🔄 In progress · ⬜ Pending · ⚠️ Blocke
 - Commit(s): `<phase-7b lecture commit>` — "fix(lectures): inline mermaid for add-data-flow (Phase 7b)"; this docs commit.
 - **Next:** Phase 4 (Express+EJS editor).
 
+### Session 11 — 2026-06-14 (Phase 4)
+- Did: Built the **Express+EJS editor** (architecture **A1 — server-core preview**, user-locked after feasibility ~96% / confidence ~90% scoring). Key insight: `renderPresentation` (ported from `createSingleHTML`) already embeds the full narrated deck player (voice loading, auto/manual mode, speed control, TTS) — so the editor's preview `<iframe>` IS a playable deck; no port of the original `app.js` TTS code needed. Refactored `listSlugs` into the shared core barrel [`scripts/lib/index.mjs`](../scripts/lib/index.mjs) and re-exported from [`scripts/build.js`](../scripts/build.js) (D5 — editor + CLI import one function). Created [`server/views/editor.ejs`](../server/views/editor.ejs) (EJS port of `index.html`: lecture `<select>` server-populated via `listSlugs()`, markdown `<textarea>`, preview `<iframe>`, Refresh + Export buttons; **base-URL field dropped** (D6); editor-level voice settings dropped — the deck player owns TTS). Created [`server/public/editor.js`](../server/public/editor.js) (`loadLecture` → GET `/api/lectures/:slug`; `refreshPreview` → POST `/preview` → `iframe.srcdoc`; `exportLecture` → POST `/export` → blob → `<a download>`). Created 3 route modules: [`server/routes/editor.js`](../server/routes/editor.js) (GET `/`), [`server/routes/lectures.js`](../server/routes/lectures.js) (GET `/api/lectures`, GET `/api/lectures/:slug`; `SLUG_RE=/^[a-z0-9-]+$/` for path safety), [`server/routes/export.js`](../server/routes/export.js) (GET `/preview/:slug`, POST `/preview`, POST `/export` + `Content-Disposition: attachment`). All editor builds use `buildLecture({ onMissing:'warn' })` (authoring loop tolerates drafts; CLI single-build stays `'throw'`; `npm run check` remains the strict ship-gate). Rewired [`server/app.js`](../server/app.js): `express.json`, static(`/static`), routers mounted, `/health` kept, 404 + error handlers, listen guard kept (for supertest in Phase 5), `export default app`.
+- Decisions: **D14 — editor architecture = server-core preview (A1)** over A2 (faithful port of `app.js` TTS — redundant, the deck player already does it) and A3 (A1 + persist to `dist/` — adds write side-effects to the editor loop). A1 is D5-pure (one `buildLecture`), D6-done-by-construction (base-URL field dropped), D3-same-origin (localhost Express sidesteps `file://` CORS), and WYSIWYG (preview ≡ export, same build). CDN Bulma/FontAwesome used for editor *chrome only* — the **exported** student file has zero external URLs (data-URI images, inlined highlight.js + mermaid). Export download uses native `<a download>` (no FileSaver dep).
+- Issues/TODOs: None blocking. Scope deliberately deferred to Phase 5: supertest route tests, zero-external-URL *integration* assertion (unit-level spot-check already confirmed the exported `dist/express-basics.html` has zero `http` URLs). Smoke test hit a boot-timing race on first try (4 endpoints blank with 2s warmup) — re-run with 4s warmup was fully green; no code change needed.
+- Verified: `npm start` smoke — GET `/health` `{status:'ok',phase:'editor'}`; GET `/` renders 20 lecture `<option>`s; GET `/static/editor.js` 200; GET `/api/lectures` 20 slugs; GET `/api/lectures/git-github` `{slug,markdown}`; POST `/preview` → built HTML in `iframe.srcdoc`; POST `/export` → attachment, zero external URLs; 404 + 400 (bad slug) handled. Regression gates: `npm test` **53 pass / 0 fail**; `npm run check` **exit 0** (0 misses); `npm run build -- --all` **20 ok, 0 failed**. `git status` clean pre-commit on branch `reorg`.
+- Commit(s): `e6905b9` — "feat(editor): Express+EJS editor with server-core preview (Phase 4)"; this docs commit.
+- **Next:** Phase 5 (tests: supertest routes + zero-external-URL integration + wire `check`).
+
 <!-- Append new sessions below using this template:
 ### Session N — YYYY-MM-DD (Phase X)
 - Did: ...
@@ -148,6 +156,7 @@ See [`inceptions/context.md`](../inceptions/context.md) §6 (D1–D13) for the f
 | Date | Decision | Rationale |
 |---|---|---|
 | 2026-06-12 | D1–D13 | see context.md §6 |
+| 2026-06-14 | D14 | Editor architecture = **server-core preview (A1)**: editor + CLI share `buildLecture` (D5); preview via `POST /preview` → `iframe.srcdoc`; export via `POST /export` + `Content-Disposition: attachment`; `onMissing:'warn'` on editor routes (CLI stays `'throw'`). WYSIWYG (preview ≡ export). CDN Bulma = editor chrome only; exported file has zero external URLs. |
 
 ---
 
