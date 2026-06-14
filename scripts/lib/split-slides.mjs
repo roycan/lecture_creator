@@ -3,7 +3,7 @@
 // Shared core — splits a Markdown lecture into presentation slides using the
 // marked *token stream* (no DOM), so it runs identically in Node (CLI/server).
 //
-// Ported from the original browser tool's processMarkdown() (app.js:95), which
+// Ported from the original browser tool's processMarkdown() (now archive/reorg-2026-06/app.js:95), which
 // split on EVERY heading via a DOM walk. Real lectures use ### / #### as
 // sub-content *inside* a section, so splitting on all headings shattered long
 // decks into dozens of micro-slides. This port splits on headings up to

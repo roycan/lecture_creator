@@ -2,14 +2,14 @@
 //
 // Shared core — renders the self-contained presentation HTML shell.
 //
-// Faithful port of the original browser tool's createSingleHTML() (app.js:270),
+// Faithful port of the original browser tool's createSingleHTML() (now archive/reorg-2026-06/app.js:270),
 // moved into the Node shared core so the CLI build and the Express /export
 // route share one source of truth (context.md §3 / D5).
 //
 // Changes vs. original:
 //   - Renamed createSingleHTML -> renderPresentation.
 //   - Title is now a parameter (was hard-coded "Lecture Presentation").
-//   - The dead GitHub-Pages base-URL path (app.js:239-262) is NOT ported (D6):
+//   - The dead GitHub-Pages base-URL path (archive/reorg-2026-06/app.js:239-262) is NOT ported (D6):
 //     images are inlined as data URIs (Phase 2b) instead.
 //   - Phase 2c: when a `bundle` is supplied, highlight.js (always) + mermaid
 //     (only when used) are INLINED from vendored UMD copies and NO CDN tags are
