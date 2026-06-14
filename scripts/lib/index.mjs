@@ -9,6 +9,8 @@
 // Phase 2b: inlineImages + buildLecture orchestrator (split -> inline -> render).
 // Phase 2c: bundleLibs + hasMermaid plug into buildLecture (inline highlight.js
 // always + mermaid only when used), so exports are fully offline.
+// Phase 3: scanMissingImages — read-only missing-image collector for the CLI
+// integrity linter (scripts/check.js) and build's --all error reporting.
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -16,12 +18,12 @@ import { fileURLToPath } from 'node:url';
 
 import { splitSlides } from './split-slides.mjs';
 import { renderPresentation } from './template.mjs';
-import { inlineImages } from './inline-images.mjs';
+import { inlineImages, scanMissingImages } from './inline-images.mjs';
 import { bundleLibs, hasMermaid } from './bundle-libs.mjs';
 
 export { splitSlides } from './split-slides.mjs';
 export { renderPresentation } from './template.mjs';
-export { inlineImages } from './inline-images.mjs';
+export { inlineImages, scanMissingImages } from './inline-images.mjs';
 export { bundleLibs, hasMermaid } from './bundle-libs.mjs';
 
 const REPO_ROOT = path.resolve(

@@ -14,6 +14,14 @@
 //     original <img src> untouched (a broken img). For the Phase 4 editor
 //     live-preview, where a teacher may reference an image not yet added.
 //
+// scanMissingImages(slides, { lectureDir }) (Phase 3): the read-only
+// collection twin of inlineImages() — same <img src> discovery, skip rule and
+// path resolution, but it neither inlines nor throws. Returns one record per
+// referenced local file that does NOT exist, so check.js can report EVERY miss
+// in a lecture instead of stopping at the first. Existence-only: a present
+// file with an unsupported extension is not "missing" (inlineImages flags that
+// loudly at build time).
+//
 // MIME is derived from the file extension (one consistent base64 path, incl.
 // SVG). An unknown/unsupported extension throws a clear Error so a bad ref is
 // never silently mis-typed. Only the `src` attribute is mutated; attribute
@@ -111,6 +119,56 @@ export function inlineImages(slides, { lectureDir, onMissing = 'throw' } = {}) {
 
     return { html: next };
   });
+}
+
+/**
+ * Scan slides for missing local image refs (read-only integrity check).
+ *
+ * The collection twin of inlineImages(): same <img src> discovery, same skip
+ * rule (absolute / protocol-relative / data: / empty), same path resolution —
+ * but it neither inlines nor throws. It returns one record per referenced
+ * local file that does NOT exist on disk, so a caller (Phase 3 check.js) can
+ * report EVERY miss in a lecture instead of stopping at the first.
+ *
+ * Existence-only by design: a present file with an unsupported extension is
+ * not "missing" — inlineImages handles that as a separate, loud error at build
+ * time. scanMissingImages reports only files that cannot be found.
+ *
+ * @param {{ html: string }[]} slides - output of splitSlides().
+ * @param {{ lectureDir: string }} opts - `lectureDir` (required): the owning
+ *   lecture folder; relative refs resolve here.
+ * @returns {{ slideIndex: number, resolvedPath: string, src: string }[]} One
+ *   entry per missing local image ref, in document order.
+ */
+export function scanMissingImages(slides, { lectureDir } = {}) {
+  if (!lectureDir) {
+    throw new Error('scanMissingImages: required option "lectureDir" is missing');
+  }
+
+  const input = Array.isArray(slides) ? slides : [];
+  const missing = [];
+
+  input.forEach((slide, slideIndex) => {
+    const html = slide && typeof slide.html === 'string' ? slide.html : '';
+    if (!html) return;
+
+    // IMG_TAG_RE carries the `g` flag (stateful lastIndex); reset per slide.
+    IMG_TAG_RE.lastIndex = 0;
+    let m;
+    while ((m = IMG_TAG_RE.exec(html)) !== null) {
+      const sm = m[0].match(SRC_ATTR_RE);
+      if (!sm) continue; // <img> with no src — not a ref we track
+      const value = sm[4] ?? sm[5] ?? sm[6] ?? '';
+      if (isSkippable(value)) continue; // absolute / data: / empty -> not local
+
+      const resolved = path.resolve(lectureDir, value);
+      if (fs.existsSync(resolved)) continue; // present -> fine
+
+      missing.push({ slideIndex, resolvedPath: resolved, src: value });
+    }
+  });
+
+  return missing;
 }
 
 export default inlineImages;
