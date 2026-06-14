@@ -1,527 +1,247 @@
-# 🎓 Lecture Creation Pattern - Step-by-Step Workflow
+# Lecture Creation Pattern
 
-**Purpose:** Template and checklist for creating new complete lectures.
+> How a lecture goes from `lecture.md` to a self-contained, narrated `.html` file students open
+> offline. Pair with [`FOLDER-STRUCTURE.md`](FOLDER-STRUCTURE.md) (where things live) and
+> [`../README.md`](../README.md) (quick start). Design + rationale:
+> [`../inceptions/context.md`](../inceptions/context.md).
 
-**Last Updated:** November 10, 2025
-
----
-
-## 📋 Overview
-
-A complete lecture consists of:
-- 1 main markdown file (~500-800 lines)
-- 5-7 practice HTML files
-- 2-3 mini-project HTML files
-- 1 starter + 3 solution files for final challenge
-- 5-10 mock JSON data files
-- 15-25 diagram source files (multiple formats)
-
-**Time Estimate:** 4-6 hours for complete implementation
-
-**Reference Example:** `ajax-fetch-lecture.md` (created 2025-11-10)
+**Last updated:** 2026-06-14
 
 ---
 
-## Phase 1: Planning & Structure
+## 1. The round-trip at a glance
 
-### 1.1 Define Learning Objectives
-- [ ] List 5-7 key concepts to teach
-- [ ] Identify prerequisites
-- [ ] Determine difficulty progression
-- [ ] Choose grade level (usually Grade 9)
-
-### 1.2 Find Philippine Context
-- [ ] Identify relevant local examples
-- [ ] Choose appropriate analogies (food, transport, school)
-- [ ] List data examples (cities, names, products)
-- [ ] Ensure cultural relevance
-
-### 1.3 Plan Sections
-- [ ] Introduction with analogy
-- [ ] 5-7 main teaching sections
-- [ ] 2-3 mini-project ideas
-- [ ] Final challenge theme options (3 variations)
-- [ ] Troubleshooting topics
-- [ ] What's Next section
-
-**Example Progression (AJAX/Fetch):**
-1. setTimeout (simple async)
-2. Promises (concept)
-3. Fetch API (real requests)
-4. async/await (cleaner syntax)
-5. JSON (data format)
-6. Error handling (robust code)
-7. Real-world patterns (debouncing, caching)
-
----
-
-## Phase 2: Create Main Markdown
-
-### 2.1 Create File
-```bash
-touch {topic}-lecture.md
+```
+            author                              the tool                           deliver
+ ┌─────────────────────┐   ┌───────────────────────────────────────────┐   ┌────────────────┐
+ │ lectures/<slug>/    │   │ splitSlides → inlineImages → bundleLibs    │   │ dist/<slug>.html│
+ │   lecture.md  ──────┼──▶│        → renderPresentation               │──▶│ (one file,      │
+ │   assets/ diagrams/ │   │ = buildLecture()  (scripts/lib/index.mjs)  │   │  zero URLs)     │
+ └─────────────────────┘   └───────────────────────────────────────────┘   └────────────────┘
+        ▲                                            ▲                              │
+        │ npm run check (gate: no missing images)    │ npm run build                │ share / USB
+        └────────────────────────────────────────────┘                              ▼
+                                  npm start (editor: preview ≡ export)        student double-clicks
 ```
 
-### 2.2 Write Introduction
-- [ ] Hook with relatable scenario
-- [ ] Present analogy (e.g., Jollibee ordering)
-- [ ] Explain what students will learn
-- [ ] Set expectations (no internet needed)
+There are **two ways** to drive the tool, both using the *same* core:
 
-### 2.3 Write Teaching Sections
-For each section:
-- [ ] Clear heading with emoji
-- [ ] Concept explanation
-- [ ] Simple code example with comments
-- [ ] Common mistakes section
-- [ ] Try-It block linking to practice file
-- [ ] Build on previous sections
+- **CLI** (`npm run build`) — fastest for "edit → build → ship one file".
+- **Editor** (`npm start`) — a localhost page to author, live-preview, and export in the browser.
 
-**Try-It Block Template:**
+Both call [`buildLecture()`](../scripts/lib/index.mjs) — one source of truth (decision D5).
+
+---
+
+## 2. Authoring `lecture.md`
+
+### Slide splitting (the one rule that matters most)
+
+A **new slide** starts at every `#` (H1) or `##` (H2) heading. `###`/`####` headings stay **inside**
+the current slide as sub-content. This is "split depth 2" — it yields presentable decks instead of
+dozens of micro-slides.
+
 ```markdown
-**🎯 Try It:** {Title}
-- Open `assets/{filename}.html` in your browser
-- {Instruction 1}
-- {Instruction 2}
-- Try: {Modification suggestion}
+# Introduction            ← slide 1 starts
+Welcome to the lecture!
+
+## Main Topic             ← slide 2 starts
+This whole section is slide 2.
+
+### A sub-point           ← still slide 2 (not a new slide)
+Bullet points, a code block, an image…
+
+## Another Topic          ← slide 3 starts
 ```
 
-### 2.4 Add Diagrams
-- [ ] Embed diagram references: `![Description](diagrams/{name}.png)`
-- [ ] Place diagrams strategically (after explanation, before code)
-- [ ] Note diagram sources needed
+### What Markdown you can use
 
-### 2.5 Write Mini-Projects Section
-For each project (2-3 total):
-- [ ] Project description
-- [ ] Learning objectives
-- [ ] Features to implement
-- [ ] Try-It block with file reference
-- [ ] Extension ideas
+| Feature | Notes |
+|---|---|
+| Headings `#`–`######` | `#`/`##` split slides; deeper headings are in-slide content. |
+| **bold**, *italic*, `inline code` | Standard Markdown. |
+| Lists (`-`, `1.`) | Standard. |
+| Fenced code blocks | Add a language for syntax highlighting: <code>```js</code>, <code>```html</code>, <code>```python</code>… highlight.js is bundled in. |
+| ```` ```mermaid ```` fence | Rendered as a diagram. **Mermaid is only bundled when a lecture uses it** (decision D4) — keeps files small. |
+| Images `![alt](path)` | **Relative to the lecture folder.** See below. |
+| Raw HTML | Allowed — useful for embedded forms/demos (see [`../lectures/localstorage/lecture.md`](../lectures/localstorage/lecture.md)). |
 
-### 2.6 Write Final Challenge
-- [ ] Overview of challenge
-- [ ] Starter template description
-- [ ] 3 theme variations with specifics
-- [ ] Grading criteria or success metrics
+### Images — relative paths only
 
-### 2.7 Add Troubleshooting
-- [ ] List 3-5 common errors
-- [ ] For each: symptom, cause, solution
-- [ ] Include code examples of fixes
+Reference images **relative to the lecture folder**, then let the build inline them:
 
-### 2.8 Write What's Next
-- [ ] Connect to future topics
-- [ ] Suggest extensions
-- [ ] Link to related concepts
-
----
-
-## Phase 3: Create Practice Files
-
-### 3.1 Plan Practice Progression
-- [ ] List 5-7 practice file concepts
-- [ ] Order by increasing difficulty
-- [ ] Each builds on previous concepts
-
-### 3.2 Create Each Practice File
-
-**Template:**
-```html
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>{Descriptive Title}</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div class="container">
-    <div class="card">
-      <h2>{Title with Emoji}</h2>
-      <!-- Interactive UI here -->
-    </div>
-  </div>
-  <script>
-    // JavaScript with comments
-  </script>
-</body>
-</html>
+```markdown
+![Request/response flow](diagrams/web-server-basics/01-request-response-flow.png)
+![A practice file](assets/mini-project-students/index.html)
 ```
 
-**For each file:**
-- [ ] Create in `assets/{concept}-demo.html` or `assets/{concept}-practice.html`
-- [ ] Link to `styles.css`
-- [ ] Add descriptive title and heading
-- [ ] Build interactive UI (buttons, inputs, display areas)
-- [ ] Implement the concept with clear code
-- [ ] Add comments explaining key lines
-- [ ] Test in browser
+- Use `diagrams/<name>.png` for rendered images, `assets/<name>` for practice files.
+- **Never** use `https://…` or old `github.io` URLs for slide content — the offline guarantee
+  depends on every image being a local file the build can read.
+- The build rewrites each `<img src>` to a `data:image/…;base64,…` URI so the export has **no
+  external image URLs** (decision D2).
 
-**Practice File Checklist:**
-- [ ] Links to shared `styles.css`
-- [ ] Uses standard classes (`.btn`, `.input`, `.card`)
-- [ ] Has clear title and heading
-- [ ] Interactive (buttons/inputs)
-- [ ] Code is commented
-- [ ] Demonstrates single concept clearly
-- [ ] Works offline
-- [ ] No errors in console
+### A minimal, real example
 
----
+The smallest lecture in the repo is
+[`../lectures/localstorage/lecture.md`](../lectures/localstorage/lecture.md) — just `lecture.md`,
+no images. Its top looks like:
 
-## Phase 4: Create Mock Data
+```markdown
+# localStorage Lecture
 
-### 4.1 Identify Data Needs
-- [ ] List all data needed for practice files
-- [ ] List data for mini-projects
-- [ ] List data for final challenge
+> Roy Canseco
 
-### 4.2 Create JSON Files
+## User Interface
+…HTML for a "Save a Note" form…
 
-**For each data file:**
-- [ ] Create in `assets/{data-type}.json`
-- [ ] Use Philippine context
-- [ ] 5-15 realistic records
-- [ ] Proper JSON formatting
-- [ ] Test loading in browser
-
-**Example Data Types:**
-- Geographic: provinces, cities, barangays
-- People: students, officials, customers
-- Products: sari-sari store items
-- Services: transport routes, weather data
-- Educational: quiz questions, lessons
-
-**JSON Data Checklist:**
-- [ ] Valid JSON syntax
-- [ ] Descriptive filename
-- [ ] Philippine context
-- [ ] Realistic values
-- [ ] Appropriate size (5-15 items)
-- [ ] Used by at least one HTML file
-
----
-
-## Phase 5: Create Mini-Projects
-
-### 5.1 Plan Projects
-- [ ] Choose 2-3 project themes
-- [ ] Ensure they combine multiple concepts
-- [ ] More complex than practice files
-- [ ] Different themes/contexts
-
-**Successful Project Patterns:**
-- Weather Dashboard (API + UI + error handling)
-- Directory/Search (filter + pagination + search)
-- Quiz App (data loading + state + scoring)
-- Analytics Dashboard (calculations + charts + stats)
-
-### 5.2 Create Each Mini-Project
-
-**For each project:**
-- [ ] Create `assets/{project-name}.html`
-- [ ] More complex UI than practice files
-- [ ] Combine 3-5 concepts from lecture
-- [ ] Include all UI states (loading/success/error)
-- [ ] Create corresponding JSON data file
-- [ ] Test thoroughly
-
-**Mini-Project Checklist:**
-- [ ] Combines multiple concepts
-- [ ] More polished UI
-- [ ] Real-world applicable
-- [ ] All states handled (loading/error/success)
-- [ ] Uses mock data (JSON file)
-- [ ] Works offline
-- [ ] Commented code
-- [ ] Test all features
-
----
-
-## Phase 6: Create Final Challenge
-
-### 6.1 Create Starter Template
-- [ ] Create `assets/dashboard-starter.html`
-- [ ] Basic structure with TODOs
-- [ ] Comments explaining what to implement
-- [ ] Minimal working code (optional)
-- [ ] Clear instructions in comments
-
-### 6.2 Create Solution Variations
-
-**For each of 3 themes:**
-- [ ] Create `assets/dashboard-{theme}.html`
-- [ ] Complete working implementation
-- [ ] Uses appropriate JSON data
-- [ ] Different theme/context
-- [ ] Showcases all lecture concepts
-
-**Theme Ideas:**
-- School: grades, attendance, students
-- Store: sales, inventory, products
-- Transport: routes, vehicles, passengers
-- Health: patients, appointments, records
-- Events: bookings, venues, attendees
-
-**Solution File Checklist:**
-- [ ] Complete, working code
-- [ ] Uses corresponding JSON data
-- [ ] Different theme from others
-- [ ] All features implemented
-- [ ] Professional appearance
-- [ ] Error handling
-- [ ] Commented code
-
----
-
-## Phase 7: Create Diagrams
-
-### 7.1 Identify Needed Diagrams
-- [ ] List concepts that need visual explanation
-- [ ] Prioritize complex/abstract concepts
-- [ ] Aim for 15-25 diagrams total
-
-**Diagram Types:**
-- State diagrams: For states/transitions
-- Sequence diagrams: For processes/flows
-- Flowcharts: For decision logic
-- Timelines: For temporal concepts
-- Comparisons: For before/after
-
-### 7.2 Create Diagram Sources
-
-**For each diagram:**
-- [ ] Create in `diagram-src/{topic}/{name}.mmd` (Mermaid first)
-- [ ] Optionally create `.d2`, `.puml` versions
-- [ ] Add clear labels and notes
-- [ ] Test rendering
-
-**Organization:**
+## loadNotes script
+```js
+function loadNotes() {
+  const raw = localStorage.getItem(KEY);
+  return raw ? JSON.parse(raw) : [];
+}
 ```
-diagram-src/
-└── {topic}/
-    ├── concept1.mmd
-    ├── concept1.d2
-    ├── concept1.puml
-    ├── concept2.mmd
-    ├── concept2.d2
-    └── ...
 ```
 
-### 7.3 Export to PNG
-- [ ] Export each diagram to PNG
-- [ ] Save in `diagrams/{name}.png` (flat structure)
-- [ ] Descriptive filename (no topic prefix)
-- [ ] Verify quality/readability
+---
 
-### 7.4 Update Markdown
-- [ ] Verify all diagram references in markdown point to existing PNGs
-- [ ] Check diagram placement makes sense
-- [ ] Ensure alt text is descriptive
+## 3. The build pipeline — what `buildLecture()` does
+
+[`buildLecture({ slug | lectureDir, … })`](../scripts/lib/index.mjs) runs four steps and returns
+**one complete HTML string**:
+
+| Step | Function | What it does |
+|---|---|---|
+| 1 | [`splitSlides()`](../scripts/lib/split-slides.mjs) | Parse Markdown with `marked.lexer`; cut into slides on `#`/`##`. |
+| 2 | [`inlineImages()`](../scripts/lib/inline-images.mjs) | Replace each relative `<img src>` with a base64 **data URI** read from the lecture folder. |
+| 3 | [`bundleLibs()`](../scripts/lib/bundle-libs.mjs) | Inline **highlight.js** (always) + **mermaid** (only if the deck has a ```` ```mermaid ```` fence) from [`vendor/`](../scripts/lib/vendor). |
+| 4 | [`renderPresentation()`](../scripts/lib/template.mjs) | Wrap the slides in the themed deck shell: theme CSS, keyboard controls, and the text-to-speech **voice player**. |
+
+The result is a **single, self-contained `.html`** file:
+
+- ✅ Images are data URIs — no `https://` image fetches.
+- ✅ highlight.js + mermaid are inlined — no CDN `<script>` tags.
+- ✅ The voice player is built in — narration works offline.
+- ➡️ Therefore: **zero external URLs**. The Phase-5/9 acceptance test asserts exactly this.
+
+> The title is auto-extracted from the first `#`/`##` in the deck; you can also pass it explicitly.
+
+### Missing-image handling: `throw` vs `warn`
+
+[`inlineImages()`](../scripts/lib/inline-images.mjs) takes `onMissing`:
+
+- `'throw'` (CLI default) — a missing image **fails the build** with a clear error naming the slide
+  index + resolved path. This makes broken decks impossible to ship silently.
+- `'warn'` (editor default) — logs the missing image and leaves the `<img src>` as-is, so the
+  authoring loop tolerates drafts whose images don't exist yet.
+
+[`npm run check`](#4-the-check-gate) is the strict, authoritative gate that runs the read-only
+collector ([`scanMissingImages()`](../scripts/lib/inline-images.mjs)) across **all** lectures.
 
 ---
 
-## Phase 8: Testing & Quality Assurance
-
-### 8.1 Test All HTML Files
-- [ ] Open each HTML file in browser
-- [ ] Click all buttons
-- [ ] Fill all forms
-- [ ] Verify all features work
-- [ ] Check console for errors
-- [ ] Test error scenarios
-
-### 8.2 Verify Links
-- [ ] All Try-It blocks reference existing files
-- [ ] All diagram references point to existing PNGs
-- [ ] All JSON files load correctly
-- [ ] All CSS links work
-
-### 8.3 Check Consistency
-- [ ] All HTML files use shared `styles.css`
-- [ ] Philippine context throughout
-- [ ] Consistent code style
-- [ ] Consistent commenting
-- [ ] Consistent emoji usage
-
-### 8.4 Review Content
-- [ ] Proper difficulty progression
-- [ ] Clear explanations
-- [ ] Code examples are correct
-- [ ] No typos or grammar errors
-- [ ] All sections complete
-
----
-
-## Phase 9: Documentation
-
-### 9.1 Create Implementation Log
-- [ ] Create `logs/{topic}-implementation-{date}.md`
-- [ ] Document design decisions
-- [ ] List all files created
-- [ ] Note key features
-- [ ] Include statistics (file counts, line counts)
-
-### 9.2 Update Session Context (if needed)
-- [ ] Add new patterns discovered
-- [ ] Update examples if this lecture is better
-- [ ] Note any conventions established
-
----
-
-## Phase 10: Final Checklist
-
-### Content Completeness
-- [ ] Main markdown has all sections
-- [ ] Introduction with analogy
-- [ ] 5-7 teaching sections
-- [ ] 5-7 practice files
-- [ ] 2-3 mini-projects
-- [ ] Final challenge (starter + 3 solutions)
-- [ ] Troubleshooting section
-- [ ] What's Next section
-- [ ] All Try-It blocks present
-
-### Files & Assets
-- [ ] All practice HTML files created
-- [ ] All mini-project files created
-- [ ] All challenge files created (4 total)
-- [ ] All JSON data files created
-- [ ] All diagram sources created
-- [ ] All diagram PNGs exported
-- [ ] All files in correct folders
-
-### Quality
-- [ ] All HTML files work in browser
-- [ ] All files use shared `styles.css`
-- [ ] All JSON files are valid
-- [ ] All diagrams render correctly
-- [ ] No broken links in markdown
-- [ ] No console errors
-- [ ] Philippine context throughout
-- [ ] Works completely offline
-
-### Code Quality
-- [ ] Code is commented
-- [ ] Error handling implemented
-- [ ] Loading states present
-- [ ] Consistent code style
-- [ ] Clear variable names
-- [ ] No hardcoded data (use JSON)
-
-### Documentation
-- [ ] Implementation log created
-- [ ] Design decisions documented
-- [ ] File inventory complete
-- [ ] Patterns noted for reuse
-
----
-
-## 📊 Expected File Counts
-
-| Category | Count | Location |
-|----------|-------|----------|
-| Main markdown | 1 | Root level |
-| Practice HTML | 5-7 | assets/ |
-| Mini-project HTML | 2-3 | assets/ |
-| Challenge HTML | 4 | assets/ |
-| Mock JSON data | 5-10 | assets/ |
-| Diagram sources | 15-25 | diagram-src/{topic}/ |
-| Diagram PNGs | 10-20 | diagrams/ |
-| **Total** | **40-70** | Various |
-
----
-
-## 🎯 Success Criteria
-
-A lecture is complete and successful when:
-
-✅ **Functional**
-- All practice files work without errors
-- All mini-projects are complete
-- Final challenge has working solutions
-- Everything works offline
-
-✅ **Educational**
-- Progressive difficulty
-- Clear explanations
-- Good analogies
-- Practical examples
-- Philippine context
-
-✅ **Quality**
-- No broken links
-- No errors
-- Consistent styling
-- Clean code
-- Good comments
-
-✅ **Complete**
-- All sections written
-- All files created
-- All diagrams exported
-- Documentation complete
-
----
-
-## 🚀 Quick Start Command
-
-When starting a new lecture:
+## 4. The `check` gate
 
 ```bash
-# Create main markdown
-touch {topic}-lecture.md
-
-# Create practice files (example)
-touch assets/{concept1}-demo.html
-touch assets/{concept2}-practice.html
-# ... more as needed
-
-# Create mini-projects
-touch assets/{project1}.html
-touch assets/{project2}.html
-
-# Create challenge files
-touch assets/dashboard-starter.html
-touch assets/dashboard-{theme1}.html
-touch assets/dashboard-{theme2}.html
-touch assets/dashboard-{theme3}.html
-
-# Create data files
-touch assets/{data1}.json
-touch assets/{data2}.json
-# ... more as needed
-
-# Create diagram source folder
-mkdir -p diagram-src/{topic}
-
-# Create implementation log
-touch logs/{topic}-implementation-$(date +%Y-%m-%d).md
+npm run check
 ```
 
----
+Scans every `lectures/<slug>/lecture.md`, splits it, and reports each local image reference whose
+file is missing on disk. **Exits non-zero on any miss** — this is the strict ship gate (decision: an
+honest linter). A clean run:
 
-## 💡 Tips for Efficient Creation
+```
+check: scanned 20 lecture(s), 0 missing image ref(s).
+check: clean — no missing local image refs.
+```
 
-1. **Start with structure** - Create all files first, fill in later
-2. **Reuse patterns** - Copy from existing good examples
-3. **Test incrementally** - Don't wait until the end
-4. **Use templates** - Standard HTML structure for all files
-5. **Batch similar tasks** - Do all JSON files together
-6. **Document as you go** - Note decisions immediately
-7. **Reference examples** - Look at `ajax-fetch-lecture.md`
-
----
-
-## 🔗 Reference Files
-
-- **Best complete example:** `ajax-fetch-lecture.md`
-- **Pattern documentation:** `logs/SESSION-CONTEXT.md`
-- **Folder structure:** `logs/FOLDER-STRUCTURE.md`
-- **Context restoration:** `logs/prompts.md`
+> **Ship rule:** `npm run check` must exit 0 before distributing any lecture. Run it after editing
+> images or moving files.
 
 ---
 
-**Ready to create a new lecture? Follow this guide step by step!**
+## 5. Building with the CLI
+
+```bash
+npm run build -- git-github        # one lecture  → dist/git-github.html
+npm run build:all                  # every lecture (per-lecture error isolation)
+```
+
+Single-slug builds are **fail-loud** (`onMissing: 'throw'`), so a broken ref stops the build. The
+`--all` pass keeps that per-lecture strictness but isolates failures so one bad slug can't abort the
+batch:
+
+```
+build: wrote dist/git-github.html (3697539 bytes)
+…
+build --all: 20 ok, 0 failed (of 20).
+```
+
+Output is written to **`dist/<slug>.html`** (gitignored — rebuild anytime).
+
+---
+
+## 6. The editor round-trip (`npm start`)
+
+```bash
+npm start      # → http://localhost:3000
+```
+
+The editor is an Express + EJS page (decision D3) that runs on `localhost` so it is **same-origin**
+with the build — the preview `<iframe>` can show a fully self-contained deck (data-URI images,
+inlined libs) with no `file://` CORS problem.
+
+| UI element | Calls | Result |
+|---|---|---|
+| Lecture dropdown | `GET /api/lectures/:slug` | Loads that lecture's Markdown into the editor. |
+| **Refresh** | `POST /preview` | Builds the current Markdown → sets `iframe.srcdoc`. **Preview ≡ export.** |
+| **Export** | `POST /export` | Same build, returned as a download (`Content-Disposition: attachment`). |
+
+Because preview and export use the **same** [`buildLecture()`](../scripts/lib/index.mjs) (with
+`onMissing: 'warn'`), what you see in the iframe is exactly what students get — WYSIWYG (decision D14).
+
+---
+
+## 7. Adding a new lecture (step-by-step)
+
+1. **Create the folder** — `mkdir lectures/<slug>` (kebab-case slug).
+2. **Write the deck** — `lectures/<slug>/lecture.md` (start with a `#` title).
+3. **Add assets/diagrams** if needed — `assets/`, `diagrams/`, `diagram-src/`. Reference images
+   with **relative paths**.
+4. **Check** — `npm run check` must be clean.
+5. **Build** — `npm run build -- <slug>` → `dist/<slug>.html`.
+6. **Ship** — copy `dist/<slug>.html` to students (USB, shared drive, LMS). They double-click it.
+
+> Nothing is registered by hand — the slug is auto-discovered from the folder name, so it appears in
+> `npm run build:all`, `npm run check`, and the editor dropdown immediately.
+
+---
+
+## 8. Conventions & gotchas
+
+- **Slugs are kebab-case** (`ajax-fetch`, not `Ajax_Fetch`) — they're used as folder names, the CLI
+  argument, and the output filename.
+- **Relative image paths only.** No absolute, `https://`, or legacy `github.io` URLs for slide
+  content. The build only inlines local files it can read.
+- **`#`/`##` split slides; `###`+ stay inside.** If a deck feels like too few/many slides, rework
+  the heading levels (`splitDepth` is configurable per-build but defaults to 2).
+- **Don't hand-edit `dist/`.** It's generated and gitignored — regenerate with `npm run build`.
+- **Voice/TTS is the deck player's job**, not the author's. Every export already has auto-play +
+  manual modes, speed/pitch control, and graceful fallback when a platform has no speech voice.
+- **Archive, never delete** (D13). Superseded files go to [`../archive/`](../archive).
+
+---
+
+## 9. Where to look in the code
+
+| Want to… | Read |
+|---|---|
+| See the pipeline / orchestrator | [`scripts/lib/index.mjs`](../scripts/lib/index.mjs) (`buildLecture`) |
+| Understand slide splitting | [`scripts/lib/split-slides.mjs`](../scripts/lib/split-slides.mjs) |
+| Understand image inlining / missing-image errors | [`scripts/lib/inline-images.mjs`](../scripts/lib/inline-images.mjs) |
+| Understand lib bundling (offline guarantee) | [`scripts/lib/bundle-libs.mjs`](../scripts/lib/bundle-libs.mjs) + [`vendor/`](../scripts/lib/vendor) |
+| See the narrated deck shell | [`scripts/lib/template.mjs`](../scripts/lib/template.mjs) |
+| See the CLI build / linter | [`scripts/build.js`](../scripts/build.js), [`scripts/check.js`](../scripts/check.js) |
+| See the editor routes | [`server/routes/`](../server/routes) |
+| Trust it's correct | [`scripts/test/`](../scripts/test) (`npm test`, 68 tests) |
