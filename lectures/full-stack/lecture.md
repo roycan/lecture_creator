@@ -15,7 +15,7 @@ APIs are the invisible messengers that make websites work.
 
 Here's that exchange as a sequence diagram:
 
-![](diagrams/api-testing/analogy.png)
+![](diagrams/analogy.png)
 
 # 🌐 What is Full Stack Development?
 

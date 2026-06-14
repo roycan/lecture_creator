@@ -636,7 +636,7 @@ app.get('/admin', securityGuard, actualRoute);
 
 ### **Visual Guide: Middleware Stack Architecture**
 
-![Middleware Stack](diagrams/supplementary/middleware-stack.png)
+![Middleware Stack](diagrams/middleware-stack.png)
 *Figure 2: Complete middleware execution stack showing order of operations from request to response*
 
 ---

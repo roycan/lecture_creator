@@ -89,7 +89,7 @@ Three states:
 
 **Visual: Promise State Machine**
 
-![Promise States](diagrams/promise-state.png)
+![Promise States](diagrams/promise-states.png)
 
 This diagram shows how a Promise transitions from pending to either fulfilled or rejected. Once settled, it never changes state.
 

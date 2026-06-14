@@ -21,7 +21,7 @@ The word "cascading" means styles flow down like a waterfall.
 
 If you style a parent element, the children inherit those styles automatically!
 
-![CSS Cascade Flow](assets/css-cascade-flow.png)
+![CSS Cascade Flow](diagrams/css-cascade-flow.png)
 
 **Example:**
 - If you make a `<div>` blue, everything inside it becomes blue too
@@ -37,7 +37,7 @@ selector {
 }
 ```
 
-![CSS Syntax Breakdown](assets/css-style-breakdown.png)
+![CSS Syntax Breakdown](diagrams/css-style-breakdown.png)
 
 **Let's break it down:**
 - **Selector:** What element you want to style (e.g., `h1`, `p`, `.class`)
@@ -56,7 +56,7 @@ This makes all `<h1>` headings blue and 32 pixels tall!
 
 ## Three Ways to Add CSS
 
-![CSS Application Methods](assets/css-application-methods.png)
+![CSS Application Methods](diagrams/css-application-methods.png)
 
 ### 1. Inline CSS (Inside HTML tags)
 
@@ -92,7 +92,7 @@ This makes all `<h1>` headings blue and 32 pixels tall!
 
 ## CSS Selectors - Part 1
 
-![CSS Selector Types](assets/css-selector-types.png)
+![CSS Selector Types](diagrams/css-selector-types.png)
 
 ### Element Selectors
 
@@ -148,7 +148,7 @@ Style a single unique element:
 
 ## CSS Colors
 
-![CSS Color Systems](assets/css-color-systems.png)
+![CSS Color Systems](diagrams/css-color-systems.png)
 
 ### Named Colors
 ```css
@@ -229,7 +229,7 @@ Options: `left`, `right`, `center`, `justify`
 
 Every HTML element is a rectangular box with four parts:
 
-![CSS Box Model Nested Structure](assets/css-box-model-nested-structure.png)
+![CSS Box Model Nested Structure](diagrams/css-box-model-nested-structure.png)
 
 ```
 ┌─────────────────────────────────┐
@@ -400,7 +400,7 @@ font-family: "Times New Roman", serif;
 
 ## Real-World Example: Simple Navigation Bar
 
-![Simple Navigation Bar Structure](assets/simple-navigation-bar-structure.png)
+![Simple Navigation Bar Structure](diagrams/simple-navigation-bar-structure.png)
 
 **HTML:**
 ```html

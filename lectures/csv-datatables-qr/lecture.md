@@ -77,7 +77,7 @@ With 500 products in your database:
 
 ### **Visual Guide: DataTables Features Overview**
 
-![DataTables Features](diagrams/supplementary/datatables-features.png)
+![DataTables Features](diagrams/datatables-features.png)
 *Figure 3: Comprehensive overview of all DataTables features - search, sort, pagination, export, and filtering*
 
 ---
