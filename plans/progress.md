@@ -2,15 +2,15 @@
 
 > **Living document.** Update at the end of every session. New sessions: read [`inceptions/context.md`](../inceptions/context.md) first, then find **▶ RESUME HERE** below.
 
-**Last updated:** 2026-06-13 · **Overall:** Phase 2c complete → ready for Phase 3 (CLI build.js + check.js).
+**Last updated:** 2026-06-14 · **Overall:** Phase 3 complete (CLI build.js + check.js + scanMissingImages) → ready for Phase 7a (rewire broken image refs).
 
 ---
 
 ## ▶ RESUME HERE
 
-**Next action:** Phase 3 — wire the CLI: `scripts/build.js` (`--slug <slug>` / `--all`) → `dist/<slug>.html`, and `scripts/check.js` integrity linter (scan lectures for missing `![]()`/asset refs; CI gate). Both call the shared core in `scripts/lib/`.
-**Mode:** Code · **Confidence:** 94%
-**Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (2c done; next: 3 → 7a → 7b → 4 → 5 → 8 → 9).
+**Next action:** Phase 7a — rewire broken image/asset refs to valid targets. `npm run check` is now the **authoritative worklist**: **22 missing refs across 8 lectures** — `css` ×7 (`assets/css-*.png` → moved to `diagrams/` by D9), `tmc-eval360` ×8 (`tmc-eval360/*.png` path), `json-api-audit` ×2, and `csv-datatables-qr` / `express-basics` / `ajax-fetch` / `authentication-sessions` / `full-stack` ×1 each (broader than the §2/§2b inventory snapshot — `check` also caught cross-lecture misfiles). Phase 7b renders any truly-missing PNGs that 7a can't repoint.
+**Mode:** Code · **Confidence:** ~95% (Phase 3 landed at ~95% feasibility / ~82% decision-confidence — see Session 8; the ~18% uncertainty is "don't let 7a/7b slip, or revisit as an allowlist".)
+**Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (3 done; next: 7a → 7b → 4 → 5 → 8 → 9).
 
 ---
 
@@ -25,7 +25,7 @@
 | 2a | Core: `splitSlides` (marked.lexer) + port `createSingleHTML` template | 92% | ✅ Done | 2026-06-13 |
 | 2b | Core: data-URI image inlining (MIME png/svg/jpg, clear errors) | 95% | ✅ Done | 2026-06-13 |
 | 2c | Core: bundle highlight.js always; mermaid only when used | 94% | ✅ Done | 2026-06-13 |
-| 3 | CLI: `build.js` (`--slug`/`--all`) + `check.js` linter | 94% | ⬜ Pending | — |
+| 3 | CLI: `build.js` (`--slug`/`--all`) + `check.js` linter | 94% | ✅ Done | 2026-06-14 |
 | 7a | Rewire image/asset refs with valid target (fix 3 typos + repaths) | 97% | ⬜ Pending | — |
 | 7b | Truly-missing images: render from sources or log TODO (non-blocking) | 85% | ⬜ Pending | — |
 | 4 | Express+EJS editor: reuse `app.js` preview/TTS; list lectures; same-origin preview; `POST /export`; drop base-URL field | 92% | ⬜ Pending | — |
@@ -105,6 +105,15 @@ Legend: ✅ Done · ⏳ Next · 🔄 In progress · ⬜ Pending · ⚠️ Blocke
 - Commit(s): `<phase-2c core commit>` — "feat(core): bundle highlight.js + mermaid offline (Phase 2c)"; this docs commit.
 - **Next:** Phase 3 (CLI `build.js` + `check.js`).
 
+### Session 8 — 2026-06-14 (Phase 3)
+- Did: Wired the CLI as thin wrappers over the shared core (D5). [`scripts/build.js`](../scripts/build.js): importable `listSlugs()` / `buildOne(slug,{distDir,lecturesDir,onMissing})` / `main(argv,{lecturesDir,distDir})`; `--slug` or positional → `buildLecture` → writes `dist/<slug>.html` (one-line success w/ byte size); `--all` → per-lecture `try/catch` (one failure can't abort the batch) + summary (`N ok, M failed (of T)`) + exit non-zero; no-args → usage + `exit(1)`. Single builds are **fail-loud** (`onMissing:'throw'` → exit 1). [`scripts/check.js`](../scripts/check.js): importable `scanLecture()` / `checkAll()` / `main({lecturesDir})`; splits each `lecture.md` + collects every missing local `<img src>` via a new **`scanMissingImages(slides,{lectureDir})`** helper extracted into [`scripts/lib/inline-images.mjs`](../scripts/lib/inline-images.mjs) (read-only, existence-only, reports every occurrence as `{slideIndex,resolvedPath,src}`, never throws — the collection twin of `inlineImages`, sharing its exact regex + skip rule) and re-exported from the barrel; prints a grouped report and exits **1 on any miss** (hard CI gate). `build.js`/`check.js` use the `import.meta.url === pathToFileURL(process.argv[1]).href` guard so importing them in tests never runs the CLI.
+- Decision (confirmed with user via scored review): **check.js strictness = (a) Hard CI gate + fail-loud single builds.** `check` exits 1 on any missing ref and stays RED until 7a/7b fix the known-broken lectures (acceptable — 7a/7b is the very next phase). Scores reported to the user: **feasibility ~95%** (thin-wrapper phase over a proven, 37-test-green core; the only *new* code is `scanMissingImages` — a read-only extraction of the existing regex/`existsSync` loop — plus the two thin CLIs; no new deps/algorithms), **confidence ~82%** (technically ~95%; long-term-choice vs. the (c) allowlist ~80%, with nearly all uncertainty schedule-dependent — if 7a/7b slips several sessions, the "boy who cried wolf" check-fatigue effect makes (c) the better daily-workflow tool; mitigant: (a)→(c) is a ~5-line reversal, so the downside of having chosen (a) is near-zero). Dropped (b) advisory — a green-on-broken linter undercuts the correctness mindset the tool is meant to model for students.
+- Issues/TODOs: **Fixed a path bug caught ONLY by the manual smoke** — `REPO_ROOT` in `build.js`/`check.js` climbed two `..` (copied from [`scripts/lib/index.mjs`](../scripts/lib/index.mjs), which is two levels deep under `scripts/lib/`) but these files are one level deep in `scripts/`, so it resolved to `<repo>/..` → `ENOENT`/no-lectures. One `..` is correct. Unit tests missed it (they pass an explicit `lecturesDir`); the real-CLI `npm run build -- git-github` + `npm run check` smoke caught it immediately — a strong argument for keeping the manual smoke in DONE-WHEN. **`check.js` surface (authoritative 7a worklist):** 22 misses / 8 lectures — `css`×7, `tmc-eval360`×8, `json-api-audit`×2, `csv-datatables-qr`/`express-basics`/`ajax-fetch`/`authentication-sessions`/`full-stack` ×1 each. Broader than the §2/§2b snapshot — e.g. `full-stack` → `diagrams/api-testing/analogy.png` (a PNG owned by the `api-testing` lecture, misfiled/referenced cross-lecture). Phase 7a reconciles against `check`'s **live** output, not the inventory snapshot. Try-It **asset-link** checking (anchors to practice HTML) is left as a TODO (Phase 5+); Phase 3 scopes to `<img src>` image refs only, as specified.
+- Verified: `npm test` green (**53 pass, 0 fail**: prior 37 + 16 new in [`scripts/test/cli.test.js`](../scripts/test/cli.test.js), all hermetic via temp fixtures). `npm run build -- git-github` → `dist/git-github.html` (3.70 MB), `<!doctype html>`, **0** `cdnjs.cloudflare.com` / `cdn.jsdelivr.net`, 7 `data:image/png;base64,`. `npm run check` → exit 1, scanned 20 lectures, 22 misses grouped by slug, no crash. `npm run build -- --all` → exit 1, "12 ok, 8 failed (of 20)" (the 8 = exactly what `check` flagged). `npm run build` (no-args) → usage + exit 1.
+- Out of scope (next phases): fix the broken refs (7a), render truly-missing PNGs (7b), Express `/export` route (Phase 4), zero-**external**-URLs gate incl. lecture *content* URLs like badge images (Phase 5/9).
+- Commit(s): `<phase-3 code+tests commit>` — "feat(cli): build.js + check.js + scanMissingImages (Phase 3)"; this docs commit.
+- **Next:** Phase 7a (rewire broken image refs — use `npm run check` as the worklist).
+
 <!-- Append new sessions below using this template:
 ### Session N — YYYY-MM-DD (Phase X)
 - Did: ...
@@ -132,7 +141,7 @@ See [`inceptions/context.md`](../inceptions/context.md) §6 (D1–D13) for the f
 - Truly-missing PNGs to render from `.mmd`/`.d2`/`.txt` sources (Phase 7b): testing-quality ×6, responsive-bulma ×4, express-basics ×1, production-best-practices ×2.
 - ~~Verify tmc-eval360 image locations during Phase 6.~~ ✅ Done — 8 PNGs were at `web-lectures/tmc-eval360/tmc-eval360/` (not `assets/tmc-eval360/`); moved → `lectures/tmc-eval360/assets/` (commit `8f7854d`).
 - 36 unreferenced orphan files intentionally left in `assets/` (non-blocking — decide archive vs. assign in a later pass).
-- **Phase-2b confirmed broken refs (fix in 7a/7b, non-blocking):** `css` still points at `assets/css-*.png` after D9 moved them to `diagrams/`; `csv-datatables-qr` `datables`/`datatables` typo; `tmc-eval360` uses `tmc-eval360/*.png`; plus the truly-missing PNGs (testing-quality ×6, responsive-bulma ×4, express-basics ×1, production-best-practices ×2). All surface as clear `inlineImages` errors — by design.
+- **Phase-2b confirmed broken refs (fix in 7a/7b, non-blocking):** `css` still points at `assets/css-*.png` after D9 moved them to `diagrams/`; `csv-datatables-qr` `datables`/`datatables` typo; `tmc-eval360` uses `tmc-eval360/*.png`; plus the truly-missing PNGs (testing-quality ×6, responsive-bulma ×4, express-basics ×1, production-best-practices ×2). All surface as clear `inlineImages` errors — by design. **As of Phase 3, `npm run check` is the authoritative LIVE worklist** (currently 22 misses / 8 lectures — see Session 8; broader than this snapshot, which predates the move). Reconcile 7a against `check`'s output, not this list.
 
 ---
 
