@@ -76,13 +76,11 @@ _“Stop browsing. Start building. Join the FullStack elective and ship your own
 
 # the following slides from the article of
 
-[![Tombri Bowei](https://media2.dev.to/dynamic/image/width=50,height=50,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Fuser%2Fprofile_image%2F1745361%2Fa5ccba4b-d4ad-4f12-8265-dcd18c3775cd.jpg)](https://dev.to/_boweii)
+[Tombri Bowei](https://dev.to/_boweii)
 
 [Tombri Bowei](https://dev.to/_boweii)
 
-Posted on Jan 20
-
-![](https://assets.dev.to/assets/sparkle-heart-5f9bee3767e18deb1bb725290cb151c25234768a0e9a2bd39370c382d02920cf.svg)5![](https://assets.dev.to/assets/raised-hands-74b2099fd66a39f2d7eed9305ee0f4553df0eb7b4f11b01b6b1b499973048fe5.svg)1
+Posted on Jan 20
 
 # Choosing a Stack Is a Social Decision, Not a Technical One
 

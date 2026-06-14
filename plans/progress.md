@@ -2,15 +2,15 @@
 
 > **Living document.** Update at the end of every session. New sessions: read [`inceptions/context.md`](../inceptions/context.md) first, then find **▶ RESUME HERE** below.
 
-**Last updated:** 2026-06-14 | **Overall:** Phase 8 complete -- docs rewritten (README, logs/FOLDER-STRUCTURE, logs/LECTURE-CREATION-PATTERN) for the new Node/Express build; legacy root app.js + index.html + 12 stale logs/* archived to archive/reorg-2026-06/ (D13). All gates still green (test 68/0; check 0; build --all 20 ok). Next: Phase 9 (final acceptance verification).
+**Last updated:** 2026-06-14 | **Overall:** Phase 9 complete (automated acceptance) -- all Definition-of-Done gates green: `npm test` 68/0 · `npm run check` 0 misses · `npm run build -- --all` 20 ok · offline proof = 0 external `src=` URLs across all 20 real decks (strengthened beyond the hermetic fixture tests). Phase 9 also stripped 3 external hotlinks scraped into `full-stack` (dev.to avatar + reaction SVGs) so the offline guarantee holds for every lecture. Manual browser smoke (offline-open render + `npm start` round-trip) is deferred to the owner. The project is feature-complete and shipped.
 
 ---
 
 ## ▶ RESUME HERE
 
-**Next action:** Phase 9 -- Final acceptance verification (context.md §5 Definition of Done): npm test green, npm run check clean, built file has zero external URLs, offline open shows images/highlight/mermaid/voice, npm start round-trip works. Phases 0-8 are done; the tool is feature-complete and documented; all gates are green.
+**Next action:** PROJECT COMPLETE (automated acceptance). All Definition-of-Done gates are green: `npm test` 68/0 · `npm run check` 0 misses · `npm run build -- --all` 20 ok · built decks have ZERO external `src=` URLs (verified across all 20 real lectures, not just fixtures) · D4 lib bundling correct (hljs always; mermaid only in express-basics). The ONLY remaining item is the MANUAL browser smoke (deferred to owner): (1) offline-open a built `dist/<slug>.html` to eyeball images/code-highlight/mermaid/voice; (2) `npm start` editor round-trip (dropdown lists 20 slugs, load fills textarea, Refresh previews in iframe, Export downloads a file identical to the preview). When done, tick those two and optionally resolve the untracked `.rooignore`.
 **Mode:** Code | **Confidence:** ~95% (Phase 8 = docs only: README + logs/FOLDER-STRUCTURE + logs/LECTURE-CREATION-PATTERN rewritten from the real on-disk layout; legacy app.js/index.html + 12 stale logs archived (D13, verified no active code depends on them); attribution comments in scripts/lib repointed to the archive path. Gates re-verified unchanged: 68 tests / check 0 / build --all 20 ok. Remaining uncertainty for Phase 9 = manual offline-open + npm start smoke only).
-**Implementation order:** 0 -> 1 -> 6 -> 2 -> 3 -> 7 -> 4 -> 5 -> 8 -> 9 (Phases 0-8 done; next: 9).
+**Implementation order:** 0 -> 1 -> 6 -> 2 -> 3 -> 7 -> 4 -> 5 -> 8 -> 9 (ALL DONE — automated gates green; manual browser smoke deferred to owner).
 
 ---
 
@@ -31,7 +31,7 @@
 | 4 | Express+EJS editor (server-core preview A1): list lectures; same-origin `iframe` preview; `POST /export`; dropped base-URL field (D6) | 94% | ✅ Done | 2026-06-14 |
 | 5 | Tests: factory refactor (createApp); hermetic supertest route tests; zero-external-URL integration proof; real-repo read smokes | 95% | Done | 2026-06-14 |
 | 8 | Docs: update README, FOLDER-STRUCTURE, LECTURE-CREATION-PATTERN | 95% | ✅ Done | 2026-06-14 |
-| 9 | Verify acceptance: `npm test` green, `check` clean, zero external URLs, offline open OK, `npm start` round-trip | 92% | ⏳ Next | — |
+| 9 | Verify acceptance: `npm test` green, `check` clean, zero external URLs, offline open OK, `npm start` round-trip | 98% | ✅ Done (automated) | 2026-06-14 |
 
 Legend: ✅ Done · ⏳ Next · 🔄 In progress · ⬜ Pending · ⚠️ Blocked
 
@@ -146,13 +146,22 @@ Legend: ✅ Done · ⏳ Next · 🔄 In progress · ⬜ Pending · ⚠️ Blocke
 - Commit(s): see git log (this session).
 - **Next:** Phase 8 (docs: README, FOLDER-STRUCTURE, LECTURE-CREATION-PATTERN).
 
-### Session 11 — 2026-06-14 (Phase 8)
+### Session 13 — 2026-06-14 (Phase 8)
 - Did: Phase 8 (docs). Rewrote the three project docs to reflect the completed restructure, all driven by the real on-disk layout: [`README.md`](../README.md) (teacher-first: what/why, npm scripts table, quick-start authoring, mermaid architecture diagram, condensed "Viewing exported lectures" student section preserving the still-accurate keyboard shortcuts + Linux/Chrome manual-mode troubleshooting, quality gates, project-docs map); [`logs/FOLDER-STRUCTURE.md`](../logs/FOLDER-STRUCTURE.md) (new `lectures/<slug>/` + `server/` + `scripts/lib/` + `shared/` + `archive/` layout, the 20-slug list, the shared-core pipeline table); [`logs/LECTURE-CREATION-PATTERN.md`](../logs/LECTURE-CREATION-PATTERN.md) (`lecture.md` -> `splitSlides` -> `inlineImages` -> `bundleLibs` -> `renderPresentation` = `buildLecture` -> self-contained `.html`; `throw` vs `warn`; the `check` gate; the `npm start` editor round-trip; "adding a new lecture" step-by-step). Archived (D13 — never delete) the legacy pre-port originals + 12 superseded pre-restructure logs: root `app.js` + `index.html` -> `archive/reorg-2026-06/`; 12 stale `logs/*` (SESSION-CONTEXT, technical-architecture, project-overview, the per-lecture implementation logs, etc.) -> `archive/reorg-2026-06/logs/`. Repointed the historical attribution comments in [`scripts/lib/split-slides.mjs`](../scripts/lib/split-slides.mjs) + [`scripts/lib/template.mjs`](../scripts/lib/template.mjs) from `(app.js:N)` to `(archive/reorg-2026-06/app.js:N)`.
 - Decisions: Owner-confirmed (architect -> code) doc approach = full teacher-first rewrite of all 3 named docs + archive the legacy root tool + stale logs (cleanest for a teacher browsing docs — no contradictory frontend-only descriptions left behind); preserve the still-valid student viewing/troubleshooting content as a condensed README section. `logs/` + `plans/` are `.rooignore`-blocked, so those docs + this progress file were written via staging files in `scripts/` + an internal-copy temp script (the documented workaround), then the temp scripts were deleted.
 - Issues/TODOs: None. Verified beforehand that NO active code depends on the root `app.js`/`index.html` — every reference is either a lecture *teaching example* (generic filenames like `git add app.js`), a historical attribution comment, or the one-time reorg mover's ignore list; none are runtime deps.
 - Verified: `npm test` -> 68 pass / 0 fail; `npm run check` -> exit 0 (0 misses); `npm run build -- --all` -> 20 ok / 0 failed. Gates unchanged by Phase 8 (doc-only + comment edits).
 - Commit(s): see git log (this session).
 - **Next:** Phase 9 (final acceptance verification — context.md §5 Definition of Done).
+
+### Session 14 — 2026-06-14 (Phase 9 — final acceptance verification)
+- Did: Ran the full Definition-of-Done automated gate suite against the real repo: `npm test` → 68 pass / 0 fail; `npm run check` → scanned 20, 0 missing image refs, exit 0; `npm run build -- --all` → 20 ok, 0 failed. Then ran a throwaway read-only offline audit (`scripts/_phase9-audit.mjs`, since deleted) over the REAL `dist/*.html` for all 20 slugs — mirroring the `routes.test.js` zero-URL regex but with a GLOBAL matchAll so it counts EVERY external resource URL, not just the first. Also cross-checked D4 bundling via the exact `template.mjs` markers.
+- Finding + fix: the audit caught 3 external hotlinks scraped into `lectures/full-stack/lecture.md` from a dev.to source article — (1) an author avatar `<img src="https://media2.dev.to/...">` and (2) a dev.to reaction bar (`sparkle-heart` + `raised-hands` SVGs with reaction counts). These leak into the built deck because `inlineImages` (correctly) inlines only LOCAL relative images — the hermetic fixture tests miss them (fixtures use only local images). Per owner decision, stripped the external images while keeping the text attribution (`[Tombri Bowei](https://dev.to/_boweii)`) and the "Posted on Jan 20" line. Rebuilt `full-stack` + re-audited → 0 external `src=` URLs across all 20 decks. Re-ran the full gate suite (unchanged: 68/0 · check 0 · build 20 ok).
+- Decisions: D16 — owner chose to STRIP the hotlinked images (no network, keeps attribution) over download-and-repoint or defer; the offline guarantee is now 100% true for every lecture. D17 — manual browser smoke (offline-open render + `npm start` round-trip) DEFERRED to the owner; Phase 9 closed on the automated gates.
+- Issues/TODOs: manual browser smoke pending (owner). The untracked `.rooignore` (session scaffolding) still unresolved — ask owner (commit vs. gitignore vs. leave).
+- Verified: `npm test` 68 pass / 0 fail; `npm run check` exit 0 (0 misses); `npm run build -- --all` 20 ok / 0 failed; offline audit 0 external `src=` URLs / 0 D4 violations across 20 decks.
+- Commit(s): see git log (this session).
+- **Next:** Owner manual browser smoke; then the restructure project is fully closed.
 
 <!-- Append new sessions below using this template:
 ### Session N — YYYY-MM-DD (Phase X)
@@ -174,6 +183,8 @@ See [`inceptions/context.md`](../inceptions/context.md) §6 (D1–D13) for the f
 | 2026-06-12 | D1–D13 | see context.md §6 |
 | 2026-06-14 | D14 | Editor architecture = **server-core preview (A1)**: editor + CLI share `buildLecture` (D5); preview via `POST /preview` → `iframe.srcdoc`; export via `POST /export` + `Content-Disposition: attachment`; `onMissing:'warn'` on editor routes (CLI stays `'throw'`). WYSIWYG (preview ≡ export). CDN Bulma = editor chrome only; exported file has zero external URLs. |
 | 2026-06-14 | D15 | Test architecture = **Option C (hybrid)**: factory refactor (createApp({ lecturesDir })) -> hermetic supertest route tests (throwaway fixtures, no repo coupling) + lightweight real-repo read smokes. Zero-URL regex scoped to src= resource attributes (ignoring data:, SVG xmlns, content a-href); handles JSON.stringify escaping. |
+| 2026-06-14 | D16 | Offline-proof scope = assert on the REAL `dist/*.html` (all 20 decks), not just hermetic fixtures. Phase 9 audit (throwaway) found 3 external hotlinks in `full-stack` scraped from a dev.to article; owner chose to STRIP the external images (avatar + reaction SVGs) keeping text attribution — no network, minimal, reversible — so the "zero external URLs" DoD is 100% true for every lecture. `inlineImages` intentionally inlines LOCAL images only; external refs are a content-authoring concern. |
+| 2026-06-14 | D17 | Phase 9 acceptance = automated gates green NOW; manual browser smoke (offline-open render + `npm start` round-trip) DEFERRED to the owner. No code risk remains — only visual confirmation. |
 
 ---
 
@@ -184,6 +195,8 @@ See [`inceptions/context.md`](../inceptions/context.md) §6 (D1–D13) for the f
 - ~~Verify tmc-eval360 image locations during Phase 6.~~ ✅ Done — 8 PNGs were at `web-lectures/tmc-eval360/tmc-eval360/` (not `assets/tmc-eval360/`); moved → `lectures/tmc-eval360/assets/` (commit `8f7854d`).
 - 36 unreferenced orphan files intentionally left in `assets/` (non-blocking — decide archive vs. assign in a later pass).
 - **Phase-2b confirmed broken refs (fix in 7a/7b, non-blocking):** `css` still points at `assets/css-*.png` after D9 moved them to `diagrams/`; `csv-datatables-qr` `datables`/`datatables` typo; `tmc-eval360` uses `tmc-eval360/*.png`; plus the truly-missing PNGs (testing-quality ×6, responsive-bulma ×4, express-basics ×1, production-best-practices ×2). All surface as clear `inlineImages` errors — by design. **As of Phase 3, `npm run check` is the authoritative LIVE worklist** (currently 22 misses / 8 lectures — see Session 8; broader than this snapshot, which predates the move). Reconcile 7a against `check`'s output, not this list.
+- **Phase 9 manual browser smoke (DEFERRED to owner, non-blocking):** open a built `dist/<slug>.html` directly in a browser (no server) — confirm images render, code is highlighted, mermaid renders (if used), voice/narration player works (auto + manual). Try `localstorage` (small) and `database-sqlite`/`responsive-bulma` (big). Then `npm start` round-trip: editor loads, dropdown lists all 20 slugs, load → textarea, Refresh → iframe preview, Export → download ≡ preview (D14). All automated gates are already green; this is visual confirmation only.
+- **`full-stack` hotlinks REMOVED (Phase 9, ✅):** the 3 dev.to external images (avatar + sparkle-heart + raised-hands SVGs) scraped into `lectures/full-stack/lecture.md` were stripped; text attribution + dev.to links kept. Note `full-stack-showcase.md` still carries the same hotlinks but is NOT built (only `lecture.md` ships), so it does not affect the offline proof.
 
 ---
 
