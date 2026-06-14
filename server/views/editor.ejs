@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lecture Creator — Editor</title>
+  <!-- The editor is a localhost authoring tool (teacher's machine). The CDN
+       Bulma/FontAwesome here style only the editor chrome — the *exported*
+       student file (built by buildLecture) has zero external URLs (Phase 9). -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+  <style>
+    html, body { height: 100%; }
+    #preview-frame {
+      width: 100%;
+      height: 70vh;
+      border: 1px solid #dbdbdb;
+      border-radius: 6px;
+      background: #1a1a1a;
+    }
+    .editor-status { min-height: 1.4em; font-size: 0.9em; }
+    .is-monospace { font-family: "Courier New", Consolas, Monaco, monospace; }
+  </style>
+</head>
+<body>
+
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Markdown to Audio Slideshow Creator 🎙️</h1>
+      <p class="subtitle">Pick a lecture, edit the Markdown, preview the narrated deck, and export a self-contained HTML file for students.</p>
+    </div>
+  </section>
+
+  <main class="container">
+    <div class="columns">
+
+      <div class="column is-half">
+        <div class="box">
+          <h2 class="title is-4">1. Choose a lecture</h2>
+          <div class="field">
+            <label class="label">Lecture</label>
+            <div class="control">
+              <div class="select is-fullwidth">
+                <select id="lecture-select">
+                  <option value="" disabled selected>Select a lecture…</option>
+                  <% slugs.forEach(function (slug) { %>
+                    <option value="<%= slug %>"><%= slug %></option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+            <p class="help">Loaded from <code>lectures/<slug>/lecture.md</code>. Images resolve from that folder.</p>
+          </div>
+        </div>
+
+        <div class="box">
+          <h2 class="title is-4">2. Edit Markdown</h2>
+          <div class="field">
+            <div class="control">
+              <textarea id="markdown-input" class="textarea is-monospace is-medium" rows="18" placeholder="Select a lecture above to load its Markdown…" disabled></textarea>
+            </div>
+          </div>
+          <p id="editor-status" class="editor-status help"></p>
+        </div>
+      </div>
+
+      <div class="column is-half">
+        <div class="box">
+          <h2 class="title is-4">3. Preview & Export</h2>
+          <p class="help">The preview <em>is</em> the exact file students get — images, code highlighting, and voice are all embedded. Click <strong>Start</strong> inside the preview to play it with narration.</p>
+          <iframe id="preview-frame" title="Presentation preview"></iframe>
+          <div class="buttons is-centered mt-4">
+            <button id="refresh-button" class="button is-info is-large" disabled>
+              <span class="icon"><i class="fas fa-sync"></i></span>
+              <span>Refresh Preview</span>
+            </button>
+            <button id="export-button" class="button is-success is-large" disabled>
+              <span class="icon"><i class="fas fa-file-export"></i></span>
+              <span>Export for Students</span>
+            </button>
+          </div>
+          <p id="build-status" class="editor-status help has-text-centered"></p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/static/editor.js"></script>
+</body>
+</html>

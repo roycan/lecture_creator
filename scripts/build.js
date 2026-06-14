@@ -18,7 +18,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import { buildLecture } from './lib/index.mjs';
+import { buildLecture, listSlugs } from './lib/index.mjs';
 
 // scripts/build.js + scripts/check.js live ONE level under the repo root
 // (scripts/), so a single '..' reaches it — unlike scripts/lib/*.mjs which are
@@ -30,24 +30,10 @@ const REPO_ROOT = path.resolve(
 const DEFAULT_DIST = path.join(REPO_ROOT, 'dist');
 const LECTURES_DIR = path.join(REPO_ROOT, 'lectures');
 
-/**
- * Sorted list of lecture slugs (the subdirectory names of lectures/).
- *
- * @param {{ lecturesDir?: string }} [opts]
- * @returns {string[]} Sorted slug names; [] if lectures/ is absent.
- */
-export function listSlugs({ lecturesDir = LECTURES_DIR } = {}) {
-  let entries;
-  try {
-    entries = fs.readdirSync(lecturesDir, { withFileTypes: true });
-  } catch {
-    return [];
-  }
-  return entries
-    .filter((d) => d.isDirectory())
-    .map((d) => d.name)
-    .sort();
-}
+// listSlugs now lives in the shared core (./lib/index.mjs, Phase 4) so the
+// Express editor and this CLI read the same lectures/ tree (D5). Re-exported
+// here so existing `import { listSlugs } from './build.js'` callers keep working.
+export { listSlugs };
 
 /**
  * Build one lecture and write dist/<slug>.html.

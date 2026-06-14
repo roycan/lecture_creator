@@ -11,6 +11,9 @@
 // always + mermaid only when used), so exports are fully offline.
 // Phase 3: scanMissingImages — read-only missing-image collector for the CLI
 // integrity linter (scripts/check.js) and build's --all error reporting.
+// Phase 4: listSlugs — read-only lecture enumerator shared by the CLI
+// (scripts/build.js --all) and the Express editor (server/routes/), so both
+// read the same lectures/ tree (D5 single source of truth).
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -34,6 +37,29 @@ const REPO_ROOT = path.resolve(
 
 function defaultLectureDir(slug) {
   return path.join(REPO_ROOT, 'lectures', slug);
+}
+
+/**
+ * Sorted list of lecture slugs (the subdirectory names of lectures/).
+ * Shared by the CLI --all pass and the Express editor's lecture list (D5).
+ *
+ * @param {{ lecturesDir?: string }} [opts] - defaults to <repo>/lectures;
+ *   tests/the editor point this at a specific tree.
+ * @returns {string[]} Sorted slug names; [] if lectures/ is absent.
+ */
+export function listSlugs({
+  lecturesDir = path.join(REPO_ROOT, 'lectures'),
+} = {}) {
+  let entries;
+  try {
+    entries = fs.readdirSync(lecturesDir, { withFileTypes: true });
+  } catch {
+    return [];
+  }
+  return entries
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name)
+    .sort();
 }
 
 // Pull a presentation <title> from the first H1/H2 in the deck (strip inner
