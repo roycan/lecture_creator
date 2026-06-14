@@ -2,15 +2,15 @@
 
 > **Living document.** Update at the end of every session. New sessions: read [`inceptions/context.md`](../inceptions/context.md) first, then find **▶ RESUME HERE** below.
 
-**Last updated:** 2026-06-14 | **Overall:** Phase 5 complete -- tests green (68 pass: 53 unit + 15 route/integration via supertest); zero-external-URL integration proof locked; factory refactor enables hermetic route tests. All gates green (check 0; build --all 20 ok). Next: Phase 8 (docs: README, FOLDER-STRUCTURE, LECTURE-CREATION-PATTERN).
+**Last updated:** 2026-06-14 | **Overall:** Phase 8 complete -- docs rewritten (README, logs/FOLDER-STRUCTURE, logs/LECTURE-CREATION-PATTERN) for the new Node/Express build; legacy root app.js + index.html + 12 stale logs/* archived to archive/reorg-2026-06/ (D13). All gates still green (test 68/0; check 0; build --all 20 ok). Next: Phase 9 (final acceptance verification).
 
 ---
 
 ## ▶ RESUME HERE
 
-**Next action:** Phase 8 -- Docs: update README.md (project overview, npm scripts, architecture), logs/FOLDER-STRUCTURE.md (new lectures/<slug>/ + server/ + scripts/lib/ layout), and logs/LECTURE-CREATION-PATTERN.md (the lecture.md -> buildLecture -> self-contained .html workflow + check gate). Phases 0-7 + 4 + 5 are done; the tool is feature-complete and all gates are green.
-**Mode:** Code | **Confidence:** ~95% (Phase 5 landed clean: factory refactor preserved Phase-4 runtime (re-smoke green); 15 new tests (11 hermetic routes + 2 zero-URL + 2 real-repo smokes) all pass; zero-URL regex empirically grounded against real build output. Total 68 tests / check 0 / build --all 20 ok. Remaining uncertainty for Phase 8 = doc accuracy only -- no code risk).
-**Implementation order:** 0 -> 1 -> 6 -> 2 -> 3 -> 7 -> 4 -> 5 -> 8 -> 9 (Phases 0-7 + 4 + 5 done; next: 8 -> 9).
+**Next action:** Phase 9 -- Final acceptance verification (context.md §5 Definition of Done): npm test green, npm run check clean, built file has zero external URLs, offline open shows images/highlight/mermaid/voice, npm start round-trip works. Phases 0-8 are done; the tool is feature-complete and documented; all gates are green.
+**Mode:** Code | **Confidence:** ~95% (Phase 8 = docs only: README + logs/FOLDER-STRUCTURE + logs/LECTURE-CREATION-PATTERN rewritten from the real on-disk layout; legacy app.js/index.html + 12 stale logs archived (D13, verified no active code depends on them); attribution comments in scripts/lib repointed to the archive path. Gates re-verified unchanged: 68 tests / check 0 / build --all 20 ok. Remaining uncertainty for Phase 9 = manual offline-open + npm start smoke only).
+**Implementation order:** 0 -> 1 -> 6 -> 2 -> 3 -> 7 -> 4 -> 5 -> 8 -> 9 (Phases 0-8 done; next: 9).
 
 ---
 
@@ -30,8 +30,8 @@
 | 7b | Resolve the 1 truly-missing image ref (express-basics add-data-flow → inline mermaid) | 96% | ✅ Done | 2026-06-14 |
 | 4 | Express+EJS editor (server-core preview A1): list lectures; same-origin `iframe` preview; `POST /export`; dropped base-URL field (D6) | 94% | ✅ Done | 2026-06-14 |
 | 5 | Tests: factory refactor (createApp); hermetic supertest route tests; zero-external-URL integration proof; real-repo read smokes | 95% | Done | 2026-06-14 |
-| 8 | Docs: update README, FOLDER-STRUCTURE, LECTURE-CREATION-PATTERN | 95% | ⬜ Pending | — |
-| 9 | Verify acceptance: `npm test` green, `check` clean, zero external URLs, offline open OK, `npm start` round-trip | 92% | ⬜ Pending | — |
+| 8 | Docs: update README, FOLDER-STRUCTURE, LECTURE-CREATION-PATTERN | 95% | ✅ Done | 2026-06-14 |
+| 9 | Verify acceptance: `npm test` green, `check` clean, zero external URLs, offline open OK, `npm start` round-trip | 92% | ⏳ Next | — |
 
 Legend: ✅ Done · ⏳ Next · 🔄 In progress · ⬜ Pending · ⚠️ Blocked
 
@@ -145,6 +145,14 @@ Legend: ✅ Done · ⏳ Next · 🔄 In progress · ⬜ Pending · ⚠️ Blocke
 - Verified: npm test -> **68 pass / 0 fail** (53 original + 15 new). npm run check -> **exit 0** (0 misses). npm run build -- --all -> **20 ok, 0 failed**. Phase-4 re-smoke after refactor: all endpoints unchanged. git status clean pre-commit on branch reorg.
 - Commit(s): see git log (this session).
 - **Next:** Phase 8 (docs: README, FOLDER-STRUCTURE, LECTURE-CREATION-PATTERN).
+
+### Session 11 — 2026-06-14 (Phase 8)
+- Did: Phase 8 (docs). Rewrote the three project docs to reflect the completed restructure, all driven by the real on-disk layout: [`README.md`](../README.md) (teacher-first: what/why, npm scripts table, quick-start authoring, mermaid architecture diagram, condensed "Viewing exported lectures" student section preserving the still-accurate keyboard shortcuts + Linux/Chrome manual-mode troubleshooting, quality gates, project-docs map); [`logs/FOLDER-STRUCTURE.md`](../logs/FOLDER-STRUCTURE.md) (new `lectures/<slug>/` + `server/` + `scripts/lib/` + `shared/` + `archive/` layout, the 20-slug list, the shared-core pipeline table); [`logs/LECTURE-CREATION-PATTERN.md`](../logs/LECTURE-CREATION-PATTERN.md) (`lecture.md` -> `splitSlides` -> `inlineImages` -> `bundleLibs` -> `renderPresentation` = `buildLecture` -> self-contained `.html`; `throw` vs `warn`; the `check` gate; the `npm start` editor round-trip; "adding a new lecture" step-by-step). Archived (D13 — never delete) the legacy pre-port originals + 12 superseded pre-restructure logs: root `app.js` + `index.html` -> `archive/reorg-2026-06/`; 12 stale `logs/*` (SESSION-CONTEXT, technical-architecture, project-overview, the per-lecture implementation logs, etc.) -> `archive/reorg-2026-06/logs/`. Repointed the historical attribution comments in [`scripts/lib/split-slides.mjs`](../scripts/lib/split-slides.mjs) + [`scripts/lib/template.mjs`](../scripts/lib/template.mjs) from `(app.js:N)` to `(archive/reorg-2026-06/app.js:N)`.
+- Decisions: Owner-confirmed (architect -> code) doc approach = full teacher-first rewrite of all 3 named docs + archive the legacy root tool + stale logs (cleanest for a teacher browsing docs — no contradictory frontend-only descriptions left behind); preserve the still-valid student viewing/troubleshooting content as a condensed README section. `logs/` + `plans/` are `.rooignore`-blocked, so those docs + this progress file were written via staging files in `scripts/` + an internal-copy temp script (the documented workaround), then the temp scripts were deleted.
+- Issues/TODOs: None. Verified beforehand that NO active code depends on the root `app.js`/`index.html` — every reference is either a lecture *teaching example* (generic filenames like `git add app.js`), a historical attribution comment, or the one-time reorg mover's ignore list; none are runtime deps.
+- Verified: `npm test` -> 68 pass / 0 fail; `npm run check` -> exit 0 (0 misses); `npm run build -- --all` -> 20 ok / 0 failed. Gates unchanged by Phase 8 (doc-only + comment edits).
+- Commit(s): see git log (this session).
+- **Next:** Phase 9 (final acceptance verification — context.md §5 Definition of Done).
 
 <!-- Append new sessions below using this template:
 ### Session N — YYYY-MM-DD (Phase X)
