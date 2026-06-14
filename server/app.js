@@ -1,4 +1,4 @@
-// server/app.js — Express + EJS SSR editor (Phase 4).
+// server/app.js — Express + EJS SSR editor (Phase 4; Phase 5 createApp factory).
 //
 // The editor is a localhost authoring tool (D3): same-origin, so the preview
 // <iframe> can show a self-contained build with data-URI images and inlined
@@ -22,49 +22,67 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
 
-import editorRouter from './routes/editor.js';
-import lecturesRouter from './routes/lectures.js';
-import exportRouter from './routes/export.js';
+import createEditorRouter from './routes/editor.js';
+import createLecturesRouter from './routes/lectures.js';
+import createExportRouter from './routes/export.js';
 
-const app = express();
 const PORT = process.env.PORT || 3000;
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+/**
+ * Build an Express app. Phase 5: tests inject `lecturesDir` to point at a
+ * throwaway fixture tree; production (npm start) calls createApp() with no
+ * args, so each router factory falls back to <repo>/lectures.
+ *
+ * @param {{ lecturesDir?: string }} opts
+ * @returns {import('express').Express}
+ */
+export function createApp({ lecturesDir } = {}) {
+  const app = express();
 
-// Editor client assets (server/public/editor.js).
-app.use('/static', express.static(path.join(__dirname, 'public')));
+  app.set('view engine', 'ejs');
+  app.set('views', path.join(__dirname, 'views'));
 
-// Parse JSON bodies for POST /preview and POST /export (the posted markdown).
-app.use(express.json({ limit: '20mb' }));
+  // Editor client assets (server/public/editor.js).
+  app.use('/static', express.static(path.join(__dirname, 'public')));
 
-// Health probe (kept from the Phase-1 scaffold; handy for smokes + Phase 5).
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', phase: 'editor' });
-});
+  // Parse JSON bodies for POST /preview and POST /export (the posted markdown).
+  app.use(express.json({ limit: '20mb' }));
 
-// Routes.
-app.use('/', editorRouter); // GET /
-app.use('/api/lectures', lecturesRouter); // GET /api/lectures(/:slug)
-app.use('/', exportRouter); // GET /preview/:slug, POST /preview, POST /export
+  // Health probe (kept from the Phase-1 scaffold; handy for smokes + Phase 5).
+  app.get('/health', (_req, res) => {
+    res.json({ status: 'ok', phase: 'editor' });
+  });
 
-// 404 — nothing matched.
-app.use((_req, res) => {
-  res.status(404).type('text').send('404 — not found');
-});
+  // Routes.
+  app.use('/', createEditorRouter({ lecturesDir }));
+  app.use('/api/lectures', createLecturesRouter({ lecturesDir }));
+  app.use('/', createExportRouter({ lecturesDir }));
 
-// Error handler (route handlers `next(err)` with err.statusCode).
-// eslint-disable-next-line no-unused-vars
-app.use((err, _req, res, _next) => {
-  const status = err.statusCode || 500;
-  if (status >= 500) console.error(err);
-  res.status(status).type('text').send(`${status} — ${err.message}`);
-});
+  // 404 — nothing matched.
+  app.use((_req, res) => {
+    res.status(404).type('text').send('404 — not found');
+  });
+
+  // Error handler (route handlers `next(err)` with err.statusCode).
+  // eslint-disable-next-line no-unused-vars
+  app.use((err, _req, res, _next) => {
+    const status = err.statusCode || 500;
+    if (status >= 500) console.error(err);
+    res.status(status).type('text').send(`${status} — ${err.message}`);
+  });
+
+  return app;
+}
+
+// Default app for `npm start`; supertest imports `createApp` for hermetic tests.
+const app = createApp();
 
 // Listen only when run directly (not when imported by tests — Phase 5).
-const __filename = fileURLToPath(import.meta.url);
-if (path.resolve(process.argv[1]) === __filename) {
+// The `process.argv[1]` guard is null-checked: under `node -e` / `node --test`
+// argv[1] can be undefined, and path.resolve(undefined) would throw.
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
   app.listen(PORT, () => {
     console.log(`lecture_creator editor → http://localhost:${PORT}`);
   });

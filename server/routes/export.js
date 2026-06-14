@@ -1,4 +1,4 @@
-// server/routes/export.js — preview + export via the shared build core (Phase 4).
+// server/routes/export.js — preview + export via the shared build core (Phase 4; Phase 5 factory).
 //
 // Mounted at /:
 //   GET  /preview/:slug → build the committed lecture.md       → HTML (iframe)
@@ -15,18 +15,15 @@ import { fileURLToPath } from 'node:url';
 import express from 'express';
 import { buildLecture } from '../../scripts/lib/index.mjs';
 
-const router = express.Router();
-
 const REPO_ROOT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   '..',
   '..',
 );
-const LECTURES_DIR = path.join(REPO_ROOT, 'lectures');
 
 const SLUG_RE = /^[a-z0-9-]+$/;
 
-function buildHtml({ slug, markdown } = {}) {
+function buildHtml({ slug, markdown, lecturesDir } = {}) {
   if (typeof slug !== 'string' || !SLUG_RE.test(slug)) {
     const err = new Error('invalid or missing slug');
     err.statusCode = 400;
@@ -35,40 +32,53 @@ function buildHtml({ slug, markdown } = {}) {
   // Resolve via lectureDir so images in the posted markdown resolve from the
   // owning lecture folder; pass `markdown` through to override lecture.md.
   return buildLecture({
-    lectureDir: path.join(LECTURES_DIR, slug),
+    lectureDir: path.join(lecturesDir, slug),
     markdown,
     onMissing: 'warn',
   });
 }
 
-// Live preview of the editor's current markdown.
-router.post('/preview', (req, res, next) => {
-  try {
-    res.type('html').send(buildHtml(req.body));
-  } catch (err) {
-    next(err);
-  }
-});
+/**
+ * Factory for the preview/export router (Phase 5: tests inject `lecturesDir`
+ * via `createApp({ lecturesDir })`; production defaults to <repo>/lectures).
+ *
+ * @param {{ lecturesDir?: string }} opts
+ * @returns {import('express').Router}
+ */
+export default function createExportRouter({
+  lecturesDir = path.join(REPO_ROOT, 'lectures'),
+} = {}) {
+  const router = express.Router();
 
-// Preview the committed lecture.md (no edits). Handy for direct linking/tests.
-router.get('/preview/:slug', (req, res, next) => {
-  try {
-    res.type('html').send(buildHtml({ slug: req.params.slug }));
-  } catch (err) {
-    next(err);
-  }
-});
+  // Live preview of the editor's current markdown.
+  router.post('/preview', (req, res, next) => {
+    try {
+      res.type('html').send(buildHtml({ ...req.body, lecturesDir }));
+    } catch (err) {
+      next(err);
+    }
+  });
 
-// Export: same self-contained HTML, but as a downloadable attachment.
-router.post('/export', (req, res, next) => {
-  try {
-    const { slug } = req.body || {};
-    const html = buildHtml(req.body);
-    res.set('Content-Disposition', `attachment; filename="${slug}.html"`);
-    res.type('html').send(html);
-  } catch (err) {
-    next(err);
-  }
-});
+  // Preview the committed lecture.md (no edits). Handy for direct linking/tests.
+  router.get('/preview/:slug', (req, res, next) => {
+    try {
+      res.type('html').send(buildHtml({ slug: req.params.slug, lecturesDir }));
+    } catch (err) {
+      next(err);
+    }
+  });
 
-export default router;
+  // Export: same self-contained HTML, but as a downloadable attachment.
+  router.post('/export', (req, res, next) => {
+    try {
+      const { slug } = req.body || {};
+      const html = buildHtml({ ...req.body, lecturesDir });
+      res.set('Content-Disposition', `attachment; filename="${slug}.html"`);
+      res.type('html').send(html);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  return router;
+}
