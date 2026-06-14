@@ -2,15 +2,15 @@
 
 > **Living document.** Update at the end of every session. New sessions: read [`inceptions/context.md`](../inceptions/context.md) first, then find **▶ RESUME HERE** below.
 
-**Last updated:** 2026-06-14 · **Overall:** Phase 4 complete — Express+EJS editor live (server-core preview A1). All gates green (`check` 0 misses; `build --all` 20 ok; 53 tests). Next: Phase 5 (supertest routes + zero-external-URL integration + wire check).
+**Last updated:** 2026-06-14 | **Overall:** Phase 5 complete -- tests green (68 pass: 53 unit + 15 route/integration via supertest); zero-external-URL integration proof locked; factory refactor enables hermetic route tests. All gates green (check 0; build --all 20 ok). Next: Phase 8 (docs: README, FOLDER-STRUCTURE, LECTURE-CREATION-PATTERN).
 
 ---
 
 ## ▶ RESUME HERE
 
-**Next action:** Phase 5 — Tests: supertest route tests (`GET /`, `GET /api/lectures`, `GET /api/lectures/:slug`, `GET /preview/:slug`, `POST /preview`, `POST /export`, 404/400 error paths); zero-external-URL integration test on the *exported* HTML (note: the editor *page* uses CDN Bulma — the Phase 9 gate targets exports, which already pass); wire `npm run check` into the test runner if not already. The Phase 4 editor is live on `npm start` (server-core preview A1): editor + CLI share `buildLecture` (D5); preview via `POST /preview` → `iframe.srcdoc`; export via `POST /export` + `Content-Disposition`; `onMissing:'warn'` on editor routes (CLI stays fail-loud).
-**Mode:** Code · **Confidence:** ~94% (Phase 4 landed clean: editor boots, all 20 lectures listed, preview/export via shared `buildLecture`, base-URL field dropped (D6), `npm test` 53 / `check` 0 / `build --all` 20 ok all green. Remaining uncertainty for Phase 5 = supertest wiring details + the exact zero-URL assertion approach).
-**Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (Phase 4 done; next: 5 → 8 → 9).
+**Next action:** Phase 8 -- Docs: update README.md (project overview, npm scripts, architecture), logs/FOLDER-STRUCTURE.md (new lectures/<slug>/ + server/ + scripts/lib/ layout), and logs/LECTURE-CREATION-PATTERN.md (the lecture.md -> buildLecture -> self-contained .html workflow + check gate). Phases 0-7 + 4 + 5 are done; the tool is feature-complete and all gates are green.
+**Mode:** Code | **Confidence:** ~95% (Phase 5 landed clean: factory refactor preserved Phase-4 runtime (re-smoke green); 15 new tests (11 hermetic routes + 2 zero-URL + 2 real-repo smokes) all pass; zero-URL regex empirically grounded against real build output. Total 68 tests / check 0 / build --all 20 ok. Remaining uncertainty for Phase 8 = doc accuracy only -- no code risk).
+**Implementation order:** 0 -> 1 -> 6 -> 2 -> 3 -> 7 -> 4 -> 5 -> 8 -> 9 (Phases 0-7 + 4 + 5 done; next: 8 -> 9).
 
 ---
 
@@ -29,7 +29,7 @@
 | 7a | Rewire image/asset refs with valid target (fix 3 typos + repaths) | 97% | ✅ Done | 2026-06-14 |
 | 7b | Resolve the 1 truly-missing image ref (express-basics add-data-flow → inline mermaid) | 96% | ✅ Done | 2026-06-14 |
 | 4 | Express+EJS editor (server-core preview A1): list lectures; same-origin `iframe` preview; `POST /export`; dropped base-URL field (D6) | 94% | ✅ Done | 2026-06-14 |
-| 5 | Tests: unit + integration (zero external URLs) + routes (supertest); wire `check` | 93% | ⬜ Pending | — |
+| 5 | Tests: factory refactor (createApp); hermetic supertest route tests; zero-external-URL integration proof; real-repo read smokes | 95% | Done | 2026-06-14 |
 | 8 | Docs: update README, FOLDER-STRUCTURE, LECTURE-CREATION-PATTERN | 95% | ⬜ Pending | — |
 | 9 | Verify acceptance: `npm test` green, `check` clean, zero external URLs, offline open OK, `npm start` round-trip | 92% | ⬜ Pending | — |
 
@@ -138,6 +138,14 @@ Legend: ✅ Done · ⏳ Next · 🔄 In progress · ⬜ Pending · ⚠️ Blocke
 - Commit(s): `e6905b9` — "feat(editor): Express+EJS editor with server-core preview (Phase 4)"; this docs commit.
 - **Next:** Phase 5 (tests: supertest routes + zero-external-URL integration + wire `check`).
 
+### Session 12 -- 2026-06-14 (Phase 5)
+- Did: Implemented Phase 5 tests -- **Option C (hybrid)**, locked after scoring (feasibility ~96%, confidence ~92%; all tasks >=93% after the Task-4 inspect-first simplification). **Factory refactor:** converted the 3 route modules (server/routes/editor.js, lectures.js, export.js) from `export default router` to factory exports `createXxxRouter({ lecturesDir })`, and wrapped server/app.js in `export function createApp({ lecturesDir })` + `export default createApp()` (so `npm start` is unchanged and supertest imports the factory for hermetic tests). Fixed a null guard on `process.argv[1]` in the listen guard (was `undefined` under `node -e`/`node --test`, would throw `path.resolve(undefined)`). **Created scripts/test/routes.test.js** (15 tests, 3 layers): (1) Hermetic route tests (11) -- `supertest(createApp({ lecturesDir: tmp }))` with throwaway fixtures (mirrors cli.test.js withLectures convention); covers all routes + error paths (400 invalid slug, 404 unknown, 400 missing body). (2) Zero-external-URL integration proof (2) -- clean fixture (local PNG) -> POST /export -> asserts zero external src= URLs; negative control proves the regex catches an injected https:// leak. Key discovery: renderPresentation stores slide HTML via JSON.stringify() (template.mjs:57), so attribute quotes are escaped; the regex uses optional backslash to handle both escaped and unescaped forms. (3) Real-repo read smokes (2, non-hermetic) -- GET / -> >=1 option, GET /api/lectures -> non-empty slugs.
+- Decisions: **D15 -- test architecture = Option C (hybrid):** factory refactor (createApp) enables hermetic route tests matching the existing cli.test.js convention; plus lightweight real-repo read smokes with non-count assertions. Zero-URL regex scoped to src= resource attributes (images/scripts/iframes), deliberately ignoring data: URIs, SVG xmlns, and content <a href> links. Chose C over B (pure hermetic) and A-prime (real-repo -- slower, couples test counts to repo content).
+- Issues/TODOs: None. The process.argv[1] null guard fix was the only code change beyond the factory refactor + new test file.
+- Verified: npm test -> **68 pass / 0 fail** (53 original + 15 new). npm run check -> **exit 0** (0 misses). npm run build -- --all -> **20 ok, 0 failed**. Phase-4 re-smoke after refactor: all endpoints unchanged. git status clean pre-commit on branch reorg.
+- Commit(s): see git log (this session).
+- **Next:** Phase 8 (docs: README, FOLDER-STRUCTURE, LECTURE-CREATION-PATTERN).
+
 <!-- Append new sessions below using this template:
 ### Session N — YYYY-MM-DD (Phase X)
 - Did: ...
@@ -157,6 +165,7 @@ See [`inceptions/context.md`](../inceptions/context.md) §6 (D1–D13) for the f
 |---|---|---|
 | 2026-06-12 | D1–D13 | see context.md §6 |
 | 2026-06-14 | D14 | Editor architecture = **server-core preview (A1)**: editor + CLI share `buildLecture` (D5); preview via `POST /preview` → `iframe.srcdoc`; export via `POST /export` + `Content-Disposition: attachment`; `onMissing:'warn'` on editor routes (CLI stays `'throw'`). WYSIWYG (preview ≡ export). CDN Bulma = editor chrome only; exported file has zero external URLs. |
+| 2026-06-14 | D15 | Test architecture = **Option C (hybrid)**: factory refactor (createApp({ lecturesDir })) -> hermetic supertest route tests (throwaway fixtures, no repo coupling) + lightweight real-repo read smokes. Zero-URL regex scoped to src= resource attributes (ignoring data:, SVG xmlns, content a-href); handles JSON.stringify escaping. |
 
 ---
 
