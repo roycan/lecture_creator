@@ -29,7 +29,7 @@ Thumbs.db
 # --- Legacy pre-restructure folders ---
 # Content already migrated into lectures/<slug>/. These root
 # folders are superseded and only add noise to the index.
-web-lectures/
+
 assets/
 diagrams/
 diagram-src/
