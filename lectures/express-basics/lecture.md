@@ -993,7 +993,30 @@ app.listen(PORT, () => {
 7. Server redirects to `/` (home page)
 8. User sees updated list with new student!
 
-![Add Data Flow](diagrams/add-data-flow.png)
+The diagram below traces the full **Add Data Flow** — how the form data travels from the browser to the Express server, into the JSON file, and back to the user as an updated list:
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant B as Browser
+    participant E as Express Server
+    participant J as students.json
+
+    U->>B: 1. Visit /add
+    B->>E: GET /add
+    E-->>B: Send "Add Student" form
+    U->>B: 2. Fill form, click "Add Student"
+    B->>E: 3. POST /add (name, section, grade)
+    Note over E: express.urlencoded() parses req.body
+    E->>J: 4. Read current students
+    J-->>E: Return student array
+    E->>E: 5. Add new student to array
+    E->>J: 6. Write updated array back
+    E-->>B: 7. res.redirect('/')
+    B->>E: GET / (home page)
+    E-->>B: Show updated list
+    B-->>U: 8. Display success!
+```
 
 ### Important Concepts
 
