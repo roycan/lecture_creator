@@ -2,15 +2,15 @@
 
 > **Living document.** Update at the end of every session. New sessions: read [`inceptions/context.md`](../inceptions/context.md) first, then find **▶ RESUME HERE** below.
 
-**Last updated:** 2026-06-14 · **Overall:** Phase 3 complete (CLI build.js + check.js + scanMissingImages) → ready for Phase 7a (rewire broken image refs).
+**Last updated:** 2026-06-14 · **Overall:** Phase 7a complete (21/22 broken image refs rewired; only `express-basics/add-data-flow.png` remains → Phase 7b).
 
 ---
 
 ## ▶ RESUME HERE
 
-**Next action:** Phase 7a — rewire broken image/asset refs to valid targets. `npm run check` is now the **authoritative worklist**: **22 missing refs across 8 lectures** — `css` ×7 (`assets/css-*.png` → moved to `diagrams/` by D9), `tmc-eval360` ×8 (`tmc-eval360/*.png` path), `json-api-audit` ×2, and `csv-datatables-qr` / `express-basics` / `ajax-fetch` / `authentication-sessions` / `full-stack` ×1 each (broader than the §2/§2b inventory snapshot — `check` also caught cross-lecture misfiles). Phase 7b renders any truly-missing PNGs that 7a can't repoint.
-**Mode:** Code · **Confidence:** ~95% (Phase 3 landed at ~95% feasibility / ~82% decision-confidence — see Session 8; the ~18% uncertainty is "don't let 7a/7b slip, or revisit as an allowlist".)
-**Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (3 done; next: 7a → 7b → 4 → 5 → 8 → 9).
+**Next action:** Phase 7b — render or stub the **one** truly-missing PNG: `lectures/express-basics/diagrams/add-data-flow.png` (no `.mmd`/`.txt` source in its `diagramSrc/`; author a source + render, or drop/log the ref as a non-blocking TODO). After 7b, `npm run check` should exit **0**. ⚠️ The inventory §2b "truly-missing ×13" set (testing-quality/responsive-bulma/production-best-practices) is **STALE** — all those PNGs exist on disk (verified Phase 7a); they never appeared in the live `check`. Re-scope 7b against live `check`, not the inventory.
+**Mode:** Code · **Confidence:** ~90% (Phase 7a landed clean: `check` 22→1 miss, build 8→1 fail, 53 tests green; remaining ~10% = how to source `add-data-flow.png` in 7b).
+**Implementation order:** `0 → 1 → 6 → 2 → 3 → 7 → 4 → 5 → 8 → 9` (7a done; next: 7b → 4 → 5 → 8 → 9).
 
 ---
 
@@ -26,8 +26,8 @@
 | 2b | Core: data-URI image inlining (MIME png/svg/jpg, clear errors) | 95% | ✅ Done | 2026-06-13 |
 | 2c | Core: bundle highlight.js always; mermaid only when used | 94% | ✅ Done | 2026-06-13 |
 | 3 | CLI: `build.js` (`--slug`/`--all`) + `check.js` linter | 94% | ✅ Done | 2026-06-14 |
-| 7a | Rewire image/asset refs with valid target (fix 3 typos + repaths) | 97% | ⬜ Pending | — |
-| 7b | Truly-missing images: render from sources or log TODO (non-blocking) | 85% | ⬜ Pending | — |
+| 7a | Rewire image/asset refs with valid target (fix 3 typos + repaths) | 97% | ✅ Done | 2026-06-14 |
+| 7b | Render/stub the 1 truly-missing PNG (express-basics add-data-flow); §2b set is stale | 85% | ⏳ Next | — |
 | 4 | Express+EJS editor: reuse `app.js` preview/TTS; list lectures; same-origin preview; `POST /export`; drop base-URL field | 92% | ⬜ Pending | — |
 | 5 | Tests: unit + integration (zero external URLs) + routes (supertest); wire `check` | 93% | ⬜ Pending | — |
 | 8 | Docs: update README, FOLDER-STRUCTURE, LECTURE-CREATION-PATTERN | 95% | ⬜ Pending | — |
@@ -114,6 +114,14 @@ Legend: ✅ Done · ⏳ Next · 🔄 In progress · ⬜ Pending · ⚠️ Blocke
 - Commit(s): `<phase-3 code+tests commit>` — "feat(cli): build.js + check.js + scanMissingImages (Phase 3)"; this docs commit.
 - **Next:** Phase 7a (rewire broken image refs — use `npm run check` as the worklist).
 
+### Session 9 — 2026-06-14 (Phase 7a)
+- Did: Rewired every repathable broken image ref so lectures build clean. Used live `npm run check` as the authoritative worklist (22 misses / 8 lectures) and reconciled each against on-disk evidence — NOT the stale inventory snapshot. All fixes in source `lecture.md` (refs resolve relative to the lecture folder): **css** ×7 — `assets/css-*.png` → `diagrams/…` (D9 move); **tmc-eval360** ×8 — `tmc-eval360/X.png` → `assets/X.png`; **authentication-sessions** ×1 — dropped ghost `diagrams/supplementary/` → `diagrams/middleware-stack.png`; **ajax-fetch** ×1 — `promise-state.png` → `promise-states.png` (add `s`); **csv-datatables-qr** ×1 — `git mv datables-features.png → datatables-features.png` (typo fix, history preserved) + rewire ghost `supplementary/` path; **full-stack** ×1 — cross-lecture ref `diagrams/api-testing/analogy.png` (owned by api-testing): copied `analogy.png` into `lectures/full-stack/diagrams/` (D2 self-containment) + rewired ref to local `diagrams/analogy.png`; **json-api-audit** ×2 — cross-lecture refs `diagrams/advanced-features/{json-backup-restore,system-architecture}.png` (owned by csv-datatables-qr; this lecture had NO `diagrams/`): copied both into `lectures/json-api-audit/diagrams/advanced-features/` (refs already pointed there, so no `.md` edit needed). See [`plans/phase-7a-plan.md`](phase-7a-plan.md).
+- Decisions (confirmed with user): **cross-lecture refs → copy the PNG into the referencing lecture's own `diagrams/`** (D2 offline self-containment; rejected relative `../other-slug/…` climb as fragile coupling); **csv typo → `git mv` to correct spelling** (fix at source; never `rm`); **scope → 7a = repathable only** — the genuinely-missing `express-basics/add-data-flow.png` left for 7b, not rendered here.
+- Issues/TODOs: **⚠️ Inventory §2b "truly-missing ×13" set is STALE.** Verified on disk — `testing-quality` (12 PNGs), `responsive-bulma` (8), `production-best-practices` (5) ALL have their referenced PNGs present, which is why they never appeared in the live `check`. The ONLY genuinely-missing PNG in the whole tree is **`express-basics/diagrams/add-data-flow.png`** (no `.mmd`/`.txt` source in `diagramSrc/`). So Phase 7b shrinks to a single item, NOT 13. Also found a systematic ghost `diagrams/supplementary/` path prefix in 2 lectures (auth-sessions + csv) — fixed per-ref.
+- Verified: `npm test` green (**53 pass, 0 fail**). `npm run check` → exit 1, **1 miss** (express-basics `add-data-flow` only — down from 22; no new misses). `npm run build -- --all` → **19 ok, 1 failed** (express-basics only — down from 8 failed); the 7 repathable lectures that previously failed now build clean.
+- Commit(s): `<phase-7a lecture commit>` — "fix(lectures): rewire broken image refs (Phase 7a)"; this docs commit.
+- **Next:** Phase 7b (render/stub the 1 truly-missing PNG: express-basics add-data-flow; §2b inventory set is stale).
+
 <!-- Append new sessions below using this template:
 ### Session N — YYYY-MM-DD (Phase X)
 - Did: ...
@@ -138,7 +146,7 @@ See [`inceptions/context.md`](../inceptions/context.md) §6 (D1–D13) for the f
 ## Open TODOs / Known Gaps (non-blocking)
 
 - Content gaps to author later: `user-story-template.html`, `debugging-practice.html`, `uat-form.html`, `support-materials/auth-patterns.md`, `support-materials/session-config-guide.md`, `practice-apps/authentication-sessions/*-v3`. **(Corrected 2026-06-13: `weather.html`+`weather-data.json` and `practice-apps/{barangay-directory,store-inventory,class-list}-v2/` DO exist — moved during Phase 6; see [`plans/reorg-inventory.md`](reorg-inventory.md) §0.)**
-- Truly-missing PNGs to render from `.mmd`/`.d2`/`.txt` sources (Phase 7b): testing-quality ×6, responsive-bulma ×4, express-basics ×1, production-best-practices ×2.
+- Truly-missing PNGs to render/stub (Phase 7b): **express-basics ×1 only** (`diagrams/add-data-flow.png`, no source). ⚠️ The testing-quality ×6 / responsive-bulma ×4 / production-best-practices ×2 counts in the inventory are **STALE** — those PNGs all exist on disk (verified Phase 7a); re-scope 7b against live `npm run check`, not the inventory.
 - ~~Verify tmc-eval360 image locations during Phase 6.~~ ✅ Done — 8 PNGs were at `web-lectures/tmc-eval360/tmc-eval360/` (not `assets/tmc-eval360/`); moved → `lectures/tmc-eval360/assets/` (commit `8f7854d`).
 - 36 unreferenced orphan files intentionally left in `assets/` (non-blocking — decide archive vs. assign in a later pass).
 - **Phase-2b confirmed broken refs (fix in 7a/7b, non-blocking):** `css` still points at `assets/css-*.png` after D9 moved them to `diagrams/`; `csv-datatables-qr` `datables`/`datatables` typo; `tmc-eval360` uses `tmc-eval360/*.png`; plus the truly-missing PNGs (testing-quality ×6, responsive-bulma ×4, express-basics ×1, production-best-practices ×2). All surface as clear `inlineImages` errors — by design. **As of Phase 3, `npm run check` is the authoritative LIVE worklist** (currently 22 misses / 8 lectures — see Session 8; broader than this snapshot, which predates the move). Reconcile 7a against `check`'s output, not this list.
