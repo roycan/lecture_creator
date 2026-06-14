@@ -1,0 +1,60 @@
+# ============================================================
+# .rooignore — scope the codebase index to development-relevant
+# files only. Indexing runs on a CPU-only local LLM, so the index
+# is kept lean and high-signal.
+#
+# Convention: gitignore-style globs. Unlisted paths stay indexed.
+#
+# INDEXED (kept):  server/ scripts/ shared/ lectures/ (text only)
+#                  inceptions/  + root source/config files
+# EXCLUDED (below): archive/ legacy folders libs/ node_modules/
+#                   plans/ support-materials/  + binary images
+# ============================================================
+
+# --- Third-party / generated (huge, never hand-edited) ---
+node_modules/
+dist/
+libs/
+
+# --- Logs & operational noise ---
+logs/
+*.log
+npm-debug.log*
+
+# --- Editor / OS cruft ---
+.vscode/
+.DS_Store
+Thumbs.db
+
+# --- Legacy pre-restructure folders ---
+# Content already migrated into lectures/<slug>/. These root
+# folders are superseded and only add noise to the index.
+web-lectures/
+assets/
+diagrams/
+diagram-src/
+
+# --- Historical archive (superseded files, never active) ---
+archive/
+
+# --- Empty / placeholder dirs ---
+practice-apps/
+
+# --- Project-management state (heavy, transient, low code value) ---
+# NOTE: inceptions/ is intentionally KEPT — context.md is the
+# single source of truth and is tiny. plans/ is excluded as it
+# is mostly phase/session state that churns and goes stale.
+plans/
+support-materials/
+
+# --- Binary assets (no value for text/code embeddings) ---
+# Keeps rendered PNGs out while the .mmd/.puml/.dot/.d2/.txt
+# diagram SOURCES stay indexed (they are text).
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif
+**/*.ico
+**/*.webp
+**/*.pdf
+**/*.zip
