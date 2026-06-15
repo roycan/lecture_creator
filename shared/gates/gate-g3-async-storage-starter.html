@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gate G3 — Save-a-Quote (STARTER)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container" style="max-width: 640px;">
+      <h1 class="title is-4">💬 Save-a-Quote</h1>
+      <p class="subtitle is-6">
+        <strong>GATE G3 · Persistence + Async</strong> · 30 minutes · NO AI · individual
+      </p>
+
+      <div class="message is-warning is-light">
+        <div class="message-body">
+          <strong>Serve this folder with a local server</strong> (VS Code <em>Live Server</em>
+          or <code>npx serve</code>) — <code>fetch</code> does NOT work over <code>file://</code>.
+        </div>
+      </div>
+
+      <div class="buttons">
+        <button id="fetch-btn" class="button is-primary">Fetch a Quote</button>
+        <button id="save-btn" class="button is-info">Save Current</button>
+      </div>
+
+      <p class="is-size-7 has-text-grey">Current quote:</p>
+      <div id="current" class="box"></div>
+
+      <p class="is-size-7 has-text-grey mt-4">Saved quotes (must survive a reload):</p>
+      <ul id="saved" class="content"></ul>
+    </div>
+  </section>
+
+  <script>
+    const STORAGE_KEY = 'g3_saved_quotes';
+    let saved = [];
+    let current = null;
+
+    // ============================================================
+    // TODO 1: renderSaved()
+    // Clear the #saved list, then append an <li> for each saved quote.
+    // Hint: reuse the DOM pattern from Gate G2 (createElement + textContent + appendChild).
+    // ============================================================
+    function renderSaved() {
+      // YOUR CODE HERE
+    }
+
+    // ============================================================
+    // TODO 2: loadSaved()
+    // Read localStorage, JSON.parse it into `saved`, then call renderSaved().
+    // Hint:
+    //   const raw = localStorage.getItem(STORAGE_KEY);
+    //   if (raw) { saved = JSON.parse(raw); }
+    //   renderSaved();
+    // ============================================================
+    function loadSaved() {
+      // YOUR CODE HERE
+    }
+
+    // ============================================================
+    // TODO 3: async function loadItem()
+    // fetch('data.json'), await + .json(), pick one item, store in `current`,
+    // and render it into #current.
+    // Hint:
+    //   const res = await fetch('data.json');
+    //   const data = await res.json();
+    //   current = data[0];
+    //   document.getElementById('current').innerHTML = `...`;
+    // ============================================================
+    async function loadItem() {
+      // YOUR CODE HERE
+    }
+
+    // ============================================================
+    // TODO 4: saveCurrent()
+    // If current is not null, push it into saved,
+    // write saved back with  localStorage.setItem(STORAGE_KEY, JSON.stringify(saved)),
+    // then call renderSaved().
+    // ============================================================
+    function saveCurrent() {
+      // YOUR CODE HERE
+    }
+
+    // ============================================================
+    // TODO 5: Wire it up.
+    //  - #fetch-btn click  -> loadItem
+    //  - #save-btn  click  -> saveCurrent
+    //  - call loadSaved() so saved quotes appear on page load
+    // ============================================================
+    // YOUR CODE HERE
+  </script>
+</body>
+</html>

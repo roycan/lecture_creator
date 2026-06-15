@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container" style="max-width: 640px;">
+      <div class="box">
+        <h1 class="title is-4">📋 Barangay Dashboard</h1>
+        <p class="subtitle is-5">Welcome, <%= user.name %>!</p>
+        <p>You are seeing this because you are logged in. Try logging out — you should be
+           bounced back to the login page if you visit <code>/dashboard</code> again.</p>
+
+        <div class="buttons mt-4">
+          <a href="/logout" class="button is-danger">Log Out</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

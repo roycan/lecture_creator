@@ -1,0 +1,17 @@
+{
+  "name": "gate-g6-auth-sessions",
+  "version": "1.0.0",
+  "description": "GATE G6 - Authentication & sessions (login, route guard, logout)",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "solution": "node app.solution.js"
+  },
+  "keywords": ["gate", "auth", "session", "express-session"],
+  "license": "MIT",
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-session": "^1.18.0"
+  }
+}

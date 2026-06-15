@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gate G1 — Sari-sari Cart Calculator (SOLUTION)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container" style="max-width: 640px;">
+      <h1 class="title is-4">🛒 Sari-sari Cart Calculator</h1>
+      <p class="subtitle is-6">
+        <strong>GATE G1 · SOLUTION (teacher reference)</strong>
+      </p>
+      <div id="receipt" class="box content"></div>
+    </div>
+  </section>
+
+  <script>
+    const items = [
+      { name: 'Coke 500ml',         price: 25, qty: 8  },
+      { name: 'Lucky Me Pancit',    price: 12, qty: 15 },
+      { name: 'Skyflakes Crackers', price: 15, qty: 10 },
+      { name: 'Alaska Evap 370ml',  price: 35, qty: 2  }
+    ];
+
+    // TODO 1
+    function computeSubtotal(items) {
+      let total = 0;
+      for (const item of items) {
+        total += item.price * item.qty;
+      }
+      return total;
+    }
+
+    // TODO 2
+    function applyDiscount(total) {
+      if (total > 500) {
+        return total * 0.9; // 10% bulk discount
+      } else {
+        return total;
+      }
+    }
+
+    // TODO 3
+    function printReceipt(items) {
+      const subtotal = computeSubtotal(items);
+      const finalTotal = applyDiscount(subtotal);
+
+      let html = '<ul>';
+      for (const item of items) {
+        const lineTotal = item.price * item.qty;
+        console.log(`${item.name} x${item.qty} = ${lineTotal}`);
+        html += `<li>${item.name} x${item.qty} = ${lineTotal}</li>`;
+      }
+      html += '</ul>';
+      console.log(`TOTAL: ${finalTotal}`);
+      html += `<p class="mt-3"><strong>TOTAL: ₱${finalTotal}</strong></p>`;
+
+      document.getElementById('receipt').innerHTML = html;
+    }
+
+    printReceipt(items);
+  </script>
+</body>
+</html>

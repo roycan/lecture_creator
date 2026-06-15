@@ -43,6 +43,22 @@
 6. **Philippine context, mobile-first, offline deliverables** — already your house standard; preserve it.
 7. **Trim, don't cram** — every lecture is a *menu*; teach the 60–80% that serves the quarter's artifact. Depth is deferred to Q5–Q6.
 
+### 3.1 AI-use policy by phase
+
+> The *when* that complements the *how* in [`lectures/ai-assisted-development`](lectures/ai-assisted-development/lecture.md). Full rationale: [`inceptions/teaching-model-ai-gated-mastery.md`](inceptions/teaching-model-ai-gated-mastery.md). Gate specs: [`inceptions/gate-activities.md`](inceptions/gate-activities.md).
+
+Students may use AI to **generate** code **only in technologies they have personally unlocked** by passing the relevant no-AI gate — this guarantees they can always verify the output. Each lecture sits in one of three phases; label activities accordingly:
+
+| Phase | AI explains / quizzes / demos | AI writes deliverable code | Copy-paste | Applies to |
+|---|---|---|---|---|
+| **1 — Apprentice** (learning) | ✅ Yes | ❌ No | ❌ Forbidden — type it | first encounter of any lecture |
+| **Transition tier** (first project cycle after a gate) | ✅ Yes | ⚠️ Hints / review only; student still types | ⚠️ Re-type suggestions | the project cycle right after passing a gate |
+| **3 — Pair** (unlocked stack) | ✅ Yes | ✅ Within unlocked stack only | ✅ Fine — reviewing, not learning | all later project work in unlocked tech |
+
+**The seven gates** (pass to unlock AI-gen in that area): `G0` markup · `G1` control flow & data · `G2` DOM & events · `G3` persistence + async · `G4` request→response · `G5` data model + SQLite CRUD · `G6` auth & sessions. Specs in [`inceptions/gate-activities.md`](inceptions/gate-activities.md).
+
+> 🔒 **Unlock is individual; project AI-use is collective.** A group may use AI for tech area X only when **every** member has individually passed gate X.
+
 ---
 
 ## 4. The six quarters at a glance
@@ -72,58 +88,66 @@ flowchart TD
 ### Q1 — Foundations of the Web & Static Frontend
 **Theme:** *Make something you can show on your phone on day one.*
 
-| Wk | Lecture | Notes |
-|---|---|---|
-| 1 | `full-stack` (overview: how the web works) | client/server, request/response, browser |
-| 2–3 | [`html`](lectures/html/lecture.md) | semantic structure, **forms**, accessibility |
-| 4–5 | css | styling fundamentals |
-| 5–6 | responsive-bulma | mobile-first (house standard) |
-| woven | git-github (subset: §1–§5) | init/add/commit from week 1 |
-| 7 | **NEW `requirements-user-stories`** | build the *right* thing: ideas→features→user stories→wireframe→MVP scope |
+| Wk | Lecture | Gate | Notes |
+|---|---|---|---|
+| 1 | `full-stack` (overview: how the web works) | — | client/server, request/response, browser |
+| 2–3 | [`html`](lectures/html/lecture.md) | — | semantic structure, **forms**, accessibility |
+| 4–5 | css | — | styling fundamentals |
+| 5–6 | responsive-bulma | 🚪 **G0** (markup) | mobile-first (house standard) |
+| woven | git-github (subset: §1–§5) | — | init/add/commit from week 1 |
+| 7 | **NEW `requirements-user-stories`** | — | build the *right* thing: ideas→features→user stories→wireframe→MVP scope |
 
 🏁 **Artifact:** static, responsive multi-page site (barangay profile / sari-sari store) committed to GitHub, with a one-page user story.
+
+🚪 **Gate this quarter — `G0` (markup & responsive):** pass to unlock AI generation of HTML/CSS/Bulma markup. See §3.1.
 
 ### Q2 — Programming the Browser (client-side)
 **Theme:** *Make the page do things and remember things — no server yet.*
 
-| Wk | Lecture |
-|---|---|
-| 1–2 | js-basics |
-| 2–3 | js-arrays-objects |
-| 4–5 | [`dom`](lectures/dom/lecture.md) |
-| 5–6 | [`localstorage`](lectures/localstorage/lecture.md) |
-| 7–8 | ajax-fetch (Promises, async/await, public API) |
-| 9 | **NEW `debugging-devtools`** |
+| Wk | Lecture | Gate |
+|---|---|---|
+| 1–2 | js-basics | — |
+| 2–3 | js-arrays-objects | 🚪 **G1** (control flow & data) |
+| 4–5 | [`dom`](lectures/dom/lecture.md) | 🚪 **G2** (DOM & events) |
+| 5–6 | [`localstorage`](lectures/localstorage/lecture.md) | — |
+| 7–8 | ajax-fetch (Promises, async/await, public API) | 🚪 **G3** (persistence + async) |
+| 9 | **NEW `debugging-devtools`** | — |
 
 🏁 **Artifact:** interactive client-side app that persists locally **and** calls a public API (quiz, tracker, weather). Proves they can *use* the web before they *serve* it.
+
+🚪 **Gates this quarter — `G1` control flow & data · `G2` DOM & events · `G3` persistence + async:** each unlocks AI-gen for that client-side skill area. See §3.1.
 
 ### Q3 — The Backend: Server, Data, CRUD
 **Theme:** *Become the kitchen, not just the customer.*
 
-| Wk | Lecture |
-|---|---|
-| 1–3 | [`express-basics`](lectures/express-basics/lecture.md) (+ EJS) + **NEW server-side-validation section** |
-| 3–4 | **NEW `data-modeling`** (schema-before-code; PK/FK; 1-to-many) |
-| 4–6 | database-sqlite (better-sqlite3, prepared statements, CRUD) |
-| 7 | [`csv-datatables-qr`](lectures/csv-datatables-qr/lecture.md) (real data display) |
-| 8 | json-api-audit (serve/test JSON) |
-| 9 | **NEW `code-organization`** (project structure, MVC-lite, naming, README) |
+| Wk | Lecture | Gate |
+|---|---|---|
+| 1–3 | [`express-basics`](lectures/express-basics/lecture.md) (+ EJS) + **NEW server-side-validation section** | 🚪 **G4** (request→response) |
+| 3–4 | **NEW `data-modeling`** (schema-before-code; PK/FK; 1-to-many) | — |
+| 4–6 | database-sqlite (better-sqlite3, prepared statements, CRUD) | 🚪 **G5** (data model + SQLite CRUD) |
+| 7 | [`csv-datatables-qr`](lectures/csv-datatables-qr/lecture.md) (real data display) | — |
+| 8 | json-api-audit (serve/test JSON) | — |
+| 9 | **NEW `code-organization`** (project structure, MVC-lite, naming, README) | — |
 
 🏁 **Artifact:** full-stack CRUD app on SQLite (Class List Manager / barangay records). **This is the "usable" milestone** — real data in, real data out.
+
+🚪 **Gates this quarter — `G4` request→response · `G5` data model + SQLite CRUD:** unlock AI-gen for Express/EJS and SQLite/SQL. See §3.1.
 
 ### Q4 — Production-Ready Apps & Capstone
 **Theme:** *Ship something a real person actually uses.*
 
-| Wk | Lecture |
-|---|---|
-| 1–2 | authentication-sessions (login, who-am-I via cookies; library-assisted; **don't hand-roll crypto**) |
-| 3 | production-best-practices *(light)*: basic error handling + deploy once |
-| 4 | testing-quality *(light)*: manual testing + a handful of assertions |
-| 5 | git-github collaboration (PR/merge for group capstone) |
-| 6 | **NEW `ai-assisted-development`** (prompting, pasting errors, *verifying* output, reading docs, ethics) |
-| 7–10 | **Group capstone** → build + deploy + README + demo |
+| Wk | Lecture | Gate |
+|---|---|---|
+| 1–2 | authentication-sessions (login, who-am-I via cookies; library-assisted; **don't hand-roll crypto**) | 🚪 **G6** (auth & sessions) |
+| 3 | production-best-practices *(light)*: basic error handling + deploy once | — |
+| 4 | testing-quality *(light)*: manual testing + a handful of assertions | — |
+| 5 | git-github collaboration (PR/merge for group capstone) | — |
+| 6 | **NEW `ai-assisted-development`** (prompting, pasting errors, *verifying* output, reading docs, ethics) | — |
+| 7–10 | **Group capstone** → build + deploy + README + demo | — |
 
 🏁 **Artifact:** group capstone — a real, usable, **deployed** app for a real stakeholder (barangay clearance/profile, local business) with a README.
+
+🚪 **Gate this quarter — `G6` (auth & sessions):** unlocks AI-gen for login/session code. From Wk 6 (`ai-assisted-development`) onward, students apply the full AI-use policy on the capstone — see §3.1.
 
 ### Q5 — *Extension · Engineering Depth*
 **Theme:** *Turn a "working app" into a "robust, professional app."* (Full depth of the material trimmed from core.)

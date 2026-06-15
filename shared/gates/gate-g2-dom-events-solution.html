@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gate G2 — Barangay Complaint Box (SOLUTION)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container" style="max-width: 640px;">
+      <h1 class="title is-4">📣 Barangay Complaint Box</h1>
+      <p class="subtitle is-6"><strong>GATE G2 · SOLUTION (teacher reference)</strong></p>
+
+      <form id="complaint-form" class="box">
+        <div class="field">
+          <label class="label">Name</label>
+          <div class="control">
+            <input id="name" class="input" type="text" placeholder="Juan dela Cruz">
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Complaint / Request</label>
+          <div class="control">
+            <textarea id="complaint" class="textarea" placeholder="Pothole on Sampaguita Street"></textarea>
+          </div>
+        </div>
+        <button type="submit" class="button is-primary">Submit</button>
+      </form>
+
+      <p class="mt-4">Total complaints logged: <strong id="count">0</strong></p>
+      <ul id="list" class="content"></ul>
+    </div>
+  </section>
+
+  <script>
+    // TODO 1
+    const form = document.getElementById('complaint-form');
+    const list = document.getElementById('list');
+    const countSpan = document.getElementById('count');
+    let count = 0;
+
+    // TODO 2 + 3
+    form.addEventListener('submit', function (e) {
+      e.preventDefault(); // stop the page reload
+
+      const name = document.getElementById('name').value;
+      const complaint = document.getElementById('complaint').value;
+
+      const li = document.createElement('li');
+      li.textContent = `${name}: ${complaint}`;
+      list.prepend(li); // newest first
+
+      form.reset();
+      bumpCount();
+    });
+
+    function bumpCount() {
+      count = count + 1;
+      countSpan.textContent = count;
+    }
+  </script>
+</body>
+</html>

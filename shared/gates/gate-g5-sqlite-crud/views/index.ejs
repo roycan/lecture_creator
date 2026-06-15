@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resident Records</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container" style="max-width: 720px;">
+      <div class="level">
+        <div class="level-left"><h1 class="title is-4">🏠 Resident Records</h1></div>
+        <div class="level-right"><a href="/add" class="button is-primary">+ Add Resident</a></div>
+      </div>
+
+      <table class="table is-fullwidth is-striped">
+        <thead>
+          <tr><th>Name</th><th>Purok</th><th class="has-text-right">Action</th></tr>
+        </thead>
+        <tbody>
+          <% if (residents.length === 0) { %>
+            <tr><td colspan="3" class="has-text-grey has-text-centered">No residents yet. Add one!</td></tr>
+          <% } %>
+          <% residents.forEach(function(r) { %>
+            <tr>
+              <td><%= r.name %></td>
+              <td><%= r.purok %></td>
+              <td class="has-text-right">
+                <form action="/delete/<%= r.id %>" method="POST" style="display:inline">
+                  <button class="button is-small is-danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</body>
+</html>
