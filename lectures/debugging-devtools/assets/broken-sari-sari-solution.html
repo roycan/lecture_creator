@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sari-Sari Inventory (Solution)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f5f5f5; color: #222; padding: 16px; max-width: 480px; margin: 0 auto; }
+    h1 { font-size: 1.4rem; margin-bottom: 12px; }
+    form { background: #fff; padding: 12px; border-radius: 8px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+    label { display: block; font-size: .85rem; margin: 8px 0 4px; }
+    input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; }
+    button { margin-top: 12px; width: 100%; padding: 10px; background: #2e7d32; color: #fff; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; }
+    button:hover { background: #1b5e20; }
+    .cart { background: #fff; padding: 12px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+    .cart h2 { font-size: 1.1rem; margin-bottom: 8px; }
+    .cart ul { list-style: none; }
+    .cart li { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; }
+    .total { font-weight: bold; margin-top: 10px; text-align: right; font-size: 1.1rem; }
+    .empty { color: #888; font-style: italic; }
+  </style>
+</head>
+<body>
+  <h1>🏪 Sari-Sari Inventory</h1>
+
+  <!--
+    ✅ TEACHER SOLUTION — all 4 bugs fixed.
+
+    BUG #1  ID mismatch — getElementById('addForm') returned null.
+            The HTML id is "add-form". Console showed a TypeError on load;
+            the Elements panel confirmed the real id.
+            FIX: getElementById('add-form')
+
+    BUG #2  No e.preventDefault() — the form submitted, the browser navigated
+            (page reloaded) and the cart array was wiped each time.
+            The Network panel showed a navigation request.
+            FIX: e.preventDefault();
+
+    BUG #3  Typo "cart.lenght" — the render loop never ran because
+            cart.lenght is undefined, so i < undefined is false. Silent bug.
+            Found by logging: console.log('cart length:', cart.length)
+            (note correct spelling) and divide-and-conquer.
+            FIX: cart.length
+
+    BUG #4  Property mismatch — the object stores "quantity" but the total
+            loop read "qty", so cart[i].qty was undefined → NaN total.
+            Found by logging the item object: console.log(cart[i]).
+            FIX: cart[i].quantity
+  -->
+
+  <form id="add-form">
+    <label for="item-name">Item Name</label>
+    <input id="item-name" type="text" placeholder="e.g., Sardinas" required>
+
+    <label for="item-qty">Quantity</label>
+    <input id="item-qty" type="number" min="1" value="1">
+
+    <label for="item-price">Price (₱)</label>
+    <input id="item-price" type="number" min="0" step="0.25" placeholder="e.g., 25" required>
+
+    <button type="submit">Add Item</button>
+  </form>
+
+  <div class="cart">
+    <h2>Cart</h2>
+    <ul id="cart-list">
+      <li class="empty">No items yet.</li>
+    </ul>
+    <div class="total">Total: ₱<span id="total">0.00</span></div>
+  </div>
+
+  <script>
+    const cart = [];
+
+    // FIX #1: id matches the HTML ("add-form")
+    const addForm = document.getElementById('add-form');
+    const itemNameInput = document.getElementById('item-name');
+    const itemQtyInput = document.getElementById('item-qty');
+    const itemPriceInput = document.getElementById('item-price');
+    const cartList = document.getElementById('cart-list');
+    const totalEl = document.getElementById('total');
+
+    addForm.addEventListener('submit', function (e) {
+      e.preventDefault();                         // FIX #2: stop the page reload
+      const newItem = {
+        name: itemNameInput.value,
+        quantity: Number(itemQtyInput.value),
+        price: Number(itemPriceInput.value),
+      };
+      cart.push(newItem);
+      renderCart();
+      addForm.reset();
+    });
+
+    function renderCart() {
+      cartList.innerHTML = '';
+      for (let i = 0; i < cart.length; i++) {     // FIX #3: "length" not "lenght"
+        const item = cart[i];
+        const li = document.createElement('li');
+        li.textContent = item.name + ' ×' + item.quantity;
+        const priceSpan = document.createElement('span');
+        priceSpan.textContent = '₱' + (item.quantity * item.price).toFixed(2);
+        li.appendChild(priceSpan);
+        cartList.appendChild(li);
+      }
+
+      let total = 0;
+      for (let i = 0; i < cart.length; i++) {
+        total += cart[i].quantity * cart[i].price; // FIX #4: "quantity" not "qty"
+      }
+      totalEl.textContent = total.toFixed(2);
+    }
+  </script>
+</body>
+</html>

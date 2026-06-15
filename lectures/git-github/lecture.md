@@ -1,6 +1,6 @@
 # Git & GitHub: Version Control and Collaboration
 
-**Grade 9 - ICT**  
+**Grade 10 - ICT**  
 **Duration:** 2-3 weeks  
 **Prerequisites:** Basic file/folder understanding, text editing, internet access
 
@@ -3160,7 +3160,7 @@ const apiKey = process.env.API_KEY;
 
 **Examples:**
 ```
-Grade 9 student learning web development 
+Grade 10 student learning web development 
 🇵🇭 Building projects with HTML, CSS, JavaScript
 🎓 Studying Express.js and SQLite
 ```
@@ -3190,7 +3190,7 @@ Grade 9 student learning web development
 # Hi, I'm Juan! 👋
 
 ## 🇵🇭 About Me
-- 🎓 Grade 9 ICT student from Manila
+- 🎓 Grade 10 ICT student from Manila
 - 💻 Learning web development
 - 🌱 Currently exploring Node.js and databases
 - 📫 Reach me: juan@email.com
@@ -3326,7 +3326,7 @@ my-project/
 - ✅ Clean, commented code
 
 **Profile README highlights:**
-- 🇵🇭 "Grade 9 from Manila"
+- 🇵🇭 "Grade 10 from Manila"
 - 💻 "Learning full-stack development"
 - 🌱 "Interested in apps solving Philippine problems"
 - 📫 Contact email
@@ -3582,7 +3582,7 @@ View live: https://juan.github.io/sari-sari-store
 - ⚠️ Hundreds of branches
 - ⚠️ Thousands of commits per day
 
-**For Grade 9 projects: Git will always be fast!**
+**For Grade 10 projects: Git will always be fast!**
 
 ### **Complexity Considerations**
 
@@ -3717,7 +3717,7 @@ feature branches (new stuff)
 hotfix branches (urgent fixes)
 ```
 
-**For Grade 9: Feature branch workflow is perfect!**
+**For Grade 10: Feature branch workflow is perfect!**
 
 ### **When to Commit**
 
@@ -3797,7 +3797,7 @@ git commit -m "Initial commit with README"
 <body>
     <header>
         <h1>Juan Dela Cruz</h1>
-        <p>Grade 9 Web Development Student from Manila</p>
+        <p>Grade 10 Web Development Student from Manila</p>
     </header>
     
     <section id="about">
@@ -4901,7 +4901,7 @@ Go build something amazing and share it with the world! 🚀
 
 ## 🙏 Acknowledgments
 
-**Created for Grade 9 Filipino students** learning modern web development practices. Git and GitHub are essential professional skills that will serve you throughout your tech career.
+**Created for Grade 10 Filipino students** learning modern web development practices. Git and GitHub are essential professional skills that will serve you throughout your tech career.
 
 **Special thanks to:**
 - Linus Torvalds (creator of Git)

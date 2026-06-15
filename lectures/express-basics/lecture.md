@@ -1,7 +1,7 @@
 # Building Web Applications - Part 1
 ## Node.js, Express, EJS, and JSON
 
-**Target Audience:** Grade 9 Students  
+**Target Audience:** Grade 10 Students  
 **Prerequisites:** HTML/CSS basics, JavaScript fundamentals, AJAX/Fetch API  
 **Duration:** 1-2 weeks
 
@@ -1035,6 +1035,138 @@ app.use(express.urlencoded({ extended: true }));
 // This line lets Express understand form data
 ```
 
+### 🛡️ Don't Trust the Browser: Server-Side Validation
+
+Look closely at the add form above. It has `required`, `min="0"`, and `max="100"`:
+
+```html
+<input class="input" type="number" name="grade" min="0" max="100" required>
+```
+
+These are **client-side validation** — the browser checks them. That's helpful, but here's the catch:
+
+> ⚠️ **Anyone can bypass HTML validation.** A user can open DevTools and delete the `required` attribute, or send a POST request with a tool like curl. HTML validation is a *convenience*, not a *guarantee*.
+
+**The golden rule: validate on the server too.** Your Express route is the last line of defense before data gets saved.
+
+**❌ Trusting only HTML validation (dangerous):**
+```javascript
+app.post('/add', (req, res) => {
+  const students = getStudents();
+  students.push({
+    id: students.length + 1,
+    name: req.body.name,        // could be "" or undefined!
+    section: req.body.section,  // could be anything!
+    grade: parseInt(req.body.grade)  // could be NaN or 99999!
+  });
+  saveStudents(students);
+  res.redirect('/');
+});
+```
+
+**✅ Adding manual validation (safe):**
+
+We use plain `if`/`else` checks — no extra library needed. If a check fails, we **re-render the form** with an error message instead of saving:
+
+```javascript
+// Handle form submission — WITH validation
+app.post('/add', (req, res) => {
+  // 1. Read what the user sent
+  const name = req.body.name;
+  const section = req.body.section;
+  const grade = parseInt(req.body.grade);
+
+  // 2. Build an empty list of errors
+  const errors = [];
+
+  // 3. Check each field with simple if statements
+  if (!name || name.trim() === '') {
+    errors.push('Name is required.');
+  }
+
+  if (!section || section.trim() === '') {
+    errors.push('Section is required.');
+  }
+
+  // isNaN = "is Not a Number" (catches empty strings, text, etc.)
+  if (isNaN(grade)) {
+    errors.push('Grade must be a number.');
+  } else if (grade < 0 || grade > 100) {
+    errors.push('Grade must be between 0 and 100.');
+  }
+
+  // 4. If there are errors, re-show the form (DON'T save!)
+  if (errors.length > 0) {
+    return res.render('add-student', {
+      errors: errors,        // send errors to the template
+      oldName: name,         // keep what they typed
+      oldSection: section,
+      oldGrade: req.body.grade
+    });
+  }
+
+  // 5. All good — save it!
+  const students = getStudents();
+  students.push({
+    id: students.length + 1,
+    name: name.trim(),
+    section: section.trim(),
+    grade: grade
+  });
+  saveStudents(students);
+  res.redirect('/');
+});
+```
+
+**Show the errors in your EJS template** (`views/add-student.ejs`):
+
+```html
+<!-- Show errors if there are any -->
+<% if (locals.errors && errors.length > 0) { %>
+  <div class="notification is-danger">
+    <ul>
+      <% errors.forEach(function(error) { %>
+        <li><%= error %></li>
+      <% }) %>
+    </ul>
+  </div>
+<% } %>
+
+<form method="POST" action="/add">
+  <!-- Pre-fill with old values so user doesn't retype everything -->
+  <input class="input" type="text" name="name"
+         value="<%= locals.oldName || '' %>">
+  <!-- ... other fields ... -->
+</form>
+```
+
+> 💡 **Why `locals.errors`?** When you first load the form via `GET /add`, you don't pass `errors`. The `locals.` check prevents an "errors is not defined" crash. It means "if errors exists, use it."
+
+**Common validation checks (memorize these!):**
+
+| What you're checking | How to check it |
+|---|---|
+| Required field | `if (!value \|\| value.trim() === '')` |
+| Must be a number | `if (isNaN(parseInt(value)))` |
+| Number in range | `if (num < min \|\| num > max)` |
+| Max length | `if (value.length > 50)` |
+| Valid email (basic) | `if (!value.includes('@'))` |
+
+```mermaid
+flowchart TD
+    A[User submits form] --> B[Read req.body]
+    B --> C{Run if/else checks}
+    C -->|Errors found| D[Re-render form\nwith error messages]
+    C -->|All checks pass| E[Save to JSON / database]
+    D --> F[User fixes mistakes]
+    F --> A
+    E --> G[Redirect to list]
+```
+
+**🎯 Try It:** Add validation to your own mini-project (Section 9). Pick one field and add an `if` check that prevents saving when it's empty. Then test it by sending bad data using DevTools!
+
+**Key takeaway:** Prepared statements (you'll learn these in Part 2) protect you from **hacking**. Server-side validation protects you from **bad data**. You need *both*.
+
 ---
 
 ## 🚀 Section 9: Mini-Project - Choose Your App!
@@ -1512,7 +1644,7 @@ DON'T use plain JSON because:
 
 ### 🎓 Learning Path Recommendations
 
-**If you're Grade 9 learning web dev:**
+**If you're Grade 10 learning web dev:**
 
 ```markdown
 WEEK 1-2: Start with Static HTML/CSS ✅
@@ -1551,7 +1683,7 @@ WEEK 5-6: NOW learn Express ✅
 - ❌ Overcomplicate: Don't add Express just because "it's professional"
 - ❌ Skip learning static HTML first (understand basics before Express)
 
-**🇵🇭 Reality Check:** Most Grade 9 projects DON'T need Express. But when you DO need it (forms, dynamic content, user accounts), Express is the simplest server solution to learn.
+**🇵🇭 Reality Check:** Most Grade 10 projects DON'T need Express. But when you DO need it (forms, dynamic content, user accounts), Express is the simplest server solution to learn.
 
 ---
 

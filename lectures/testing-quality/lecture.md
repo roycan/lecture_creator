@@ -1,6 +1,6 @@
 # Testing & Quality Assurance - Delivering with Confidence
 
-> **For Grade 9 Filipino Students**  
+> **For Grade 10 Filipino Students**  
 > **Goal:** Learn to test your web applications systematically, ensuring you deliver reliable, professional software to clients with confidence.
 
 ---
@@ -2212,5 +2212,5 @@ Simulate UAT session:
 ---
 
 **Created:** November 12, 2025  
-**Course:** Web Development for Grade 9 Students  
+**Course:** Web Development for Grade 10 Students  
 **Phase 3:** Quality & Testing (Sessions 1-2 of 3)

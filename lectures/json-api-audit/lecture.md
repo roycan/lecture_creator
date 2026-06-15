@@ -510,7 +510,7 @@ fetch('/api/products')
 
 ✅ GOOD: Team project (backend dev + frontend dev work separately)
 ✅ GOOD: Want to rebuild frontend later (React, Vue)
-❌ BAD: Solo Grade 9 project (extra complexity)
+❌ BAD: Solo Grade 10 project (extra complexity)
 ```
 
 #### 4. **Need Programmatic Access (Other Systems Use Your Data)**
@@ -614,7 +614,7 @@ But: Government sites should work for everyone
 | **Mobile + web app** | ✅ YES | One API, multiple frontends |
 | **Blog/marketing site** | ❌ NO | Server-rendered HTML (SEO) |
 | **Admin panel (internal)** | ⚠️ MAYBE | Either works, API adds flexibility |
-| **Learning project (Grade 9)** | ❌ START WITH NO | Learn HTML forms first |
+| **Learning project (Grade 10)** | ❌ START WITH NO | Learn HTML forms first |
 | **Multi-page CRUD app** | ⚠️ MAYBE | HTML forms simpler, APIs better UX |
 
 ### 🇵🇭 Philippine Context Examples
@@ -822,7 +822,7 @@ async function loadResidents() {
 ```
 
 **DECISION:**
-- **Grade 9 learning:** Version 1 (simpler) ✅
+- **Grade 10 learning:** Version 1 (simpler) ✅
 - **Real client project:** Version 2 (better UX) ✅
 - **Small dataset (< 100 residents):** Version 1 ✅
 - **Large dataset (> 1000 residents):** Version 2 (server-side filtering) ✅
@@ -839,7 +839,7 @@ async function loadResidents() {
    - YES → JSON API ✅
    - NO (web only) → HTML forms simpler
 
-3. **"Is this a learning project (Grade 9)?"**
+3. **"Is this a learning project (Grade 10)?"**
    - YES → Start with HTML forms, add APIs later ✅
    - NO (production) → JSON API for better UX
 
@@ -857,7 +857,7 @@ async function loadResidents() {
 
 ### 🎓 Learning Path Recommendations
 
-**For Grade 9 students:**
+**For Grade 10 students:**
 
 ```markdown
 WEEK 1-2: HTML Forms + Express ✅

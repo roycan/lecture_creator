@@ -716,7 +716,7 @@ function greetStudent(name, grade) {
     console.log("Hi " + name + "! Welcome to Grade " + grade + "!");
 }
 
-greetStudent("Jose", 9);  // Output: Hi Jose! Welcome to Grade 9!
+greetStudent("Jose", 10);  // Output: Hi Jose! Welcome to Grade 10!
 ```
 
 ## Parameters and Return Values

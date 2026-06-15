@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Refactor Exercise (Solution)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f5f5f5; color: #222; padding: 16px; max-width: 480px; margin: 0 auto; }
+    h1 { font-size: 1.3rem; margin-bottom: 6px; }
+    .box { background: #fff; padding: 14px; border-radius: 8px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    td, th { padding: 5px 4px; text-align: left; }
+    .num { text-align: right; }
+    .right { text-align: right; }
+    .muted { color: #777; }
+    .total { font-weight: bold; border-top: 2px solid #333; }
+    pre { background: #1e1e1e; color: #d4d4d4; padding: 12px; border-radius: 6px; font-size: .8rem; overflow:auto; }
+    .note { background: #e8f5e9; padding: 10px; border-radius: 6px; font-size: .88rem; border-left: 4px solid #2e7d32; }
+  </style>
+</head>
+<body>
+  <h1>✅ Sari-Sari Receipt — Refactored</h1>
+  <div class="note">
+    Same output, readable code. Each function does <b>one job</b>, and every name explains itself.
+    Compare this to the spaghetti version: same result, far easier to understand, test, and change.
+  </div>
+
+  <div class="box" id="out"></div>
+
+  <pre id="src"></pre>
+
+  <script>
+    // ============================================
+    //  ✅ CLEAN VERSION — small functions, clear names
+    // ============================================
+
+    // --- The data (now readable) ---
+    const items = [
+      { name: 'Sardinas', quantity: 2, price: 25 },
+      { name: 'Rice 1kg', quantity: 1, price: 55 },
+      { name: 'Softdrinks', quantity: 3, price: 18 }
+    ];
+    const VAT_RATE = 0.12;
+
+    // --- One small function per concern ---
+
+    function lineTotal(item) {
+      return item.quantity * item.price;
+    }
+
+    function calcSubtotal(items) {
+      return items.reduce((sum, item) => sum + lineTotal(item), 0);
+    }
+
+    function calcVat(subtotal) {
+      return subtotal * VAT_RATE;
+    }
+
+    function renderRow(item) {
+      return '<tr><td>' + item.name + '</td>' +
+             '<td class="num">' + item.quantity + '</td>' +
+             '<td class="num">₱' + item.price + '</td>' +
+             '<td class="num">₱' + lineTotal(item).toFixed(2) + '</td></tr>';
+    }
+
+    function renderReceipt(items) {
+      const subtotal = calcSubtotal(items);
+      const vat = calcVat(subtotal);
+      const grandTotal = subtotal + vat;
+
+      let html = '<table>';
+      html += '<tr><th>Item</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Total</th></tr>';
+      html += items.map(renderRow).join('');
+      html += '<tr class="muted"><td colspan="3" class="right">Subtotal</td><td class="num">₱' + subtotal.toFixed(2) + '</td></tr>';
+      html += '<tr class="muted"><td colspan="3" class="right">VAT (12%)</td><td class="num">₱' + vat.toFixed(2) + '</td></tr>';
+      html += '<tr class="total"><td colspan="3" class="right">Grand Total</td><td class="num">₱' + grandTotal.toFixed(2) + '</td></tr>';
+      html += '</table>';
+      return html;
+    }
+
+    // --- Render it ---
+    document.getElementById('out').innerHTML = renderReceipt(items);
+
+    document.getElementById('src').textContent =
+      'const items = [...]\n' +
+      'const VAT_RATE = 0.12;\n\n' +
+      'function lineTotal(item)   { return item.quantity * item.price; }\n' +
+      'function calcSubtotal(items){ return items.reduce((s,i)=> s + lineTotal(i), 0); }\n' +
+      'function calcVat(subtotal) { return subtotal * VAT_RATE; }\n' +
+      'function renderRow(item)   { ... }\n' +
+      'function renderReceipt(items) { ... uses calcSubtotal + calcVat ... }';
+  </script>
+</body>
+</html>

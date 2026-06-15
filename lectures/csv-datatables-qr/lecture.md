@@ -1,7 +1,7 @@
 # Building Web Applications - Part 2C
 ## Advanced Features & Professional Polish
 
-**Target Audience:** Grade 9 Students  
+**Target Audience:** Grade 10 Students  
 **Prerequisites:** Part 2B (Authentication & Authorization)  
 **Duration:** 4-5 days
 
@@ -1484,7 +1484,7 @@ DO LOG:
 
 #### 2. **Solo Projects or Learning**
 ```markdown
-Grade 9 learning project:
+Grade 10 learning project:
 ❌ DON'T: Implement audit log on first project
 ✅ DO: Focus on core CRUD functionality first
 
@@ -1632,7 +1632,7 @@ Add audit logging LATER when:
 
 ### 🎓 Learning Path
 
-**For Grade 9 students:**
+**For Grade 10 students:**
 
 ```markdown
 PROJECT 1: Store inventory (basic CRUD)

@@ -1,6 +1,6 @@
 # 🚀 Production Best Practices for Express Apps
 
-**Target Audience:** Grade 9 Filipino students who have built Express apps  
+**Target Audience:** Grade 10 Filipino students who have built Express apps  
 **Prerequisites:** Express basics, Railway deployment basics  
 **Time:** 3-4 hours  
 **Goal:** Learn to deploy apps safely and professionally
@@ -24,7 +24,7 @@ By the end of this lecture, you'll know how to:
 
 **Trixie's Sari-Sari Store Admin (October 2024)**
 
-Trixie, a Grade 9 student, built a beautiful inventory management system for her family's sari-sari store. She deployed it to Railway, excited to show her tita.
+Trixie, a Grade 10 student, built a beautiful inventory management system for her family's sari-sari store. She deployed it to Railway, excited to show her tita.
 
 **What went wrong:**
 
@@ -704,7 +704,7 @@ module.exports = {
 
 ### Common Web Attacks (and How to Prevent Them)
 
-**Grade 9-Friendly Explanation:**
+**Grade 10-Friendly Explanation:**
 
 Imagine your Express app is a sari-sari store. Customers (users) come in, ask for things (HTTP requests), and you give them what they want (responses). But some customers are bad people trying to:
 - Steal money from the register (steal data)
@@ -3248,7 +3248,7 @@ Why:
 - Teacher is the only user
 ```
 
-**Grade 9-Einstein Class List (Personal Project)**
+**Grade 10-Einstein Class List (Personal Project)**
 ```
 Use:
 ✅ Try-catch + error middleware
@@ -3405,7 +3405,7 @@ Before deploying ANY app to production:
 
 > "The Barangay San Juan certificate system processes 100 requests per day with zero downtime. Residents get their clearances in minutes instead of hours. The kagawad prints reports directly from the web app."
 
-> "Our Grade 9-Einstein class list ran the entire semester without a single data loss. When we accidentally deleted a student, we restored from backup in 5 minutes. Everyone's grades were safe."
+> "Our Grade 10-Einstein class list ran the entire semester without a single data loss. When we accidentally deleted a student, we restored from backup in 5 minutes. Everyone's grades were safe."
 
 ### What's Next
 
@@ -3466,7 +3466,7 @@ You're now ready to:
 
 **Last Updated:** November 13, 2025  
 **Status:** Complete (Sections 1-11)  
-**Target Audience:** Grade 9 Filipino Students  
+**Target Audience:** Grade 10 Filipino Students  
 **Prerequisites:** Express Basics, Database SQLite  
 **Next Lecture:** Git & GitHub Collaboration
 

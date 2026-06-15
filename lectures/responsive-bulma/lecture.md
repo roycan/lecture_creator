@@ -1,6 +1,6 @@
 # 📱 Responsive Web Design with Bulma
 
-**For:** Grade 9 Filipino Students  
+**For:** Grade 10 Filipino Students  
 **Prerequisites:** HTML Fundamentals  
 **Time:** 4-5 hours  
 **Goal:** Create mobile-friendly websites that work on any device
@@ -1952,7 +1952,7 @@ Now you know Bulma! But **should you always use it?**
 - Want to see how pros structure CSS
 - Focus on functionality, not design
 
-**Example:** Grade 9 students (you!) learning web dev
+**Example:** Grade 10 students (you!) learning web dev
 
 **4. Government/Business Forms**
 - Need clean, professional look
@@ -2043,7 +2043,7 @@ Now you know Bulma! But **should you always use it?**
 | **Foundation** | ~300KB | Hard | Very High | Complex enterprise apps |
 | **Pure CSS** | 0KB | Hard | Complete | Learning, full control, tiny sites |
 
-**For Grade 9 students: Start with Bulma!**
+**For Grade 10 students: Start with Bulma!**
 - Smaller than Bootstrap
 - Cleaner HTML than Tailwind
 - Focuses on CSS (not JavaScript)

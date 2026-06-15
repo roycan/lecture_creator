@@ -1,7 +1,7 @@
 # Building Web Applications - Part 2B
 ## User Authentication & Authorization
 
-**Target Audience:** Grade 9 Students  
+**Target Audience:** Grade 10 Students  
 **Prerequisites:** Part 2A (SQLite databases, CRUD operations, prepared statements)  
 **Duration:** 3-4 days
 
@@ -107,7 +107,7 @@ This is exactly what we're building!
 
 ### The Two-Role System
 
-**For Grade 9 projects, two roles cover 90% of needs:**
+**For Grade 10 projects, two roles cover 90% of needs:**
 
 **Role 1: Admin (Full Access)**
 - Create, edit, delete anything
@@ -1444,7 +1444,7 @@ npm install express-session bcrypt better-sqlite3-session-store
 // - Implement token rotation
 // - Handle expired tokens manually
 
-✅ GOOD: Grade 9 learning project
+✅ GOOD: Grade 10 learning project
 ✅ GOOD: Rapid prototyping for client demo
 ❌ BAD: Distributed API (multiple servers)
 ```
@@ -1490,7 +1490,7 @@ JWT = Stateless (no database lookups)
 - No session storage needed
 - Scales better
 
-Reality: Grade 9 projects won't hit this scale
+Reality: Grade 10 projects won't hit this scale
 ```
 
 #### 4. **Long-Lived Authentication (Weeks/Months)**
@@ -1515,7 +1515,7 @@ Session cookies typically expire in hours/days
 | **Admin dashboard** | ✅ YES | Need instant logout control |
 | **Public content (comments)** | ⚠️ OPTIONAL | JWT or simple API keys |
 | **Multi-server deployment** | ❌ NO | JWT or Redis sessions |
-| **Grade 9 learning project** | ✅ YES | Simplest to learn |
+| **Grade 10 learning project** | ✅ YES | Simplest to learn |
 | **Client project (< 1000 users)** | ✅ YES | Sessions work fine |
 
 ### 🇵🇭 Philippine Context Examples
@@ -1720,7 +1720,7 @@ app.post('/admin/login', (req, res) => {
    - < 1000 concurrent → Sessions ✅
    - > 1000 concurrent → Consider JWT or Redis sessions
 
-4. **"Is this for learning (Grade 9)?"**
+4. **"Is this for learning (Grade 10)?"**
    - YES → Sessions ✅ (simpler concept)
    - NO (production API) → Consider JWT
 
@@ -1734,7 +1734,7 @@ app.post('/admin/login', (req, res) => {
 
 ### 🎓 Learning Path Recommendations
 
-**For Grade 9 students:**
+**For Grade 10 students:**
 
 ```markdown
 PROJECT 1: Portfolio with guest book

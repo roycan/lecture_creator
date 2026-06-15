@@ -1635,7 +1635,7 @@ Build a **Student Management System** with everything you learned!
 
 ```javascript
 let classroom = {
-    section: "Grade 9 - Einstein",
+    section: "Grade 10 - Einstein",
     students: [
         { name: "Maria Santos", scores: [95, 92, 94], attendance: 98 },
         { name: "Jose Cruz", scores: [88, 85, 90], attendance: 95 },

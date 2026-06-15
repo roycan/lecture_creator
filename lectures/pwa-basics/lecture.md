@@ -1,6 +1,6 @@
 # Progressive Web Apps (PWA): Building Offline-First Applications
 
-**Grade 9 - ICT**  
+**Grade 10 - ICT**  
 **Duration:** 2-3 weeks  
 **Prerequisites:** HTML, CSS, JavaScript, Basic web servers, Service Workers concept
 
@@ -220,7 +220,7 @@ PWA:
 - ✅ Install prompts (add to home screen)
 - ✅ Offline detection (user feedback)
 
-**We WON'T cover (too advanced for Grade 9):**
+**We WON'T cover (too advanced for Grade 10):**
 - ❌ Push notifications (complex server setup)
 - ❌ Background sync (advanced API)
 - ❌ IndexedDB (complex storage, localStorage is enough)
@@ -519,7 +519,7 @@ Sari-sari store owner:
 
 **Not required (but nice):**
 - ⭕ IndexedDB (localStorage is enough for basics)
-- ⭕ Push API (skip for Grade 9)
+- ⭕ Push API (skip for Grade 10)
 - ⭕ Background Sync (advanced)
 
 **You already know everything you need!**
@@ -4419,7 +4419,7 @@ const studentApp = {
   problem: "Students need to track homework without constant internet",
   solution: "PWA todo list with offline sync",
   benefit: "Add tasks anytime, syncs at school WiFi",
-  users: "Grade 9-12 students"
+  users: "Grade 10-12 students"
 };
 ```
 
@@ -4865,7 +4865,7 @@ Your Decision: _______________________
 #### **Project 1: Recipe Collection**
 
 ```
-Student: Maria, Grade 9
+Student: Maria, Grade 10
 Idea: "Filipino recipe app with offline access"
 
 Analysis:
@@ -6413,8 +6413,8 @@ const attendanceManager = new AttendanceManager();
     <section class="class-selector">
         <select id="class-select">
             <option value="">Select Class</option>
-            <option value="9-A">Grade 9-A</option>
-            <option value="9-B">Grade 9-B</option>
+            <option value="9-A">Grade 10-A</option>
+            <option value="9-B">Grade 10-B</option>
         </select>
         
         <select id="subject-select">
@@ -7814,6 +7814,6 @@ Web technologies evolve fast!
 
 **End of PWA Basics Lecture**
 
-*Created for Grade 9 Filipino Students*  
+*Created for Grade 10 Filipino Students*  
 *Focus: Offline-first, data-efficient, Philippine-ready PWAs*  
 *Keep building, keep learning! 🚀*

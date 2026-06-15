@@ -1,6 +1,6 @@
 # HTML Fundamentals: Building the Web's Foundation
 
-**Grade 9 - ICT**  
+**Grade 10 - ICT**  
 **Duration:** 2-3 weeks  
 **Prerequisite:** None (This is the starting point!)
 
@@ -869,7 +869,7 @@ Tables organize data in rows and columns:
 
 ```html
 <table>
-    <caption>Grade 9 - Einstein Schedule</caption>
+    <caption>Grade 10 - Einstein Schedule</caption>
     <thead>
         <tr>
             <th>Time</th>
@@ -1587,5 +1587,5 @@ You've completed the HTML Fundamentals lecture! You now have the foundation to b
 
 **End of HTML Fundamentals Lecture**
 
-*Created for Grade 9 Filipino Students*  
+*Created for Grade 10 Filipino Students*  
 *Philippine Context, Real-World Examples, Practical Skills*

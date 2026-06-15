@@ -1,7 +1,7 @@
 # Building Web Applications - Part 2A
 ## SQLite Databases and CRUD Operations
 
-**Target Audience:** Grade 9 Students  
+**Target Audience:** Grade 10 Students  
 **Prerequisites:** Part 1 (Node.js, Express, EJS, JSON files, Railway deployment)  
 **Duration:** 1 week
 
@@ -518,7 +518,7 @@ A **database** is like a smart filing cabinet that:
 
 **Think of it as:** The Jollibee of databases - simple, reliable, gets the job done!
 
-### Why SQLite for Grade 9 Students?
+### Why SQLite for Grade 10 Students?
 
 - ✅ **Simple:** One file, no complex setup
 - ✅ **Free:** No costs, no limits
@@ -1402,7 +1402,7 @@ const studentsWithSections = db.prepare(`
 `).all();
 
 // Now you can display:
-// "Juan Dela Cruz (Grade 9-Einstein, Room 101, Adviser: Ms. Reyes)"
+// "Juan Dela Cruz (Grade 10-Einstein, Room 101, Adviser: Ms. Reyes)"
 ```
 
 **Filtering with JOIN:**
@@ -1601,6 +1601,85 @@ db.prepare(sql).get(userInput);
 ```
 
 **If you remember only ONE thing from this lecture, remember this!** 🔒
+
+---
+
+### 🛡️ Validation: The Other Half of Security
+
+Prepared statements stop **hackers** (SQL injection). But what about **bad data**? A user who isn't trying to hack you can still type nonsense:
+
+```javascript
+// User fills the form with:
+// name: "asdfghjkl"      (keyboard smash)
+// age: "-999"            (negative age?!)
+// section: ""            (left it blank)
+```
+
+Prepared statements will happily insert all of that — no error! That's why you need **validation** *before* your `INSERT`.
+
+**Layer 1: Manual checks in your route (do this first)**
+
+```javascript
+app.post('/students/add', (req, res) => {
+  const name = req.body.name;
+  const age = parseInt(req.body.age);
+
+  const errors = [];
+
+  if (!name || name.trim() === '') {
+    errors.push('Name is required.');
+  }
+
+  if (isNaN(age) || age < 5 || age > 120) {
+    errors.push('Age must be a number between 5 and 120.');
+  }
+
+  // Stop if there are problems
+  if (errors.length > 0) {
+    return res.render('add-student', { errors: errors });
+  }
+
+  // All good — safe to INSERT with a prepared statement
+  db.prepare('INSERT INTO students (name, age) VALUES (?, ?)')
+    .run(name.trim(), age);
+
+  res.redirect('/students');
+});
+```
+
+**Layer 2: Column constraints (your backup)**
+
+Even if your route validation has a bug, the database itself can reject bad data. You add these rules when you `CREATE TABLE`:
+
+```sql
+CREATE TABLE students (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,                     -- can't be empty
+  age INTEGER NOT NULL CHECK (age >= 0),  -- can't be negative
+  section TEXT DEFAULT 'Unassigned'       -- fills in if blank
+);
+```
+
+| Constraint | What it does | Example |
+|---|---|---|
+| `NOT NULL` | Rejects empty values | `name TEXT NOT NULL` |
+| `CHECK (...)` | Rejects values that fail a rule | `CHECK (age >= 0)` |
+| `DEFAULT value` | Uses a fallback if blank | `DEFAULT 'Unassigned'` |
+| `UNIQUE` | Rejects duplicates | `email TEXT UNIQUE` |
+
+```mermaid
+flowchart LR
+    A[User submits form] --> B[Route: manual if/else checks]
+    B -->|Fails| C[Re-show form\nwith errors]
+    B -->|Passes| D[Prepared statement INSERT]
+    D --> E{Column constraints}
+    E -->|Violated| F[Database error\nhandle with try/catch]
+    E -->|OK| G[Data saved]
+```
+
+> ⚠️ **Why two layers?** Your route validation gives users *friendly* error messages ("Age must be a number"). Column constraints are a *safety net* that catches anything your code missed. Both matter.
+
+**🎯 Try It:** Add a `CHECK` constraint to one of your tables — for example, force a `price` column to be positive: `price REAL CHECK (price >= 0)`. Then try to insert a negative price and watch the database reject it!
 
 ---
 
@@ -1991,7 +2070,7 @@ GROUP BY b.id;
 
 ### 🎓 Learning Path Recommendations
 
-**For Grade 9 students:**
+**For Grade 10 students:**
 
 ```markdown
 PROJECT 1: Portfolio (5 pages, 3 projects)

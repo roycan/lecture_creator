@@ -188,8 +188,8 @@ Building *with* AI — your explicit goal. **Objectives:** write effective promp
 
 ## 8. Consistency fixes (bundle in)
 
-1. **Grade level metadata:** lecture headers currently say **"Grade 9 - ICT"** (e.g. [`html/lecture.md`](lectures/html/lecture.md)). For this elective they should read **Grade 10**. Sweep all lecture sources.
-2. **`api-testing` placement:** `api-testing.html` exists in the G10 export set but has no current source folder under [`lectures/`](lectures). Confirm canonical source and its slot (logically near `json-api-audit`, Q3).
+1. **Grade level metadata:** ✅ **Done** — swept all lecture sources from "Grade 9" to **Grade 10** (54 references across 14 files).
+2. **`api-testing` placement:** ✅ **Confirmed** — the source folder [`lectures/api-testing/lecture.md`](lectures/api-testing/lecture.md) exists. It sits in **Q3** immediately after `json-api-audit` (testing APIs naturally follows auditing/consuming them). No reconciliation was needed.
 3. **`web-lectures/full-stack-g10/`** are the exported `.html`; the source of truth is [`lectures/`](lectures). New gap lectures get a source folder; the export set is regenerated.
 
 ---
@@ -197,16 +197,16 @@ Building *with* AI — your explicit goal. **Objectives:** write effective promp
 ## 9. Implementation order
 
 1. ✅ Lock this plan (this doc).
-2. Build gap lectures **one at a time, full house style**, in this priority order (value × low dependency):
-   1. `debugging-devtools` (Q2) — highest independence value
-   2. `ai-assisted-development` (Q4) — explicit goal, novel
-   3. `code-organization` (Q3) — "maintainable" backbone
-   4. `requirements-user-stories` (Q1) — "usable / right thing"
-   5. `data-modeling` (Q3) — pairs with database-sqlite
-3. Add the **server-side-validation** sections to express-basics + database-sqlite.
-4. Apply the **Grade 9 → Grade 10** metadata sweep.
-5. Reconcile **api-testing** source/placement.
-6. Regenerate the G10 export set.
+2. ✅ Build gap lectures **one at a time, full house style**, in this priority order (value × low dependency):
+   1. ✅ `debugging-devtools` (Q2) — highest independence value
+   2. ✅ `ai-assisted-development` (Q4) — explicit goal, novel
+   3. ✅ `code-organization` (Q3) — "maintainable" backbone
+   4. ✅ `requirements-user-stories` (Q1) — "usable / right thing"
+   5. ✅ `data-modeling` (Q3) — pairs with database-sqlite
+3. ✅ Add the **server-side-validation** sections to express-basics + database-sqlite.
+4. ✅ Apply the **Grade 9 → Grade 10** metadata sweep.
+5. ✅ Reconcile **api-testing** source/placement (confirmed: source exists, Q3 slot correct).
+6. ✅ Regenerate the G10 export set (23 lectures in `web-lectures/full-stack-g10/`).
 
 ---
 
@@ -232,7 +232,7 @@ Building *with* AI — your explicit goal. **Objectives:** write effective promp
 | **code-organization** | Q3 | 🆕 | — |
 | csv-datatables-qr | Q3 | ✅ | — |
 | json-api-audit | Q3 | ✅ | — |
-| api-testing | Q3 | ✅ | reconcile |
+| api-testing | Q3 | ✅ | — |
 | authentication-sessions | Q4 | ✅ | light |
 | production-best-practices | Q4/Q5 | ✅ | light→full |
 | testing-quality | Q4/Q5 | ✅ | light→full |
