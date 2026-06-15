@@ -1,7 +1,7 @@
 # 📚 Teaching Model — AI-Gated Mastery Learning
 
 > **Purpose:** the single source of truth for *how* this course teaches coding in an AI-saturated world. Written for any teacher — including at other campuses — who will deliver the Grade 10 Full-Stack elective.
-> **Read alongside:** [`context.md`](context.md) (the tool/project), [`full-stack-g10-curriculum.md`](../full-stack-g10-curriculum.md) (what to teach & in what order), and [`lectures/ai-assisted-development/lecture.md`](../lectures/ai-assisted-development/lecture.md) (the *how-to-use-AI* lesson students receive).
+> **Read alongside:** [`context.md`](context.md) (the tool/project), [`full-stack-g10-curriculum.md`](../full-stack-g10-curriculum.md) (what to teach & in what order), [`delivery-cheatsheet.md`](delivery-cheatsheet.md) (how to *run a session* — Me/Us/You, no prep needed), and [`lectures/ai-assisted-development/lecture.md`](../lectures/ai-assisted-development/lecture.md) (the *how-to-use-AI* lesson students receive).
 >
 > **Status:** Adopted model · **Last updated:** 2026-06-15
 

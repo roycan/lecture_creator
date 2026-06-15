@@ -45,7 +45,7 @@
 
 ### 3.1 AI-use policy by phase
 
-> The *when* that complements the *how* in [`lectures/ai-assisted-development`](lectures/ai-assisted-development/lecture.md). Full rationale: [`inceptions/teaching-model-ai-gated-mastery.md`](inceptions/teaching-model-ai-gated-mastery.md). Gate specs: [`inceptions/gate-activities.md`](inceptions/gate-activities.md).
+> The *when* that complements the *how* in [`lectures/ai-assisted-development`](lectures/ai-assisted-development/lecture.md). Full rationale: [`inceptions/teaching-model-ai-gated-mastery.md`](inceptions/teaching-model-ai-gated-mastery.md). Gate specs: [`inceptions/gate-activities.md`](inceptions/gate-activities.md). How to run a session (Me/Us/You): [`inceptions/delivery-cheatsheet.md`](inceptions/delivery-cheatsheet.md).
 
 Students may use AI to **generate** code **only in technologies they have personally unlocked** by passing the relevant no-AI gate — this guarantees they can always verify the output. Each lecture sits in one of three phases; label activities accordingly:
 
