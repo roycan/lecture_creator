@@ -195,11 +195,44 @@ test('scanLecture: source whose mirrored PNG is ABSENT is not stale (will render
   );
 });
 
-// ===========================================================================
-// (3) multi-format collision — WARNING
-// ===========================================================================
+test('scanLecture: editing a FALLBACK source (.puml) flags the PNG stale (mtime across all sources)', async () => {
+  // render-fallback mtime rule: the PNG is fresh iff it is newer than EVERY
+  // same-stem source. Here the PNG is newer than .mmd but OLDER than .puml —
+  // so the .puml fallback edit must flag the PNG as stale (build will rerender).
+  await withLectures(
+    {
+      demo: {
+        'lecture.md': '# Demo\n\n![x](diagrams/foo.png)\n',
+        'diagramSrc/foo.mmd': 'graph TD; A-->B',
+        'diagramSrc/foo.puml': '@startuml\nA-->B\n@enduml',
+        'diagrams/foo.png': PNG,
+      },
+    },
+    (root) => {
+      const png = path.join(root, 'demo', 'diagrams', 'foo.png');
+      const mmd = path.join(root, 'demo', 'diagramSrc', 'foo.mmd');
+      const puml = path.join(root, 'demo', 'diagramSrc', 'foo.puml');
+      age(png, 5); // PNG 5 days old
+      age(mmd, 10); // .mmd older than PNG (would NOT be stale by itself)
+      age(puml, 0); // .puml NEWER than PNG → stale
+      const res = scanLecture('demo', { lecturesDir: root });
+      assert.equal(res.diagrams.stale.length, 1, '.puml edit flags staleness');
+      // The stale entry points at the NEWEST source (the .puml the teacher edited).
+      assert.equal(res.diagrams.stale[0].src, puml);
+      assert.match(res.diagrams.stale[0].srcRel, /foo\.puml/);
+      assert.equal(res.ok, true);
+    },
+  );
+});
 
-test('scanLecture: two formats with the same stem → collision WARNING', async () => {
+// ===========================================================================
+// (3) multi-format — FIRST-CLASS FALLBACK (no longer a collision warning)
+// ===========================================================================
+// render-fallback feature: several formats of one diagram are intentional
+// fallbacks the build tries in priority order on render failure. So they NO
+// LONGER produce a collision warning (the 21 curriculum warnings drop to 0).
+
+test('scanLecture: two formats with the same stem → NO collision warning (fallback feature)', async () => {
   await withLectures(
     {
       demo: {
@@ -211,14 +244,12 @@ test('scanLecture: two formats with the same stem → collision WARNING', async 
     },
     (root) => {
       const res = scanLecture('demo', { lecturesDir: root });
-      assert.equal(res.ok, true, 'collision is a WARNING, not an error');
-      assert.equal(res.diagrams.sources, 1, 'one winning job after resolution');
-      assert.equal(res.diagrams.collisions.length, 1);
-      assert.match(res.diagrams.collisions[0], /foo/);
-      assert.match(
-        res.diagrams.collisions[0],
-        /keep only ONE source format/i,
-        'teacher-readable guidance',
+      assert.equal(res.ok, true, 'multi-format is never an error');
+      assert.equal(res.diagrams.sources, 1, 'one fallback chain after resolution');
+      assert.equal(
+        res.diagrams.collisions.length,
+        0,
+        'NO collision warning — multi-format is an intentional fallback',
       );
     },
   );
@@ -259,7 +290,7 @@ test('scanLecture: .txt/.md design notes in diagramSrc are ignored, not flagged'
         'diagramSrc/foo.mmd': 'graph TD; A-->B',
         'diagramSrc/notes.txt': 'design notes — NOT a diagram source',
         'diagramSrc/README.md': '# design notes',
-        'diagramSrc/foo.puml': '@startuml\nA-->B\n@enduml', // collides with foo.mmd
+        'diagramSrc/foo.puml': '@startuml\nA-->B\n@enduml', // 2nd format of foo (fallback)
         'diagrams/foo.png': PNG,
       },
     },
@@ -268,8 +299,8 @@ test('scanLecture: .txt/.md design notes in diagramSrc are ignored, not flagged'
       assert.equal(res.diagrams.sources, 1, '.txt/.md do not count as sources');
       assert.equal(
         res.diagrams.collisions.length,
-        1,
-        'one collision (foo.mmd vs foo.puml) — .txt/.md do not collide',
+        0,
+        'no collision — foo.{mmd,puml} is a fallback chain, .txt/.md are ignored',
       );
       assert.equal(res.diagrams.stale.length, 0);
       assert.equal(res.ok, true, 'ignored design notes are never errors');
@@ -323,9 +354,11 @@ test('scanLecture: a source NOT at the mirrored path does NOT rescue a missing P
 // checkAll aggregation + main() exit codes
 // ===========================================================================
 
-test('checkAll: totalMisses counts broken refs; totalWarnings counts collisions + stale', async () => {
+test('checkAll: totalMisses counts broken refs; totalWarnings counts stale only (collisions retired)', async () => {
   await withLectures(
     {
+      // 'collide' used to emit a collision warning; multi-format is now a
+      // fallback feature, so it contributes ZERO warnings.
       collide: {
         'lecture.md': '# C\n\n![x](diagrams/foo.png)\n',
         'diagramSrc/foo.mmd': 'g',
@@ -347,12 +380,16 @@ test('checkAll: totalMisses counts broken refs; totalWarnings counts collisions 
       const { results, totalMisses, totalWarnings } = checkAll({ lecturesDir: root });
       assert.equal(results.length, 3);
       assert.equal(totalMisses, 1, 'one broken diagram ref (broken/missing.png)');
-      assert.equal(totalWarnings, 2, '1 collision (collide) + 1 stale (staleLec)');
+      assert.equal(
+        totalWarnings,
+        1,
+        'only the 1 stale render counts now — multi-format is NOT a warning',
+      );
     },
   );
 });
 
-test('check main: collisions are reported but NON-FATAL (exit 0)', async () => {
+test('check main: multi-format is SILENT and NON-FATAL (exit 0, no collision line)', async () => {
   await withLectures(
     {
       warn: {
@@ -364,12 +401,16 @@ test('check main: collisions are reported but NON-FATAL (exit 0)', async () => {
     },
     async (root) => {
       const out = await captureConsole(async () => {
-        assert.equal(checkMain({ lecturesDir: root }), 0, 'collision warning → exit 0');
+        assert.equal(checkMain({ lecturesDir: root }), 0, 'multi-format → exit 0');
       });
-      assert.ok(out.log.some((l) => /collision/i.test(l)), 'collision reported');
+      assert.equal(
+        out.log.filter((l) => /collision/i.test(l)).length,
+        0,
+        'no collision line printed (multi-format is a fallback feature)',
+      );
       assert.ok(
-        out.log.some((l) => /0 errors, 1 warning/i.test(l)),
-        'summary line (collision is a warning, not an error)',
+        out.log.some((l) => /0 errors, 0 warning/i.test(l)),
+        'summary line shows ZERO warnings',
       );
     },
   );

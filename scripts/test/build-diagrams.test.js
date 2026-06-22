@@ -25,6 +25,7 @@ import os from 'node:os';
 
 import {
   resolveCollisions,
+  resolveFallbackChain,
   scanDiagramSrc,
   renderDiagramSourcesSync,
   renderDiagramFileSync,
@@ -66,76 +67,52 @@ function touchFuture(p, ms = Date.now() + 60_000) {
 }
 
 // ===========================================================================
-// resolveCollisions — priority + non-destructive selection (pure)
+// resolveFallbackChain / resolveCollisions — ordered fallback chain (pure)
 // ===========================================================================
+// Multi-format is a FIRST-CLASS FALLBACK feature now: several formats of one
+// diagram (.mmd + .puml + .dot) form an ordered chain; the primary renders
+// first and the others are tried only on render failure. `warnings` is empty
+// by default (multi-format is intentional, not a problem).
 
-test('resolveCollisions: .mmd wins over .puml and .dot for the same PNG', () => {
+test('resolveFallbackChain: groups same-stem sources into one ordered chain (.mmd primary)', () => {
   const lectureDir = path.join(os.tmpdir(), 'lec');
   const src = (ext) => path.join(lectureDir, 'diagramSrc', 'sub', `if-else.${ext}`);
-  const { jobs, warnings } = resolveCollisions(
+  const { jobs } = resolveFallbackChain(
     [src('dot'), src('mmd'), src('puml')],
     lectureDir,
   );
-  assert.equal(jobs.length, 1, 'one job per unique PNG');
-  assert.equal(path.basename(jobs[0].src), 'if-else.mmd', '.mmd wins');
-  assert.equal(jobs[0].engine, 'mermaid');
-  assert.equal(warnings.length, 1, 'one collision warning');
-  assert.match(warnings[0], /if-else\.mmd/);
-  assert.match(warnings[0], /if-else\.puml/);
-  assert.match(warnings[0], /if-else\.dot/);
-});
-
-test('resolveCollisions: no warning when each diagram has a single format', () => {
-  const lectureDir = path.join(os.tmpdir(), 'lec');
-  const { jobs, warnings } = resolveCollisions(
-    [
-      path.join(lectureDir, 'diagramSrc', 'a.mmd'),
-      path.join(lectureDir, 'diagramSrc', 'b.puml'),
-    ],
-    lectureDir,
+  assert.equal(jobs.length, 1, 'one chain per unique PNG stem');
+  const chain = jobs[0].chain.map((c) => path.basename(c.src));
+  assert.deepEqual(
+    chain,
+    ['if-else.mmd', 'if-else.puml', 'if-else.dot'],
+    'ordered .mmd > .puml > .dot; primary is chain[0]',
   );
-  assert.equal(jobs.length, 2);
-  assert.deepEqual(warnings, []);
+  assert.equal(jobs[0].chain[0].engine, 'mermaid', 'engine resolved per source');
 });
 
-test('resolveCollisions: full priority .mmd > .puml > .d2 > .dot', () => {
+test('resolveFallbackChain: full priority .mmd > .puml > .d2 > .dot', () => {
   const lectureDir = path.join(os.tmpdir(), 'lec');
   const src = (ext) => path.join(lectureDir, 'diagramSrc', `x.${ext}`);
-  assert.equal(
-    path.basename(resolveCollisions([src('dot')], lectureDir).jobs[0].src),
-    'x.dot',
-  );
-  assert.equal(
-    path.basename(resolveCollisions([src('dot'), src('d2')], lectureDir).jobs[0].src),
-    'x.d2',
-  );
-  assert.equal(
-    path.basename(
-      resolveCollisions([src('dot'), src('d2'), src('puml')], lectureDir).jobs[0].src,
-    ),
-    'x.puml',
-  );
-  assert.equal(
-    path.basename(
-      resolveCollisions([src('dot'), src('d2'), src('puml'), src('mmd')], lectureDir)
-        .jobs[0].src,
-    ),
-    'x.mmd',
-  );
+  const head = (arr) =>
+    path.basename(resolveFallbackChain(arr, lectureDir).jobs[0].chain[0].src);
+  assert.equal(head([src('dot')]), 'x.dot');
+  assert.equal(head([src('dot'), src('d2')]), 'x.d2');
+  assert.equal(head([src('dot'), src('d2'), src('puml')]), 'x.puml');
+  assert.equal(head([src('dot'), src('d2'), src('puml'), src('mmd')]), 'x.mmd');
 });
 
-test('resolveCollisions: .gv ties with .dot (rank) → alphabetical basename wins', () => {
+test('resolveFallbackChain: .gv ties with .dot (rank) → alphabetical basename wins', () => {
   const lectureDir = path.join(os.tmpdir(), 'lec');
   const src = (ext) => path.join(lectureDir, 'diagramSrc', `y.${ext}`);
-  const { jobs, warnings } = resolveCollisions([src('gv'), src('dot')], lectureDir);
+  const { jobs } = resolveFallbackChain([src('gv'), src('dot')], lectureDir);
   assert.equal(jobs.length, 1);
-  assert.equal(path.basename(jobs[0].src), 'y.dot', "'y.dot' < 'y.gv'");
-  assert.equal(warnings.length, 1);
+  assert.equal(path.basename(jobs[0].chain[0].src), 'y.dot', "'y.dot' < 'y.gv'");
 });
 
-test('resolveCollisions: jobs sorted by source path (deterministic)', () => {
+test('resolveFallbackChain: jobs sorted by PRIMARY source path (deterministic)', () => {
   const lectureDir = path.join(os.tmpdir(), 'lec');
-  const { jobs } = resolveCollisions(
+  const { jobs } = resolveFallbackChain(
     [
       path.join(lectureDir, 'diagramSrc', 'z.mmd'),
       path.join(lectureDir, 'diagramSrc', 'a.mmd'),
@@ -144,9 +121,46 @@ test('resolveCollisions: jobs sorted by source path (deterministic)', () => {
     lectureDir,
   );
   assert.deepEqual(
-    jobs.map((j) => path.basename(j.src)),
+    jobs.map((j) => path.basename(j.chain[0].src)),
     ['a.mmd', 'm.mmd', 'z.mmd'],
   );
+});
+
+test('resolveCollisions: back-compat — primary wins, NO warning by default (multi-format is intentional)', () => {
+  const lectureDir = path.join(os.tmpdir(), 'lec');
+  const src = (ext) => path.join(lectureDir, 'diagramSrc', 'sub', `if-else.${ext}`);
+  const { jobs, warnings } = resolveCollisions(
+    [src('dot'), src('mmd'), src('puml')],
+    lectureDir,
+  );
+  assert.equal(jobs.length, 1, 'one job per unique PNG');
+  assert.equal(path.basename(jobs[0].src), 'if-else.mmd', '.mmd is the primary');
+  assert.equal(jobs[0].engine, 'mermaid');
+  assert.deepEqual(warnings, [], 'no collision warning — multi-format is a fallback feature');
+  // The chain is exposed on the back-compat job so the orchestrator can walk it.
+  assert.ok(Array.isArray(jobs[0].chain) && jobs[0].chain.length === 3);
+});
+
+test('resolveCollisions: opt-in warn=true emits an INFO note (not a warning)', () => {
+  const lectureDir = path.join(os.tmpdir(), 'lec');
+  const src = (ext) => path.join(lectureDir, 'diagramSrc', `w.${ext}`);
+  const { warnings } = resolveCollisions([src('mmd'), src('puml')], lectureDir, {
+    warn: true,
+  });
+  assert.equal(warnings.length, 1);
+  assert.match(warnings[0], /fallback chain/i);
+  assert.match(warnings[0], /w\.mmd/);
+  assert.match(warnings[0], /w\.puml/);
+});
+
+test('resolveCollisions: single-format group → no warning even with warn=true', () => {
+  const lectureDir = path.join(os.tmpdir(), 'lec');
+  const { warnings } = resolveCollisions(
+    [path.join(lectureDir, 'diagramSrc', 'a.mmd')],
+    lectureDir,
+    { warn: true },
+  );
+  assert.deepEqual(warnings, []);
 });
 
 // ===========================================================================
@@ -163,7 +177,7 @@ test('scanDiagramSrc: null when lectureDir does not exist (graceful, no throw)',
   assert.equal(scanDiagramSrc(path.join(os.tmpdir(), 'definitely-missing-xyz-456')), null);
 });
 
-test('scanDiagramSrc: jobs + warnings for a real diagramSrc tree (mirrored paths)', () => {
+test('scanDiagramSrc: jobs (fallback chains) for a real diagramSrc tree (mirrored paths)', () => {
   withDir(
     {
       'diagramSrc/sub/a.mmd': 'flowchart LR\n A-->B',
@@ -173,14 +187,20 @@ test('scanDiagramSrc: jobs + warnings for a real diagramSrc tree (mirrored paths
     (dir) => {
       const scan = scanDiagramSrc(dir);
       assert.ok(scan, 'scan returned a result');
-      // a.{mmd,puml} collide → 1 job; b.dot → 1 job ⇒ 2 jobs total.
+      // a.{mmd,puml} → one fallback chain (2 sources); b.dot → one chain (1 source).
       assert.equal(scan.jobs.length, 2);
-      assert.equal(scan.warnings.length, 1);
-      const winner = scan.jobs.find((j) => path.basename(j.pngPath) === 'a.png');
-      assert.ok(winner, 'a.png job present');
-      assert.equal(path.basename(winner.src), 'a.mmd');
+      assert.deepEqual(
+        scan.warnings,
+        [],
+        'multi-format is intentional → no collision warnings',
+      );
+      const aJob = scan.jobs.find((j) => path.basename(j.pngPath) === 'a.png');
+      assert.ok(aJob, 'a.png job present');
+      assert.equal(path.basename(aJob.src), 'a.mmd', 'primary is .mmd');
+      assert.ok(Array.isArray(aJob.chain) && aJob.chain.length === 2, 'chain present');
+      assert.equal(path.basename(aJob.chain[1].src), 'a.puml', '.puml is the fallback');
       assert.equal(
-        path.relative(dir, winner.pngPath),
+        path.relative(dir, aJob.pngPath),
         path.join('diagrams', 'sub', 'a.png'),
         'mirrored nested path',
       );
@@ -266,6 +286,274 @@ test('renderDiagramSourcesSync: null + one-line note when lectureDir is absent',
   }
   assert.ok(notes.some((n) => /skipping diagram rendering/i.test(n)));
 });
+
+// ===========================================================================
+// render-fallback — the ordered fallback chain (hermetic via injectable render)
+// ===========================================================================
+// Multi-format sources are deliberate FALLBACKS: render the primary (.mmd)
+// first; ONLY when it throws does the pipeline fall through to the next format
+// (.puml → .d2 → .dot/.gv → others). The output PNG stem is unchanged whichever
+// source wins. All tests use an injectable `render` so there is NO network and
+// NO subprocess — the chain logic is exercised purely.
+
+test('render-fallback: PRIMARY renders → NO fallback attempted (one render call)', () => {
+  withDir(
+    {
+      'diagramSrc/a.mmd': 'x',
+      'diagramSrc/a.puml': 'x',
+      'diagramSrc/a.dot': 'x',
+    },
+    (dir) => {
+      const calls = [];
+      const res = renderDiagramSourcesSync(dir, {
+        render: (src) => {
+          calls.push(path.basename(src));
+          return { skipped: false };
+        },
+      });
+      assert.ok(res);
+      assert.deepEqual(calls, ['a.mmd'], 'only the primary is tried on success');
+      assert.equal(res.rendered, 1);
+    },
+  );
+});
+
+test('render-fallback: PRIMARY fails → falls back to next format that succeeds', () => {
+  withDir(
+    {
+      'diagramSrc/a.mmd': 'x',
+      'diagramSrc/a.puml': 'x',
+    },
+    (dir) => {
+      const calls = [];
+      const warns = [];
+      const oWarn = console.warn;
+      console.warn = (...a) => void warns.push(a.join(' '));
+      let res;
+      try {
+        res = renderDiagramSourcesSync(dir, {
+          render: (src) => {
+            calls.push(path.basename(src));
+            if (path.basename(src) === 'a.mmd') {
+              throw new Error('Kroki 400: parse error');
+            }
+            return { skipped: false };
+          },
+        });
+      } finally {
+        console.warn = oWarn;
+      }
+      assert.ok(res, 'did not throw — fallback succeeded');
+      assert.deepEqual(calls, ['a.mmd', 'a.puml'], 'primary then fallback');
+      assert.equal(res.rendered, 1, 'one render counted');
+      assert.ok(
+        warns.some(
+          (w) => /a\.mmd failed/i.test(w) && /falling back to.+a\.puml/i.test(w),
+        ),
+        'teacher-readable fallback note emitted',
+      );
+    },
+  );
+});
+
+test('render-fallback: PRIMARY fails, .puml also fails → falls through to .dot', () => {
+  withDir(
+    {
+      'diagramSrc/a.mmd': 'x',
+      'diagramSrc/a.puml': 'x',
+      'diagramSrc/a.dot': 'x',
+    },
+    (dir) => {
+      const calls = [];
+      const res = renderDiagramSourcesSync(dir, {
+        render: (src) => {
+          calls.push(path.basename(src));
+          const name = path.basename(src);
+          if (name === 'a.mmd' || name === 'a.puml') {
+            throw new Error('fail');
+          }
+          return { skipped: false };
+        },
+        log: false,
+      });
+      assert.ok(res);
+      assert.deepEqual(calls, ['a.mmd', 'a.puml', 'a.dot'], 'full chain walked');
+      assert.equal(res.rendered, 1);
+    },
+  );
+});
+
+test('render-fallback: output PNG STEM is unchanged whichever source wins (decision 3)', () => {
+  // The fallback only swaps the INPUT; the output PNG path is the same for
+  // every source in a chain (deriveOutputPath is stem-based).
+  withDir(
+    {
+      'diagramSrc/a.mmd': 'x',
+      'diagramSrc/a.puml': 'x',
+    },
+    (dir) => {
+      const { jobs } = resolveFallbackChain(
+        [
+          path.join(dir, 'diagramSrc', 'a.mmd'),
+          path.join(dir, 'diagramSrc', 'a.puml'),
+        ],
+        dir,
+      );
+      assert.equal(jobs.length, 1, 'one chain → one PNG');
+      assert.equal(
+        path.relative(dir, jobs[0].pngPath),
+        path.join('diagrams', 'a.png'),
+        'single output stem regardless of how many formats',
+      );
+    },
+  );
+});
+
+test('render-fallback: ALL formats fail + REFERENCED + no PNG → THROWS (hard fail preserved)', () => {
+  withDir(
+    {
+      'diagramSrc/a.mmd': 'x',
+      'diagramSrc/a.puml': 'x',
+    },
+    (dir) => {
+      const calls = [];
+      assert.throws(
+        () =>
+          renderDiagramSourcesSync(dir, {
+            referencedPaths: new Set(['diagrams/a.png']),
+            render: (src) => {
+              calls.push(path.basename(src));
+              throw new Error('Kroki down');
+            },
+            log: false,
+          }),
+        /Kroki down/,
+        'a referenced diagram whose every format fails must hard-fail',
+      );
+      assert.deepEqual(
+        calls,
+        ['a.mmd', 'a.puml'],
+        'the whole chain was tried before the referenced throw',
+      );
+    },
+  );
+});
+
+test('render-fallback: ALL formats fail + UNREFERENCED → warns + continues (Phase 6 preserved)', () => {
+  withDir(
+    {
+      'diagramSrc/a.mmd': 'x',
+      'diagramSrc/a.puml': 'x',
+    },
+    (dir) => {
+      const warns = [];
+      const oWarn = console.warn;
+      console.warn = (...a) => void warns.push(a.join(' '));
+      let res;
+      try {
+        res = renderDiagramSourcesSync(dir, {
+          referencedPaths: new Set(), // a.png is an orphan
+          render: () => {
+            throw new Error('Kroki down');
+          },
+        });
+      } finally {
+        console.warn = oWarn;
+      }
+      assert.ok(res, 'did not throw — unreferenced all-fail warns + continues');
+      assert.equal(res.softFailures.length, 1, 'one soft failure recorded');
+      assert.match(res.softFailures[0].message, /2 format\(s\) failed/);
+      assert.ok(
+        warns.some((w) => /unreferenced/i.test(w)),
+        'warned to stderr',
+      );
+    },
+  );
+});
+
+test('render-fallback: mtime — PNG newer than ALL same-stem sources → skip (no render, no fallback)', () => {
+  withDir(
+    {
+      'diagramSrc/a.mmd': 'x',
+      'diagramSrc/a.puml': 'x',
+      'diagrams/a.png': PNG,
+    },
+    (dir) => {
+      // PNG is in the future → newer than BOTH sources.
+      touchFuture(path.join(dir, 'diagrams', 'a.png'));
+      let calls = 0;
+      const res = renderDiagramSourcesSync(dir, {
+        render: () => {
+          calls += 1;
+          return { skipped: false };
+        },
+      });
+      assert.equal(calls, 0, 'fresh PNG across the whole chain → zero render calls');
+      assert.equal(res.skipped, 1);
+      assert.equal(res.rendered, 0);
+    },
+  );
+});
+
+test('render-fallback: mtime — editing the FALLBACK source (.puml) invalidates the cache', () => {
+  withDir(
+    {
+      'diagramSrc/a.mmd': 'x',
+      'diagramSrc/a.puml': 'x',
+      'diagrams/a.png': PNG,
+    },
+    (dir) => {
+      // PNG newer than .mmd but OLDER than .puml → stale (the .puml fallback was edited).
+      const png = path.join(dir, 'diagrams', 'a.png');
+      const mmd = path.join(dir, 'diagramSrc', 'a.mmd');
+      const puml = path.join(dir, 'diagramSrc', 'a.puml');
+      const now = Date.now();
+      ageFile(mmd, now - 5 * 60_000); // .mmd: 5 min ago
+      ageFile(png, now - 2 * 60_000); // png: 2 min ago (newer than .mmd)
+      ageFile(puml, now - 60_000); // .puml: 1 min ago (NEWER than png → stale)
+      let called = false;
+      const res = renderDiagramSourcesSync(dir, {
+        render: () => {
+          called = true;
+          return { skipped: false };
+        },
+      });
+      assert.equal(called, true, 'editing the fallback source re-renders');
+      assert.equal(res.skipped, 0, 'not skipped — cache invalidated by the .puml edit');
+      assert.equal(res.rendered, 1);
+    },
+  );
+});
+
+test('render-fallback: stale-PNG return on primary STOPS the chain (kept existing PNG)', () => {
+  // If the renderer keeps an existing (stale) PNG after a Kroki failure, that
+  // counts as a SUCCESS for chain purposes — we must NOT then try a fallback.
+  withDir(
+    {
+      'diagramSrc/a.mmd': 'x',
+      'diagramSrc/a.puml': 'x',
+    },
+    (dir) => {
+      const calls = [];
+      const res = renderDiagramSourcesSync(dir, {
+        render: (src) => {
+          calls.push(path.basename(src));
+          if (path.basename(src) === 'a.mmd') return { stale: true };
+          return { skipped: false };
+        },
+        log: false,
+      });
+      assert.deepEqual(calls, ['a.mmd'], 'stale-kept is a success → no fallback');
+      assert.equal(res.stale, 1);
+    },
+  );
+});
+
+/** Stamp a file's mtime to an absolute epoch-ms (used by the mtime tests above). */
+function ageFile(p, ms) {
+  const d = new Date(ms);
+  fs.utimesSync(p, d, d);
+}
 
 // ===========================================================================
 // renderDiagramFileSync — stat-only mtime skip (no subprocess, no network)

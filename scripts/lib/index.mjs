@@ -27,6 +27,7 @@ import {
   renderDiagramSourcesSync,
   scanDiagramSrc,
   resolveCollisions,
+  resolveFallbackChain,
 } from './render-diagram.mjs';
 
 export { splitSlides } from './split-slides.mjs';
@@ -35,10 +36,13 @@ export { inlineImages, scanMissingImages, extractImageRefs } from './inline-imag
 export { bundleLibs, hasMermaid } from './bundle-libs.mjs';
 // Phase 2: pre-build diagram rendering (shared with the diagram CLI). Re-exported
 // so callers can import everything from the barrel (D5 single source of truth).
+// render-fallback: resolveFallbackChain is the new ordered-fallback model;
+// resolveCollisions is kept as a back-compat shim (empty warnings by default).
 export {
   renderDiagramSourcesSync,
   scanDiagramSrc,
   resolveCollisions,
+  resolveFallbackChain,
 } from './render-diagram.mjs';
 
 const REPO_ROOT = path.resolve(

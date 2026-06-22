@@ -391,14 +391,18 @@ export async function renderDiagramFile(srcPath, {
 // async renderDiagramFile() via a child process (spawnSync) so the exact
 // failure semantics (decision 7) are shared, not duplicated.
 //
-// Non-destructive throughout (decision 2): a multi-format collision picks ONE
-// source by priority and warns loudly; a teacher's source files are NEVER
-// deleted.
+// Multi-format is now a FIRST-CLASS FALLBACK feature (render-fallback): a
+// teacher keeps several formats of the same diagram (e.g. if-else.{mmd,puml,dot})
+// as deliberate fallbacks. The pipeline renders the PRIMARY (.mmd) first; only
+// when the primary's render FAILS does it fall through to the next format
+// (.puml → .d2 → .dot/.gv → others). The output PNG stem is unchanged whichever
+// source wins. Source files are NEVER deleted (non-destructive, decision 2).
 
 const SUPPORTED_SET = new Set(SUPPORTED_EXTENSIONS);
 
-// Collision priority (lower rank wins): .mmd > .puml > .d2 > .dot/.gv > any
-// other supported extension (alphabetical tiebreak). Locked decision 2.
+// Fallback priority (lower rank wins): .mmd > .puml > .d2 > .dot/.gv > any
+// other supported extension (alphabetical tiebreak). Reused as the SINGLE
+// ordering definition for both the build path and the diagram CLI.
 const COLLISION_RANK = {
   '.mmd': 0,
   '.puml': 1,
@@ -415,7 +419,8 @@ function collisionRank(filePath) {
     : 100;
 }
 
-/** Comparator implementing decision 2: priority rank, then alphabetical. */
+/** Comparator: priority rank, then alphabetical basename. This is the SINGLE
+ *  fallback ordering (build + CLI + check all reuse it). */
 function byCollisionPriority(a, b) {
   const ra = collisionRank(a);
   const rb = collisionRank(b);
@@ -424,27 +429,31 @@ function byCollisionPriority(a, b) {
 }
 
 /**
- * Group diagram sources by the PNG they would produce and pick ONE winner per
- * group when several formats collide (e.g. if-else.{mmd,dot,puml} → one PNG).
+ * Group diagram sources by the output PNG they would produce, and for each
+ * group build an ORDERED FALLBACK CHAIN of all sources sorted by priority
+ * (`.mmd > .puml > .d2 > .dot/.gv > others (alphabetical)`). The PRIMARY is
+ * chain[0]; the rest are FALLBACKS, tried in order only when the primary's
+ * render FAILS.
  *
- * NON-destructive (decision 2): losers are simply excluded from the render set
- * — never deleted. The winner is chosen by priority
- * `.mmd > .puml > .d2 > .dot/.gv > others (alphabetical)`, and a loud,
- * teacher-readable warning names every colliding source plus the one chosen,
- * advising the teacher to keep a single format.
+ * This is the render-fallback model: multiple formats of the same diagram are
+ * deliberate fallbacks (e.g. if-else.{mmd,puml} — if the .mmd has a typo or
+ * Kroki chokes on it, the pipeline falls through to .puml). The output PNG stem
+ * is unchanged whichever source wins (decision 3). Source files are NEVER
+ * deleted (decision 2 / non-destructive).
  *
  * Pure + synchronous (no I/O, no rendering): safe to unit-test directly and
  * safe to call from the sync build path. Shared by buildLecture() and the
- * diagram CLI so there is one collision policy everywhere.
+ * diagram CLI so there is ONE fallback policy everywhere.
  *
  * @param {string[]} sources - Absolute diagram source paths.
- * @param {string} lectureDir - The lecture root (used to compute output PNGs
- *   and readable relative paths inside warnings).
- * @returns {{ jobs: { src: string, pngPath: string, lectureDir: string,
- *   engine: string }[], warnings: string[] }} One job per unique output PNG,
- *   sorted by source path for deterministic output.
+ * @param {string} lectureDir - The lecture root (used to compute output PNGs).
+ * @returns {{ jobs: { pngPath: string, lectureDir: string,
+ *   chain: { src: string, engine: string }[] }[] }} One job per unique output
+ *   PNG, sorted by PRIMARY source path for deterministic output. `chain` is the
+ *   ordered fallback list (chain[0] is the primary). Each entry carries its
+ *   resolved Kroki engine so callers render without re-deriving it.
  */
-export function resolveCollisions(sources, lectureDir) {
+export function resolveFallbackChain(sources, lectureDir) {
   const root = path.resolve(lectureDir);
   const groups = new Map(); // pngPath -> string[]
   for (const src of sources) {
@@ -453,29 +462,61 @@ export function resolveCollisions(sources, lectureDir) {
     groups.get(png).push(src);
   }
 
-  const rel = (p) => path.relative(root, p) || p;
   const jobs = [];
-  const warnings = [];
   for (const [pngPath, srcs] of groups) {
-    let winner;
-    if (srcs.length === 1) {
-      winner = srcs[0];
-    } else {
-      const ranked = [...srcs].sort(byCollisionPriority);
-      winner = ranked[0];
-      const losers = ranked.slice(1);
-      const stem = path.basename(pngPath, '.png');
-      warnings.push(
-        `warning: the diagram "${stem}" has ${srcs.length} source formats that ` +
-          `all produce the same image "${rel(pngPath)}". ` +
-          `Using ${rel(winner)}; ignoring ${losers.map(rel).join(', ')}. ` +
-          `Please keep only ONE source format per diagram so the build is unambiguous.`,
-      );
-    }
-    jobs.push({ src: winner, pngPath, lectureDir: root, engine: engineFromExt(winner) });
+    const ranked = [...srcs].sort(byCollisionPriority);
+    const chain = ranked.map((src) => ({ src, engine: engineFromExt(src) }));
+    jobs.push({ pngPath, lectureDir: root, chain });
   }
 
-  jobs.sort((a, b) => a.src.localeCompare(b.src));
+  // Deterministic order: sort by each job's PRIMARY source path.
+  jobs.sort((a, b) => a.chain[0].src.localeCompare(b.chain[0].src));
+  return { jobs };
+}
+
+/**
+ * Back-compat shim over resolveFallbackChain(). The original API returned
+ * `{ jobs: [{ src, pngPath, lectureDir, engine }], warnings }` — a "winner per
+ * PNG" plus a collision WARNING per multi-format group. Under the fallback
+ * model multi-format is a FIRST-CLASS FEATURE (not a problem), so `warnings`
+ * is now EMPTY by default. Callers that still want a one-line info note about
+ * multi-format groups can pass `{ warn: true }` (opt-in; the build/CLI/check
+ * pass DO NOT — the 21 collision warnings become 0). The returned `jobs` keep
+ * the legacy single-source shape (the primary wins) so any older caller keeps
+ * working unchanged.
+ *
+ * @param {string[]} sources - Absolute diagram source paths.
+ * @param {string} lectureDir - The lecture root.
+ * @param {{ warn?: boolean }} [opts] - `warn: true` to emit an opt-in info note
+ *   for each multi-format group (default: none — multi-format is intentional).
+ * @returns {{ jobs: { src: string, pngPath: string, lectureDir: string,
+ *   engine: string, chain?: { src: string, engine: string }[] }[],
+ *   warnings: string[] }}
+ */
+export function resolveCollisions(sources, lectureDir, { warn = false } = {}) {
+  const root = path.resolve(lectureDir);
+  const { jobs: chainJobs } = resolveFallbackChain(sources, root);
+  const rel = (p) => path.relative(root, p) || p;
+  const warnings = [];
+  const jobs = chainJobs.map((j) => {
+    const primary = j.chain[0];
+    if (warn && j.chain.length > 1) {
+      const fallbacks = j.chain.slice(1).map((c) => rel(c.src));
+      const stem = path.basename(j.pngPath, '.png');
+      warnings.push(
+        `info: the diagram "${stem}" has ${j.chain.length} source formats ` +
+          `(intentional fallback chain). Primary ${rel(primary.src)} → on ` +
+          `render failure falls back to ${fallbacks.join(', ')}.`,
+      );
+    }
+    return {
+      src: primary.src,
+      pngPath: j.pngPath,
+      lectureDir: j.lectureDir,
+      engine: primary.engine,
+      chain: j.chain,
+    };
+  });
   return { jobs, warnings };
 }
 
@@ -517,18 +558,26 @@ export function walkDiagramSourcesSync(dir) {
 }
 
 /**
- * Scan `<lectureDir>/diagramSrc/` for diagram sources and resolve collisions.
- * The shared entry point both buildLecture() and the diagram CLI use to find
- * what WOULD render, without rendering anything.
+ * Scan `<lectureDir>/diagramSrc/` for diagram sources and resolve them into
+ * ordered FALLBACK CHAINS (one per unique output PNG). The shared entry point
+ * both buildLecture() and the diagram CLI use to find what WOULD render,
+ * without rendering anything.
  *
  * Returns `null` when there is no diagramSrc/ folder — the offline no-op case
  * (a lecture without diagrams builds IDENTICALLY to before: zero Kroki, zero
  * subprocess). Never throws for a missing lectureDir (returns null) so an
  * unknown / editor-preview path degrades gracefully.
  *
+ * Each returned job carries a `chain` (the ordered fallback list, chain[0] is
+ * the primary) AND a back-compat single-source shape (`src`/`engine` = the
+ * primary). `warnings` is ALWAYS EMPTY now — multi-format is a first-class
+ * fallback feature, not a problem. The chain is what the build path uses; the
+ * single-source fields keep check.js / older callers working.
+ *
  * @param {string} lectureDir - The lecture root.
  * @param {{ diagramSrcName?: string }} [opts] - Subfolder name (default 'diagramSrc').
  * @returns {{ diagramSrcDir: string, jobs: object[], warnings: string[] } | null}
+ *   `jobs[i] = { src, pngPath, lectureDir, engine, chain: {src, engine}[] }`.
  */
 export function scanDiagramSrc(lectureDir, { diagramSrcName = 'diagramSrc' } = {}) {
   if (!lectureDir) return null;
@@ -542,6 +591,8 @@ export function scanDiagramSrc(lectureDir, { diagramSrcName = 'diagramSrc' } = {
   }
   if (!st.isDirectory()) return null;
   const sources = walkDiagramSourcesSync(diagramSrcDir);
+  // Multi-format is intentional now → `warn: false` (the default) keeps
+  // `warnings` empty so the 21 collision warnings drop to 0.
   const { jobs, warnings } = resolveCollisions(sources, root);
   return { diagramSrcDir, jobs, warnings };
 }
@@ -756,50 +807,117 @@ export function renderDiagramSourcesSync(lectureDir, {
   // buildLecture() passes the real set (from extractImageRefs).
   const refSet = referencedPaths instanceof Set ? referencedPaths : null;
   const root = path.resolve(lectureDir);
+  const rel = (p) => path.relative(root, p) || p;
+
+  // Sanitize a Kroki error for a teacher-readable warning (some engines return
+  // a binary 400 body that would leak raw bytes). The REFERENCED throw path is
+  // NOT sanitized — it keeps the full error for debugging.
+  const sanitizeErr = (err) =>
+    String((err && err.message) || err)
+      .replace(/[^\x09\x0a\x0d\x20-\x7e]/g, '')
+      .replace(/[ \t]{2,}/g, ' ')
+      .trim() || '(no detail)';
 
   let rendered = 0;
   let skipped = 0;
   let stale = 0;
   const softFailures = [];
   for (const job of jobs) {
-    let r;
-    try {
-      r = render(job.src, {
-        lectureDir,
-        krokiBase,
-        force,
-        scale,
-        engine: job.engine,
-      });
-    } catch (err) {
-      // Referenced-aware severity (Phase 6). Decide from the output's relative
-      // PNG path whether the deck actually needs this image.
-      const outRel = path.relative(root, job.pngPath).split(path.sep).join('/');
-      const isReferenced = refSet ? refSet.has(outRel) : true;
-      if (isReferenced) throw err; // never ship a broken deck (decision 7)
-      // Unreferenced (WIP/legacy/orphan): warn + continue so a flaky render
-      // can't abort the whole lecture (the deck uses other/flat PNGs instead).
-      const srcRel = path.relative(root, job.src) || job.src;
-      // Kroki occasionally returns a 400 with a binary (PNG) body for some
-      // engines; that would leak raw bytes into the warning. Keep only printable
-      // ASCII (+ tabs/newlines) + collapse runs of whitespace so the warning is
-      // teacher-readable. The REFERENCED throw path is NOT sanitized — it keeps
-      // the full error for debugging.
-      const errText = String((err && err.message) || err)
-        .replace(/[^\x09\x0a\x0d\x20-\x7e]/g, '')
-        .replace(/[ \t]{2,}/g, ' ')
-        .trim() || '(no detail)';
-      const msg =
-        `${srcRel} failed to render (unreferenced — output ${outRel} is not ` +
-        `used by any slide). Build continues using any existing PNG; fix or ` +
-        `remove the source when ready:\n  ${errText}`;
-      if (log) console.warn(msg);
-      softFailures.push({ src: job.src, pngPath: job.pngPath, outRel, message: msg, error: err });
+    const chain = job.chain || [{ src: job.src, engine: job.engine }];
+    const outRel = path.relative(root, job.pngPath).split(path.sep).join('/');
+
+    // --- mtime check across ALL same-stem sources (decision 8) --------------
+    // The PNG is "fresh" iff it exists and is at least as new as EVERY source
+    // in the chain (so editing a FALLBACK source — e.g. the .puml — also
+    // invalidates the cache correctly). When fresh, skip entirely: zero Kroki,
+    // zero fallback attempts (same as today, generalized to the chain).
+    if (!force) {
+      let pngStat = null;
+      try { pngStat = fsSync.statSync(job.pngPath); } catch { /* no PNG yet */ }
+      if (pngStat) {
+        const allCovered = chain.every((c) => {
+          try {
+            return pngStat.mtimeMs >= fsSync.statSync(c.src).mtimeMs;
+          } catch {
+            return true; // missing source: don't block the skip on a vanished file
+          }
+        });
+        if (allCovered) {
+          skipped += 1;
+          continue;
+        }
+      }
+    }
+
+    // --- Walk the fallback chain: primary first, fall through on FAILURE ----
+    // decision 1: fallback triggers ONLY on a render FAILURE (throw), not on
+    // the happy path. The first format that succeeds (or keeps a stale PNG)
+    // wins; the output PNG stem is unchanged whichever source produced it.
+    let result = null;
+    let lastErr = null;
+    const attemptSrcs = [];
+    for (let i = 0; i < chain.length; i++) {
+      const { src, engine } = chain[i];
+      attemptSrcs.push(src);
+      try {
+        // force:true bypasses the per-source mtime check inside the renderer:
+        // we already decided (above) that a real render is needed.
+        const r = render(src, {
+          lectureDir,
+          krokiBase,
+          force: true,
+          scale,
+          engine,
+        });
+        if (r && r.stale) {
+          // The renderer kept an existing (stale) PNG after a Kroki failure.
+          // That is a SUCCESS for chain purposes — stop, don't try fallbacks.
+          result = r;
+          break;
+        }
+        result = r;
+        break; // primary (or earlier fallback) succeeded → done, no more attempts
+      } catch (err) {
+        lastErr = err;
+        // decision 9: clear, teacher-readable fallback note. Only printed when
+        // there is at least one more format to try.
+        if (i < chain.length - 1 && log) {
+          const next = chain[i + 1];
+          console.warn(
+            `${rel(src)} failed — falling back to ${rel(next.src)}.`,
+          );
+        }
+      }
+    }
+
+    if (result) {
+      if (result.stale) stale += 1;
+      else rendered += 1;
       continue;
     }
-    if (r && r.stale) stale += 1;
-    else if (r && r.skipped) skipped += 1;
-    else rendered += 1;
+
+    // --- ALL formats failed → referenced-aware severity (Phase 6) ----------
+    const isReferenced = refSet ? refSet.has(outRel) : true;
+    if (isReferenced) {
+      // decision 4: never ship a broken deck. Throw the last error verbatim
+      // (NOT sanitized) so debugging info is preserved.
+      throw lastErr;
+    }
+    // decision 5 / Phase 6: unreferenced (WIP/legacy/orphan) → warn + continue.
+    const srcRel = rel(attemptSrcs[0]);
+    const errText = sanitizeErr(lastErr);
+    const msg =
+      `${srcRel} failed to render (unreferenced — output ${outRel} is not ` +
+      `used by any slide). All ${attemptSrcs.length} format(s) failed. Build ` +
+      `continues using any existing PNG; fix or remove the source when ready:\n  ${errText}`;
+    if (log) console.warn(msg);
+    softFailures.push({
+      src: attemptSrcs[0],
+      pngPath: job.pngPath,
+      outRel,
+      message: msg,
+      error: lastErr,
+    });
   }
   return { jobs, warnings, rendered, skipped, stale, softFailures };
 }

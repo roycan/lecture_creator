@@ -6,19 +6,22 @@
 // honest linter; the known-broken lectures are fixed in Phase 7a/7b).
 //
 // Diagram gate (Phase 3, on top of render-diagram.mjs): when a lecture has a
-// diagramSrc/ folder, three more checks run — reusing scanDiagramSrc() so there
-// is ONE source of truth for "which sources win, and what PNG they produce":
+// diagramSrc/ folder, two checks run — reusing scanDiagramSrc() so there is
+// ONE source of truth for "which sources win, and what PNG they produce":
 //
 //   ERROR   broken diagram ref — a ref under diagrams/... whose mirrored PNG is
 //           absent AND there is NO matching diagramSrc source (any supported
 //           ext) at the mirrored path. The build would ship a broken slide.
 //           (A ref whose PNG is missing but that HAS a source is NOT broken —
 //           buildLecture renders it automatically.)
-//   WARNING stale render — a winning source's PNG exists but is OLDER than the
-//           source (source changed, not re-rendered). Non-fatal: the build
-//           re-renders it; this is an informational lint.
-//   WARNING multi-format collision — 2+ supported sources map to one PNG stem.
-//           Non-destructive (matches Phase 2 build behavior).
+//   WARNING stale render — a winning source's PNG exists but is OLDER than
+//           ANY same-stem source (a source changed, not re-rendered). The
+//           build re-renders it; this is an informational lint.
+//
+// Multi-format sources are a FIRST-CLASS FALLBACK feature now (render-fallback):
+// they no longer produce a collision warning. Several formats of one diagram
+// (.mmd + .puml + .dot) are intentional fallbacks the build tries in priority
+// order on render failure — so they are NOT a problem to flag here.
 //
 // Unsupported-extension files in diagramSrc (.txt/.md design notes, etc.) are
 // IGNORED — they are neither sources nor flagged. A lecture with NO diagramSrc
@@ -105,17 +108,18 @@ export function scanLecture(slug, { lecturesDir = LECTURES_DIR, splitDepth = 2 }
 
   // Read-only diagram scan: returns {jobs, warnings} when diagramSrc/ exists,
   // or null when it does not (the offline no-op: this lecture builds identically
-  // to pre-diagram behavior). jobs[] are the COLLISION-RESOLVED winners, each
-  // {src, pngPath, lectureDir, engine}; warnings[] are the collision strings.
+  // to pre-diagram behavior). jobs[] each carry a `chain` (the ordered fallback
+  // list — chain[0] is the primary) plus back-compat `src`/`engine` fields.
+  // `warnings` is ALWAYS empty now: multi-format is a first-class fallback
+  // feature (render-fallback), not a collision problem to flag.
   const diagramScan = scanDiagramSrc(lectureDir);
 
-  // pngPath (abs) -> winning source (abs). A ref whose resolved path is in this
+  // pngPath (abs) -> primary source (abs). A ref whose resolved path is in this
   // map has a source that renders it, so a missing PNG there is not broken.
   const pngToSource = new Map();
   if (diagramScan) {
     for (const job of diagramScan.jobs) pngToSource.set(job.pngPath, job.src);
   }
-  const collisions = diagramScan ? diagramScan.warnings : [];
 
   // --- Broken refs (ERROR) ------------------------------------------------
   // scanMissingImages reports every referenced local file that does NOT exist.
@@ -133,27 +137,43 @@ export function scanLecture(slug, { lecturesDir = LECTURES_DIR, splitDepth = 2 }
   }
 
   // --- Stale renders (WARNING) -------------------------------------------
-  // Source-driven (not ref-driven): for each winning source, if its mirrored PNG
-  // exists and the SOURCE mtime > PNG mtime, the render is out of date. A source
-  // whose PNG does not exist yet is skipped (it will render at build time, which
-  // is the expected first-build case, not a stale warning).
+  // Source-driven (not ref-driven): for each output PNG, if the PNG exists and
+  // ANY same-stem source (primary OR a fallback) is NEWER than the PNG, the
+  // render is out of date. This matches the build's mtime rule (decision 8: the
+  // PNG is fresh iff it is at least as new as EVERY source in the chain — so
+  // editing the .puml fallback correctly flags staleness). A PNG that does not
+  // exist yet is skipped (it will render at build time — the first-build case,
+  // not a stale warning). We attribute the stale flag to the NEWEST source so
+  // the message points the teacher at the file they actually just edited.
   const rel = (p) => path.relative(lectureDir, p) || p;
   const stale = [];
   if (diagramScan) {
     for (const job of diagramScan.jobs) {
-      let srcStat;
+      const chain = job.chain || [{ src: job.src, engine: job.engine }];
       let pngStat;
       try {
-        srcStat = fs.statSync(job.src);
         pngStat = fs.statSync(job.pngPath);
       } catch {
-        continue; // source or PNG unreadable/absent → not a stale render
+        continue; // PNG absent → first-build case, not a stale render
       }
-      if (srcStat.mtimeMs > pngStat.mtimeMs) {
+      let newestSrc = null;
+      let newestMtime = -Infinity;
+      for (const c of chain) {
+        try {
+          const s = fs.statSync(c.src);
+          if (s.mtimeMs > pngStat.mtimeMs && s.mtimeMs > newestMtime) {
+            newestMtime = s.mtimeMs;
+            newestSrc = c.src;
+          }
+        } catch {
+          /* a missing source file is not a staleness signal */
+        }
+      }
+      if (newestSrc) {
         stale.push({
-          src: job.src,
+          src: newestSrc,
           pngPath: job.pngPath,
-          srcRel: rel(job.src),
+          srcRel: rel(newestSrc),
           pngRel: rel(job.pngPath),
         });
       }
@@ -167,7 +187,8 @@ export function scanLecture(slug, { lecturesDir = LECTURES_DIR, splitDepth = 2 }
     diagrams: {
       hasDiagramSrc: !!diagramScan,
       sources: diagramScan ? diagramScan.jobs.length : 0,
-      collisions,
+      // Retained for API back-compat; always [] now (multi-format is intentional).
+      collisions: [],
       stale,
     },
   };
@@ -193,8 +214,9 @@ export function checkAll({ lecturesDir = LECTURES_DIR } = {}) {
 }
 
 /** Format the aggregate report to a readable, structured string: a one-line
- *  summary, then an ERRORS block (broken refs) and a WARNINGS block
- *  (collisions + stale renders). Teacher-readable, no internal jargon. */
+ *  summary, then an ERRORS block (broken refs) and a WARNINGS block (stale
+ *  renders). Multi-format sources are intentional fallbacks (render-fallback),
+ *  not collisions, so they no longer appear here. Teacher-readable. */
 function formatReport({ results, totalMisses, totalWarnings }) {
   const errNoun = totalMisses === 1 ? 'error' : 'errors';
   const warnNoun = totalWarnings === 1 ? 'warning' : 'warnings';
@@ -226,7 +248,8 @@ function formatReport({ results, totalMisses, totalWarnings }) {
     }
   }
 
-  // WARNINGS — non-fatal (stale renders + multi-format collisions).
+  // WARNINGS — non-fatal (stale renders). Multi-format sources are intentional
+  // fallbacks now, so they do NOT appear here (render-fallback feature).
   if (totalWarnings > 0) {
     lines.push('');
     lines.push(
@@ -234,19 +257,13 @@ function formatReport({ results, totalMisses, totalWarnings }) {
     );
     for (const r of results) {
       const d = r.diagrams;
-      if (d.stale.length === 0 && d.collisions.length === 0) continue;
-      const tags = [];
-      if (d.stale.length) tags.push(`${d.stale.length} stale diagram(s)`);
-      if (d.collisions.length) tags.push(`${d.collisions.length} collision(s)`);
-      lines.push(`  ⚠ ${r.slug} — ${tags.join(', ')}:`);
+      if (d.stale.length === 0) continue;
+      lines.push(`  ⚠ ${r.slug} — ${d.stale.length} stale diagram(s):`);
       for (const s of d.stale) {
         lines.push(
           `      stale: ${s.pngRel} is older than its source ${s.srcRel} ` +
             `(re-render with: npm run diagram)`,
         );
-      }
-      for (const c of d.collisions) {
-        lines.push(`      collision: ${c}`);
       }
     }
   }
