@@ -56,6 +56,12 @@ const IMG_TAG_RE = /<img\b[^>]*>/gi;
 // + `=` + any whitespace; then the value as "..."(4), '...'(5), or unquoted(6).
 const SRC_ATTR_RE = /(^|\s)(src\s*=\s*)("([^"]*)"|'([^']*)'|([^\s>]+))/i;
 
+// Markdown image syntax: ![alt](url) with an optional title ![alt](url "t").
+// Group 1 = the URL (stops at the first ")" or whitespace-before-title). `g` is
+// required for matchAll(). Kept here next to the <img> regexes so all image-ref
+// discovery lives in ONE module (single source of truth).
+const MD_IMAGE_RE = /!\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
+
 /**
  * Inline relative image srcs as base64 data URIs.
  *
@@ -169,6 +175,57 @@ export function scanMissingImages(slides, { lectureDir } = {}) {
   });
 
   return missing;
+}
+
+/** Normalize a local image ref to web form: backslashes → "/", strip "./". */
+function toWebPath(value) {
+  return value.replace(/\\/g, '/').replace(/^\.\//, '');
+}
+
+/**
+ * Extract every LOCAL image reference path from a markdown string — both
+ * Markdown image syntax `![alt](path)` and HTML `<img src="path">`. Absolute
+ * (http(s)://), protocol-relative (//) and data: URIs are skipped using the
+ * SAME rule as inlineImages()/scanMissingImages(), so this is the single source
+ * of truth for "what images does this deck reference".
+ *
+ * Returned paths are normalized to web form (forward slashes, a leading "./"
+ * stripped) — exactly as they appear under the lecture dir — so they can be
+ * compared against a diagram's relative output PNG path (deriveOutputPath).
+ *
+ * Used by buildLecture()'s pre-build render step to classify each diagram
+ * output as REFERENCED vs UNREFERENCED: a render failure on an UNREFERENCED
+ * (WIP/legacy/orphan) source warns + continues instead of aborting the build
+ * (Phase 6), while a REFERENCED failure still hard-fails (decision 7).
+ *
+ * @param {string} markdown - Raw lecture markdown.
+ * @returns {Set<string>} Unique normalized local image paths (web form).
+ */
+export function extractImageRefs(markdown) {
+  const refs = new Set();
+  const text = typeof markdown === 'string' ? markdown : '';
+
+  // Markdown image syntax ![alt](path) / ![alt](path "title").
+  for (const m of text.matchAll(MD_IMAGE_RE)) {
+    const value = (m[1] || '').trim();
+    if (isSkippable(value)) continue;
+    refs.add(toWebPath(value));
+  }
+
+  // HTML <img src="path"> — reuse the SAME regexes as inlineImages so the
+  // discovery rule never diverges. IMG_TAG_RE carries a stateful lastIndex
+  // (shared, module-level); reset it before scanning this string.
+  IMG_TAG_RE.lastIndex = 0;
+  let tag;
+  while ((tag = IMG_TAG_RE.exec(text)) !== null) {
+    const sm = tag[0].match(SRC_ATTR_RE);
+    if (!sm) continue; // <img> with no src
+    const value = sm[4] ?? sm[5] ?? sm[6] ?? '';
+    if (isSkippable(value)) continue;
+    refs.add(toWebPath(value));
+  }
+
+  return refs;
 }
 
 export default inlineImages;

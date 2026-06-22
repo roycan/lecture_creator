@@ -6,6 +6,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [2.4.0] - June 22, 2026
+
+### Added — Diagram rendering pipeline (Phases 1–4)
+- **Server-side diagram rendering** via [Kroki](https://kroki.io) in
+  [`scripts/lib/render-diagram.mjs`](scripts/lib/render-diagram.mjs) — renders diagram source files
+  (`.mmd`, `.puml`, `.d2`, `.dot`/`.gv`, `.svgbob`, `.ditaa`, `.nomnoml`, `.erd`, `.bytefield`, the
+  `*diag` family) to crisp PNGs at `?scale=2`. No Chromium/puppeteer dependency.
+- **`npm run diagram` CLI** ([`scripts/diagram.js`](scripts/diagram.js)) — render one file or a whole
+  `diagramSrc/` folder, with `--engine`, `--force`, and `--kroki-base` options; prints the exact
+  `![](diagrams/…/x.png)` markdown lines to paste. Idempotent (mtime-skip) so re-runs are offline.
+- **Auto-render on build** — `buildLecture()` now renders `diagramSrc/` → `diagrams/` **before**
+  inlining images. Lectures without `diagramSrc/` are a clean no-op (zero Kroki, zero subprocess —
+  byte-for-byte identical to before).
+- **Diagram integrity gate** in `npm run check` — ERRORs on broken diagram refs (no source AND no
+  PNG), WARNs on stale renders and multi-format collisions. `npm run check` stays offline.
+- **Editor live-refresh** — debounced auto-refresh (~600 ms) on edit, plus on-disk change detection
+  (~2 s) that reloads without clobbering unsaved edits. Diagrams render in the preview pane.
+
+### Diagram conventions
+- **Mirror path:** `diagramSrc/<rel>.<ext>` → `diagrams/<rel>.png` → `![name](diagrams/<rel>.png)`.
+- **Multi-format collisions** (same stem, several formats) auto-resolve by priority
+  `.mmd > .puml > .d2 > .dot/.gv` > others; losers are ignored, never deleted, with a loud warning.
+- **`KROKI_BASE_URL` env** override for self-hosted/local Kroki (see
+  [`references/diagram-converter/kroki-local.md`](references/diagram-converter/kroki-local.md)).
+
+### Changed
+- README rewritten with the end-to-end teacher workflow, the diagram CLI, format table, and the
+  `KROKI_BASE_URL` / editor / check documentation.
+- `npm run check` report now distinguishes ERRORS (broken refs) from WARNINGS (stale/collision).
+- Quality-gate expectations updated: **134 pass / 0 fail** tests, **0 errors** on check.
+
+### Notes
+- A ` ```mermaid ` fence still renders **live** in the student's browser (bundled mermaid.js) —
+  unchanged. The new pipeline is for **pre-rendered PNGs** of any engine in the offline deck.
+- Test suite grew to **134 pass / 0 fail** (+2 skipped) with new diagram, build, check, and editor
+  route coverage.
+
+---
+
 ## [2.3.0] - February 15, 2026
 
 ### Added

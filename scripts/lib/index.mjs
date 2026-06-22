@@ -21,13 +21,25 @@ import { fileURLToPath } from 'node:url';
 
 import { splitSlides } from './split-slides.mjs';
 import { renderPresentation } from './template.mjs';
-import { inlineImages, scanMissingImages } from './inline-images.mjs';
+import { inlineImages, scanMissingImages, extractImageRefs } from './inline-images.mjs';
 import { bundleLibs, hasMermaid } from './bundle-libs.mjs';
+import {
+  renderDiagramSourcesSync,
+  scanDiagramSrc,
+  resolveCollisions,
+} from './render-diagram.mjs';
 
 export { splitSlides } from './split-slides.mjs';
 export { renderPresentation } from './template.mjs';
-export { inlineImages, scanMissingImages } from './inline-images.mjs';
+export { inlineImages, scanMissingImages, extractImageRefs } from './inline-images.mjs';
 export { bundleLibs, hasMermaid } from './bundle-libs.mjs';
+// Phase 2: pre-build diagram rendering (shared with the diagram CLI). Re-exported
+// so callers can import everything from the barrel (D5 single source of truth).
+export {
+  renderDiagramSourcesSync,
+  scanDiagramSrc,
+  resolveCollisions,
+} from './render-diagram.mjs';
 
 const REPO_ROOT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -98,7 +110,40 @@ export function buildLecture({
     throw new Error('buildLecture: provide either "slug" or "lectureDir"');
   }
 
+  // Read the lecture markdown ONCE (either the override or lecture.md) so we
+  // can both extract referenced image paths (Phase 6) and feed splitSlides().
   const md = markdown ?? fs.readFileSync(path.join(dir, 'lecture.md'), 'utf8');
+
+  // Phase 6: classify each diagram source's output PNG as REFERENCED or
+  // UNREFERENCED against this markdown. A REFERENCED image that fails to render
+  // with no PNG on disk still hard-fails (decision 7: never ship a broken
+  // deck). An UNREFERENCED source (WIP/legacy/orphan whose mirrored PNG path no
+  // slide uses) that fails to render now WARNS and lets the build proceed using
+  // whatever PNGs already exist — so a flaky Kroki or a half-finished diagram
+  // can't abort a whole lecture (e.g. ajax-fetch/dom, whose nested diagramSrc/
+  // mirrors to PNG paths the slides don't reference).
+  const referencedPaths = extractImageRefs(md);
+
+  // Phase 2: render diagram sources (lectures/<slug>/diagramSrc/**) to PNGs
+  // BEFORE inlineImages() so the PNGs exist on disk when images are inlined.
+  // buildLecture() is synchronous (the Express /export route hands its return
+  // value straight to res.send), so this uses the sync render path: a lecture
+  // with NO diagramSrc/ is a clean no-op (returns null → zero Kroki, zero
+  // subprocess — byte-for-byte identical to pre-Phase-2). On a hard render
+  // failure of a REFERENCED image (no PNG at all) it throws; in draft/preview
+  // mode (onMissing:'warn') we downgrade that to a warning so the editor
+  // preview never hard-crashes, while the strict ship-build (onMissing:'throw')
+  // fails loud (decision 4: never ship a broken deck).
+  try {
+    renderDiagramSourcesSync(dir, { referencedPaths });
+  } catch (err) {
+    if (onMissing === 'warn') {
+      console.warn(`buildLecture: diagram rendering skipped — ${err.message}`);
+    } else {
+      throw err;
+    }
+  }
+
   const slides = splitSlides(md, { splitDepth });
   const inlined = inlineImages(slides, { lectureDir: dir, onMissing });
   // Phase 2c: bundle highlight.js always + mermaid only when the lecture uses a

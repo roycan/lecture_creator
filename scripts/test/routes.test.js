@@ -201,6 +201,48 @@ test('GET /nonexistent → 404', async () => {
   });
 });
 
+test('GET /api/lectures/:slug includes a numeric mtime (additive, backward-compatible)', async () => {
+  await withApp(
+    { 'my-talk': { 'lecture.md': MD_WITH_IMAGE } },
+    async (app) => {
+      const res = await request(app).get('/api/lectures/my-talk');
+      assert.equal(res.status, 200);
+      // Existing fields are unchanged (additive change, old clients keep working) …
+      assert.equal(res.body.slug, 'my-talk');
+      assert.equal(res.body.markdown, MD_WITH_IMAGE);
+      // … and mtime is added as a positive, finite ms epoch.
+      assert.equal(typeof res.body.mtime, 'number');
+      assert.ok(
+        Number.isFinite(res.body.mtime) && res.body.mtime > 0,
+        'mtime is a positive finite ms epoch',
+      );
+    },
+  );
+});
+
+test('GET /api/lectures/:slug/mtime → { slug, mtime } (cheap stat-only poll target)', async () => {
+  await withApp(
+    { 'my-talk': { 'lecture.md': MD_WITH_IMAGE } },
+    async (app) => {
+      const res = await request(app).get('/api/lectures/my-talk/mtime');
+      assert.equal(res.status, 200);
+      assert.equal(res.body.slug, 'my-talk');
+      assert.equal(typeof res.body.mtime, 'number');
+      assert.ok(Number.isFinite(res.body.mtime) && res.body.mtime > 0);
+      // The poll endpoint deliberately omits the markdown body — it is meant
+      // to be cheap (one stat, not a full re-read) for the 2 s editor loop.
+      assert.equal(res.body.markdown, undefined);
+    },
+  );
+});
+
+test('GET /api/lectures/:slug/mtime (unknown) → 404', async () => {
+  await withApp({}, async (app) => {
+    const res = await request(app).get('/api/lectures/nonexistent/mtime');
+    assert.equal(res.status, 404);
+  });
+});
+
 // ==========================================================================
 // LAYER 2 — Zero-external-URL integration proof (the offline proof)
 // ==========================================================================
@@ -252,6 +294,37 @@ test('zero-URL assertion catches an injected external src (negative control)', a
       );
     },
   );
+});
+
+test('POST /preview {slug} with diagramSrc/ + fresh PNG → 200 HTML with inlined diagram (no Kroki)', async () => {
+  // Deliverable #4 proof: the slug flows through to buildLecture, which scans
+  // lectures/<slug>/diagramSrc/, stat-skips the render (the PNG is newer than
+  // the source → zero Kroki, zero subprocess), then inlines the PNG. Hermetic
+  // and fast precisely because the fresh-PNG skip path needs no network.
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'diag-preview-'));
+  const slugDir = path.join(root, 'diag-talk');
+  fs.mkdirSync(path.join(slugDir, 'diagramSrc'), { recursive: true });
+  fs.mkdirSync(path.join(slugDir, 'diagrams'), { recursive: true });
+  // Write the source FIRST, then the PNG, so the PNG mtime >= source mtime —
+  // the render skip rule (render-diagram.mjs: outStat.mtimeMs >= srcStat.mtimeMs).
+  fs.writeFileSync(path.join(slugDir, 'diagramSrc', 'flow.mmd'), 'graph TD\n  A-->B\n');
+  fs.writeFileSync(path.join(slugDir, 'diagrams', 'flow.png'), PNG);
+  fs.writeFileSync(
+    path.join(slugDir, 'lecture.md'),
+    ['# Diagram Talk', '', '![flow](diagrams/flow.png)', ''].join('\n'),
+  );
+  const app = createApp({ lecturesDir: root });
+  try {
+    const res = await request(app).post('/preview').send({ slug: 'diag-talk' });
+    assert.equal(res.status, 200);
+    assert.match(res.headers['content-type'], /html/);
+    assert.ok(
+      res.text.includes('data:image/png;base64,'),
+      'diagram PNG inlined → diagrams render in the preview pane',
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
 });
 
 // ==========================================================================

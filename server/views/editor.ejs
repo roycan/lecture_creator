@@ -54,13 +54,20 @@
         </div>
 
         <div class="box">
-          <h2 class="title is-4">2. Edit Markdown</h2>
+          <h2 class="title is-4">
+            2. Edit Markdown
+            <span id="dirty-indicator" class="tag is-warning is-hidden ml-2" title="Edits not yet shown in the preview">unsaved</span>
+          </h2>
           <div class="field">
             <div class="control">
               <textarea id="markdown-input" class="textarea is-monospace is-medium" rows="18" placeholder="Select a lecture above to load its Markdown…" disabled></textarea>
             </div>
           </div>
           <p id="editor-status" class="editor-status help"></p>
+          <div id="disk-change-banner" class="notification is-warning is-light is-hidden is-flex is-align-items-center mt-2">
+            <span class="mr-2"><strong>lecture.md</strong> changed on disk.</span>
+            <button id="reload-from-disk-button" type="button" class="button is-small is-warning">Reload</button>
+          </div>
         </div>
       </div>
 
@@ -86,6 +93,8 @@
     </div>
   </main>
 
-  <script src="/static/editor.js"></script>
+  <!-- type="module": editor.js imports the pure, unit-tested helpers in
+       editor-helpers.js (debounce + decideReloadAction safety contract). -->
+  <script type="module" src="/static/editor.js"></script>
 </body>
 </html>

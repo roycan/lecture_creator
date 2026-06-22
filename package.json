@@ -12,6 +12,7 @@
     "build": "node scripts/build.js",
     "build:all": "node scripts/build.js --all",
     "check": "node scripts/check.js",
+    "diagram": "node scripts/diagram.js",
     "test": "node --test \"scripts/test/**/*.test.js\""
   },
   "dependencies": {

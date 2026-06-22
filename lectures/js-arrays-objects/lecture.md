@@ -104,7 +104,7 @@ let fruits = ["apple", "banana", "orange"];
 // Index:      0        1         2
 ```
 
-![Diagram showing array with four elements labeled by index 0 through 3, demonstrating zero-based indexing](diagrams/array-indexing.png)
+![Diagram showing array with four elements labeled by index 0 through 3, demonstrating zero-based indexing](diagrams/js-arrays-objects/array-indexing.png)
 
 ## Accessing Array Elements
 
@@ -213,7 +213,7 @@ shift()           →  ["Jose", "Ana"]  (remove from start)
 pop()             →  ["Maria", "Jose"]  (remove from end)
 ```
 
-![Diagram showing array with directional arrows for push, pop, shift, and unshift operations at both ends](diagrams/array-mutation.png)
+![Diagram showing array with directional arrows for push, pop, shift, and unshift operations at both ends](diagrams/js-arrays-objects/array-mutation.png)
 
 ### **Real Example: Shopping Cart**
 
@@ -278,7 +278,7 @@ Now for the **powerful stuff**! These methods make working with arrays much easi
 
 > 🟢 **You Need These!** Master these three methods - they're used everywhere in real JavaScript code.
 
-![Taxonomy diagram grouping array methods into Essential (forEach, map, filter) and Advanced (find, reduce, includes, slice, sort) categories](diagrams/method-taxonomy.png)
+![Taxonomy diagram grouping array methods into Essential (forEach, map, filter) and Advanced (find, reduce, includes, slice, sort) categories](diagrams/js-arrays-objects/method-taxonomy.png)
 
 ### **forEach() - Do Something with Each Item**
 
@@ -484,7 +484,7 @@ console.log("Passed with bonus: " + result);
 // Passed with bonus: 90,95,83,97
 ```
 
-![Linear pipeline diagram showing array transformation through filter, map, and reduce stages with intermediate values](diagrams/array-pipeline.png)
+![Linear pipeline diagram showing array transformation through filter, map, and reduce stages with intermediate values](diagrams/js-arrays-objects/array-pipeline.png)
 
 ## Advanced Array Methods
 
@@ -521,7 +521,7 @@ let found = students.find(function(student) {
 console.log(found);  // Output: Jose (only the first one)
 ```
 
-![Comparison diagram showing find, filter, and includes methods with their different return types and behaviors](diagrams/search-methods.png)
+![Comparison diagram showing find, filter, and includes methods with their different return types and behaviors](diagrams/js-arrays-objects/search-methods.png)
 
 ### **findIndex() - Get Position of First Match**
 
@@ -582,7 +582,7 @@ Step 4: sum=225, price=125 → return 225+125=350
 Final: 350
 ```
 
-![Step-by-step flowchart showing reduce accumulator evolution through each iteration with state values](diagrams/reduce-steps.png)
+![Step-by-step flowchart showing reduce accumulator evolution through each iteration with state values](diagrams/js-arrays-objects/reduce-steps.png)
 
 ### **Real Example: Calculate Total Baon Spent**
 
@@ -684,7 +684,7 @@ scores.sort(function(a, b) {
 console.log(scores);  // [92, 90, 88, 85, 78]
 ```
 
-![Decision flowchart showing how sort comparator function determines element ordering based on return value](diagrams/sort-comparator.png)
+![Decision flowchart showing how sort comparator function determines element ordering based on return value](diagrams/js-arrays-objects/sort-comparator.png)
 
 ### **Real Example: Leaderboard**
 
@@ -783,7 +783,7 @@ Student Object:
 }
 ```
 
-![Class diagram showing object structure with properties and methods, demonstrating the 'this' keyword binding](diagrams/object-anatomy.png)
+![Class diagram showing object structure with properties and methods, demonstrating the 'this' keyword binding](diagrams/js-arrays-objects/object-anatomy.png)
 
 ### **Accessing Object Properties**
 
@@ -1206,7 +1206,7 @@ console.log("Total inventory value: ₱" + totalValue);
 
 Let's build a complete inventory management system! 🏪
 
-![Architecture diagram showing Store object containing inventory array of Product objects with key methods](diagrams/inventory-architecture.png)
+![Architecture diagram showing Store object containing inventory array of Product objects with key methods](diagrams/js-arrays-objects/inventory-architecture.png)
 
 ```javascript
 // Aling Maria's Sari-Sari Store Inventory System
@@ -1344,7 +1344,7 @@ snacks.forEach(function(product) {
     console.log(product.name + " - ₱" + product.price);
 });
 
-![Funnel diagram showing filtering products by category and stock availability to get final available list](diagrams/category-filter.png)
+![Funnel diagram showing filtering products by category and stock availability to get final available list](diagrams/js-arrays-objects/category-filter.png)
 
 console.log("\n\n⚠️ LOW STOCK ALERTS");
 console.log("===================");
@@ -1631,7 +1631,7 @@ Build a **Student Management System** with everything you learned!
 
 **Try it yourself! Solution:**
 
-![Data pipeline diagram showing student objects being mapped to add averages, sorted by score, and displayed with rankings](diagrams/ranking-pipeline.png)
+![Data pipeline diagram showing student objects being mapped to add averages, sorted by score, and displayed with rankings](diagrams/js-arrays-objects/ranking-pipeline.png)
 
 ```javascript
 let classroom = {
@@ -1709,7 +1709,7 @@ let classroom = {
         }
         console.log();
         
-            ![Matrix diagram showing student classification by performance and attendance status](diagrams/attendance-matrix.png)
+            ![Matrix diagram showing student classification by performance and attendance status](diagrams/js-arrays-objects/attendance-matrix.png)
         
         // Class statistics
         console.log("📈 CLASS STATISTICS:");

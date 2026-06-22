@@ -89,7 +89,7 @@ Three states:
 
 **Visual: Promise State Machine**
 
-![Promise States](diagrams/promise-states.png)
+![Promise States](diagrams/ajax-fetch-async/promise-states.png)
 
 This diagram shows how a Promise transitions from pending to either fulfilled or rejected. Once settled, it never changes state.
 
@@ -165,7 +165,7 @@ fetch('data.json')
 
 **Visual: Fetch Lifecycle**
 
-![Fetch Process](diagrams/fetch-lifecycle.png)
+![Fetch Process](diagrams/ajax-fetch-async/fetch-lifecycle.png)
 
 This flowchart shows the complete fetch journey: request → response → parse JSON → use data (or handle errors at any step).
 
@@ -274,7 +274,7 @@ loadData();
 
 **Visual: Async/Await vs Promises**
 
-![Async Await Comparison](diagrams/async-await-comparison.png)
+![Async Await Comparison](diagrams/ajax-fetch-async/async-await-comparison.png)
 
 This diagram shows how async/await is just "syntactic sugar" over Promises—it's the same under the hood, but much easier to read and write!
 
@@ -443,13 +443,13 @@ async function loadData() {
 
 **Visual: Error Handling Flow**
 
-![Error Handling Process](diagrams/error-flow.png)
+![Error Handling Process](diagrams/ajax-fetch-async/error-flow.png)
 
 This flowchart shows the three paths: loading → success, loading → network error, loading → parse error. Always handle all three!
 
 **Visual: Loading State Machine**
 
-![Loading States](diagrams/loading-states.png)
+![Loading States](diagrams/ajax-fetch-async/loading-states.png)
 
 State diagram showing transitions: idle → loading → success/error, with retry option.
 
@@ -517,7 +517,7 @@ searchInput.addEventListener('input', function(e) {
 
 **Visual: Debounce Timeline**
 
-![Debounce Pattern](diagrams/debounce-timeline.png)
+![Debounce Pattern](diagrams/ajax-fetch-async/debounce-timeline.png)
 
 Timeline diagram showing keystrokes and delayed fetch calls—saves bandwidth and improves UX!
 

@@ -175,7 +175,7 @@ Execute    Skip
      Continue
 ```
 
-![Flowchart showing if statement decision logic with condition check branching to execute or skip paths](diagrams/if-else.png)
+![Flowchart showing if statement decision logic with condition check branching to execute or skip paths](diagrams/js-basics/if-else.png)
 
 ### **Comparison Operators**
 
@@ -378,7 +378,7 @@ console.log("Final price: ₱" + finalPrice);
 // Final price: ₱171
 ```
 
-![Decision flowchart showing three-tier discount system based on purchase amount thresholds](diagrams/discount-tiers.png)
+![Decision flowchart showing three-tier discount system based on purchase amount thresholds](diagrams/js-basics/discount-tiers.png)
 
 **Try different amounts:** 50, 150, 250 - See what happens!
 
@@ -416,7 +416,7 @@ Execution:
 6. Check: i <= 5? No → Stop
 ```
 
-![Flowchart showing for loop lifecycle with initialization, condition check, body execution, and increment steps in a cycle](diagrams/loop-lifecycle.png)
+![Flowchart showing for loop lifecycle with initialization, condition check, body execution, and increment steps in a cycle](diagrams/js-basics/loop-lifecycle.png)
 
 ### **Counting Examples**
 
@@ -593,7 +593,7 @@ for (let i = 1; i <= 10; i++) {
 // Output: 1 3 5 7 9
 ```
 
-![Flowchart showing loop with break exiting immediately and continue skipping to next iteration](diagrams/break-continue.png)
+![Flowchart showing loop with break exiting immediately and continue skipping to next iteration](diagrams/js-basics/break-continue.png)
 
 ### **Nested Loops**
 
@@ -614,7 +614,7 @@ for (let row = 1; row <= 3; row++) {
 // 3 6 9
 ```
 
-![Flowchart showing nested loops structure with outer loop containing inner loop for multiplication table generation](diagrams/nested-loops-grid.png)
+![Flowchart showing nested loops structure with outer loop containing inner loop for multiplication table generation](diagrams/js-basics/nested-loops-grid.png)
 
 ## Practice: Multiplication Table
 
@@ -699,7 +699,7 @@ keyword  name  parameter
 greet("Maria");  ← function call
 ```
 
-![Diagram showing function anatomy with call site, parameter passing, body execution, and return flow](diagrams/function-anatomy.png)
+![Diagram showing function anatomy with call site, parameter passing, body execution, and return flow](diagrams/js-basics/function-anatomy.png)
 
 ### **Creating Functions**
 

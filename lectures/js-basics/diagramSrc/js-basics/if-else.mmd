@@ -1,6 +1,6 @@
 flowchart TD
     Start([Start]) --> Check{score >= 75?}
-    Check -->|Yes / true| Pass[Execute: 'Passed!' 🎉]
+    Check -->|Yes / true| Pass[Execute: 'Passed!' ]
     Check -->|No / false| Skip[Skip code block]
     Pass --> End([Continue])
     Skip --> End

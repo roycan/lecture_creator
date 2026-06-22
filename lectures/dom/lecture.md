@@ -56,7 +56,7 @@ Open this file to see how the styles are written. You can copy these patterns in
 
 When the browser reads your HTML, it creates a tree structure. Each element becomes a "node" you can access with JavaScript:
 
-![DOM Tree Structure](diagrams/dom-tree.png)
+![DOM Tree Structure](diagrams/dom/dom-tree-mermaid.png)
 
 This diagram shows a simple sari-sari store page structure. Notice how every HTML tag becomes a node in the tree, with parent-child relationships matching your HTML nesting.
 
@@ -83,7 +83,7 @@ Tip: Always check `console.log(element)` to confirm you found the right node.
 
 **Decision guide: Which selector method should I use?**
 
-![Element Selection Decision Tree](diagrams/element-selection.png)
+![Element Selection Decision Tree](diagrams/dom/element-selection-mermaid.png)
 
 This flowchart helps you pick the right method. Start with `getElementById` when you have a unique ID. Use `querySelector` for single elements with complex selectors. Use `querySelectorAll` when you need multiple elements (like all buttons or all product cards).
 
@@ -177,7 +177,7 @@ Practice: `assets/practice3.html` — clicking a button toggles a `highlight` cl
 
 **Visual: Inline Styles vs CSS Classes**
 
-![Class Toggle Pattern](diagrams/class-toggle.png)
+![Class Toggle Pattern](diagrams/dom/class-toggle-mermaid.png)
 
 This comparison shows why toggling classes is better than writing inline styles. The left side shows messy inline style code. The right side shows clean class toggling with all styles in your CSS file. Much easier to maintain!
 
@@ -226,7 +226,7 @@ Practice: We'll build the add/remove part of the To-Do project step-by-step in `
 
 **Visual: Element Creation Lifecycle**
 
-![Element Creation Steps](diagrams/element-creation.png)
+![Element Creation Steps](diagrams/dom/element-creation-mermaid.png)
 
 This diagram shows the correct order for creating elements. First `createElement`, then set properties (text, classes, id), optionally add event listeners, and finally `appendChild` to make it visible. Skipping `appendChild` is a common mistake—the element exists in memory but won't show up on the page!
 
@@ -281,13 +281,13 @@ We'll show one good pattern: keep references to elements (don't query the DOM re
 
 **Visual: Event Flow (Theory)**
 
-![Event Flow Phases](diagrams/event-flow-theory.png)
+![Event Flow Phases](diagrams/dom/event-flow-theory-mermaid.png)
 
 When you click a button, the event travels through three phases: 1) Capturing (window → target), 2) Target phase (the element you clicked), 3) Bubbling (target → window). Most event listeners use the bubble phase (default). This is why clicking a button inside a div can trigger handlers on both!
 
 **Visual: Event Flow (Practical Example)**
 
-![Event Flow in Sari-Sari Store](diagrams/event-flow-practical.png)
+![Event Flow in Sari-Sari Store](diagrams/dom/event-flow-practical-mermaid.png)
 
 Here's a real example from our store project. When you click "Add to Cart" button, the event bubbles up through the product card to the grid container. This lets us use **event delegation**: one listener on the grid handles all buttons—even buttons added later!
 
@@ -339,7 +339,7 @@ Pedagogical notes: this project revisits arrays and methods from Part 2 but show
 
 **Visual: Form Validation Flow**
 
-![Form Validation Process](diagrams/form-validation.png)
+![Form Validation Process](diagrams/dom/form-validation-mermaid.png)
 
 This flowchart shows a typical validation pattern: prevent default, read values, check if empty, validate format (like email), then either show errors or process the data and show success. Always use `event.preventDefault()` on forms to stop the page from reloading!
 
@@ -386,7 +386,7 @@ This diagram shows how data flows in our store app. The UI layer (buttons, produ
 
 **Visual: Event Delegation Pattern**
 
-![Event Delegation Before vs After](diagrams/event-delegation.png)
+![Event Delegation Before vs After](diagrams/dom/event-delegation-mermaid.png)
 
 Compare these two approaches. On the left: attaching a listener to each button individually (memory-heavy, hard to maintain). On the right: one listener on the parent container that checks which button was clicked. Event delegation saves memory and automatically handles new buttons!
 

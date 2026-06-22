@@ -1,8 +1,9 @@
 // server/routes/lectures.js — read-only lecture data API (Phase 4; Phase 5 factory).
 //
 // Mounted at /api/lectures:
-//   GET /api/lectures        → { slugs: [...] }   (sorted lecture folder names)
-//   GET /api/lectures/:slug  → { slug, markdown } (the lecture.md source text)
+//   GET /api/lectures             → { slugs: [...] }              (sorted folder names)
+//   GET /api/lectures/:slug       → { slug, markdown, mtime }      (lecture.md text + mtime ms)
+//   GET /api/lectures/:slug/mtime → { slug, mtime }               (stat-only change-detection poll)
 //
 // Markdown is returned as-is for the editor textarea; the building/inlining
 // happens in the preview/export routes via buildLecture (D5).
@@ -47,6 +48,23 @@ export default function createLecturesRouter({
     res.json({ slugs: listSlugs({ lecturesDir }) });
   });
 
+  // Stat-only change-detection poll for the editor (Phase 6). Deliberately does
+  // NOT read lecture.md — a 2 s loop should cost one stat, not a full re-read.
+  // Registered before /:slug purely for clarity (single- vs two-segment paths
+  // don't actually collide in Express).
+  router.get('/:slug/mtime', (req, res) => {
+    const slug = req.params.slug;
+    const file = lectureFile(slug, lecturesDir);
+    if (!file) {
+      return res.status(404).json({ error: 'lecture not found', slug });
+    }
+    const { mtimeMs } = fs.statSync(file);
+    res.json({ slug, mtime: mtimeMs });
+  });
+
+  // Full lecture payload. `mtime` (ms epoch) is added for the editor's disk-
+  // change detection; existing fields (slug, markdown) are unchanged, so older
+  // clients keep working (backward-compatible additive change).
   router.get('/:slug', (req, res) => {
     const slug = req.params.slug;
     const file = lectureFile(slug, lecturesDir);
@@ -54,7 +72,8 @@ export default function createLecturesRouter({
       return res.status(404).json({ error: 'lecture not found', slug });
     }
     const markdown = fs.readFileSync(file, 'utf8');
-    res.json({ slug, markdown });
+    const { mtimeMs } = fs.statSync(file);
+    res.json({ slug, markdown, mtime: mtimeMs });
   });
 
   return router;

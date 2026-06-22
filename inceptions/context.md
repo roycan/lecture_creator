@@ -145,3 +145,33 @@ lecture_creator/
 - **Data URI** — file contents embedded inline as `data:image/png;base64,...` so no network fetch is needed.
 - **Slug** — the short kebab-case folder name for a lecture (e.g. `ajax-fetch`).
 - **Linter / `check`** — the integrity scan that flags missing image/asset references.
+
+## 12. Diagram rendering pipeline (implemented — Phases 1–4)
+
+> **Added 2026-06-22 (final phase).** This section documents the Kroki-based diagram pipeline that
+> now sits inside the build core. It is additive; nothing above is superseded.
+
+- **Render module:** [`scripts/lib/render-diagram.mjs`](../scripts/lib/render-diagram.mjs) renders
+  diagram sources (`.mmd`/`.puml`/`.d2`/`.dot`/`.svgbob`/`.ditaa`/`.nomnoml`/`.erd`/`.bytefield`/the
+  `*diag` family) to PNG via a [Kroki](https://kroki.io) endpoint — no Chromium/puppeteer.
+- **CLI:** `npm run diagram -- <file-or-dir>` (`--engine`, `--force`, `--kroki-base`); idempotent
+  (mtime-skip) and prints `![](diagrams/…)` ref lines. Default Kroki base `https://kroki.io`,
+  override with `KROKI_BASE_URL`.
+- **Auto-render in build:** `buildLecture()` renders `lectures/<slug>/diagramSrc/**` →
+  `diagrams/<rel>.png` **before** `inlineImages()`. No `diagramSrc/` ⇒ offline no-op (zero Kroki).
+- **Integrity gate:** `npm run check` ERRORs on broken diagram refs (no source + no PNG); WARNs on
+  stale renders & multi-format collisions. Stays offline.
+- **Convention:** `diagramSrc/<rel>.<ext>` → `diagrams/<rel>.png` → `![name](diagrams/<rel>.png)`.
+  Collisions resolve `.mmd > .puml > .d2 > .dot/.gv` > others; losers ignored, never deleted.
+
+**New locked decisions (extend §6):**
+
+| # | Decision | Why |
+|---|---|---|
+| D14 | All engines route through Kroki (server-side), incl. Mermaid — no browser/puppeteer | one render path; crisp `?scale=2` PNGs; offline student files |
+| D15 | Auto-render in the shared build core, not a separate pre-step | one source of truth (D5); a lecture without `diagramSrc/` is byte-identical to before |
+
+**Known content debt (not regressions):** `ajax-fetch` and `dom` keep diagram *sources* whose
+mirrored PNG paths were never pre-rendered, so a cold build hits the public Kroki service (transient
+HTTP 400s can fail them). `dom` also has unsupported `.bob`/`.diag` extensions (ignored). `npm run
+check` stays clean (0 errors) because the referenced flat PNGs exist. Fixes are content-only.
