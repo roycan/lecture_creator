@@ -22,7 +22,6 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import {
   renderDiagramFile,
   resolveFallbackChain,
-  resolveCollisions,
   resolveKrokiBase,
   SUPPORTED_EXTENSIONS,
 } from './lib/render-diagram.mjs';

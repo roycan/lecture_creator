@@ -1,53 +1,90 @@
-# Run Kroki locally with Podman
+# Run Kroki locally with Podman or Docker
 
-This guide shows how to run a local Kroki server with Podman and integrate it with this app.
+This guide shows how to run a local Kroki server on your own machine and point the lecture
+pipeline at it for fully-offline diagram rendering. The commands use **Podman**; **Docker is a
+drop-in** — replace `podman` with `docker` everywhere (verified on Docker 29).
+
+> **Mermaid needs a companion container.** The `yuzutech/kroki` image is the *frontend*; it
+> delegates Mermaid rendering to a separate `yuzutech/kroki-mermaid` service. Without it, every
+> Mermaid (`.mmd`) render returns **HTTP 503**. This project renders Mermaid heavily, so the
+> quick start below runs **both** containers on a shared network.
 
 ## Quick start (most used)
 
-Run Kroki in the background on localhost:8000. It will only be reachable from your machine.
+Run Kroki (frontend **+ Mermaid companion**) in the background on localhost:8000. It is bound
+to `127.0.0.1`, so it is only reachable from your machine.
 
 ```bash
-# Pull and start (detached)
-podman run -d \
-  --name kroki \
+# 1) A shared network lets the frontend reach the Mermaid companion by name.
+podman network create kroki-net
+
+# 2) Kroki frontend on localhost:8000, told where to find Mermaid.
+podman run -d --name kroki \
+  --network kroki-net \
   -p 127.0.0.1:8000:8000 \
+  -e KROKI_MERMAID_HOST=kroki-mermaid \
   docker.io/yuzutech/kroki
 
-# Verify it started
+# 3) Mermaid companion (headless Chromium — give it ~10s to boot on first render).
+podman run -d --name kroki-mermaid --network kroki-net docker.io/yuzutech/kroki-mermaid
+
+# Verify both are up
 podman ps --filter name=kroki
 ```
 
-- Base URL to use in the app: `http://localhost:8000`
-- To stop later: `podman stop kroki`
-- To start again: `podman start kroki`
-- To see logs: `podman logs -f kroki`
+Quick smoke test (expect a 200 and a real PNG size — not an error):
 
-If port 8000 is taken, replace `8000:8000` with another host port, e.g. `127.0.0.1:9000:8000`, and use `http://localhost:9000` as the base URL in the app.
+```bash
+printf 'flowchart LR\n  A-->B\n' | curl -s -o /tmp/m.png -w '%{http_code} %{size_download}\n' \
+  --data-binary @- http://localhost:8000/mermaid/png      # expect: 200 <size>
+```
+
+- Base URL for the pipeline: `http://localhost:8000` — e.g.
+  `KROKI_BASE_URL=http://localhost:8000 npm run build -- <slug>`, or the convenience script
+  `npm run build:kroki -- <slug>`.
+- To stop later: `podman stop kroki kroki-mermaid`
+- To start again: `podman start kroki kroki-mermaid`
+- To see logs: `podman logs -f kroki` (frontend) / `podman logs -f kroki-mermaid`
+
+If port 8000 is taken, change the host port, e.g. `-p 127.0.0.1:9000:8000`, and use
+`http://localhost:9000` as the base URL.
+
+> **Heads-up — output formats in this image (Kroki `24.04`):** Graphviz, PlantUML, Mermaid,
+> ditaa, nomnoml, … all render to **PNG**. **D2 renders to SVG only** (`POST /d2/png` → HTTP 400
+> *“Unsupported output format: png for d2. Must be one of svg.”*). In this project every `.d2`
+> is a *fallback* behind a `.mmd` primary, so this never blocks a build — just keep the `.mmd`
+> as the primary source for any diagram you need as a PNG.
 
 ---
 
 ## Prerequisites
-- Podman installed (rootless recommended). See: https://podman.io/docs/installation
-- A free local port (default 8000)
+- **Podman** *or* **Docker** installed (rootless / non-root recommended). Podman: https://podman.io/docs/installation · Docker: https://docs.docker.com/get-docker/. The commands say `podman`; `docker` works identically.
+- A free local port (default 8000).
+- ~600 MB free for the two images (`yuzutech/kroki` + `yuzutech/kroki-mermaid`).
 - Optional but recommended: a firewall that blocks external access; we bind to 127.0.0.1 for local-only access.
 
 ## Start, stop, restart
 ```bash
-# Start (first time) - see quick start above
-podman run -d --name kroki -p 127.0.0.1:8000:8000 docker.io/yuzutech/kroki
+# Start (first time) — see quick start above (network + 2 containers).
 
-# Stop
-podman stop kroki
+# Stop both
+podman stop kroki kroki-mermaid
 
-# Restart (after stop or reboot if container exists)
-podman start kroki
+# Restart both (after stop or reboot, once the containers exist)
+podman start kroki kroki-mermaid
 
-# Remove container (to recreate fresh)
-podman rm -f kroki
+# Remove both containers (to recreate fresh)
+podman rm -f kroki kroki-mermaid
+podman network rm kroki-net   # optional
 ```
 
 ## Auto-start on boot (optional)
 Podman doesn’t auto-start containers on reboot by default. Use systemd user services to start Kroki at login or boot.
+
+> The example below generates a unit for the **frontend** container only. For a working setup you
+> must ALSO generate + enable a unit for `kroki-mermaid` (same step with `--name kroki-mermaid`)
+> and have both join `kroki-net`. For most teachers, simply running
+> `podman start kroki kroki-mermaid` at login (or the Quick start commands) is far simpler.
 
 ```bash
 # 1) Create the container (if you haven’t already)
@@ -119,6 +156,13 @@ systemctl --user start container-kroki.service
 ## Troubleshooting
 - Port already in use:
   - Pick a different host port: `-p 127.0.0.1:9000:8000` and use `http://localhost:9000` in the app.
+- **Mermaid returns HTTP 503** (`Connection refused: …:8002`):
+  - The Mermaid companion isn’t running or isn’t reachable. Both containers must be on the same
+    network and the frontend needs `-e KROKI_MERMAID_HOST=kroki-mermaid`. Re-run the Quick start.
+    The companion also needs ~10 s to launch headless Chromium before its first render.
+- **D2 returns HTTP 400** (`Unsupported output format: png for d2. Must be one of svg.`):
+  - Expected on Kroki `24.04` — D2 outputs **SVG only** in this image. Use the `.mmd` primary
+    (PNG) for diagrams you need as images; `.d2` stays an SVG-only fallback.
 - Can’t connect from the app:
   - Verify container is running: `podman ps --filter name=kroki`
   - Test rendering with curl (see Verify section)

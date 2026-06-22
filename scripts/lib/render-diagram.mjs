@@ -809,14 +809,49 @@ export function renderDiagramSourcesSync(lectureDir, {
   const root = path.resolve(lectureDir);
   const rel = (p) => path.relative(root, p) || p;
 
-  // Sanitize a Kroki error for a teacher-readable warning (some engines return
-  // a binary 400 body that would leak raw bytes). The REFERENCED throw path is
-  // NOT sanitized — it keeps the full error for debugging.
-  const sanitizeErr = (err) =>
-    String((err && err.message) || err)
-      .replace(/[^\x09\x0a\x0d\x20-\x7e]/g, '')
+  // Sanitize a Kroki error for a teacher-readable warning (the UNREFERENCED
+  // soft-fail path ONLY — the referenced throw keeps the raw error). Some engines
+  // answer a render failure with HTTP 400 but a *binary* body (a PNG "error
+  // image"), so res.text() decodes it to U+FFFD + stray printable-ASCII
+  // fragments (PNG chunk names like "IHDR"/"IDAT" + compressed data) — pure
+  // noise ("HDR\IDATx^w…"). We elide any 400-body that isn't plausibly real error
+  // text (too many non-printables, or one long unbroken token) and keep genuinely
+  // readable messages (e.g. "Syntax Error: …"). The English template + the HTTP
+  // status label around each body are always preserved.
+  const NON_PRINT_RE = /[^\x09\x0a\x0d\x20-\x7e]/g;
+  const looksLikeText = (seg) => {
+    if (!seg) return false;
+    const stripped = seg.replace(NON_PRINT_RE, '');
+    // Binary image data ⇒ many non-printables; real error text ⇒ ~0%.
+    if ((seg.length - stripped.length) / seg.length > 0.1) return false;
+    // A real message has short space-separated words; a binary chunk collapses
+    // to one long dense token (e.g. "HDRIDATxw…").
+    return stripped
+      .trim()
+      .split(/\s+/)
+      .some((w) => w.length > 0 && w.length <= 48);
+  };
+  // A 400 body sits after " — " (U+2014) and runs until the next attempt
+  // ("\n  - "), the "Kroki base:" line, the trailing tip, or end-of-string.
+  // Bodies can contain embedded newlines (PNG bytes include 0x0A) and the em-dash
+  // marker never occurs inside a binary body, so this anchors robustly where a
+  // naive split('\n') would fragment a body and leak stray "IHDR"/"IDAT" runs.
+  // Bodies are the only untrusted part; the template + HTTP status around them
+  // are always clean ASCII, so any leftover non-printables get stripped last.
+  const BODY_RE = / \u2014 ([\s\S]*?)(?=\n {2}- |\nKroki base:|\nIf your|$)/g;
+  const sanitizeErr = (err) => {
+    const raw = String((err && err.message) || err);
+    const cleaned = raw
+      .replace(BODY_RE, (_m, body) =>
+        looksLikeText(body)
+          ? ` \u2014 ${body.replace(NON_PRINT_RE, '').replace(/[ \t]{2,}/g, ' ').trim().slice(0, 200)}`
+          : ' \u2014 (binary response body, elided)',
+      )
+      .replace(NON_PRINT_RE, '')
       .replace(/[ \t]{2,}/g, ' ')
-      .trim() || '(no detail)';
+      .trim();
+    return cleaned || '(no detail)';
+  };
 
   let rendered = 0;
   let skipped = 0;

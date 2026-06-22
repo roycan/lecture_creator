@@ -2,7 +2,7 @@
 
 > **Read this first at the start of every new session.** It is the single source of truth for *what this project is, why, and how*. Pair it with [`plans/progress.md`](../plans/progress.md) (where we are) and [`plans/reorg-inventory.md`](../plans/reorg-inventory.md) (the file-ownership map).
 
-**Last updated:** 2026-06-12 · **Status:** Planning complete — implementation about to begin (Phase 0).
+**Last updated:** 2026-06-22 · **Status:** Diagram rendering pipeline complete & verified (see §12); earlier planning notes retained as history.
 
 ---
 
@@ -160,9 +160,21 @@ lecture_creator/
 - **Auto-render in build:** `buildLecture()` renders `lectures/<slug>/diagramSrc/**` →
   `diagrams/<rel>.png` **before** `inlineImages()`. No `diagramSrc/` ⇒ offline no-op (zero Kroki).
 - **Integrity gate:** `npm run check` ERRORs on broken diagram refs (no source + no PNG); WARNs on
-  stale renders & multi-format collisions. Stays offline.
+  stale renders only. Same-stem multi-format sources are NOT collisions — they are a first-class
+  fallback feature (no warning), so the former 21 collision warnings are now 0. Stays offline.
 - **Convention:** `diagramSrc/<rel>.<ext>` → `diagrams/<rel>.png` → `![name](diagrams/<rel>.png)`.
-  Collisions resolve `.mmd > .puml > .d2 > .dot/.gv` > others; losers ignored, never deleted.
+- **Render-fallback model (replaces the old "collision → pick-one-and-warn" model):** same-stem
+  multi-format sources (e.g. `if-else.{mmd,puml,dot}`) are an ordered FALLBACK CHAIN, not a
+  collision. Primary = `.mmd` (priority `.mmd > .puml > .d2 > .dot/.gv` > others, alphabetical
+  tiebreak). The pipeline renders the primary first; the next format is tried ONLY on a render
+  FAILURE (not on the happy path, not on mtime staleness). The output PNG stem is unchanged
+  whichever source wins. A stale-PNG result (existing PNG kept after a Kroki failure) STOPS the
+  chain. mtime freshness = the PNG is newer than ALL same-stem sources (so editing a fallback
+  source also invalidates the cache). The "never ship a broken deck" guarantee is preserved:
+  all-formats-fail with no PNG → hard-fail for REFERENCED outputs, warn-and-continue for
+  UNREFERENCED. Source files are never deleted (non-destructive). See
+  [`resolveFallbackChain`](../scripts/lib/render-diagram.mjs) / `COLLISION_RANK` /
+  `renderDiagramSourcesSync` in [`render-diagram.mjs`](../scripts/lib/render-diagram.mjs).
 
 **New locked decisions (extend §6):**
 
@@ -170,8 +182,37 @@ lecture_creator/
 |---|---|---|
 | D14 | All engines route through Kroki (server-side), incl. Mermaid — no browser/puppeteer | one render path; crisp `?scale=2` PNGs; offline student files |
 | D15 | Auto-render in the shared build core, not a separate pre-step | one source of truth (D5); a lecture without `diagramSrc/` is byte-identical to before |
+| D16 | Same-stem multi-format = ordered fallback chain, not collision; fallback on render failure only; referenced-image hard-fail preserved | multi-format becomes deliberate resilience (collision warnings 21 → 0); never ship a broken deck for outputs the slides actually use |
 
-**Known content debt (not regressions):** `ajax-fetch` and `dom` keep diagram *sources* whose
-mirrored PNG paths were never pre-rendered, so a cold build hits the public Kroki service (transient
-HTTP 400s can fail them). `dom` also has unsupported `.bob`/`.diag` extensions (ignored). `npm run
-check` stays clean (0 errors) because the referenced flat PNGs exist. Fixes are content-only.
+**Content reconciliation done (2026-06-22):** `dom`'s wrong extensions were fixed (`.bob` →
+`.svgbob`, `.diag` → `.actdiag`), and `ajax-fetch`/`dom`/`js-arrays-objects` diagram refs were
+reconciled from flat PNG paths to the nested mirrored `diagramSrc/` paths. A few refs were
+intentionally left flat where the source had a genuine syntax error (see below).
+
+**Known limitations / content debt (honest, non-blocking):**
+- **D2 → SVG only** in Kroki `24.04` (no PNG). Keep `.mmd` as the primary for any PNG output; `.d2`
+  stays an SVG-only fallback that never blocks a build.
+- **Two genuine Mermaid SYNTAX ERRORS** (not flakiness) soft-fail as unreferenced orphans, so the
+  build stays green: `ajax-fetch/json-structure.mmd` (escaped quotes in a node label) and
+  `dom/cart-architecture-mermaid.mmd` (`<br/>{` misparsed). Non-urgent but real bugs; local Kroki
+  does not rescue them.
+- **Orphan flat PNGs** remain in `ajax-fetch`/`dom`/`js-arrays-objects` (left in place,
+  non-destructive) after reconciliation. `npm run check` stays clean because the referenced PNGs
+  exist.
+
+**Local Kroki for the classroom (recommended; opt-in):** run Kroki on the build machine so diagram
+renders never depend on the public internet. The zero-config default stays the public
+`https://kroki.io`; opt in with `KROKI_BASE_URL=http://localhost:8000` (or the convenience
+`npm run build:kroki -- <slug>`). Full setup is in
+[`references/diagram-converter/kroki-local.md`](../references/diagram-converter/kroki-local.md) —
+it runs the `yuzutech/kroki` frontend **plus** the `yuzutech/kroki-mermaid` companion on a shared
+docker network (the frontend alone HTTP-503s Mermaid). Verified 2026-06-22 on Docker 29: Mermaid
++ Graphviz + PlantUML → PNG all work. **Auto-start on reboot is configured** via
+`docker update --restart unless-stopped kroki kroki-mermaid` (the Docker daemon is already
+`enabled` at boot), so both containers come back automatically after a reboot; a manual
+`docker stop` is still respected. Once a PNG is on disk, the build's mtime-skip makes
+`npm run build -- <slug>` fully offline (zero Kroki, zero internet).
+
+**Final verified state (2026-06-22):** `npm test` → **155 pass / 0 fail / 2 skipped** (the 2 skipped
+are opt-in live-Kroki tests). `npm run check` → **0 errors / 0 warnings** (the former 21 collision
+warnings are gone under the fallback model). `npm run build:all` → **25/25** lectures built.

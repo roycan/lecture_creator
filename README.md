@@ -156,11 +156,15 @@ the build machine — note the *student* file is still fully offline). To render
 service, point at your own instance:
 
 ```bash
-KROKI_BASE_URL=http://localhost:8000 npm run build -- <slug>
+KROKI_BASE_URL=http://localhost:8000 npm run build -- <slug>   # explicit
+npm run build:kroki -- <slug>                                  # convenience: same thing, less typing
 ```
 
 Set-up instructions for a local Kroki (Podman/Docker) are in
 [`references/diagram-converter/kroki-local.md`](references/diagram-converter/kroki-local.md).
+Follow that guide end-to-end: it runs the Kroki frontend **and** the `kroki-mermaid` companion on
+a shared network — without the companion, every `.mmd` render returns HTTP 503. (The zero-config
+default stays the public `https://kroki.io`; local is strictly opt-in via `KROKI_BASE_URL`.)
 
 ### Mermaid note
 

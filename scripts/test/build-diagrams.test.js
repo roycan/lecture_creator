@@ -702,6 +702,74 @@ test('renderDiagramSourcesSync: UNREFERENCED render failure → warn + continue 
   });
 });
 
+// Soft-fail sanitizer — only the UNREFERENCED warn path is sanitized; the
+// REFERENCED throw keeps the raw error. Real Kroki quirk: some renders answer
+// HTTP 400 with a *binary* PNG body, so res.text() decodes it to U+FFFD + stray
+// ASCII (PNG chunk names "IHDR"/"IDAT" + compressed data). The warning must keep
+// the readable template + HTTP status and ELIDE the binary noise; a genuine
+// readable error body must be preserved.
+test('renderDiagramSourcesSync: UNREFERENCED failure with a BINARY 400 body → warning elides the noise (no leaked PNG bytes)', () => {
+  const binaryBody = Buffer.from([
+    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, // PNG signature
+    0x00, 0x00, 0x00, 0x0d, 0x49, 0x48, 0x44, 0x52, // IHDR chunk header
+    0x00, 0x00, 0x00, 0x02, 0xc3, 0xa9, 0xff, 0xfe, 0x80, 0xa0, // dims + high bytes
+    0xe0, 0xd8, 0x9b, 0x7f, 0x78, 0x9c, // IDAT-ish compressed data
+  ]).toString('utf8'); // decode bytes as UTF-8, exactly as peekBody() does
+  const errMsg =
+    'Kroki could not render this diagram (engine "mermaid"). Tried 2 method(s):\n' +
+    `  - POST http://localhost:8000/mermaid/png: HTTP 400 Bad Request — ${binaryBody}\n` +
+    `  - GET http://localhost:8000/mermaid/png: HTTP 400 Bad Request — ${binaryBody}\n` +
+    'Kroki base: http://localhost:8000.\n' +
+    'If your diagram syntax is correct, the service may be down — try again later.';
+  withDir({ 'diagramSrc/a.mmd': 'x' }, (dir) => {
+    const res = renderDiagramSourcesSync(dir, {
+      referencedPaths: new Set(), // a.png is an orphan → soft-fail (sanitized) path
+      render: () => {
+        throw new Error(errMsg);
+      },
+      log: false,
+    });
+    assert.ok(res, 'unreferenced failure does not abort the build');
+    assert.equal(res.softFailures.length, 1);
+    const msg = res.softFailures[0].message;
+    // Readable parts kept:
+    assert.match(msg, /Kroki could not render/, 'template text preserved');
+    assert.match(msg, /HTTP 400 Bad Request/, 'HTTP status label preserved');
+    assert.match(msg, /Kroki base: http:\/\/localhost:8000/, 'base URL line preserved');
+    // Binary noise elided:
+    assert.ok(!msg.includes('IHDR'), 'PNG chunk name must not leak into the warning');
+    assert.ok(!msg.includes('IDAT'), 'PNG chunk name must not leak into the warning');
+    assert.match(msg, /elided/i, 'binary body replaced with an elision marker');
+  });
+});
+
+test('renderDiagramSourcesSync: UNREFERENCED failure with a READABLE 400 body → warning keeps the real error text', () => {
+  // A genuine human-readable Kroki error (e.g. a syntax error) is short,
+  // all-printable, with normal words — it must NOT be elided.
+  const errMsg =
+    'Kroki could not render this diagram (engine "mermaid"). Tried 1 method(s):\n' +
+    "  - POST http://localhost:8000/mermaid/png: HTTP 400 Bad Request — Syntax Error: undefined node 'Foo'\n" +
+    'Kroki base: http://localhost:8000.\n' +
+    'If your diagram syntax is correct, the service may be down — try again later.';
+  withDir({ 'diagramSrc/a.mmd': 'x' }, (dir) => {
+    const res = renderDiagramSourcesSync(dir, {
+      referencedPaths: new Set(),
+      render: () => {
+        throw new Error(errMsg);
+      },
+      log: false,
+    });
+    assert.ok(res);
+    const msg = res.softFailures[0].message;
+    assert.match(
+      msg,
+      /Syntax Error: undefined node 'Foo'/,
+      'readable error body preserved (not elided)',
+    );
+    assert.ok(!/elided/i.test(msg), 'a readable body is not elided');
+  });
+});
+
 test('renderDiagramSourcesSync: REFERENCED render failure → throws (hard fail preserved)', () => {
   withDir({ 'diagramSrc/a.mmd': 'x' }, (dir) => {
     assert.throws(
