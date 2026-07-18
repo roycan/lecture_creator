@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Grade 10 Full-Stack Web Development — lecture index. 23 self-contained, offline-ready lecture decks.">
+  <title>Grade 10 Full-Stack Web Development — Lecture Index</title>
+
+  <!--
+    Self-contained index (zero external URLs — matches project standard).
+    Uses RELATIVE links only, so this file renders identically:
+      - online, hosted via GitHub Pages, AND
+      - offline, opened from a downloaded folder via file://
+    If you re-publish to a GitHub Pages repo, optionally add a link to your
+    Releases page in the "Offline use" section below.
+  -->
+
+  <style>
+    /* ---------- Reset & base ---------- */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      color: #1e293b;
+      background: #f1f5f9;
+    }
+    a { color: #2563eb; }
+
+    /* ---------- Layout container ---------- */
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 1.25rem; }
+
+    /* ---------- Header ---------- */
+    header.site {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #0ea5e9 100%);
+      color: #fff;
+      padding: 2.75rem 0 2.25rem;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, .18);
+    }
+    header.site h1 {
+      margin: 0 0 .35rem;
+      font-size: clamp(1.6rem, 4.5vw, 2.4rem);
+      line-height: 1.15;
+      letter-spacing: -.01em;
+    }
+    header.site .subtitle {
+      margin: 0 0 1rem;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      opacity: .95;
+      font-weight: 500;
+    }
+    header.site .pills { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .25rem; }
+    header.site .pill {
+      background: rgba(255, 255, 255, .16);
+      border: 1px solid rgba(255, 255, 255, .28);
+      padding: .28rem .7rem;
+      border-radius: 999px;
+      font-size: .82rem;
+      backdrop-filter: blur(2px);
+    }
+
+    /* ---------- Quarter quick-nav ---------- */
+    nav.quarters {
+      background: #fff;
+      border-bottom: 1px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 1px 0 rgba(15, 23, 42, .04);
+    }
+    nav.quarters .wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .35rem;
+      padding-top: .6rem;
+      padding-bottom: .6rem;
+    }
+    nav.quarters a {
+      text-decoration: none;
+      color: #334155;
+      background: #f1f5f9;
+      padding: .35rem .75rem;
+      border-radius: 8px;
+      font-size: .85rem;
+      font-weight: 600;
+      transition: background .15s, color .15s, transform .1s;
+    }
+    nav.quarters a:hover { background: #2563eb; color: #fff; transform: translateY(-1px); }
+    nav.quarters a:focus-visible { outline: 3px solid #93c5fd; outline-offset: 2px; }
+
+    /* ---------- Intro / usage info ---------- */
+    .info { padding: 1.5rem 0 .25rem; }
+    .info details {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      margin-bottom: .75rem;
+      overflow: hidden;
+    }
+    .info summary {
+      cursor: pointer;
+      padding: .9rem 1.1rem;
+      font-weight: 700;
+      font-size: 1rem;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+    }
+    .info summary::-webkit-details-marker { display: none; }
+    .info summary::before { content: "▸"; color: #2563eb; transition: transform .15s; font-size: .9rem; }
+    .info details[open] summary::before { transform: rotate(90deg); }
+    .info summary:hover { background: #f8fafc; }
+    .info .body { padding: 0 1.1rem 1.1rem; color: #475569; font-size: .95rem; }
+    .info .body p { margin: .35rem 0; }
+    .info .body code {
+      background: #f1f5f9;
+      padding: .1rem .35rem;
+      border-radius: 4px;
+      font-size: .88em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    /* ---------- Quarter sections ---------- */
+    main { padding: 1.5rem 0 3rem; }
+    section.phase { margin-top: 2.25rem; scroll-margin-top: 64px; }
+    section.phase > h2 {
+      font-size: clamp(1.15rem, 3vw, 1.5rem);
+      margin: 0 0 .15rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+    section.phase .tagline { color: #64748b; margin: 0 0 1.1rem; font-size: .95rem; }
+    .phase-bar {
+      display: inline-block;
+      width: 10px; height: 1.1em;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    /* per-quarter accent colors */
+    .accent-q1 { background: #2563eb; }            /* blue */
+    .accent-q2 { background: #0d9488; }            /* teal */
+    .accent-q3 { background: #7c3aed; }            /* violet */
+    .accent-q4 { background: #ea580c; }            /* orange */
+    .accent-q5 { background: #db2777; }            /* pink */
+
+    /* ---------- Card grid ---------- */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 1.1rem 1.15rem 1rem;
+      transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+      position: relative;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px rgba(15, 23, 42, .12);
+      border-color: #cbd5e1;
+    }
+    .card:focus-visible { outline: 3px solid #93c5fd; outline-offset: 3px; }
+    .card h3 {
+      margin: 0 0 .35rem;
+      font-size: 1.06rem;
+      color: #0f172a;
+      line-height: 1.3;
+    }
+    .card p { margin: 0 0 .85rem; color: #64748b; font-size: .9rem; flex-grow: 1; }
+    .card .open {
+      font-size: .82rem;
+      font-weight: 700;
+      color: #2563eb;
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+    }
+    .card .open::after { content: "→"; transition: transform .14s; }
+    .card:hover .open::after { transform: translateX(3px); }
+    .card .badge {
+      position: absolute;
+      top: .85rem; right: .85rem;
+      font-size: .68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+      color: #94a3b8;
+    }
+
+    /* ---------- Footer ---------- */
+    footer.site {
+      background: #0f172a;
+      color: #cbd5e1;
+      padding: 2rem 0;
+      text-align: center;
+      font-size: .88rem;
+    }
+    footer.site strong { color: #fff; }
+    footer.site a { color: #60a5fa; }
+
+    /* ---------- Dark mode (matches the decks' own light/dark support) ---------- */
+    @media (prefers-color-scheme: dark) {
+      body { color: #e2e8f0; background: #0b1220; }
+      nav.quarters { background: #111827; border-bottom-color: #1f2937; }
+      nav.quarters a { color: #cbd5e1; background: #1f2937; }
+      nav.quarters a:hover { background: #2563eb; color: #fff; }
+      .info details { background: #111827; border-color: #1f2937; }
+      .info summary:hover { background: #0b1220; }
+      .info .body { color: #94a3b8; }
+      .info .body code { background: #1f2937; }
+      section.phase .tagline { color: #94a3b8; }
+      .card { background: #111827; border-color: #1f2937; }
+      .card:hover { border-color: #334155; box-shadow: 0 12px 24px rgba(0,0,0,.45); }
+      .card h3 { color: #f1f5f9; }
+      .card p { color: #94a3b8; }
+      .card .badge { color: #64748b; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site">
+    <div class="wrap">
+      <h1>Grade 10 — Full-Stack Web Development</h1>
+      <p class="subtitle">Lecture index · 1-year, 6-quarter curriculum · 23 self-contained decks</p>
+      <div class="pills">
+        <span class="pill">✅ Works offline</span>
+        <span class="pill">📱 Mobile-first</span>
+        <span class="pill">🇵🇭 Philippine context</span>
+        <span class="pill">🔌 No external dependencies</span>
+      </div>
+    </div>
+  </header>
+
+  <nav class="quarters" aria-label="Curriculum phases">
+    <div class="wrap">
+      <a href="#q1">Q1 · Foundations</a>
+      <a href="#q2">Q2 · The Browser</a>
+      <a href="#q3">Q3 · The Backend</a>
+      <a href="#q4">Q4 · Production</a>
+      <a href="#q5">Q5–6 · Extension</a>
+    </div>
+  </nav>
+
+  <div class="wrap">
+
+    <section class="info" aria-label="How to use these materials">
+      <details open>
+        <summary>📖 How to use these lectures</summary>
+        <div class="body">
+          <p><strong>Online:</strong> you're already here — just click any card below to open that lecture.</p>
+          <p><strong>Offline (slow or no internet):</strong> download the whole folder as a ZIP, unzip it, and open this same <code>index.html</code> in any browser. Every lecture is a single self-contained HTML file — images, syntax highlighting, and diagrams are all embedded — so they work fully without a connection.</p>
+        </div>
+      </details>
+      <details>
+        <summary>🧭 How the year is structured</summary>
+        <div class="body">
+          <p>The course runs as a <strong>web-first spiral</strong>: concepts are revisited with increasing depth rather than "mastered" once. Q1–Q4 form the <em>core lane</em> (everyone ships a real, deployed app). Q5–Q6 are the <em>extension lane</em> for faster students — engineering depth and a second, bigger capstone.</p>
+          <p>You'll build a <strong>shippable artifact every quarter</strong>, from a static site (Q1) to an interactive client app (Q2), a full-stack CRUD app (Q3), and finally a deployed group capstone (Q4).</p>
+        </div>
+      </details>
+      <details>
+        <summary>🤖 A note on using AI</summary>
+        <div class="body">
+          <p>AI is a taught skill here, not a secret. You may use AI to <em>generate</em> code only in technologies you have personally unlocked by passing a hands-on "gate." This guarantees you can always verify what the AI produces. See each lecture's activities for which phase applies.</p>
+        </div>
+      </details>
+    </section>
+
+    <main>
+
+      <!-- ============ Q1 ============ -->
+      <section class="phase" id="q1">
+        <h2><span class="phase-bar accent-q1" aria-hidden="true"></span> Q1 — Foundations of the Web & Static Frontend</h2>
+        <p class="tagline">Make something you can show on your phone on day one. Semantic markup, styling, responsive layouts, version control, and scoping a project.</p>
+        <div class="grid">
+          <a class="card" href="html.html">
+            <span class="badge">Markup</span>
+            <h3>HTML Fundamentals</h3>
+            <p>Semantic structure, forms, and accessibility — the web's foundation.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="css.html">
+            <span class="badge">Styling</span>
+            <h3>Introduction to CSS</h3>
+            <p>Selectors, the box model, layout, and styling fundamentals.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="responsive-bulma.html">
+            <span class="badge">Responsive</span>
+            <h3>Responsive Web Design with Bulma</h3>
+            <p>Mobile-first layouts using the class-only Bulma CSS framework.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="git-github.html">
+            <span class="badge">Tooling</span>
+            <h3>Git & GitHub</h3>
+            <p>Version control and collaboration — woven in from week one.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="requirements-user-stories.html">
+            <span class="badge">Process</span>
+            <h3>Requirements & User Stories</h3>
+            <p>Turn ideas into buildable features, sketch wireframes, and define MVP scope.</p>
+            <span class="open">Open lecture</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- ============ Q2 ============ -->
+      <section class="phase" id="q2">
+        <h2><span class="phase-bar accent-q2" aria-hidden="true"></span> Q2 — Programming the Browser</h2>
+        <p class="tagline">Make the page do things and remember things — no server yet. JavaScript fundamentals through async and calling real APIs, plus the independence skill: debugging.</p>
+        <div class="grid">
+          <a class="card" href="js-basics.html">
+            <span class="badge">JS Core</span>
+            <h3>JavaScript Basics</h3>
+            <p>Variables, data types, control flow, and functions.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="js-arrays-objects.html">
+            <span class="badge">JS Core</span>
+            <h3>JavaScript: Arrays & Objects</h3>
+            <p>Organizing and working with collections of data.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="dom.html">
+            <span class="badge">Interactivity</span>
+            <h3>JavaScript and the DOM</h3>
+            <p>Select elements, handle events, and build interactivity.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="localstorage.html">
+            <span class="badge">Persistence</span>
+            <h3>localStorage</h3>
+            <p>Save data in the browser so it survives refreshes and reloads.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="ajax-fetch.html">
+            <span class="badge">Async</span>
+            <h3>Asynchronous JS & Fetch</h3>
+            <p>Promises, async/await, and calling public APIs.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="debugging-devtools.html">
+            <span class="badge">Independence</span>
+            <h3>Debugging & DevTools</h3>
+            <p>Console, Elements, and the Network tab — become your own fixer.</p>
+            <span class="open">Open lecture</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- ============ Q3 ============ -->
+      <section class="phase" id="q3">
+        <h2><span class="phase-bar accent-q3" aria-hidden="true"></span> Q3 — The Backend: Server, Data & CRUD</h2>
+        <p class="tagline">Become the kitchen, not just the customer. Express + EJS, data modeling, SQLite, and a full-stack CRUD app — the "usable" milestone.</p>
+        <div class="grid">
+          <a class="card" href="express-basics.html">
+            <span class="badge">Server</span>
+            <h3>Express Basics</h3>
+            <p>Server-side routing, the request/response cycle, and EJS templates.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="data-modeling.html">
+            <span class="badge">Design</span>
+            <h3>Data Modeling</h3>
+            <p>Design tables, keys, and relationships before you write a line of code.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="database-sqlite.html">
+            <span class="badge">Database</span>
+            <h3>Database & SQLite</h3>
+            <p>better-sqlite3, prepared statements, and full CRUD operations.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="csv-datatables-qr.html">
+            <span class="badge">Data display</span>
+            <h3>CSV, DataTables & QR Codes</h3>
+            <p>Displaying real-world tabular data and generating QR codes.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="json-api-audit.html">
+            <span class="badge">APIs</span>
+            <h3>JSON & API Audit</h3>
+            <p>Serving and inspecting JSON data your apps exchange.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="code-organization.html">
+            <span class="badge">Craft</span>
+            <h3>Code Organization</h3>
+            <p>Project structure, MVC-lite, naming, and writing a good README.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="api-testing.html">
+            <span class="badge">Reference</span>
+            <h3>API Testing</h3>
+            <p>A quick-reference handout for testing the APIs you build.</p>
+            <span class="open">Open lecture</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- ============ Q4 ============ -->
+      <section class="phase" id="q4">
+        <h2><span class="phase-bar accent-q4" aria-hidden="true"></span> Q4 — Production-Ready Apps & Capstone</h2>
+        <p class="tagline">Ship something a real person actually uses. Auth, production hardening, testing, and building with AI — culminating in a deployed group capstone.</p>
+        <div class="grid">
+          <a class="card" href="authentication-sessions.html">
+            <span class="badge">Security</span>
+            <h3>Authentication & Sessions</h3>
+            <p>Login, sessions, and cookies — library-assisted; never hand-roll crypto.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="production-best-practices.html">
+            <span class="badge">Operations</span>
+            <h3>Production Best Practices</h3>
+            <p>Error handling, logging, and deploying your app for real users.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="testing-quality.html">
+            <span class="badge">Quality</span>
+            <h3>Testing & Quality Assurance</h3>
+            <p>Manual testing plus structured assertions — ship with confidence.</p>
+            <span class="open">Open lecture</span>
+          </a>
+          <a class="card" href="ai-assisted-development.html">
+            <span class="badge">AI skill</span>
+            <h3>AI-Assisted Development</h3>
+            <p>Prompting, pasting errors, and verifying output — AI as a junior pair.</p>
+            <span class="open">Open lecture</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- ============ Q5–Q6 ============ -->
+      <section class="phase" id="q5">
+        <h2><span class="phase-bar accent-q5" aria-hidden="true"></span> Q5–Q6 — Extension: Engineering Depth & Specialization</h2>
+        <p class="tagline">Turn a "working app" into a "robust, professional app" — then go deeper on one axis and ship something portfolio-grade.</p>
+        <div class="grid">
+          <a class="card" href="pwa-basics.html">
+            <span class="badge">Advanced</span>
+            <h3>Progressive Web Apps (PWA)</h3>
+            <p>Offline-first apps — especially valuable when internet is unreliable.</p>
+            <span class="open">Open lecture</span>
+          </a>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="site">
+    <div class="wrap">
+      <p><strong>23 lectures</strong> · each a single self-contained HTML file · works online or fully offline.</p>
+      <p>Curriculum reference: <a href="full-stack-g10-curriculum.md">full-stack-g10-curriculum.md</a></p>
+    </div>
+  </footer>
+
+</body>
+</html>
