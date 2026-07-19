@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "name": "Maria Santos",
+    "studentId": "2021-00001",
+    "course": "BSIT",
+    "year": 3,
+    "grade": 95,
+    "email": "maria.santos@example.com"
+  },
+  {
+    "id": 2,
+    "name": "Juan Dela Cruz",
+    "studentId": "2022-00045",
+    "course": "BSCS",
+    "year": 2,
+    "grade": 88,
+    "email": "juan.delacruz@example.com"
+  },
+  {
+    "id": 3,
+    "name": "Sofia Reyes",
+    "studentId": "2020-00123",
+    "course": "BSIT",
+    "year": 4,
+    "grade": 92,
+    "email": "sofia.reyes@example.com"
+  },
+  {
+    "id": 4,
+    "name": "Carlos Mendoza",
+    "studentId": "2023-00078",
+    "course": "BSIS",
+    "year": 1,
+    "grade": 76,
+    "email": "carlos.mendoza@example.com"
+  },
+  {
+    "id": 5,
+    "name": "Ana Garcia",
+    "studentId": "2021-00234",
+    "course": "BSIT",
+    "year": 3,
+    "grade": 90,
+    "email": "ana.garcia@example.com"
+  },
+  {
+    "id": 6,
+    "name": "Miguel Torres",
+    "studentId": "2022-00189",
+    "course": "BSCS",
+    "year": 2,
+    "grade": 73,
+    "email": "miguel.torres@example.com"
+  },
+  {
+    "id": 7,
+    "name": "Carmela Lopez",
+    "studentId": "2021-00567",
+    "course": "BSCpE",
+    "year": 3,
+    "grade": 85,
+    "email": "carmela.lopez@example.com"
+  },
+  {
+    "id": 8,
+    "name": "Diego Ramos",
+    "studentId": "2023-00012",
+    "course": "BSIT",
+    "year": 1,
+    "grade": 91,
+    "email": "diego.ramos@example.com"
+  }
+]

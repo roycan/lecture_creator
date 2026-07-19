@@ -1,0 +1,10 @@
+[
+  {"id": 1, "product": "Pandesal", "sold": 150, "revenue": 450},
+  {"id": 2, "product": "Soft Drinks", "sold": 85, "revenue": 850},
+  {"id": 3, "product": "Instant Noodles", "sold": 62, "revenue": 930},
+  {"id": 4, "product": "Rice (kg)", "sold": 45, "revenue": 2250},
+  {"id": 5, "product": "Candy", "sold": 200, "revenue": 400},
+  {"id": 6, "product": "Eggs (dozen)", "sold": 30, "revenue": 1800},
+  {"id": 7, "product": "Cooking Oil", "sold": 28, "revenue": 2800},
+  {"id": 8, "product": "Soap", "sold": 40, "revenue": 600}
+]

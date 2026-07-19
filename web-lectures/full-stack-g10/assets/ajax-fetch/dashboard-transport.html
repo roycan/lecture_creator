@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Transport Tracker Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>🚌 Transport Tracker Dashboard</h2>
+      
+      <div class="form-row">
+        <button id="loadBtn" class="btn">Load Data</button>
+        <button id="refreshBtn" class="btn secondary">↻ Refresh</button>
+        <select id="filterStatus" class="input">
+          <option value="">All Routes</option>
+          <option value="normal">Normal</option>
+          <option value="busy">Busy</option>
+          <option value="very busy">Very Busy</option>
+        </select>
+      </div>
+      
+      <div id="stats" class="card hidden" style="margin-top:12px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;">
+          <div style="text-align:center;padding:12px;background:#f0f0f0;border-radius:8px;">
+            <div class="small">Total Routes</div>
+            <div style="font-size:2rem;font-weight:700;" id="totalRoutes">-</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:#f0f0f0;border-radius:8px;">
+            <div class="small">Total Vehicles</div>
+            <div style="font-size:2rem;font-weight:700;" id="totalVehicles">-</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:#f0f0f0;border-radius:8px;">
+            <div class="small">Total Passengers</div>
+            <div style="font-size:2rem;font-weight:700;" id="totalPassengers">-</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:#f0f0f0;border-radius:8px;">
+            <div class="small">Busiest Route</div>
+            <div style="font-size:1rem;font-weight:700;" id="busiestRoute">-</div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="details" class="card hidden" style="margin-top:12px;">
+        <h3>Route Status</h3>
+        <div id="routeTable"></div>
+      </div>
+      
+      <div id="loading" class="small hidden">Loading... ⏳</div>
+      <div id="error" class="error hidden"></div>
+    </div>
+  </div>
+
+  <script>
+    const loadBtn = document.getElementById('loadBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const filterStatus = document.getElementById('filterStatus');
+    const stats = document.getElementById('stats');
+    const details = document.getElementById('details');
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    
+    let allRoutes = [];
+    
+    async function loadData() {
+      loading.classList.remove('hidden');
+      error.classList.add('hidden');
+      stats.classList.add('hidden');
+      details.classList.add('hidden');
+      
+      try {
+        const response = await fetch('transport-data.json');
+        if (!response.ok) throw new Error('Failed to load data');
+        
+        allRoutes = await response.json();
+        displayData();
+        
+      } catch (err) {
+        loading.classList.add('hidden');
+        error.classList.remove('hidden');
+        error.textContent = `Error: ${err.message}`;
+      }
+    }
+    
+    function displayData() {
+      const filter = filterStatus.value;
+      const routes = filter ? allRoutes.filter(r => r.status === filter) : allRoutes;
+      
+      // Calculate statistics
+      const totalRoutes = routes.length;
+      const totalVehicles = routes.reduce((sum, r) => sum + r.vehicles, 0);
+      const totalPassengers = routes.reduce((sum, r) => sum + r.passengers, 0);
+      const busiestRoute = routes.reduce((max, r) => r.passengers > max.passengers ? r : max, routes[0]);
+      
+      // Display stats
+      document.getElementById('totalRoutes').textContent = totalRoutes;
+      document.getElementById('totalVehicles').textContent = totalVehicles;
+      document.getElementById('totalPassengers').textContent = totalPassengers.toLocaleString();
+      document.getElementById('busiestRoute').textContent = busiestRoute ? busiestRoute.route : '-';
+      
+      // Build table
+      const table = document.createElement('table');
+      table.className = 'table';
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>Route</th>
+            <th>Vehicles</th>
+            <th>Passengers</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${routes.map(r => {
+            const statusClass = r.status === 'very busy' ? 'error' : r.status === 'busy' ? 'small' : 'success';
+            return `
+              <tr>
+                <td>${r.route}</td>
+                <td>${r.vehicles}</td>
+                <td>${r.passengers}</td>
+                <td><span class="${statusClass}">${r.status.toUpperCase()}</span></td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      `;
+      
+      document.getElementById('routeTable').innerHTML = '';
+      document.getElementById('routeTable').appendChild(table);
+      
+      loading.classList.add('hidden');
+      stats.classList.remove('hidden');
+      details.classList.remove('hidden');
+    }
+    
+    loadBtn.addEventListener('click', loadData);
+    refreshBtn.addEventListener('click', loadData);
+    filterStatus.addEventListener('change', displayData);
+    
+    loadData();
+  </script>
+</body>
+</html>

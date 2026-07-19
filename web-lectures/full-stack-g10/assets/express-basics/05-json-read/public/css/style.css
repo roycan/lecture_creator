@@ -1,0 +1,39 @@
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.section {
+  flex: 1;
+}
+
+.footer {
+  margin-top: auto;
+  background-color: #f5f5f5;
+}
+
+/* Card styling */
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Table styling */
+.table-container {
+  background: white;
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+/* Statistics box */
+.box .heading {
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #7a7a7a;
+}

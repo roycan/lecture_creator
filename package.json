@@ -11,6 +11,7 @@
     "start": "node server/app.js",
     "build": "node scripts/build.js",
     "build:all": "node scripts/build.js --all",
+    "stage": "npm run build:all && node scripts/stage-student-assets.mjs",
     "build:kroki": "KROKI_BASE_URL=http://localhost:8000 node scripts/build.js",
     "check": "node scripts/check.js",
     "diagram": "node scripts/diagram.js",

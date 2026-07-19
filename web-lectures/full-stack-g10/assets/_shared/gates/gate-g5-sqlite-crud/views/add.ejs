@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Resident</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container" style="max-width: 480px;">
+      <h1 class="title is-4">+ Add a Resident</h1>
+
+      <form action="/add" method="POST" class="box">
+        <div class="field">
+          <label class="label" for="name">Full Name</label>
+          <div class="control">
+            <input id="name" name="name" class="input" type="text" placeholder="Juan dela Cruz" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="purok">Purok</label>
+          <div class="control">
+            <input id="purok" name="purok" class="input" type="text" placeholder="Purok 1" required>
+          </div>
+        </div>
+
+        <button type="submit" class="button is-primary">Save</button>
+        <a href="/" class="button is-light">Cancel</a>
+      </form>
+    </div>
+  </section>
+</body>
+</html>

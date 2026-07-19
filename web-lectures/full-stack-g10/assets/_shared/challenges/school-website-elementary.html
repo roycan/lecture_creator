@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunshine Elementary School - Where Young Minds Grow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Comic Sans MS', cursive, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        header {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            color: #fff;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        header p {
+            color: #fff;
+            font-size: 1.2em;
+        }
+        nav {
+            background-color: #FF6B6B;
+            padding: 15px;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 20px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: #FF4757;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 20px;
+        }
+        main {
+            background-color: #fff;
+        }
+        section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #FFF9E6;
+            border-radius: 10px;
+            border: 3px solid #FFD700;
+        }
+        h2 {
+            color: #FF6B6B;
+            margin-bottom: 15px;
+            font-size: 2em;
+        }
+        h3 {
+            color: #FFA500;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        .hero-image {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul li {
+            padding: 8px;
+            margin: 5px 0;
+            background-color: #FFE6CC;
+            border-left: 4px solid #FFA500;
+            border-radius: 5px;
+        }
+        ul li:before {
+            content: "🌟 ";
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 2px solid #FFD700;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #FF6B6B;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #FFF9E6;
+        }
+        form {
+            background-color: #E6F7FF;
+            padding: 20px;
+            border-radius: 10px;
+            border: 3px solid #4ECDC4;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            color: #2C3E50;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 2px solid #4ECDC4;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            margin-top: 15px;
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button[type="submit"] {
+            background-color: #4ECDC4;
+            color: white;
+        }
+        button[type="submit"]:hover {
+            background-color: #45B7AA;
+        }
+        button[type="reset"] {
+            background-color: #95A5A6;
+            color: white;
+            margin-left: 10px;
+        }
+        aside {
+            background-color: #FFE6E6;
+            padding: 20px;
+            border-radius: 10px;
+            border: 3px solid #FF6B6B;
+            height: fit-content;
+        }
+        aside h3 {
+            color: #FF6B6B;
+            margin-bottom: 15px;
+        }
+        aside p {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #FFF9E6;
+            border-radius: 5px;
+            border-left: 4px solid #FFD700;
+        }
+        footer {
+            background-color: #2C3E50;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 30px;
+        }
+        footer h3 {
+            color: #FFD700;
+        }
+        footer p {
+            margin: 5px 0;
+        }
+        footer a {
+            color: #4ECDC4;
+            text-decoration: none;
+        }
+        .required {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://via.placeholder.com/150x150/FFD700/FFFFFF?text=🏫" alt="Sunshine Elementary Logo" style="border-radius: 50%; border: 5px solid white;">
+        <h1>☀️ Sunshine Elementary School ☀️</h1>
+        <p>Where Young Minds Grow and Shine!</p>
+    </header>
+    
+    <nav>
+        <a href="#home">🏠 Home</a>
+        <a href="#about">📖 About</a>
+        <a href="#programs">🎨 Programs</a>
+        <a href="#teachers">👨‍🏫 Teachers</a>
+        <a href="#inquiry">✉️ Inquiry</a>
+    </nav>
+    
+    <div class="container">
+        <main>
+            <!-- Welcome Section -->
+            <section id="home">
+                <h2>🌈 Welcome to Sunshine Elementary!</h2>
+                <img src="https://via.placeholder.com/800x400/FFE6E6/FF6B6B?text=Happy+Kids+Learning+Together" 
+                     alt="Students playing in the playground" 
+                     class="hero-image">
+                <p>
+                    Welcome to Sunshine Elementary School, where learning is fun and every child shines! 
+                    For over 25 years, we have been providing quality elementary education in a safe, 
+                    nurturing, and joyful environment.
+                </p>
+                <p>
+                    Our school believes that every child is unique and special. We focus on developing 
+                    not just academic skills, but also values, creativity, and social skills. Through 
+                    engaging activities, caring teachers, and a colorful learning environment, we help 
+                    children discover their potential and love for learning.
+                </p>
+                <p>
+                    At Sunshine Elementary, we are more than just a school—we are a family! 🏫❤️
+                </p>
+            </section>
+            
+            <!-- About Section -->
+            <section id="about">
+                <h2>📚 About Our School</h2>
+                <h3>Our Mission</h3>
+                <p>
+                    To provide quality elementary education that develops well-rounded, happy, and 
+                    confident learners who are ready for the future.
+                </p>
+                
+                <h3>Our Vision</h3>
+                <p>
+                    To be the leading elementary school in the community, known for academic excellence, 
+                    strong values, and joyful learning experiences.
+                </p>
+                
+                <h3>Our Core Values</h3>
+                <ul>
+                    <li><strong>Respect</strong> - We treat everyone with kindness and consideration</li>
+                    <li><strong>Excellence</strong> - We always do our best in everything we do</li>
+                    <li><strong>Integrity</strong> - We are honest and do what is right</li>
+                    <li><strong>Creativity</strong> - We think imaginatively and express ourselves</li>
+                    <li><strong>Responsibility</strong> - We take care of ourselves, others, and our environment</li>
+                </ul>
+                
+                <h3>Our Facilities</h3>
+                <ul>
+                    <li>Air-conditioned classrooms with colorful learning corners</li>
+                    <li>Computer laboratory with kid-friendly software</li>
+                    <li>Science discovery room with fun experiments</li>
+                    <li>Library with thousands of children's books</li>
+                    <li>Large playground with safe equipment</li>
+                    <li>Arts and crafts room</li>
+                    <li>Music and movement studio</li>
+                    <li>School clinic with registered nurse</li>
+                    <li>Cafeteria serving healthy and delicious meals</li>
+                </ul>
+            </section>
+            
+            <!-- Programs Section -->
+            <section id="programs">
+                <h2>🎨 Our Programs</h2>
+                <p>We offer a complete elementary education from Kindergarten to Grade 6:</p>
+                
+                <h3>Kindergarten (5-6 years old)</h3>
+                <ul>
+                    <li>Play-based learning approach</li>
+                    <li>Basic literacy and numeracy</li>
+                    <li>Social and emotional development</li>
+                    <li>Arts, music, and movement</li>
+                    <li>Mother Tongue-Based Multilingual Education (MTB-MLE)</li>
+                </ul>
+                
+                <h3>Grade 1-3 (Primary Level)</h3>
+                <ul>
+                    <li>Foundation skills in reading, writing, and mathematics</li>
+                    <li>Science exploration and discovery</li>
+                    <li>Filipino and English language development</li>
+                    <li>Araling Panlipunan (Social Studies)</li>
+                    <li>MAPEH (Music, Arts, Physical Education, Health)</li>
+                    <li>Values Education</li>
+                </ul>
+                
+                <h3>Grade 4-6 (Intermediate Level)</h3>
+                <ul>
+                    <li>Advanced academic subjects</li>
+                    <li>Critical thinking and problem-solving</li>
+                    <li>Project-based learning</li>
+                    <li>Computer literacy and basic coding</li>
+                    <li>Leadership development</li>
+                    <li>Preparation for junior high school</li>
+                </ul>
+                
+                <h3>Special Programs</h3>
+                <ul>
+                    <li><strong>Reading Stars Program</strong> - Developing strong readers</li>
+                    <li><strong>Math Champions</strong> - Making math fun and easy</li>
+                    <li><strong>Little Scientists</strong> - Hands-on science experiments</li>
+                    <li><strong>Arts and Crafts Club</strong> - Unleashing creativity</li>
+                    <li><strong>Sports Development</strong> - Swimming, basketball, and more</li>
+                    <li><strong>Student Government</strong> - Leadership training for kids</li>
+                </ul>
+            </section>
+            
+            <!-- Teachers Section -->
+            <section id="teachers">
+                <h2>👨‍🏫 Meet Our Teachers</h2>
+                <p>Our dedicated and loving teachers make learning a joyful adventure!</p>
+                
+                <img src="https://via.placeholder.com/800x300/E6F7FF/4ECDC4?text=Our+Amazing+Teachers" 
+                     alt="Sunshine Elementary Teachers" 
+                     class="hero-image">
+                
+                <table>
+                    <caption><strong>Teacher Directory - Academic Year 2024-2025</strong></caption>
+                    <thead>
+                        <tr>
+                            <th>Teacher Name</th>
+                            <th>Grade Level / Subject</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ms. Maria Santos</td>
+                            <td>Kindergarten - Sunflower Class</td>
+                            <td><a href="mailto:maria.santos@sunshine.edu.ph">maria.santos@sunshine.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>Ms. Ana Reyes</td>
+                            <td>Kindergarten - Tulip Class</td>
+                            <td><a href="mailto:ana.reyes@sunshine.edu.ph">ana.reyes@sunshine.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>Ms. Rosa Cruz</td>
+                            <td>Grade 1 - Rose Class</td>
+                            <td><a href="mailto:rosa.cruz@sunshine.edu.ph">rosa.cruz@sunshine.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>Mr. Pedro Garcia</td>
+                            <td>Grade 2 - Daisy Class</td>
+                            <td><a href="mailto:pedro.garcia@sunshine.edu.ph">pedro.garcia@sunshine.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>Ms. Linda Ramos</td>
+                            <td>Grade 3 - Orchid Class</td>
+                            <td><a href="mailto:linda.ramos@sunshine.edu.ph">linda.ramos@sunshine.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>Mr. Jose Fernandez</td>
+                            <td>Grade 4 - Sampaguita Class</td>
+                            <td><a href="mailto:jose.fernandez@sunshine.edu.ph">jose.fernandez@sunshine.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>Ms. Elena Torres</td>
+                            <td>Grade 5 - Gumamela Class</td>
+                            <td><a href="mailto:elena.torres@sunshine.edu.ph">elena.torres@sunshine.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>Mr. Carlos Mendoza</td>
+                            <td>Grade 6 - Santan Class</td>
+                            <td><a href="mailto:carlos.mendoza@sunshine.edu.ph">carlos.mendoza@sunshine.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>Ms. Joy Santiago</td>
+                            <td>Music Teacher</td>
+                            <td><a href="mailto:joy.santiago@sunshine.edu.ph">joy.santiago@sunshine.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>Mr. Mark Diaz</td>
+                            <td>PE Teacher</td>
+                            <td><a href="mailto:mark.diaz@sunshine.edu.ph">mark.diaz@sunshine.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>Ms. Bella Aquino</td>
+                            <td>Arts Teacher</td>
+                            <td><a href="mailto:bella.aquino@sunshine.edu.ph">bella.aquino@sunshine.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>Ms. Grace Lopez</td>
+                            <td>Computer Teacher</td>
+                            <td><a href="mailto:grace.lopez@sunshine.edu.ph">grace.lopez@sunshine.edu.ph</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>School Administration</h3>
+                <ul>
+                    <li><strong>Principal:</strong> Dr. Carmen Dela Cruz - <a href="mailto:principal@sunshine.edu.ph">principal@sunshine.edu.ph</a></li>
+                    <li><strong>Assistant Principal:</strong> Ms. Ruby Santos - <a href="mailto:assistant.principal@sunshine.edu.ph">assistant.principal@sunshine.edu.ph</a></li>
+                    <li><strong>Guidance Counselor:</strong> Ms. Angela Flores - <a href="mailto:guidance@sunshine.edu.ph">guidance@sunshine.edu.ph</a></li>
+                    <li><strong>School Nurse:</strong> Nurse Sofia Reyes - <a href="mailto:clinic@sunshine.edu.ph">clinic@sunshine.edu.ph</a></li>
+                </ul>
+            </section>
+            
+            <!-- Inquiry Form Section -->
+            <section id="inquiry">
+                <h2>✉️ Enrollment Inquiry Form</h2>
+                <p>Interested in enrolling your child at Sunshine Elementary? Fill out this form and we'll contact you soon!</p>
+                
+                <form action="/submit-inquiry" method="POST">
+                    <h3>Parent/Guardian Information</h3>
+                    
+                    <label for="parent-name">Parent/Guardian Name: <span class="required">*</span></label>
+                    <input type="text" 
+                           id="parent-name" 
+                           name="parent_name" 
+                           placeholder="Juan dela Cruz" 
+                           required>
+                    
+                    <label for="email">Email Address: <span class="required">*</span></label>
+                    <input type="email" 
+                           id="email" 
+                           name="email" 
+                           placeholder="parent@email.com" 
+                           required>
+                    
+                    <label for="phone">Contact Number: <span class="required">*</span></label>
+                    <input type="tel" 
+                           id="phone" 
+                           name="phone" 
+                           placeholder="0912 345 6789" 
+                           required>
+                    
+                    <h3>Child Information</h3>
+                    
+                    <label for="child-name">Child's Name:</label>
+                    <input type="text" 
+                           id="child-name" 
+                           name="child_name" 
+                           placeholder="Maria dela Cruz">
+                    
+                    <label for="age">Child's Age:</label>
+                    <input type="number" 
+                           id="age" 
+                           name="age" 
+                           min="5" 
+                           max="12" 
+                           placeholder="6">
+                    
+                    <label for="grade">Grade Level Interested In: <span class="required">*</span></label>
+                    <select id="grade" name="grade" required>
+                        <option value="">-- Select Grade Level --</option>
+                        <option value="kindergarten">Kindergarten (5-6 years old)</option>
+                        <option value="grade1">Grade 1 (6-7 years old)</option>
+                        <option value="grade2">Grade 2 (7-8 years old)</option>
+                        <option value="grade3">Grade 3 (8-9 years old)</option>
+                        <option value="grade4">Grade 4 (9-10 years old)</option>
+                        <option value="grade5">Grade 5 (10-11 years old)</option>
+                        <option value="grade6">Grade 6 (11-12 years old)</option>
+                    </select>
+                    
+                    <label for="school-year">School Year:</label>
+                    <select id="school-year" name="school_year">
+                        <option value="">-- Select --</option>
+                        <option value="2025-2026">2025-2026</option>
+                        <option value="2026-2027">2026-2027</option>
+                    </select>
+                    
+                    <label for="message">Questions or Comments:</label>
+                    <textarea id="message" 
+                              name="message" 
+                              rows="5" 
+                              placeholder="Tell us more about your inquiry..."></textarea>
+                    
+                    <label for="referral">How did you hear about us?</label>
+                    <select id="referral" name="referral">
+                        <option value="">-- Select --</option>
+                        <option value="friend">Friend/Referral</option>
+                        <option value="facebook">Facebook</option>
+                        <option value="google">Google Search</option>
+                        <option value="flyer">Flyer/Poster</option>
+                        <option value="other">Other</option>
+                    </select>
+                    
+                    <label>
+                        <input type="checkbox" name="newsletter" value="yes">
+                        Send me updates about enrollment, events, and school news
+                    </label>
+                    
+                    <button type="submit">📧 Send Inquiry</button>
+                    <button type="reset">🔄 Clear Form</button>
+                </form>
+            </section>
+        </main>
+        
+        <!-- Sidebar -->
+        <aside>
+            <h3>📢 Announcements</h3>
+            <p><strong>🎉 Enrollment for SY 2025-2026 is NOW OPEN!</strong></p>
+            <p>Limited slots available. Enroll now!</p>
+            
+            <p><strong>🎭 Year-End Culminating Activity</strong></p>
+            <p>Date: March 28, 2025<br>
+            Time: 9:00 AM<br>
+            Venue: School Gymnasium</p>
+            
+            <p><strong>📚 Summer Reading Program</strong></p>
+            <p>April-May 2025<br>
+            Fun reading activities for all levels!</p>
+            
+            <hr>
+            
+            <h3>⏰ School Hours</h3>
+            <p><strong>Monday - Friday:</strong><br>
+            7:30 AM - 3:30 PM</p>
+            
+            <hr>
+            
+            <h3>📞 Quick Contacts</h3>
+            <p><strong>Main Office:</strong><br>
+            (02) 123-4567</p>
+            
+            <p><strong>Admissions:</strong><br>
+            (02) 123-4568</p>
+            
+            <p><strong>Emergency:</strong><br>
+            0915 123 4567</p>
+        </aside>
+    </div>
+    
+    <footer>
+        <h3>☀️ Sunshine Elementary School</h3>
+        <p>📍 456 Maligaya Street, Barangay Silangan, Manila, Philippines</p>
+        <p>📞 Phone: <a href="tel:+6321234567">(02) 123-4567</a></p>
+        <p>📱 Mobile: <a href="tel:+639151234567">0915 123 4567</a></p>
+        <p>📧 Email: <a href="mailto:info@sunshine.edu.ph">info@sunshine.edu.ph</a></p>
+        <p>🌐 Website: <a href="https://www.sunshine.edu.ph">www.sunshine.edu.ph</a></p>
+        <p>📘 Facebook: <a href="https://facebook.com/SunshineElementary" target="_blank">@SunshineElementary</a></p>
+        <hr style="margin: 20px 0; border-color: #FFD700;">
+        <p>&copy; 2025 Sunshine Elementary School. All rights reserved.</p>
+        <p>Accredited by DepEd | Member of PEAC</p>
+        <p><em>Where Young Minds Grow and Shine! ☀️</em></p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "manila": {
+    "city": "Manila",
+    "temperature": 32,
+    "condition": "Partly Cloudy",
+    "humidity": 75,
+    "wind": "15 km/h",
+    "icon": "⛅"
+  },
+  "cebu": {
+    "city": "Cebu",
+    "temperature": 30,
+    "condition": "Sunny",
+    "humidity": 70,
+    "wind": "12 km/h",
+    "icon": "☀️"
+  },
+  "davao": {
+    "city": "Davao",
+    "temperature": 28,
+    "condition": "Light Rain",
+    "humidity": 85,
+    "wind": "10 km/h",
+    "icon": "🌦️"
+  }
+}

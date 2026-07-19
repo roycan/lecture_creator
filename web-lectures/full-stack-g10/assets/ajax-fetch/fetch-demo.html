@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fetch Demo — Philippine Provinces</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Philippine Provinces</h2>
+      <button id="loadBtn" class="btn">Load Provinces</button>
+      <div id="loading" class="small hidden" style="margin-top:10px;">Loading... ⏳</div>
+      <div id="error" class="error hidden" style="margin-top:10px;"></div>
+      <div id="results" style="margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <script>
+    const loadBtn = document.getElementById('loadBtn');
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    const results = document.getElementById('results');
+
+    loadBtn.addEventListener('click', function(){
+      // Show loading, hide others
+      loading.classList.remove('hidden');
+      error.classList.add('hidden');
+      results.innerHTML = '';
+
+      fetch('provinces.json')
+        .then(function(response){
+          if(!response.ok){
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(function(provinces){
+          // Hide loading
+          loading.classList.add('hidden');
+          
+          // Display provinces
+          const ul = document.createElement('ul');
+          provinces.forEach(function(province){
+            const li = document.createElement('li');
+            li.textContent = `${province.name} — Capital: ${province.capital} (${province.region})`;
+            ul.appendChild(li);
+          });
+          results.appendChild(ul);
+        })
+        .catch(function(err){
+          // Show error
+          loading.classList.add('hidden');
+          error.classList.remove('hidden');
+          error.textContent = `Error: ${err.message}`;
+        });
+    });
+  </script>
+</body>
+</html>

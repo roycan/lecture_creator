@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "question": "Who is known as the 'Father of the Philippine Revolution'?",
+    "options": ["Andres Bonifacio", "Jose Rizal", "Emilio Aguinaldo", "Apolinario Mabini"],
+    "correct": 0
+  },
+  {
+    "id": 2,
+    "question": "What is the largest island in the Philippines?",
+    "options": ["Mindanao", "Luzon", "Palawan", "Visayas"],
+    "correct": 1
+  },
+  {
+    "id": 3,
+    "question": "In what year did the Philippines gain independence from Spain?",
+    "options": ["1896", "1898", "1899", "1901"],
+    "correct": 1
+  },
+  {
+    "id": 4,
+    "question": "What is the national flower of the Philippines?",
+    "options": ["Sampaguita", "Rose", "Orchid", "Sunflower"],
+    "correct": 0
+  },
+  {
+    "id": 5,
+    "question": "How many regions are there in the Philippines?",
+    "options": ["15", "16", "17", "18"],
+    "correct": 2
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "name": "store-inventory-v2",
+  "version": "2.0.0",
+  "description": "Store inventory system with SQLite database - upgraded from JSON file storage",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "setup": "node database/setup-database.js",
+    "dev": "npm run setup && npm start"
+  },
+  "keywords": [
+    "inventory",
+    "store",
+    "products",
+    "sqlite",
+    "express",
+    "crud"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^9.0.0",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2"
+  }
+}

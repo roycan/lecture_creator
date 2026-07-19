@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schema Designer Worksheet</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f0f4f8; color: #222; padding: 16px; max-width: 780px; margin: 0 auto; line-height: 1.5; }
+    h1 { font-size: 1.4rem; margin-bottom: 4px; }
+    .sub { color: #555; margin-bottom: 14px; font-size: .9rem; }
+    .card { background: #fff; border-radius: 8px; padding: 14px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+    .card h2 { font-size: 1.05rem; margin-bottom: 8px; }
+    .card h3 { font-size: .95rem; margin: 10px 0 6px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+    table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+    th, td { border: 1px solid #ccc; padding: 5px 7px; text-align: left; }
+    th { background: #1565c0; color: #fff; }
+    td.pk { background: #fff9c4; font-weight: bold; }
+    td.fk { background: #c8e6c9; }
+    .legend { font-size: .8rem; margin: 6px 0; color: #555; }
+    .legend span { margin-right: 12px; }
+    .chip { display: inline-block; padding: 1px 6px; border-radius: 8px; font-size: .7rem; font-weight: bold; }
+    .chip-pk { background: #fff9c4; color: #8d6e00; }
+    .chip-fk { background: #c8e6c9; color: #1b5e20; }
+    .rel { text-align: center; color: #1565c0; font-weight: bold; font-size: 1.3rem; margin: 8px 0; }
+    input, select { font-size: .85rem; padding: 5px; border: 1px solid #ccc; border-radius: 5px; }
+    .col-row { display: grid; grid-template-columns: 2fr 1.1fr 0.7fr 0.7fr auto; gap: 5px; margin-bottom: 5px; align-items: center; }
+    .col-row input, .col-row select { width: 100%; }
+    .ex { background: #f5f5f5; padding: 10px; border-radius: 6px; font-family: monospace; font-size: .8rem; white-space: pre-wrap; }
+    details summary { cursor: pointer; color: #1565c0; font-weight: bold; font-size: .85rem; }
+    .answer { background: #e8f5e9; border-left: 4px solid #2e7d32; padding: 10px; border-radius: 4px; font-size: .85rem; margin-top: 6px; }
+    .bad { background: #ffebee; border-left: 4px solid #c62828; padding: 10px; border-radius: 4px; font-size: .85rem; }
+    button { padding: 6px 12px; background: #1565c0; color: #fff; border: none; border-radius: 5px; font-size: .85rem; cursor: pointer; }
+    button.small { background: #eee; color: #333; padding: 3px 8px; }
+    button:hover { opacity: .9; }
+    .note { font-size: .8rem; color: #666; font-style: italic; }
+  </style>
+</head>
+<body>
+  <h1>🗄️ Schema Designer Worksheet</h1>
+  <p class="sub">Design your tables, mark PK/FK, and see how they connect. Start with the worked example, then try the exercises.</p>
+
+  <!-- WORKED EXAMPLE -->
+  <div class="card">
+    <h2>✅ Worked Example: Sari-Sari (products + sales)</h2>
+    <p class="legend">
+      <span><span class="chip chip-pk">PK</span> primary key</span>
+      <span><span class="chip chip-fk">FK</span> foreign key</span>
+    </p>
+    <div class="grid">
+      <div>
+        <h3>products (the "one")</h3>
+        <table>
+          <tr><th>column</th><th>type</th></tr>
+          <tr><td class="pk">id <span class="chip chip-pk">PK</span></td><td>INTEGER</td></tr>
+          <tr><td>name</td><td>TEXT</td></tr>
+          <tr><td>price</td><td>REAL</td></tr>
+          <tr><td>stock</td><td>INTEGER</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>sales (the "many")</h3>
+        <table>
+          <tr><th>column</th><th>type</th></tr>
+          <tr><td class="pk">id <span class="chip chip-pk">PK</span></td><td>INTEGER</td></tr>
+          <tr><td class="fk">product_id <span class="chip chip-fk">FK</span></td><td>INTEGER</td></tr>
+          <tr><td>qty</td><td>INTEGER</td></tr>
+          <tr><td>sale_date</td><td>TEXT</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="rel">products (1) ──⟶ sales (many) &nbsp;&nbsp; FK = product_id → products.id</div>
+    <div class="ex">CREATE TABLE products (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT, price REAL, stock INTEGER
+);
+CREATE TABLE sales (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  product_id INTEGER,
+  qty INTEGER, sale_date TEXT,
+  FOREIGN KEY (product_id) REFERENCES products(id)
+);</div>
+  </div>
+
+  <!-- EXERCISE 1: BUILD YOUR OWN -->
+  <div class="card">
+    <h2>✏️ Exercise 1: Design the barangay clearance tables</h2>
+    <p class="note">One <b>resident</b> can request <b>many</b> clearances. Build both tables. Mark the PK and the FK (remember: the FK goes on the "many" side = clearances).</p>
+    <div class="grid">
+      <div>
+        <h3>residents</h3>
+        <div id="t1"></div>
+        <button class="small" onclick="addCol('t1')">+ column</button>
+      </div>
+      <div>
+        <h3>clearances</h3>
+        <div id="t2"></div>
+        <button class="small" onclick="addCol('t2')">+ column</button>
+      </div>
+    </div>
+    <div class="rel">residents (1) ──⟶ clearances (many)</div>
+    <details><summary>Check your answer</summary>
+      <div class="answer">
+        <b>residents:</b> id (PK, INTEGER), full_name (TEXT), address (TEXT), birth_date (TEXT).<br>
+        <b>clearances:</b> id (PK, INTEGER), <b>resident_id (FK → residents.id)</b>, purpose (TEXT), date_issued (TEXT), status (TEXT).<br>
+        The FK <code>resident_id</code> is on <b>clearances</b> (the many side). One resident → many clearances.
+      </div>
+    </details>
+  </div>
+
+  <!-- EXERCISE 2: FIX THE GIANT TABLE -->
+  <div class="card">
+    <h2>🔧 Exercise 2: Fix the one-giant-table</h2>
+    <div class="bad">
+      <b>❌ Bad:</b> a single <code>records</code> table crams product info into every sale:<br>
+      sale_id · product_name · product_price · qty · date<br>
+      <span class="note">(product_name & price are repeated on every sale — if the price changes, you must update dozens of rows.)</span>
+    </div>
+    <p class="note" style="margin-top:8px">Split this into two properly-related tables. Write the two table names and the foreign key that connects them.</p>
+    <input style="width:100%;margin-bottom:6px" placeholder="Table 1 name + columns (the product info, once)">
+    <input style="width:100%;margin-bottom:6px" placeholder="Table 2 name + columns (the sale, referencing the product by id)">
+    <input style="width:100%" placeholder="Which column is the FK, and what does it point to?">
+    <details><summary>Check your answer</summary>
+      <div class="answer">
+        <b>Table 1 — products:</b> id (PK), name, price.<br>
+        <b>Table 2 — sales:</b> id (PK), <b>product_id (FK → products.id)</b>, qty, date.<br>
+        Now product name/price live in ONE place. Sales just store the product's id. ✅
+      </div>
+    </details>
+  </div>
+
+  <p class="note">Memory trick: <b>"The many side carries the id of the one."</b> Sales carry product_id. Clearances carry resident_id.</p>
+
+  <script>
+    // --- Mini schema builder ---
+    function addCol(containerId) {
+      const row = document.createElement('div');
+      row.className = 'col-row';
+      row.innerHTML = `
+        <input placeholder="column name">
+        <select>
+          <option>INTEGER</option><option>REAL</option><option>TEXT</option>
+        </select>
+        <label style="font-size:.75rem"><input type="radio" name="pk-${containerId}"> PK</label>
+        <label style="font-size:.75rem"><input type="checkbox"> FK</label>
+        <button class="small" onclick="this.parentElement.remove()">✕</button>
+      `;
+      document.getElementById(containerId).appendChild(row);
+    }
+    // seed each table with a starter PK row
+    addCol('t1'); addCol('t1');
+    addCol('t2'); addCol('t2');
+  </script>
+</body>
+</html>

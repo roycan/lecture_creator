@@ -141,7 +141,7 @@ All of this structure is HTML!
 *Figure 2: Anatomy of HTML tags and attributes - understanding opening tags, closing tags, and attribute syntax*
 
 **🎯 Try It:** Basic Structure
-- Open `assets/html-structure.html` in your browser
+- Open [`assets/html-structure.html`](assets/html-structure.html) in your browser
 - View the page source (Right-click → View Page Source)
 - See how the structure becomes a web page
 
@@ -295,7 +295,7 @@ All of this structure is HTML!
 ```
 
 **🎯 Try It:** Semantic Structure
-- Open `assets/barangay-semantic.html` in your browser
+- Open [`assets/barangay-semantic.html`](assets/barangay-semantic.html) in your browser
 - Inspect with DevTools (F12) - see the clear structure
 - Notice how easy it is to understand the layout
 
@@ -431,7 +431,7 @@ All of this structure is HTML!
 ```
 
 **🎯 Try It:** Text Elements
-- Open `assets/text-practice.html`
+- Open [`assets/text-practice.html`](assets/text-practice.html)
 - See different text elements in action
 - Try modifying the content
 
@@ -554,7 +554,7 @@ All of this structure is HTML!
 ```
 
 **🎯 Try It:** Links and Images
-- Open `assets/links-images-practice.html`
+- Open [`assets/links-images-practice.html`](assets/links-images-practice.html)
 - Click different types of links
 - See how images are displayed
 
@@ -752,7 +752,7 @@ Forms are how users interact with websites:
 ```
 
 **🎯 Try It:** Forms
-- Open `assets/barangay-clearance-form.html`
+- Open [`assets/barangay-clearance-form.html`](assets/barangay-clearance-form.html)
 - Fill out the form
 - Try the validation (submit without filling required fields)
 - See how different input types work on mobile
@@ -902,7 +902,7 @@ Tables organize data in rows and columns:
 ```
 
 **🎯 Try It:** Tables
-- Open `assets/price-list-table.html`
+- Open [`assets/price-list-table.html`](assets/price-list-table.html)
 - See how data is organized
 - Try adding more rows/columns
 
@@ -1205,7 +1205,7 @@ Need offline access?
 - At least one image with alt text
 - Proper heading hierarchy
 
-**Starter:** `assets/barangay-profile-starter.html`  
+**Starter:** [`assets/barangay-profile-starter.html`](assets/barangay-profile-starter.html)  
 **Solution:** `assets/barangay-profile-solution.html`
 
 ---
@@ -1223,7 +1223,7 @@ Need offline access?
 - At least 10 products
 - Contact form at bottom
 
-**Starter:** `assets/store-catalog-starter.html`  
+**Starter:** [`assets/store-catalog-starter.html`](assets/store-catalog-starter.html)  
 **Solution:** `assets/store-catalog-solution.html`
 
 ---
@@ -1244,7 +1244,7 @@ Need offline access?
 - All inputs properly labeled
 - Required fields marked
 
-**Starter:** `assets/contact-form-starter.html`  
+**Starter:** [`assets/contact-form-starter.html`](assets/contact-form-starter.html)  
 **Solution:** `assets/contact-form-solution.html`
 
 ---
@@ -1315,10 +1315,10 @@ Create a **complete school homepage** using everything you've learned!
 - Industry partnerships
 
 **Files:**
-- Starter: `assets/school-website-starter.html`
-- Solution A: `assets/school-website-elementary.html`
-- Solution B: `assets/school-website-highschool.html`
-- Solution C: `assets/school-website-vocational.html`
+- Starter: [`assets/school-website-starter.html`](assets/school-website-starter.html)
+- Solution A: [`assets/school-website-elementary.html`](assets/school-website-elementary.html)
+- Solution B: [`assets/school-website-highschool.html`](assets/school-website-highschool.html)
+- Solution C: [`assets/school-website-vocational.html`](assets/school-website-vocational.html)
 
 ---
 

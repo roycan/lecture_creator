@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "name": "Roberto Santos",
+    "position": "Barangay Captain",
+    "contact": "0917-123-4567",
+    "address": "Purok 1, Barangay San Jose",
+    "term": "2023-2026"
+  },
+  {
+    "id": 2,
+    "name": "Elena Cruz",
+    "position": "Barangay Kagawad",
+    "contact": "0918-234-5678",
+    "address": "Purok 2, Barangay San Jose",
+    "term": "2023-2026"
+  },
+  {
+    "id": 3,
+    "name": "Pedro Ramos",
+    "position": "Barangay Kagawad",
+    "contact": "0919-345-6789",
+    "address": "Purok 3, Barangay San Jose",
+    "term": "2023-2026"
+  },
+  {
+    "id": 4,
+    "name": "Maria Gonzales",
+    "position": "Barangay Kagawad",
+    "contact": "0920-456-7890",
+    "address": "Purok 1, Barangay San Jose",
+    "term": "2023-2026"
+  },
+  {
+    "id": 5,
+    "name": "Luz Mercado",
+    "position": "Barangay Secretary",
+    "contact": "0921-567-8901",
+    "address": "Purok 4, Barangay San Jose",
+    "term": "2023-2026"
+  },
+  {
+    "id": 6,
+    "name": "Jose Tan",
+    "position": "Barangay Treasurer",
+    "contact": "0922-678-9012",
+    "address": "Purok 2, Barangay San Jose",
+    "term": "2023-2026"
+  },
+  {
+    "id": 7,
+    "name": "Carmen Lopez",
+    "position": "SK Chairperson",
+    "contact": "0923-789-0123",
+    "address": "Purok 5, Barangay San Jose",
+    "term": "2023-2026"
+  }
+]

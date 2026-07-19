@@ -127,7 +127,7 @@ foodOrder
 
 ### 🎯 Try it yourself — Promise Basics
 
-- Open: `assets/promise-basics.html`
+- Open: [`assets/promise-basics.html`](assets/promise-basics.html)
 - How: Double-click to open in your browser
 
 Tasks:
@@ -208,7 +208,7 @@ fetch('assets/data.json')
 
 ### 🎯 Try it yourself — Fetch Demo
 
-- Open: `assets/fetch-demo.html`
+- Open: [`assets/fetch-demo.html`](assets/fetch-demo.html)
 - How: Double-click to open in your browser
 
 Tasks:
@@ -300,7 +300,7 @@ async function loadProvinces() {
 
 ### 🎯 Try it yourself — Async/Await Demo
 
-- Open: `assets/async-await-demo.html`
+- Open: [`assets/async-await-demo.html`](assets/async-await-demo.html)
 - How: Double-click to open in your browser
 
 Tasks:
@@ -387,7 +387,7 @@ console.log(json); // '{"name":"Maria","age":14}'
 
 ### 🎯 Try it yourself — JSON Practice
 
-- Open: `assets/json-practice.html`
+- Open: [`assets/json-practice.html`](assets/json-practice.html)
 - How: Double-click to open in your browser
 
 Tasks:
@@ -466,7 +466,7 @@ State diagram showing transitions: idle → loading → success/error, with retr
 
 ### 🎯 Try it yourself — Error Handling
 
-- Open: `assets/error-handling.html`
+- Open: [`assets/error-handling.html`](assets/error-handling.html)
 - How: Double-click to open in your browser
 
 Tasks:
@@ -558,7 +558,7 @@ async function loadAll() {
 
 ### 🎯 Try it yourself — Search with Debounce
 
-- Open: `assets/search-demo.html`
+- Open: [`assets/search-demo.html`](assets/search-demo.html)
 - How: Double-click to open in your browser
 
 Tasks:
@@ -642,10 +642,6 @@ Students pick one theme and build a data dashboard with multiple fetch calls, ag
 
 **Downloads:**
 - [`dashboard-starter.html`](assets/dashboard-starter.html) — Scaffold with TODOs
-- Solutions (for teachers):
-  - [`dashboard-school.html`](assets/dashboard-school.html) — School Stats
-  - [`dashboard-store.html`](assets/dashboard-store.html) — Store Analytics
-  - [`dashboard-transport.html`](assets/dashboard-transport.html) — Transport Tracker
 
 ### Theme 1: School Stats Dashboard
 - Fetch: students, grades, attendance

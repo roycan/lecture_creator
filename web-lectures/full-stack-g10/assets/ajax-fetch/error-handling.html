@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Error Handling Practice</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Error Handling Practice</h2>
+      <div class="form-row">
+        <button id="successBtn" class="btn">Load Valid File</button>
+        <button id="notFoundBtn" class="btn secondary">Load Missing File (404)</button>
+        <button id="invalidBtn" class="btn secondary">Load Invalid JSON</button>
+      </div>
+      
+      <div id="loading" class="small hidden" style="margin-top:12px;">
+        <strong>Loading...</strong> ⏳
+      </div>
+      
+      <div id="success" class="card success hidden" style="margin-top:12px;">
+        <strong>Success!</strong><br>
+        <div id="successData"></div>
+      </div>
+      
+      <div id="error" class="card error hidden" style="margin-top:12px;">
+        <strong>Error:</strong><br>
+        <div id="errorMsg"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const loading = document.getElementById('loading');
+    const success = document.getElementById('success');
+    const successData = document.getElementById('successData');
+    const error = document.getElementById('error');
+    const errorMsg = document.getElementById('errorMsg');
+
+    function showLoading() {
+      loading.classList.remove('hidden');
+      success.classList.add('hidden');
+      error.classList.add('hidden');
+    }
+
+    function showSuccess(data) {
+      loading.classList.add('hidden');
+      success.classList.remove('hidden');
+      error.classList.add('hidden');
+      successData.textContent = JSON.stringify(data, null, 2);
+    }
+
+    function showError(message) {
+      loading.classList.add('hidden');
+      success.classList.add('hidden');
+      error.classList.remove('hidden');
+      errorMsg.textContent = message;
+    }
+
+    async function loadData(url) {
+      showLoading();
+
+      try {
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Response is not JSON');
+        }
+        
+        const data = await response.json();
+        showSuccess(data);
+        
+      } catch (err) {
+        showError(err.message);
+      }
+    }
+
+    document.getElementById('successBtn').addEventListener('click', () => {
+      loadData('provinces.json');
+    });
+
+    document.getElementById('notFoundBtn').addEventListener('click', () => {
+      loadData('does-not-exist.json');
+    });
+
+    document.getElementById('invalidBtn').addEventListener('click', () => {
+      // This will load an HTML file, causing JSON parse error
+      loadData('error-handling.html');
+    });
+  </script>
+</body>
+</html>

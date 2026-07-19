@@ -1,0 +1,101 @@
+# .gitignore for Node.js Projects
+# For Grade 9 Filipino Students
+
+# ==========================================
+# NODE.JS DEPENDENCIES
+# ==========================================
+# Don't upload node_modules/ - too big!
+# Anyone can download them with: npm install
+node_modules/
+
+# ==========================================
+# ENVIRONMENT VARIABLES (IMPORTANT!)
+# ==========================================
+# Never upload passwords, API keys, secrets!
+.env
+.env.local
+.env.production
+
+# ==========================================
+# LOG FILES
+# ==========================================
+# Debug logs can be very large
+*.log
+logs/
+npm-debug.log*
+
+# ==========================================
+# OS FILES (Not needed in repo)
+# ==========================================
+# macOS creates these files
+.DS_Store
+
+# Windows thumbnail cache
+Thumbs.db
+Desktop.ini
+
+# Linux temporary files
+*~
+
+# ==========================================
+# IDE/EDITOR FILES
+# ==========================================
+# VS Code workspace settings (optional - depends on team)
+.vscode/
+# Or keep settings, ignore personal files:
+# .vscode/extensions.json
+# .vscode/launch.json
+
+# ==========================================
+# BUILD OUTPUT
+# ==========================================
+# Don't upload compiled/generated files
+dist/
+build/
+*.min.js
+*.min.css
+
+# ==========================================
+# TEMPORARY FILES
+# ==========================================
+*.tmp
+*.temp
+.cache/
+
+# ==========================================
+# COMMON NODE.JS FILES TO IGNORE
+# ==========================================
+# Package lock for pnpm
+pnpm-lock.yaml
+
+# Yarn files
+.yarn/
+.pnp.*
+
+# ==========================================
+# EXAMPLE: Sari-Sari Store Inventory App
+# ==========================================
+# Keep your product list private:
+# data/products.json
+# data/sales.json
+
+# ==========================================
+# HOW TO USE THIS FILE
+# ==========================================
+# 1. Copy this file to your project root
+# 2. Rename it to: .gitignore (with the dot!)
+# 3. Customize for your project needs
+# 4. Add to Git:
+#    git add .gitignore
+#    git commit -m "Add .gitignore file"
+#
+# WHY GITIGNORE?
+# - Keeps your repo small and fast
+# - Protects passwords and secrets
+# - Avoids conflicts with OS/IDE files
+# - Makes collaboration easier
+#
+# PHILIPPINE CONTEXT:
+# - Smaller repos = faster uploads on slow internet
+# - 50 MB node_modules = ₱50 in data to upload
+# - With .gitignore = only ₱5 (10x savings!)

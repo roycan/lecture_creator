@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mobile-Friendly Form - Barangay Clearance</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+        .form-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 2rem 0;
+        }
+        .success-message {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-12-mobile is-10-tablet is-8-desktop is-6-widescreen">
+                    <div class="box">
+                        <!-- Header -->
+                        <div class="has-text-centered mb-5">
+                            <h1 class="title is-3">📄 Barangay Clearance Application</h1>
+                            <p class="subtitle is-5">Barangay San Juan, Manila</p>
+                            <p class="has-text-grey">Fill out this form on your phone or computer</p>
+                        </div>
+
+                        <!-- Success Message (hidden by default) -->
+                        <div class="notification is-success success-message" id="successMessage">
+                            <button class="delete"></button>
+                            <p><strong>✅ Application Submitted!</strong></p>
+                            <p>Your barangay clearance application has been received. Please visit the barangay hall tomorrow with ₱50 and valid ID to claim.</p>
+                        </div>
+
+                        <!-- Form -->
+                        <form id="clearanceForm">
+                            <!-- Personal Information -->
+                            <h2 class="title is-5">Personal Information</h2>
+                            
+                            <div class="field">
+                                <label class="label">
+                                    Complete Name <span class="has-text-danger">*</span>
+                                </label>
+                                <div class="control">
+                                    <input class="input" 
+                                           type="text" 
+                                           name="fullname"
+                                           placeholder="Juan Dela Cruz"
+                                           required>
+                                </div>
+                                <p class="help">As written on your ID</p>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">
+                                    Date of Birth <span class="has-text-danger">*</span>
+                                </label>
+                                <div class="control">
+                                    <input class="input" 
+                                           type="date" 
+                                           name="birthdate"
+                                           required>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">
+                                    Age <span class="has-text-danger">*</span>
+                                </label>
+                                <div class="control">
+                                    <input class="input" 
+                                           type="number" 
+                                           name="age"
+                                           min="18"
+                                           max="100"
+                                           placeholder="18"
+                                           required>
+                                </div>
+                                <p class="help">Must be 18 years or older</p>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">
+                                    Gender <span class="has-text-danger">*</span>
+                                </label>
+                                <div class="control">
+                                    <div class="select is-fullwidth">
+                                        <select name="gender" required>
+                                            <option value="">Select gender</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contact Information -->
+                            <h2 class="title is-5 mt-5">Contact Information</h2>
+                            
+                            <div class="field">
+                                <label class="label">
+                                    Mobile Number <span class="has-text-danger">*</span>
+                                </label>
+                                <div class="control">
+                                    <input class="input" 
+                                           type="tel" 
+                                           name="mobile"
+                                           placeholder="0912-345-6789"
+                                           pattern="[0-9]{4}-[0-9]{3}-[0-9]{4}"
+                                           required>
+                                </div>
+                                <p class="help">Format: 0912-345-6789</p>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">Email Address (Optional)</label>
+                                <div class="control">
+                                    <input class="input" 
+                                           type="email" 
+                                           name="email"
+                                           placeholder="juan@email.com">
+                                </div>
+                                <p class="help">For notification purposes</p>
+                            </div>
+
+                            <!-- Address -->
+                            <h2 class="title is-5 mt-5">Address</h2>
+                            
+                            <div class="field">
+                                <label class="label">
+                                    Complete Address <span class="has-text-danger">*</span>
+                                </label>
+                                <div class="control">
+                                    <textarea class="textarea" 
+                                              name="address"
+                                              rows="3"
+                                              placeholder="House No., Street, Purok, Barangay San Juan, Manila"
+                                              required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">
+                                    Years of Residency <span class="has-text-danger">*</span>
+                                </label>
+                                <div class="control">
+                                    <input class="input" 
+                                           type="number" 
+                                           name="residency"
+                                           min="0"
+                                           max="100"
+                                           placeholder="5"
+                                           required>
+                                </div>
+                                <p class="help">How many years have you lived in Barangay San Juan?</p>
+                            </div>
+
+                            <!-- Purpose -->
+                            <h2 class="title is-5 mt-5">Purpose of Clearance</h2>
+                            
+                            <div class="field">
+                                <label class="label">
+                                    Purpose <span class="has-text-danger">*</span>
+                                </label>
+                                <div class="control">
+                                    <div class="select is-fullwidth">
+                                        <select name="purpose" id="purposeSelect" required>
+                                            <option value="">Select purpose</option>
+                                            <option value="employment">Employment / Job Application</option>
+                                            <option value="school">School Requirements</option>
+                                            <option value="business">Business Permit</option>
+                                            <option value="license">Driver's License</option>
+                                            <option value="loan">Bank Loan</option>
+                                            <option value="travel">Travel / Visa</option>
+                                            <option value="other">Other (please specify)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="field" id="otherPurposeField" style="display: none;">
+                                <label class="label">Please Specify Purpose</label>
+                                <div class="control">
+                                    <input class="input" 
+                                           type="text" 
+                                           name="other_purpose"
+                                           placeholder="Enter purpose">
+                                </div>
+                            </div>
+
+                            <!-- Valid ID -->
+                            <h2 class="title is-5 mt-5">Valid ID</h2>
+                            
+                            <div class="field">
+                                <label class="label">
+                                    Type of ID <span class="has-text-danger">*</span>
+                                </label>
+                                <div class="control">
+                                    <div class="select is-fullwidth">
+                                        <select name="id_type" required>
+                                            <option value="">Select ID type</option>
+                                            <option value="postal">Postal ID</option>
+                                            <option value="philhealth">PhilHealth ID</option>
+                                            <option value="sss">SSS ID</option>
+                                            <option value="voters">Voter's ID</option>
+                                            <option value="drivers">Driver's License</option>
+                                            <option value="passport">Passport</option>
+                                            <option value="company">Company ID</option>
+                                            <option value="school">School ID</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <p class="help">Please bring this ID when claiming</p>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">
+                                    ID Number <span class="has-text-danger">*</span>
+                                </label>
+                                <div class="control">
+                                    <input class="input" 
+                                           type="text" 
+                                           name="id_number"
+                                           placeholder="12-3456789-0"
+                                           required>
+                                </div>
+                            </div>
+
+                            <!-- Terms -->
+                            <div class="field mt-5">
+                                <label class="checkbox">
+                                    <input type="checkbox" name="terms" required>
+                                    I certify that all information provided is true and correct <span class="has-text-danger">*</span>
+                                </label>
+                            </div>
+
+                            <div class="field">
+                                <label class="checkbox">
+                                    <input type="checkbox" name="data_privacy">
+                                    I agree to the data privacy policy
+                                </label>
+                            </div>
+
+                            <!-- Information Box -->
+                            <div class="notification is-info is-light mt-4">
+                                <h3 class="title is-6">📋 What to Bring When Claiming:</h3>
+                                <ul>
+                                    <li>✅ Valid ID (same as entered above)</li>
+                                    <li>✅ ₱50 processing fee</li>
+                                    <li>✅ This application confirmation (screenshot recommended)</li>
+                                </ul>
+                                <p class="mt-3"><strong>Office Hours:</strong> Monday-Friday, 8:00 AM - 5:00 PM</p>
+                            </div>
+
+                            <!-- Submit Buttons -->
+                            <div class="field is-grouped is-grouped-centered mt-5">
+                                <div class="control">
+                                    <button class="button is-primary is-large" type="submit">
+                                        <span>Submit Application</span>
+                                    </button>
+                                </div>
+                                <div class="control">
+                                    <button class="button is-light is-large" type="reset">
+                                        <span>Clear Form</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Mobile-Specific Tips -->
+                    <div class="notification is-success is-light mt-4 is-hidden-desktop">
+                        <h3 class="title is-6">📱 Mobile Tips:</h3>
+                        <ul class="content">
+                            <li>Notice how the keyboard changes for phone numbers, emails, and dates!</li>
+                            <li>Buttons are large enough to tap easily</li>
+                            <li>Form adapts to your screen size</li>
+                            <li>You can fill this out on your phone right now! 📲</li>
+                        </ul>
+                    </div>
+
+                    <!-- Desktop Tips -->
+                    <div class="notification is-info is-light mt-4 is-hidden-mobile">
+                        <h3 class="title is-6">💻 Desktop Tips:</h3>
+                        <ul class="content">
+                            <li>Try resizing your browser window to see mobile view</li>
+                            <li>Open DevTools (F12) and use Device Toolbar</li>
+                            <li>Test on different phone sizes</li>
+                            <li>Notice how the form stays centered and readable</li>
+                        </ul>
+                    </div>
+
+                    <!-- Features List -->
+                    <div class="box has-background-light mt-4">
+                        <h3 class="title is-5">✨ Why This Form is Mobile-Friendly:</h3>
+                        <div class="content">
+                            <ol>
+                                <li><strong>Viewport meta tag</strong> - Form adapts to screen size</li>
+                                <li><strong>Bulma <code>is-fullwidth</code></strong> - Dropdowns span full width on mobile</li>
+                                <li><strong>HTML5 input types</strong>:
+                                    <ul>
+                                        <li><code>type="tel"</code> - Shows number keyboard for phone</li>
+                                        <li><code>type="email"</code> - Shows email keyboard with @</li>
+                                        <li><code>type="date"</code> - Shows date picker widget</li>
+                                        <li><code>type="number"</code> - Shows number keyboard for age</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Large touch targets</strong> - Buttons are <code>is-large</code> (easy to tap)</li>
+                                <li><strong>Clear labels and help text</strong> - Users know what to enter</li>
+                                <li><strong>Form validation</strong> - <code>required</code> and <code>pattern</code> attributes</li>
+                                <li><strong>Responsive columns</strong> - Form stays centered on all screens</li>
+                                <li><strong>Textarea for address</strong> - Multi-line for complete address</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Show/hide "Other Purpose" field
+        const purposeSelect = document.getElementById('purposeSelect');
+        const otherPurposeField = document.getElementById('otherPurposeField');
+        
+        purposeSelect.addEventListener('change', function() {
+            if (this.value === 'other') {
+                otherPurposeField.style.display = 'block';
+                otherPurposeField.querySelector('input').required = true;
+            } else {
+                otherPurposeField.style.display = 'none';
+                otherPurposeField.querySelector('input').required = false;
+            }
+        });
+
+        // Handle form submission
+        const form = document.getElementById('clearanceForm');
+        const successMessage = document.getElementById('successMessage');
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Hide form
+            form.style.display = 'none';
+            
+            // Show success message
+            successMessage.style.display = 'block';
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Log form data (in real app, would send to server)
+            const formData = new FormData(form);
+            console.log('Form submitted with data:');
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+        });
+
+        // Handle success message close button
+        successMessage.querySelector('.delete').addEventListener('click', function() {
+            successMessage.style.display = 'none';
+            form.style.display = 'block';
+            form.reset();
+        });
+    </script>
+</body>
+</html>

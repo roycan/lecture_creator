@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Command Line Cheat Sheet — Grade 10 Full-Stack</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    margin: 0; padding: 24px; color: #1f2933; background: #f7f9fc; line-height: 1.5;
+  }
+  header { border-bottom: 3px solid #2563eb; padding-bottom: 12px; margin-bottom: 20px; }
+  h1 { margin: 0 0 4px; font-size: 1.6rem; }
+  header p { margin: 0; color: #52606d; font-size: 0.95rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+  section {
+    background: #fff; border: 1px solid #e4e7eb; border-radius: 8px; padding: 14px 16px;
+    break-inside: avoid;
+  }
+  h2 { margin: 0 0 10px; font-size: 1.05rem; color: #2563eb; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  td { padding: 5px 6px; border-bottom: 1px solid #f0f3f7; vertical-align: top; }
+  td:first-child { white-space: nowrap; }
+  code {
+    background: #0b1b2b; color: #7fd1ff; padding: 2px 6px; border-radius: 4px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 0.85rem;
+  }
+  td:first-child code { background: #eef2ff; color: #1e3a8a; }
+  .tip { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 14px; margin-top: 16px; }
+  .tip strong { color: #92400e; }
+  footer { margin-top: 18px; color: #7b8794; font-size: 0.8rem; }
+  @media print { body { background: #fff; } section { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>⌨️ Command Line Cheat Sheet</h1>
+  <p>Keep this next to your keyboard. The commands you'll use all year to build & run Node/Express apps. Print it.</p>
+</header>
+
+<div class="grid">
+  <section>
+    <h2>Where am I? (Navigation)</h2>
+    <table>
+      <tr><td><code>pwd</code></td><td>Print the folder you're in ("print working directory").</td></tr>
+      <tr><td><code>ls</code></td><td>List files in this folder. (<code>dir</code> on Windows cmd.)</td></tr>
+      <tr><td><code>ls -la</code></td><td>List <em>everything</em>, including hidden files like <code>.env</code>.</td></tr>
+      <tr><td><code>cd folder</code></td><td>Go into <code>folder</code>.</td></tr>
+      <tr><td><code>cd ..</code></td><td>Go up one folder.</td></tr>
+      <tr><td><code>cd ~</code></td><td>Go to your home folder.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Make / move / delete files</h2>
+    <table>
+      <tr><td><code>mkdir project</code></td><td>Make a new folder called <code>project</code>.</td></tr>
+      <tr><td><code>touch app.js</code></td><td>Create an empty <code>app.js</code>. (Or: <code>echo "" > app.js</code>.)</td></tr>
+      <tr><td><code>cp a.js b.js</code></td><td>Copy <code>a.js</code> to <code>b.js</code>.</td></tr>
+      <tr><td><code>mv old.js new.js</code></td><td>Rename or move a file.</td></tr>
+      <tr><td><code>rm file.txt</code></td><td>Delete a file. <strong>No recycle bin</strong> — be careful!</td></tr>
+      <tr><td><code>rm -r folder</code></td><td>Delete a whole folder and its contents.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>Node & npm (the important ones)</h2>
+    <table>
+      <tr><td><code>node -v</code></td><td>Check Node is installed (prints the version).</td></tr>
+      <tr><td><code>node app.js</code></td><td>Run your server / script.</td></tr>
+      <tr><td><code>npm init -y</code></td><td>Create a <code>package.json</code> (accept defaults).</td></tr>
+      <tr><td><code>npm install</code></td><td>Install every dependency listed in <code>package.json</code> (creates <code>node_modules</code>).</td></tr>
+      <tr><td><code>npm install express</code></td><td>Add a package (e.g. Express) and save it.</td></tr>
+      <tr><td><code>npm install --save-dev nodemon</code></td><td>Add a <em>dev-only</em> tool (used while coding, not in production).</td></tr>
+      <tr><td><code>npm start</code></td><td>Run the <code>"start"</code> script from <code>package.json</code>.</td></tr>
+      <tr><td><code>npx nodemon app.js</code></td><td>Run a dev tool once without installing it globally.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>When the server is running</h2>
+    <table>
+      <tr><td><code>Ctrl + C</code></td><td><strong>Stop</strong> the running server. Use this before re-running.</td></tr>
+      <tr><td><code>↑</code> (up arrow)</td><td>Recall your last command. Press again for older ones.</td></tr>
+      <tr><td><code>Tab</code></td><td>Auto-complete a file/folder name (saves typing).</td></tr>
+      <tr><td><code>clear</code></td><td>Clear the screen. (<code>cls</code> on Windows cmd.)</td></tr>
+      <tr><td><code>Ctrl + C</code> twice</td><td>If one Ctrl-C doesn't stop it, press again.</td></tr>
+    </table>
+  </section>
+</div>
+
+<div class="tip">
+  <strong>💡 The #1 beginner mistake:</strong> forgetting to stop the old server. If you see
+  <code>EADDRINUSE</code> ("port already in use"), it means a previous <code>node app.js</code> is still
+  running. Go to that terminal and press <code>Ctrl + C</code>, then try again.
+</div>
+
+<div class="tip">
+  <strong>📁 Two files you'll meet:</strong>
+  <ul style="margin:6px 0 0;">
+    <li><code>package.json</code> — your project's "ID card": name, scripts, and the list of packages it needs.</li>
+    <li><code>node_modules/</code> — the installed packages' actual code. <em>Never</em> edit by hand, never copy by USB — just run <code>npm install</code> to rebuild it.</li>
+  </ul>
+</div>
+
+<footer>
+  Grade 10 · ICT Full-Stack Elective · Command Line Cheat Sheet · Print-friendly.
+</footer>
+</body>
+</html>

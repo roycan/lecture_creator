@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grocery List - Offline PWA</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4CAF50">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    h1 {
+      color: #4CAF50;
+      margin-bottom: 10px;
+    }
+    
+    .status {
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    
+    .online {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    .offline {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    input[type="text"] {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    
+    button {
+      padding: 12px 24px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    
+    button:hover {
+      background: #45a049;
+    }
+    
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    
+    .item {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      gap: 10px;
+    }
+    
+    .item:last-child {
+      border-bottom: none;
+    }
+    
+    .item.completed {
+      opacity: 0.5;
+      text-decoration: line-through;
+    }
+    
+    .item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+    
+    .item span {
+      flex: 1;
+      font-size: 16px;
+    }
+    
+    .item button {
+      padding: 6px 12px;
+      background: #f44336;
+      font-size: 14px;
+    }
+    
+    .item button:hover {
+      background: #da190b;
+    }
+    
+    .empty {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+    
+    .install-prompt {
+      background: #2196F3;
+      color: white;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    
+    .install-prompt button {
+      background: white;
+      color: #2196F3;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📝 Lista ng Bibilhin</h1>
+    <p style="color: #666; margin-bottom: 20px;">
+      Offline-ready grocery list. Works even without internet!
+    </p>
+    
+    <!-- Connection Status -->
+    <div id="status" class="status online">
+      📡 Online - Changes will sync
+    </div>
+    
+    <!-- Install Prompt -->
+    <div id="installPrompt" class="install-prompt">
+      <strong>💾 Install this app!</strong>
+      <p>Works offline, saves data, and loads instantly.</p>
+      <button id="installBtn">Install Now</button>
+    </div>
+    
+    <!-- Add Item Form -->
+    <div class="input-group">
+      <input 
+        type="text" 
+        id="itemInput" 
+        placeholder="e.g., Bigas, Mantika, Itlog"
+        autofocus
+      >
+      <button id="addBtn">Add</button>
+    </div>
+    
+    <!-- Grocery List -->
+    <div id="list"></div>
+  </div>
+
+  <script>
+    // ===========================================
+    // STATE MANAGEMENT
+    // ===========================================
+    let items = [];
+    let deferredPrompt = null;
+    
+    // DOM elements
+    const itemInput = document.getElementById('itemInput');
+    const addBtn = document.getElementById('addBtn');
+    const list = document.getElementById('list');
+    const status = document.getElementById('status');
+    const installPrompt = document.getElementById('installPrompt');
+    const installBtn = document.getElementById('installBtn');
+    
+    // ===========================================
+    // LOAD ITEMS FROM LOCAL STORAGE
+    // ===========================================
+    function loadItems() {
+      const saved = localStorage.getItem('groceryItems');
+      if (saved) {
+        items = JSON.parse(saved);
+      }
+      renderList();
+    }
+    
+    // ===========================================
+    // SAVE ITEMS TO LOCAL STORAGE
+    // ===========================================
+    function saveItems() {
+      localStorage.setItem('groceryItems', JSON.stringify(items));
+    }
+    
+    // ===========================================
+    // ADD ITEM
+    // ===========================================
+    function addItem() {
+      const text = itemInput.value.trim();
+      if (!text) return;
+      
+      const item = {
+        id: Date.now(),
+        text: text,
+        completed: false
+      };
+      
+      items.push(item);
+      saveItems();
+      renderList();
+      itemInput.value = '';
+      itemInput.focus();
+    }
+    
+    // ===========================================
+    // TOGGLE ITEM COMPLETION
+    // ===========================================
+    function toggleItem(id) {
+      const item = items.find(i => i.id === id);
+      if (item) {
+        item.completed = !item.completed;
+        saveItems();
+        renderList();
+      }
+    }
+    
+    // ===========================================
+    // DELETE ITEM
+    // ===========================================
+    function deleteItem(id) {
+      items = items.filter(i => i.id !== id);
+      saveItems();
+      renderList();
+    }
+    
+    // ===========================================
+    // RENDER LIST
+    // ===========================================
+    function renderList() {
+      if (items.length === 0) {
+        list.innerHTML = '<div class="empty">Walang item pa. Magdagdag ng bibilhin!</div>';
+        return;
+      }
+      
+      list.innerHTML = items.map(item => `
+        <div class="item ${item.completed ? 'completed' : ''}">
+          <input 
+            type="checkbox" 
+            ${item.completed ? 'checked' : ''} 
+            onchange="toggleItem(${item.id})"
+          >
+          <span>${item.text}</span>
+          <button onclick="deleteItem(${item.id})">Delete</button>
+        </div>
+      `).join('');
+    }
+    
+    // ===========================================
+    // ONLINE/OFFLINE STATUS
+    // ===========================================
+    function updateOnlineStatus() {
+      if (navigator.onLine) {
+        status.className = 'status online';
+        status.textContent = '📡 Online - Changes will sync';
+      } else {
+        status.className = 'status offline';
+        status.textContent = '⚠️ Offline - Changes saved locally';
+      }
+    }
+    
+    // ===========================================
+    // SERVICE WORKER REGISTRATION
+    // ===========================================
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw-cache-first.js')
+          .then(reg => {
+            console.log('Service Worker registered:', reg);
+          })
+          .catch(err => {
+            console.error('Service Worker registration failed:', err);
+          });
+      });
+    }
+    
+    // ===========================================
+    // INSTALL PROMPT
+    // ===========================================
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installPrompt.style.display = 'block';
+    });
+    
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      
+      if (outcome === 'accepted') {
+        console.log('User installed the app');
+      }
+      
+      deferredPrompt = null;
+      installPrompt.style.display = 'none';
+    });
+    
+    window.addEventListener('appinstalled', () => {
+      console.log('App installed successfully!');
+      installPrompt.style.display = 'none';
+    });
+    
+    // ===========================================
+    // EVENT LISTENERS
+    // ===========================================
+    addBtn.addEventListener('click', addItem);
+    itemInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addItem();
+    });
+    
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    
+    // ===========================================
+    // INITIALIZE
+    // ===========================================
+    loadItems();
+    updateOnlineStatus();
+    
+    // Sample data for testing
+    if (items.length === 0) {
+      items = [
+        { id: 1, text: 'Bigas (5 kilos)', completed: false },
+        { id: 2, text: 'Mantika', completed: false },
+        { id: 3, text: 'Itlog (1 tray)', completed: false }
+      ];
+      saveItems();
+      renderList();
+    }
+  </script>
+</body>
+</html>

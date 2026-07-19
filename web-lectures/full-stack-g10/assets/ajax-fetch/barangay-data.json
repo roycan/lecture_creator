@@ -1,0 +1,14 @@
+[
+  {"id": 1, "name": "Juan Dela Cruz", "position": "Barangay Captain", "contact": "0917-123-4567"},
+  {"id": 2, "name": "Maria Santos", "position": "Kagawad", "contact": "0918-234-5678"},
+  {"id": 3, "name": "Pedro Reyes", "position": "Kagawad", "contact": "0919-345-6789"},
+  {"id": 4, "name": "Ana Garcia", "position": "Secretary", "contact": "0920-456-7890"},
+  {"id": 5, "name": "Carlos Mendoza", "position": "Treasurer", "contact": "0921-567-8901"},
+  {"id": 6, "name": "Elena Cruz", "position": "Kagawad", "contact": "0922-678-9012"},
+  {"id": 7, "name": "Francisco Ramos", "position": "Kagawad", "contact": "0923-789-0123"},
+  {"id": 8, "name": "Gloria Tan", "position": "SK Chairman", "contact": "0924-890-1234"},
+  {"id": 9, "name": "Henry Lim", "position": "Kagawad", "contact": "0925-901-2345"},
+  {"id": 10, "name": "Isabel Fernandez", "position": "Kagawad", "contact": "0926-012-3456"},
+  {"id": 11, "name": "Jose Aquino", "position": "Kagawad", "contact": "0927-123-4567"},
+  {"id": 12, "name": "Karen Villanueva", "position": "Kagawad", "contact": "0928-234-5678"}
+]

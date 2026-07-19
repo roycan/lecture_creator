@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>✅ UAT Form Generator</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 20px; color: #1f2933; }
+  .card { max-width: 720px; margin: 0 auto; background: #fff; border-radius: 10px; padding: 22px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+  h2 { margin: 0 0 6px; }
+  h3 { margin: 22px 0 8px; }
+  .muted { color: #6b7280; margin: 0 0 16px; }
+  .info { background: #e7f3ff; border-left: 4px solid #0066cc; border-radius: 6px; padding: 12px 14px; font-size: 14px; }
+  label { display: block; font-weight: 600; margin: 12px 0 4px; }
+  select, input[type=text], input[type=date] { width: 100%; padding: 9px; border: 1px solid #cbd2d9; border-radius: 6px; font-size: 15px; }
+  button { padding: 9px 15px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; margin-right: 8px; margin-top: 12px; }
+  .btn { background: #2563eb; color: #fff; }
+  .btn-soft { background: #6c757d; color: #fff; }
+  .btn-go { background: #28a745; color: #fff; }
+  #uat { margin-top: 10px; }
+  .uat-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 8px; }
+  .uat-item input[type=checkbox] { width: 18px; height: 18px; }
+  .uat-item select { width: auto; padding: 4px; }
+  .signoff { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .hidden { display: none; }
+  pre { background: #0b1b2b; color: #d1f4ff; padding: 14px; border-radius: 8px; overflow:auto; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h2>✅ UAT Form Generator</h2>
+  <p class="muted">Build a User Acceptance Testing (UAT) form: pick a project, list the features real users should try, then copy/export the sign-off sheet.</p>
+
+  <div class="info">
+    <strong>What is UAT?</strong> Before you ship, the people who will actually use the app (the "users") try the key features and confirm each works. UAT = their formal "yes, this is acceptable." A signed UAT form is your evidence that the app meets the requirements.
+  </div>
+
+  <h3>1. Choose a project</h3>
+  <select id="projectType" onchange="loadTemplate()">
+    <option value="">-- Select project type --</option>
+    <option value="sari-sari">🏪 Sari-Sari Store Inventory</option>
+    <option value="barangay">🏛️ Barangay Directory System</option>
+    <option value="appointment">📅 Appointment Booking System</option>
+    <option value="school">🎓 School Records System</option>
+    <option value="custom">✍️ Custom (build your own)</option>
+  </select>
+
+  <div id="customSection" class="hidden">
+    <h3>Build your own feature list</h3>
+    <label>Project name</label>
+    <input type="text" id="customName" placeholder="e.g., Library Management System">
+    <div id="customItems"></div>
+    <button class="btn-soft" onclick="addItem()">➕ Add feature</button>
+    <button class="btn" onclick="buildCustom()">✨ Generate UAT form</button>
+  </div>
+
+  <div id="formSection" class="hidden">
+    <h3>2. Run the test — tick each feature the user confirms</h3>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+      <div><label>Test date</label><input type="date" id="testDate"></div>
+      <div><label>User / tester name</label><input type="text" id="testerName" placeholder="Who tested it?"></div>
+    </div>
+    <div id="uat" style="margin-top:14px;"></div>
+
+    <div class="signoff">
+      <div><label>User signature</label><input type="text" placeholder="_______________________"></div>
+      <div><label>Developer signature</label><input type="text" placeholder="_______________________"></div>
+    </div>
+
+    <button class="btn" onclick="copyForm()">📋 Copy form (plain text)</button>
+    <button class="btn-soft" onclick="resetForm()">🔄 Reset</button>
+    <button class="btn-go" onclick="exportReport()">💾 Export report</button>
+  </div>
+</div>
+
+<script>
+  let features = [];
+
+  const templates = {
+    'sari-sari': { name: 'Sari-Sari Store Inventory', items: ['Log in as admin','Add a new product','Record a sale','View sales total for the day','Search for a product','Log out'] },
+    'barangay':  { name: 'Barangay Directory System', items: ['Search for a resident','View resident details','Add a new resident','Request a clearance','View officials list','Log out'] },
+    'appointment':{ name: 'Appointment Booking System', items: ['View available time slots','Book an appointment','See my upcoming appointments','Cancel an appointment','Receive booking confirmation','Log out'] },
+    'school':    { name: 'School Records System', items: ['View class roster','Record a grade','View a student\'s grades','Mark attendance','Search a student','Log out'] }
+  };
+
+  function loadTemplate() {
+    const type = document.getElementById('projectType').value;
+    document.getElementById('customSection').classList.add('hidden');
+    document.getElementById('formSection').classList.add('hidden');
+    if (type === 'custom') { document.getElementById('customSection').classList.remove('hidden'); initItems(); return; }
+    if (!type) return;
+    features = templates[type].items.slice();
+    render(templates[type].name);
+  }
+
+  function render(name) {
+    document.getElementById('customSection').classList.add('hidden');
+    document.getElementById('formSection').classList.remove('hidden');
+    document.getElementById('testDate').valueAsDate = new Date();
+    const c = document.getElementById('uat');
+    c.innerHTML = '<h4 style="margin:0 0 8px;">Project: ' + name + '</h4>';
+    features.forEach((f, i) => {
+      const div = document.createElement('div');
+      div.className = 'uat-item';
+      div.innerHTML =
+        '<input type="checkbox" id="uat_' + i + '">' +
+        '<span style="flex:1">' + f + '</span>' +
+        '<select id="res_' + i + '"><option value="Pass">✅ Pass</option><option value="Fail">❌ Fail</option><option value="N/A">— N/A</option></select>';
+      c.appendChild(div);
+    });
+  }
+
+  function initItems() {
+    const c = document.getElementById('customItems'); c.innerHTML = '';
+    addItem(); addItem(); addItem();
+  }
+  function addItem() {
+    const c = document.getElementById('customItems');
+    const d = document.createElement('div'); d.className = 'uat-item';
+    d.innerHTML = '<input type="text" class="custom-feature" placeholder="e.g., Add a product" style="flex:1">';
+    c.appendChild(d);
+  }
+  function buildCustom() {
+    const name = document.getElementById('customName').value.trim();
+    const items = Array.from(document.querySelectorAll('.custom-feature')).map(i => i.value.trim()).filter(v => v);
+    if (!name) return alert('⚠️ Please enter a project name');
+    if (!items.length) return alert('⚠️ Please add at least one feature');
+    features = items; render(name);
+  }
+
+  function snapshot() {
+    const date = document.getElementById('testDate').value || '(no date)';
+    const tester = document.getElementById('testerName').value.trim() || '(no name)';
+    const rows = features.map((f, i) => {
+      const checked = document.getElementById('uat_' + i).checked;
+      const res = document.getElementById('res_' + i).value;
+      const mark = checked ? res : '—';
+      return `${checked ? (res==='Pass'?'✅':res==='Fail'?'❌':'➖') : '☐'} ${f}  →  ${mark}`;
+    });
+    const passed = rows.filter(r => r.includes('✅')).length;
+    return { date, tester, rows, passed, total: features.length };
+  }
+
+  function copyForm() {
+    const s = snapshot();
+    let t = '═══════════════════════════════════\n✅ USER ACCEPTANCE TESTING (UAT)\n═══════════════════════════════════\n';
+    t += `Date: ${s.date}\nTester: ${s.tester}\n\nFeatures:\n`;
+    s.rows.forEach(r => t += `  ${r}\n`);
+    t += `\nResult: ${s.passed} of ${s.total} accepted\n\nUser: ________   Developer: ________`;
+    navigator.clipboard.writeText(t).then(() => alert('✅ UAT form copied to clipboard!'));
+  }
+
+  function exportReport() {
+    const s = snapshot();
+    const verdict = s.passed === s.total ? 'ACCEPTED ✅' : 'NOT YET ACCEPTED ❌';
+    let t = `UAT REPORT\nDate: ${s.date} | Tester: ${s.tester}\n${s.passed}/${s.total} features accepted.\nVerdict: ${verdict}\n\n`;
+    s.rows.forEach(r => t += `${r}\n`);
+    navigator.clipboard.writeText(t).then(() => alert('✅ Report copied to clipboard!'));
+  }
+
+  function resetForm() {
+    document.querySelectorAll('#uat input[type=checkbox]').forEach(c => c.checked = false);
+    document.querySelectorAll('#uat select').forEach(s => s.value = 'Pass');
+  }
+</script>
+</body>
+</html>

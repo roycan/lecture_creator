@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prompt Worksheet — C-T-C-E</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f0f4f8; color: #222; padding: 16px; max-width: 720px; margin: 0 auto; line-height: 1.5; }
+    h1 { font-size: 1.4rem; margin-bottom: 4px; }
+    .sub { color: #555; margin-bottom: 16px; font-size: .9rem; }
+    .card { background: #fff; border-radius: 8px; padding: 16px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+    .card h2 { font-size: 1.05rem; margin-bottom: 10px; }
+    .ctce { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    .ctce .row { display: grid; grid-template-columns: 32px 1fr; gap: 10px; align-items: start; }
+    .badge { width: 28px; height: 28px; border-radius: 50%; color: #fff; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: .85rem; }
+    .b-c { background: #1565c0; } .b-t { background: #2e7d32; } .b-k { background: #ef6c00; } .b-e { background: #6a1b9a; }
+    .label { font-weight: bold; font-size: .85rem; }
+    .hint { font-size: .8rem; color: #666; }
+    textarea { width: 100%; min-height: 44px; padding: 8px; border: 1px solid #bbb; border-radius: 6px; font-family: inherit; font-size: .9rem; resize: vertical; }
+    .bad { background: #ffebee; border-left: 4px solid #c62828; padding: 10px 12px; border-radius: 4px; margin-bottom: 8px; font-size: .9rem; }
+    .bad b { color: #c62828; }
+    .ex { background: #f5f5f5; padding: 10px; border-radius: 4px; font-family: monospace; font-size: .82rem; white-space: pre-wrap; }
+    details { margin-top: 8px; }
+    summary { cursor: pointer; font-size: .85rem; color: #1565c0; font-weight: bold; }
+    .answer { margin-top: 6px; background: #e8f5e9; border-left: 4px solid #2e7d32; padding: 10px 12px; border-radius: 4px; font-size: .88rem; }
+    .answer b { color: #2e7d32; }
+    button { margin-top: 8px; padding: 8px 14px; background: #1565c0; color: #fff; border: none; border-radius: 6px; font-size: .9rem; cursor: pointer; }
+    button:hover { background: #0d47a1; }
+    .note { font-size: .82rem; color: #555; font-style: italic; }
+  </style>
+</head>
+<body>
+  <h1>🤖 Prompt Worksheet</h1>
+  <p class="sub">Turn vague questions into great AI prompts using the <b>C-T-C-E</b> structure. Type your answers, then compare with the model answer.</p>
+
+  <!-- C-T-C-E REFERENCE -->
+  <div class="card">
+    <h2>The C-T-C-E Structure</h2>
+    <div class="ctce">
+      <div class="row"><div class="badge b-c">C</div><div><div class="label">Context</div><div class="hint">Who are you, what are you building, what stack/tools?</div></div></div>
+      <div class="row"><div class="badge b-t">T</div><div><div class="label">Task</div><div class="hint">Exactly what do you want the AI to do?</div></div></div>
+      <div class="row"><div class="badge b-k">C</div><div><div class="label">Constraints</div><div class="hint">Rules: libraries, style, "must not use X", add comments, etc.</div></div></div>
+      <div class="row"><div class="badge b-e">E</div><div><div class="label">Examples</div><div class="hint">Sample data, or input → expected output.</div></div></div>
+    </div>
+  </div>
+
+  <!-- EXERCISE 1 -->
+  <div class="card">
+    <h2>Exercise 1: "Make my site look better"</h2>
+    <div class="bad"><b>❌ Vague:</b> "make my site look better"</div>
+    <p class="note">Rewrite it using C-T-C-E. (Hint: name your stack, say what page, give a goal.)</p>
+    <textarea placeholder="Type your C-T-C-E prompt here..."></textarea>
+    <details><summary>Show a model answer</summary>
+      <div class="answer"><b>✅ Good:</b> "I'm a Grade 10 student building a barangay announcement page with HTML + Bulma. Right now it looks plain. Task: suggest a cleaner card-based layout for 3 announcement posts. Constraints: Bulma classes only, mobile-first, no JavaScript. Example: each card should show a title, date, and short text."</div>
+    </details>
+  </div>
+
+  <!-- EXERCISE 2 -->
+  <div class="card">
+    <h2>Exercise 2: "Fix the database"</h2>
+    <div class="bad"><b>❌ Vague:</b> "fix the database"</div>
+    <p class="note">This one needs the 4-part bug report (expected / actual / exact error / smallest code).</p>
+    <textarea placeholder="Type your prompt here — include the error message and a code snippet..."></textarea>
+    <details><summary>Show a model answer</summary>
+      <div class="answer"><b>✅ Good:</b> "I have an Express + better-sqlite3 app. Expected: adding a resident saves to the `residents` table. Actual: server returns 500. Exact error: `SQLITE_ERROR: no such column: firts_name`. Smallest code: `INSERT INTO residents (first_name, age) VALUES (?, ?)` with `[name, age]`. My table was created with columns `id, first_name, age`. Why the error and how do I fix it?"</div>
+    </details>
+  </div>
+
+  <!-- EXERCISE 3 -->
+  <div class="card">
+    <h2>Exercise 3: "Add login"</h2>
+    <div class="bad"><b>❌ Vague:</b> "add login"</div>
+    <p class="note">Be specific about the method, constraints, and what you already have.</p>
+    <textarea placeholder="Type your prompt here..."></textarea>
+    <details><summary>Show a model answer</summary>
+      <div class="answer"><b>✅ Good:</b> "I have an Express + EJS + better-sqlite3 app with a `users` table (id, username, password_hash). Task: add login using server sessions (express-session) + bcrypt for password hashing — do NOT hand-roll crypto or use JWT. Constraints: beginner-friendly, comment each step, plain callbacks or async/await. I already have a login form posting to /login. Show the route handler and how to check the session on protected pages."</div>
+    </details>
+  </div>
+
+  <!-- VERIFY CHECKLIST -->
+  <div class="card">
+    <h2>✅ Before You Trust the Answer — Verify</h2>
+    <div class="ex">1. RUN it            → does it actually work?
+2. UNDERSTAND it     → can you explain each line to a classmate?
+3. Is it CURRENT?    → does the API really exist? (check MDN / docs if unsure)</div>
+    <p class="note" style="margin-top:8px;">If you can't explain it, ask the AI to explain it — or read the docs. Don't ship code you don't understand.</p>
+  </div>
+
+  <p class="note">Tip: fill this in, then (if you have AI access) paste your prompts and compare the quality of the answers you get from vague vs. C-T-C-E prompts.</p>
+</body>
+</html>

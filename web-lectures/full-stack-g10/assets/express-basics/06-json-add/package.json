@@ -1,0 +1,20 @@
+{
+  "name": "06-json-add",
+  "version": "1.0.0",
+  "description": "Express app demonstrating adding data to JSON files via forms",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": ["express", "ejs", "json", "forms", "bulma"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "ejs": "^3.1.9"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

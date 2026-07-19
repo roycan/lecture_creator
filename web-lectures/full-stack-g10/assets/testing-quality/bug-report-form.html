@@ -1,0 +1,436 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>🐛 Professional Bug Report Form</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>🐛 Professional Bug Report Generator</h2>
+      <p>Create clear, actionable bug reports that help developers fix issues quickly.</p>
+      
+      <div style="margin-top: 20px;">
+        <h3>💡 Why Professional Bug Reports Matter</h3>
+        <div class="info-box">
+          <p><strong>Bad:</strong> "It's broken!" (developer wastes 2 hours figuring out what you mean)</p>
+          <p><strong>Good:</strong> Clear description + steps to reproduce + severity (developer fixes it in 30 minutes)</p>
+          <p><strong>Result:</strong> Faster fixes, better client relationships, professional reputation</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 30px;">
+        <h3>✍️ Create Bug Report</h3>
+        
+        <div class="form-group">
+          <label for="bugId">Bug Report # (optional):</label>
+          <input type="text" id="bugId" class="input" placeholder="e.g., 003">
+          <small style="color: #666; display: block; margin-top: 5px;">
+            💡 Sequential numbering helps track bugs
+          </small>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+          <div class="form-group">
+            <label for="dateReported">Date Reported:</label>
+            <input type="date" id="dateReported" class="input">
+          </div>
+          <div class="form-group">
+            <label for="reportedBy">Reported By:</label>
+            <input type="text" id="reportedBy" class="input" placeholder="Your name">
+          </div>
+          <div class="form-group">
+            <label for="userRole">User Role:</label>
+            <select id="userRole" class="input">
+              <option value="">-- Select --</option>
+              <option value="Admin">Admin</option>
+              <option value="Cashier">Cashier</option>
+              <option value="Store Owner">Store Owner</option>
+              <option value="Resident">Resident</option>
+              <option value="Barangay Captain">Barangay Captain</option>
+              <option value="Teacher">Teacher</option>
+              <option value="Student">Student</option>
+              <option value="Customer">Customer</option>
+            </select>
+          </div>
+        </div>
+
+        <hr style="margin: 30px 0; border: none; border-top: 2px solid #dee2e6;">
+
+        <div class="form-group">
+          <label for="summary">📝 Short Summary (one sentence):</label>
+          <input type="text" id="summary" class="input" placeholder="e.g., Cannot record sale when product name has comma">
+          <small style="color: #666; display: block; margin-top: 5px;">
+            💡 Be specific but concise
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="expected">🎯 Expected Behavior (what SHOULD happen):</label>
+          <textarea id="expected" class="input" rows="3" placeholder="e.g., Sale should be recorded successfully and stock should decrease"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="actual">❌ Actual Behavior (what ACTUALLY happens):</label>
+          <textarea id="actual" class="input" rows="3" placeholder="e.g., Error message appears: 'Cannot process sale' and sale is not recorded"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="steps">🔁 Steps to Reproduce (exact steps):</label>
+          <textarea id="steps" class="input" rows="6" placeholder="1. Log in as cashier&#10;2. Go to Sales page&#10;3. Select product 'Lucky Me, Pancit Canton'&#10;4. Enter quantity: 5&#10;5. Click 'Record Sale'&#10;6. Error appears"></textarea>
+          <small style="color: #666; display: block; margin-top: 5px;">
+            💡 Number each step. Be specific (exact button names, values entered)
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label>🚨 Severity:</label>
+          <div style="margin-top: 10px;">
+            <label style="display: block; margin-bottom: 10px; cursor: pointer;">
+              <input type="radio" name="severity" value="CRITICAL"> 
+              <strong>CRITICAL</strong> - System unusable, blocks all work (fix same day)
+            </label>
+            <label style="display: block; margin-bottom: 10px; cursor: pointer;">
+              <input type="radio" name="severity" value="HIGH" checked> 
+              <strong>HIGH</strong> - Major feature broken, has workaround (fix within 1-2 days)
+            </label>
+            <label style="display: block; margin-bottom: 10px; cursor: pointer;">
+              <input type="radio" name="severity" value="MEDIUM"> 
+              <strong>MEDIUM</strong> - Minor feature broken, not urgent (fix within 1 week)
+            </label>
+            <label style="display: block; margin-bottom: 10px; cursor: pointer;">
+              <input type="radio" name="severity" value="LOW"> 
+              <strong>LOW</strong> - Cosmetic issue, doesn't affect functionality
+            </label>
+          </div>
+        </div>
+
+        <hr style="margin: 30px 0; border: none; border-top: 2px solid #dee2e6;">
+
+        <h4>📱 Environment</h4>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+          <div class="form-group">
+            <label for="device">Device:</label>
+            <input type="text" id="device" class="input" placeholder="e.g., Samsung Galaxy A23, iPhone 12, Desktop">
+          </div>
+          <div class="form-group">
+            <label for="browser">Browser:</label>
+            <input type="text" id="browser" class="input" placeholder="e.g., Chrome 120, Safari 17">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+          <div class="form-group">
+            <label for="os">Operating System:</label>
+            <input type="text" id="os" class="input" placeholder="e.g., Windows 11, Android 13, iOS 17">
+          </div>
+          <div class="form-group">
+            <label for="screenSize">Screen Size:</label>
+            <select id="screenSize" class="input">
+              <option value="">-- Select --</option>
+              <option value="Mobile phone">Mobile phone</option>
+              <option value="Tablet">Tablet</option>
+              <option value="Laptop">Laptop</option>
+              <option value="Desktop">Desktop</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="additionalNotes">💡 Additional Notes (optional):</label>
+          <textarea id="additionalNotes" class="input" rows="3" placeholder="Any other relevant information, workarounds, frequency of occurrence, etc."></textarea>
+        </div>
+
+        <div style="margin-top: 30px;">
+          <button onclick="generateBugReport()" class="btn">✨ Generate Bug Report</button>
+          <button onclick="clearForm()" class="btn" style="background: #6c757d;">🔄 Clear</button>
+        </div>
+      </div>
+
+      <div id="result" style="margin-top: 30px; display: none;">
+        <h3>✅ Generated Bug Report</h3>
+        <div class="result-box">
+          <pre id="bugReportOutput" style="white-space: pre-wrap; font-family: 'Courier New', monospace; line-height: 1.6; font-size: 13px;"></pre>
+        </div>
+        
+        <div style="margin-top: 15px;">
+          <button onclick="copyToClipboard()" class="btn">📋 Copy to Clipboard</button>
+          <button onclick="addToList()" class="btn" style="background: #28a745;">➕ Add to List</button>
+        </div>
+      </div>
+
+      <div id="bugList" style="margin-top: 30px; display: none;">
+        <h3>📚 Your Bug Reports</h3>
+        <div id="bugListContent"></div>
+        <button onclick="exportBugs()" class="btn" style="margin-top: 15px;">💾 Export All Reports</button>
+        <button onclick="clearBugList()" class="btn" style="background: #dc3545; margin-top: 15px;">🗑️ Clear List</button>
+      </div>
+
+      <div style="margin-top: 40px; padding: 20px; background: #fff3cd; border-left: 4px solid #856404; border-radius: 5px;">
+        <h3>📖 Bug Report Best Practices</h3>
+        
+        <p><strong>✅ DO:</strong></p>
+        <ul>
+          <li>Write clear, specific descriptions</li>
+          <li>Include exact steps to reproduce</li>
+          <li>Classify severity accurately</li>
+          <li>Attach screenshots when possible</li>
+          <li>Be objective (not emotional)</li>
+        </ul>
+
+        <p style="margin-top: 15px;"><strong>❌ DON'T:</strong></p>
+        <ul>
+          <li>Be vague ("it doesn't work")</li>
+          <li>Blame the user ("you're using it wrong")</li>
+          <li>Exaggerate severity ("EVERYTHING IS BROKEN")</li>
+          <li>Write in all caps</li>
+          <li>Include multiple bugs in one report</li>
+        </ul>
+
+        <p style="margin-top: 20px;"><strong>Severity Guidelines:</strong></p>
+        <ul>
+          <li><strong>CRITICAL:</strong> Can't log in, data loss, security breach → Fix immediately</li>
+          <li><strong>HIGH:</strong> Major feature broken, workaround exists → Fix 1-2 days</li>
+          <li><strong>MEDIUM:</strong> Minor feature broken, doesn't block work → Fix 1 week</li>
+          <li><strong>LOW:</strong> Cosmetic issues, typos → Fix when convenient</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Set current date on load
+    document.getElementById('dateReported').valueAsDate = new Date();
+
+    let bugReports = [];
+
+    function generateBugReport() {
+      // Collect form data
+      const bugId = document.getElementById('bugId').value.trim() || '---';
+      const dateReported = document.getElementById('dateReported').value;
+      const reportedBy = document.getElementById('reportedBy').value.trim();
+      const userRole = document.getElementById('userRole').value;
+      const summary = document.getElementById('summary').value.trim();
+      const expected = document.getElementById('expected').value.trim();
+      const actual = document.getElementById('actual').value.trim();
+      const steps = document.getElementById('steps').value.trim();
+      const severity = document.querySelector('input[name="severity"]:checked')?.value || 'MEDIUM';
+      const device = document.getElementById('device').value.trim();
+      const browser = document.getElementById('browser').value.trim();
+      const os = document.getElementById('os').value.trim();
+      const screenSize = document.getElementById('screenSize').value;
+      const additionalNotes = document.getElementById('additionalNotes').value.trim();
+
+      // Validation
+      if (!reportedBy) {
+        alert('⚠️ Please enter your name (Reported By)');
+        return;
+      }
+      if (!summary) {
+        alert('⚠️ Please enter a short summary');
+        return;
+      }
+      if (!expected) {
+        alert('⚠️ Please describe expected behavior');
+        return;
+      }
+      if (!actual) {
+        alert('⚠️ Please describe actual behavior');
+        return;
+      }
+      if (!steps) {
+        alert('⚠️ Please provide steps to reproduce');
+        return;
+      }
+
+      // Generate bug report text
+      let text = '';
+      text += 'BUG REPORT #' + bugId + '\n';
+      text += '━'.repeat(60) + '\n\n';
+      text += '📅 DATE REPORTED: ' + (dateReported || new Date().toLocaleDateString()) + '\n';
+      text += '👤 REPORTED BY: ' + reportedBy + '\n';
+      text += '💼 USER ROLE: ' + (userRole || 'Not specified') + '\n\n';
+      
+      text += '━'.repeat(60) + '\n';
+      text += '📝 DESCRIPTION\n';
+      text += '━'.repeat(60) + '\n\n';
+      text += summary + '\n\n';
+      
+      text += '━'.repeat(60) + '\n';
+      text += '🎯 EXPECTED BEHAVIOR\n';
+      text += '━'.repeat(60) + '\n\n';
+      text += expected + '\n\n';
+      
+      text += '━'.repeat(60) + '\n';
+      text += '❌ ACTUAL BEHAVIOR\n';
+      text += '━'.repeat(60) + '\n\n';
+      text += actual + '\n\n';
+      
+      text += '━'.repeat(60) + '\n';
+      text += '🔁 STEPS TO REPRODUCE\n';
+      text += '━'.repeat(60) + '\n\n';
+      text += steps + '\n\n';
+      
+      text += '━'.repeat(60) + '\n';
+      text += '🚨 SEVERITY\n';
+      text += '━'.repeat(60) + '\n\n';
+      
+      const severitySymbols = {
+        'CRITICAL': '🚨',
+        'HIGH': '⚠️',
+        'MEDIUM': '📝',
+        'LOW': '✨'
+      };
+      text += severitySymbols[severity] + ' ' + severity + '\n\n';
+      
+      text += '━'.repeat(60) + '\n';
+      text += '📱 ENVIRONMENT\n';
+      text += '━'.repeat(60) + '\n\n';
+      text += 'Device: ' + (device || 'Not specified') + '\n';
+      text += 'Browser: ' + (browser || 'Not specified') + '\n';
+      text += 'Operating System: ' + (os || 'Not specified') + '\n';
+      text += 'Screen size: ' + (screenSize || 'Not specified') + '\n\n';
+      
+      if (additionalNotes) {
+        text += '━'.repeat(60) + '\n';
+        text += '💡 ADDITIONAL NOTES\n';
+        text += '━'.repeat(60) + '\n\n';
+        text += additionalNotes + '\n\n';
+      }
+
+      // Display result
+      document.getElementById('bugReportOutput').textContent = text;
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function clearForm() {
+      document.getElementById('bugId').value = '';
+      document.getElementById('dateReported').valueAsDate = new Date();
+      document.getElementById('reportedBy').value = '';
+      document.getElementById('userRole').value = '';
+      document.getElementById('summary').value = '';
+      document.getElementById('expected').value = '';
+      document.getElementById('actual').value = '';
+      document.getElementById('steps').value = '';
+      document.querySelector('input[name="severity"][value="HIGH"]').checked = true;
+      document.getElementById('device').value = '';
+      document.getElementById('browser').value = '';
+      document.getElementById('os').value = '';
+      document.getElementById('screenSize').value = '';
+      document.getElementById('additionalNotes').value = '';
+      document.getElementById('result').style.display = 'none';
+    }
+
+    function copyToClipboard() {
+      const text = document.getElementById('bugReportOutput').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ Bug report copied to clipboard!');
+      });
+    }
+
+    function addToList() {
+      const bugReport = document.getElementById('bugReportOutput').textContent;
+      const summary = document.getElementById('summary').value.trim();
+      bugReports.push({ summary, report: bugReport });
+      updateBugList();
+      document.getElementById('bugList').style.display = 'block';
+      clearForm();
+      alert('✅ Bug report added to list!');
+    }
+
+    function updateBugList() {
+      const listDiv = document.getElementById('bugListContent');
+      if (bugReports.length === 0) {
+        listDiv.innerHTML = '<p style="color: #666;">No bug reports yet.</p>';
+        return;
+      }
+
+      let html = '';
+      bugReports.forEach((bug, index) => {
+        html += `
+          <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-left: 3px solid #dc3545; border-radius: 3px;">
+            <h4 style="margin-top: 0; color: #333;">Bug #${index + 1}: ${bug.summary}</h4>
+            <pre style="white-space: pre-wrap; font-family: 'Courier New', monospace; margin: 10px 0; font-size: 12px; max-height: 200px; overflow-y: auto; background: white; padding: 10px; border-radius: 3px;">${bug.report}</pre>
+            <button onclick="removeBug(${index})" style="padding: 5px 10px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer;">🗑️ Remove</button>
+          </div>
+        `;
+      });
+      
+      listDiv.innerHTML = html;
+    }
+
+    function removeBug(index) {
+      bugReports.splice(index, 1);
+      updateBugList();
+      if (bugReports.length === 0) {
+        document.getElementById('bugList').style.display = 'none';
+      }
+    }
+
+    function exportBugs() {
+      if (bugReports.length === 0) {
+        alert('⚠️ No bug reports to export');
+        return;
+      }
+
+      let text = '═'.repeat(60) + '\n';
+      text += '🐛 BUG REPORT COLLECTION\n';
+      text += '═'.repeat(60) + '\n\n';
+      
+      bugReports.forEach((bug, index) => {
+        text += bug.report + '\n\n';
+        if (index < bugReports.length - 1) {
+          text += '\n' + '═'.repeat(60) + '\n\n';
+        }
+      });
+      
+      text += `\nTotal Bug Reports: ${bugReports.length}\n`;
+      text += `Exported: ${new Date().toLocaleString()}\n`;
+      
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ All bug reports copied to clipboard!');
+      });
+    }
+
+    function clearBugList() {
+      if (confirm('⚠️ Clear all bug reports? This cannot be undone.')) {
+        bugReports = [];
+        updateBugList();
+        document.getElementById('bugList').style.display = 'none';
+      }
+    }
+  </script>
+
+  <style>
+    .info-box {
+      background: #d1ecf1;
+      padding: 15px;
+      border-left: 4px solid #0c5460;
+      border-radius: 5px;
+    }
+    .info-box p {
+      margin: 5px 0;
+      color: #0c5460;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+    }
+    .result-box {
+      background: #f8d7da;
+      padding: 20px;
+      border-left: 4px solid #dc3545;
+      border-radius: 5px;
+    }
+  </style>
+</body>
+</html>

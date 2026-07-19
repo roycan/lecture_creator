@@ -1,0 +1,109 @@
+{
+  "name": "Barangay San Juan Official Directory",
+  "short_name": "Brgy SJ",
+  "description": "Community directory and services for Barangay San Juan residents",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f5f5",
+  "theme_color": "#0066cc",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["government", "utilities", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "screenshot-home.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "label": "Barangay announcements and services"
+    },
+    {
+      "src": "screenshot-directory.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "label": "Officials directory"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Emergency Contacts",
+      "short_name": "Emergency",
+      "description": "View emergency contact numbers",
+      "url": "/emergency",
+      "icons": [
+        {
+          "src": "icon-emergency.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Request Clearance",
+      "short_name": "Clearance",
+      "description": "Apply for barangay clearance",
+      "url": "/clearance",
+      "icons": [
+        {
+          "src": "icon-clearance.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Announcements",
+      "short_name": "News",
+      "description": "Latest barangay announcements",
+      "url": "/announcements",
+      "icons": [
+        {
+          "src": "icon-announcements.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "lang": "tl-PH",
+  "dir": "ltr"
+}

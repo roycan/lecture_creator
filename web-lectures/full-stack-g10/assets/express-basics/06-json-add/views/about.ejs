@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - Student Management</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <section class="section">
+    <div class="container">
+      <div class="box">
+        <h1 class="title is-2">Student Management System</h1>
+        <p class="subtitle is-4">JSON-Based CRUD Application</p>
+        
+        <div class="content">
+          <h3 class="title is-4">Features</h3>
+          <ul>
+            <li>✅ <strong>Read</strong> - Display all students from JSON file</li>
+            <li>✅ <strong>Add</strong> - Add new students via form submission</li>
+            <li>🔄 <strong>Statistics</strong> - Calculate passing rate and averages</li>
+            <li>🎨 <strong>Responsive Design</strong> - Works on mobile and desktop</li>
+          </ul>
+
+          <h3 class="title is-4">Technologies Used</h3>
+          <div class="columns">
+            <div class="column">
+              <div class="notification is-primary is-light">
+                <p><strong>Backend</strong></p>
+                <ul>
+                  <li>Node.js</li>
+                  <li>Express.js</li>
+                  <li>fs module (file system)</li>
+                </ul>
+              </div>
+            </div>
+            <div class="column">
+              <div class="notification is-info is-light">
+                <p><strong>Frontend</strong></p>
+                <ul>
+                  <li>EJS Templates</li>
+                  <li>Bulma CSS</li>
+                  <li>HTML Forms</li>
+                </ul>
+              </div>
+            </div>
+            <div class="column">
+              <div class="notification is-success is-light">
+                <p><strong>Data</strong></p>
+                <ul>
+                  <li>JSON Files</li>
+                  <li>File-based storage</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="title is-4">How Forms Work</h3>
+          <ol>
+            <li>User fills out the form on <code>/add-student</code></li>
+            <li>Form submits via <strong>POST</strong> request to <code>/add-student</code></li>
+            <li>Express receives form data using <code>express.urlencoded()</code> middleware</li>
+            <li>Server reads existing <code>students.json</code> file</li>
+            <li>New student is added to the array with auto-incremented ID</li>
+            <li>Array is written back to <code>students.json</code></li>
+            <li>User is redirected to home page to see updated list</li>
+          </ol>
+
+          <h3 class="title is-4">Key Code Snippets</h3>
+          
+          <h4>Form Submission (HTML)</h4>
+          <pre><code>&lt;form action="/add-student" method="POST"&gt;
+  &lt;input type="text" name="name" required&gt;
+  &lt;input type="email" name="email" required&gt;
+  &lt;button type="submit"&gt;Add Student&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+
+          <h4>Handling POST Request (Express)</h4>
+          <pre><code>app.post('/add-student', (req, res) => {
+  const students = readJSONFile('students.json');
+  const newStudent = {
+    id: students.length + 1,
+    name: req.body.name,
+    email: req.body.email
+  };
+  students.push(newStudent);
+  writeJSONFile('students.json', students);
+  res.redirect('/');
+});</code></pre>
+        </div>
+
+        <div class="notification is-warning is-light">
+          <p><strong>⚠️ Important Limitations:</strong></p>
+          <ul>
+            <li><strong>No validation</strong> - Data isn't validated before saving</li>
+            <li><strong>No error handling</strong> - File errors could crash the server</li>
+            <li><strong>Not concurrent-safe</strong> - Multiple writes at once could corrupt data</li>
+            <li><strong>Not scalable</strong> - Reading/writing entire file on every request</li>
+          </ul>
+          <p class="mt-3">
+            <strong>Solution:</strong> In Part 2, we'll use SQLite database which solves all these issues!
+          </p>
+        </div>
+
+        <div class="buttons">
+          <a href="/" class="button is-primary">View Students</a>
+          <a href="/add-student" class="button is-success">Add Student</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

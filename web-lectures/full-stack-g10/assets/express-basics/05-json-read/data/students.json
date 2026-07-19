@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Maria Santos",
+    "course": "BSIT",
+    "year": 3,
+    "grade": 95,
+    "email": "maria.santos@example.com"
+  },
+  {
+    "id": 2,
+    "name": "Juan Dela Cruz",
+    "course": "BSCS",
+    "year": 2,
+    "grade": 88,
+    "email": "juan.delacruz@example.com"
+  },
+  {
+    "id": 3,
+    "name": "Sofia Reyes",
+    "course": "BSIT",
+    "year": 4,
+    "grade": 92,
+    "email": "sofia.reyes@example.com"
+  },
+  {
+    "id": 4,
+    "name": "Carlos Mendoza",
+    "course": "BSIS",
+    "year": 1,
+    "grade": 76,
+    "email": "carlos.mendoza@example.com"
+  },
+  {
+    "id": 5,
+    "name": "Ana Garcia",
+    "course": "BSIT",
+    "year": 3,
+    "grade": 90,
+    "email": "ana.garcia@example.com"
+  }
+]

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day-One Build · Your Dev ID Card</title>
+  <style>
+    /* ============================================================
+       Day-One Micro-Build — a live "Dev ID Card".
+       Pure HTML + CSS + JS, fully offline. Open on a phone.
+       (You will build something just like this from scratch in Q2.)
+       ============================================================ */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent: #1565c0;   /* changes live via the color picker */
+      --accent-soft: #e3f2fd;
+      --ink: #1f2933;
+      --muted: #607d8b;
+      --bg: #f0f4f8;
+    }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 16px;
+      max-width: 720px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+    h1 { font-size: 1.4rem; }
+    .sub { color: var(--muted); margin: 4px 0 16px; font-size: .9rem; }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.12);
+    }
+    .card h2 { font-size: 1.05rem; margin-bottom: 12px; }
+
+    /* ---- form controls ---- */
+    label { display: block; font-weight: 600; font-size: .85rem; margin: 12px 0 4px; }
+    input[type=text], select {
+      width: 100%; padding: 9px 10px; border: 1px solid #c4cdd5;
+      border-radius: 7px; font: inherit; font-size: .95rem; background: #fff;
+    }
+    input[type=text]:focus, select:focus {
+      outline: none; border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .row > div { min-width: 0; }
+
+    /* ---- emoji avatar picker ---- */
+    .avatars { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
+    .avatars button {
+      width: 46px; height: 46px; font-size: 1.4rem; line-height: 1;
+      border: 2px solid #d7dee5; background: #fff; border-radius: 50%;
+      cursor: pointer; transition: transform .08s ease, border-color .15s ease;
+    }
+    .avatars button:hover { transform: translateY(-2px); }
+    .avatars button[aria-pressed="true"] {
+      border-color: var(--accent); background: var(--accent-soft);
+    }
+
+    /* ---- color picker ---- */
+    .color-row { display: flex; align-items: center; gap: 10px; }
+    input[type=color] {
+      width: 46px; height: 46px; padding: 0; border: 2px solid #d7dee5;
+      border-radius: 8px; background: #fff; cursor: pointer;
+    }
+
+    .hint { font-size: .8rem; color: var(--muted); margin-top: 4px; }
+
+    /* ============================ */
+    /*  THE LIVE DEV ID BADGE       */
+    /* ============================ */
+    .badge {
+      border-radius: 14px; overflow: hidden; border: 1px solid #e0e6ec;
+      background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.10);
+      max-width: 360px; margin: 4px auto 0;
+    }
+    .badge-top {
+      background: var(--accent); color: #fff; padding: 14px 16px 12px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .avatar-circle {
+      width: 58px; height: 58px; border-radius: 50%;
+      background: rgba(255,255,255,.22); border: 2px solid rgba(255,255,255,.7);
+      display: flex; align-items: center; justify-content: center; font-size: 1.9rem;
+      flex: 0 0 auto;
+    }
+    .badge-top .who { min-width: 0; }
+    .badge-top .name { font-size: 1.2rem; font-weight: 700; line-height: 1.15;
+      overflow-wrap: anywhere; }
+    .badge-top .role { font-size: .8rem; opacity: .92; }
+    .badge-body { padding: 14px 16px 16px; }
+    .field { margin-bottom: 10px; }
+    .field .k { font-size: .7rem; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--muted); font-weight: 700; }
+    .field .v { font-size: .95rem; color: var(--ink); overflow-wrap: anywhere; }
+    .field .v.empty { color: #b0bec5; font-style: italic; }
+    .badge-foot {
+      border-top: 2px dashed #e3e8ee; margin-top: 6px; padding-top: 10px;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: .72rem; color: var(--muted);
+    }
+    .stamp {
+      border: 2px solid var(--accent); color: var(--accent);
+      padding: 3px 8px; border-radius: 5px; font-weight: 800;
+      letter-spacing: .05em; transform: rotate(-6deg); font-size: .68rem;
+    }
+
+    .cta { margin-top: 14px; font-size: .85rem; }
+    .cta button {
+      padding: 9px 16px; background: var(--accent); color: #fff; border: none;
+      border-radius: 7px; font: inherit; font-weight: 600; cursor: pointer;
+    }
+    .cta button:hover { filter: brightness(1.07); }
+
+    footer { text-align: center; color: var(--muted); font-size: .78rem;
+      margin-top: 18px; }
+    code { background: #eef2f6; padding: 1px 5px; border-radius: 4px; font-size: .85em; }
+  </style>
+</head>
+<body>
+  <h1>🪪 Your Dev ID Card</h1>
+  <p class="sub"><b>Day-One Build.</b> Type below — the card updates <b>live</b>. Then open it on your phone. Welcome to full-stack. 🚀</p>
+
+  <!-- ============ INPUTS ============ -->
+  <div class="card">
+    <h2>Make it yours</h2>
+
+    <div class="row">
+      <div>
+        <label for="name">Your name</label>
+        <input id="name" type="text" placeholder="e.g. Maria Santos" maxlength="40" autocomplete="off">
+      </div>
+      <div>
+        <label for="section">Section</label>
+        <input id="section" type="text" placeholder="e.g. Grade 10 - Rizal" maxlength="40" autocomplete="off">
+      </div>
+    </div>
+
+    <label for="goal">Goal for this year</label>
+    <input id="goal" type="text" placeholder="e.g. Build and deploy my first real app" maxlength="70" autocomplete="off">
+
+    <label for="project">Dream project</label>
+    <select id="project">
+      <option value="">— pick one —</option>
+      <option>Barangay Clearance App</option>
+      <option>Sari-sari Store Inventory</option>
+      <option>School Club Signup Page</option>
+      <option>Homework / Task Tracker</option>
+      <option>Local Business Catalog</option>
+    </select>
+
+    <label>Pick your avatar</label>
+    <div class="avatars" id="avatars" role="group" aria-label="Choose an avatar">
+      <button type="button" data-emoji="🧑‍💻" aria-pressed="true">🧑‍💻</button>
+      <button type="button" data-emoji="👩‍💻">👩‍💻</button>
+      <button type="button" data-emoji="👨‍💻">👨‍💻</button>
+      <button type="button" data-emoji="🚀">🚀</button>
+      <button type="button" data-emoji="🎨">🎨</button>
+      <button type="button" data-emoji="⚡">⚡</button>
+    </div>
+
+    <label for="color">Theme color</label>
+    <div class="color-row">
+      <input id="color" type="color" value="#1565c0" aria-label="Theme color">
+      <span class="hint">The whole card recolors instantly.</span>
+    </div>
+  </div>
+
+  <!-- ============ LIVE BADGE ============ -->
+  <div class="card">
+    <h2>Your card <span class="hint" style="font-weight:400;">— updates as you type</span></h2>
+
+    <div class="badge" id="badge">
+      <div class="badge-top">
+        <div class="avatar-circle" id="bAvatar">🧑‍💻</div>
+        <div class="who">
+          <div class="name" id="bName">Your Name</div>
+          <div class="role" id="bRole">Grade 10 · Full-Stack Elective</div>
+        </div>
+      </div>
+      <div class="badge-body">
+        <div class="field">
+          <div class="k">Section</div>
+          <div class="v empty" id="bSection">— your section —</div>
+        </div>
+        <div class="field">
+          <div class="k">My goal this year</div>
+          <div class="v empty" id="bGoal">— type your goal —</div>
+        </div>
+        <div class="field">
+          <div class="k">Dream project</div>
+          <div class="v empty" id="bProject">— pick a project —</div>
+        </div>
+        <div class="badge-foot">
+          <span>Day 1 · Shipped on a phone</span>
+          <span class="stamp">SHIPPED ✦</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta">
+      <button type="button" id="share">📸 Screenshot this card</button>
+      <span class="hint" style="margin-left:8px;">or send the file to your phone.</span>
+    </div>
+  </div>
+
+  <footer>
+    Built with <code>HTML</code> + <code>CSS</code> + <code>JS</code> — runs <b>100% offline</b>.<br>
+    You'll build something just like this from scratch in Q2.
+  </footer>
+
+  <script>
+    // ---- grab the elements we'll update ----
+    const el = (id) => document.getElementById(id);
+    const nameEl = el('name'), sectionEl = el('section'),
+          goalEl = el('goal'), projectEl = el('project'),
+          colorEl = el('color'), avatarBtns = el('avatars');
+
+    const bName = el('bName'), bRole = el('bRole'), bSection = el('bSection'),
+          bGoal = el('bGoal'), bProject = el('bProject'), bAvatar = el('bAvatar');
+
+    let currentEmoji = '🧑‍💻';
+
+    // Show a value, or a faded placeholder if it's empty.
+    function setVal(node, value, placeholder) {
+      const text = (value || '').trim();
+      if (text) {
+        node.textContent = text;
+        node.classList.remove('empty');
+      } else {
+        node.textContent = placeholder;
+        node.classList.add('empty');
+      }
+    }
+
+    // Re-render the live badge from all the inputs.
+    function render() {
+      setVal(bName, nameEl.value, 'Your Name');
+      // Role line: section (if any) + course, else just the course.
+      const sec = (sectionEl.value || '').trim();
+      bRole.textContent = sec ? `${sec} · Full-Stack Elective` : 'Grade 10 · Full-Stack Elective';
+      setVal(bSection, sectionEl.value, '— your section —');
+      setVal(bGoal, goalEl.value, '— type your goal —');
+      setVal(bProject, projectEl.value, '— pick a project —');
+      bAvatar.textContent = currentEmoji;
+    }
+
+    // Recolor the whole card from the color picker.
+    function recolor() {
+      const c = colorEl.value;
+      document.documentElement.style.setProperty('--accent', c);
+      // a soft tint of the same hue for focus rings / pressed states
+      document.documentElement.style.setProperty('--accent-soft', c + '22');
+    }
+
+    // ---- wire up every input so the card updates live ----
+    [nameEl, sectionEl, goalEl, projectEl].forEach((n) => {
+      n.addEventListener('input', render);
+      n.addEventListener('change', render);
+    });
+    colorEl.addEventListener('input', recolor);
+
+    avatarBtns.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-emoji]');
+      if (!btn) return;
+      currentEmoji = btn.dataset.emoji;
+      avatarBtns.querySelectorAll('button').forEach((b) =>
+        b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+      render();
+    });
+
+    // ---- "screenshot" hint (we can't take a real screenshot offline,
+    //      so we tell the student the OS shortcut for their device) ----
+    el('share').addEventListener('click', () => {
+      const msg =
+        '📸 To save your card:\n\n' +
+        '• Phone: take a screenshot (power + volume).\n' +
+        '• Windows: Win + Shift + S, then drag over the card.\n' +
+        '• Mac: Cmd + Shift + 4, then drag over the card.\n\n' +
+        'Or just send this .html file to your phone and open it — it works offline!';
+      alert(msg);
+    });
+
+    // first paint
+    render();
+    recolor();
+  </script>
+</body>
+</html>

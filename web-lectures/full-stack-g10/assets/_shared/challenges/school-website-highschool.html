@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>San Miguel National High School</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        header p {
+            font-size: 1.2em;
+            font-style: italic;
+        }
+        nav {
+            background-color: #2c3e50;
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: #34495e;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 20px;
+        }
+        main {
+            background-color: #fff;
+        }
+        section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #2a5298;
+        }
+        h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 2em;
+            border-bottom: 2px solid #2a5298;
+            padding-bottom: 10px;
+        }
+        h3 {
+            color: #2a5298;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+        .hero-image {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul li {
+            padding: 10px;
+            margin: 8px 0;
+            background-color: white;
+            border-left: 3px solid #3498db;
+            border-radius: 4px;
+        }
+        ul li:before {
+            content: "✓ ";
+            color: #27ae60;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #2a5298;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e9ecef;
+        }
+        form {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        button {
+            margin-top: 20px;
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        button[type="submit"] {
+            background-color: #27ae60;
+            color: white;
+        }
+        button[type="submit"]:hover {
+            background-color: #229954;
+        }
+        button[type="reset"] {
+            background-color: #95a5a6;
+            color: white;
+            margin-left: 10px;
+        }
+        button[type="reset"]:hover {
+            background-color: #7f8c8d;
+        }
+        aside {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            height: fit-content;
+            position: sticky;
+            top: 80px;
+        }
+        aside h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+        }
+        aside p {
+            margin: 12px 0;
+            padding: 12px;
+            background-color: white;
+            border-radius: 5px;
+            border-left: 3px solid #3498db;
+            font-size: 0.95em;
+        }
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 40px;
+        }
+        footer h3 {
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        footer p {
+            margin: 8px 0;
+        }
+        footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        .required {
+            color: #e74c3c;
+        }
+        .track-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        .stem { background-color: #3498db; color: white; }
+        .abm { background-color: #e67e22; color: white; }
+        .humss { background-color: #9b59b6; color: white; }
+        .gas { background-color: #27ae60; color: white; }
+        .tvl { background-color: #c0392b; color: white; }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://via.placeholder.com/120x120/1e3c72/ffffff?text=SMNHS" 
+             alt="San Miguel National High School Logo" 
+             style="border-radius: 50%; border: 4px solid white; margin-bottom: 15px;">
+        <h1>San Miguel National High School</h1>
+        <p>Excellence in Education, Character, and Service</p>
+    </header>
+    
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#programs">Programs</a>
+        <a href="#teachers">Faculty</a>
+        <a href="#inquiry">Enrollment</a>
+    </nav>
+    
+    <div class="container">
+        <main>
+            <!-- Welcome Section -->
+            <section id="home">
+                <h2>Welcome to San Miguel National High School</h2>
+                <img src="https://via.placeholder.com/800x400/ecf0f1/2c3e50?text=SMNHS+Campus+Building" 
+                     alt="School campus and students" 
+                     class="hero-image">
+                <p>
+                    Welcome to San Miguel National High School (SMNHS), a DepEd-recognized public secondary school 
+                    committed to providing quality education to the youth of San Miguel and neighboring communities. 
+                    Established in 1985, we have been shaping future leaders for nearly four decades.
+                </p>
+                <p>
+                    As part of the K-12 Basic Education Program, we offer both Junior High School (Grades 7-10) 
+                    and Senior High School (Grades 11-12) programs. Our Senior High School provides five academic 
+                    and technical-vocational tracks, preparing students for college, employment, or entrepreneurship.
+                </p>
+                <p>
+                    At SMNHS, we believe in holistic education that develops not just academic excellence, but also 
+                    strong character, critical thinking, and active citizenship. Our dedicated faculty, modern 
+                    facilities, and supportive community create an environment where every student can thrive.
+                </p>
+            </section>
+            
+            <!-- About Section -->
+            <section id="about">
+                <h2>About Our School</h2>
+                
+                <h3>Vision</h3>
+                <p>
+                    We dream of Filipinos who passionately love their country and whose values and competencies 
+                    enable them to realize their full potential and contribute meaningfully to building the nation. 
+                    As a learner-centered public institution, we commit ourselves to provide quality education 
+                    that empowers every student for lifelong learning and responsible citizenship.
+                </p>
+                
+                <h3>Mission</h3>
+                <p>
+                    To protect and promote the right of every Filipino to quality, equitable, culture-based, 
+                    and complete basic education where students learn in a child-friendly, gender-sensitive, 
+                    safe, and motivating environment. Teachers facilitate learning and constantly nurture every 
+                    learner. Every graduate is empowered to pursue their goals and contribute to nation-building.
+                </p>
+                
+                <h3>Core Values</h3>
+                <ul>
+                    <li><strong>Maka-Diyos</strong> - Demonstrates faith in God and spiritual values</li>
+                    <li><strong>Maka-Tao</strong> - Respects human dignity and shows compassion</li>
+                    <li><strong>Makakalikasan</strong> - Cares for the environment and practices sustainability</li>
+                    <li><strong>Makabansa</strong> - Demonstrates love of country and national pride</li>
+                </ul>
+                
+                <h3>School Facilities</h3>
+                <ul>
+                    <li>24 air-conditioned classrooms (12 JHS, 12 SHS)</li>
+                    <li>Science Laboratory with modern equipment</li>
+                    <li>Computer Laboratory (40 workstations with internet)</li>
+                    <li>Library with 5,000+ books and digital resources</li>
+                    <li>Audio-Visual Room with multimedia equipment</li>
+                    <li>Home Economics and TLE workshops</li>
+                    <li>Covered basketball court</li>
+                    <li>School clinic with registered nurse</li>
+                    <li>Canteen serving nutritious meals</li>
+                </ul>
+                
+                <h3>Recognition & Achievements</h3>
+                <ul>
+                    <li>DepEd Division Champion - Science Quiz Bee (2023, 2024)</li>
+                    <li>Regional Finalist - MTAP Math Challenge (2024)</li>
+                    <li>Outstanding Public High School - Province of Manila (2023)</li>
+                    <li>100% passing rate in National Achievement Test (2023-2024)</li>
+                    <li>National Qualifier - Schools Press Conference (2024)</li>
+                </ul>
+            </section>
+            
+            <!-- Programs Section -->
+            <section id="programs">
+                <h2>Academic Programs</h2>
+                
+                <h3>Junior High School (Grades 7-10)</h3>
+                <p>
+                    Our Junior High School program follows the DepEd K-12 curriculum, providing strong foundation 
+                    in core subjects while developing critical thinking, creativity, and life skills.
+                </p>
+                
+                <p><strong>Core Subjects:</strong></p>
+                <ul>
+                    <li>Filipino, English, Mathematics, Science</li>
+                    <li>Araling Panlipunan (Social Studies)</li>
+                    <li>Technology and Livelihood Education (TLE)</li>
+                    <li>Music, Arts, Physical Education, and Health (MAPEH)</li>
+                    <li>Edukasyon sa Pagpapakatao (Values Education)</li>
+                </ul>
+                
+                <h3>Senior High School (Grades 11-12)</h3>
+                <p>
+                    Choose from five specialized tracks aligned with your interests and career goals. 
+                    All tracks prepare students for college, technical training, employment, or entrepreneurship.
+                </p>
+                
+                <h4>Academic Tracks</h4>
+                
+                <p><strong>1. STEM (Science, Technology, Engineering, and Mathematics)</strong> 
+                   <span class="track-badge stem">STEM</span>
+                </p>
+                <ul>
+                    <li>Pre-Calculus, Basic Calculus, Statistics and Probability</li>
+                    <li>General Biology, General Chemistry, General Physics</li>
+                    <li>Ideal for: Engineering, Medicine, IT, Natural Sciences</li>
+                    <li>Partner Universities: UP Diliman, DLSU, Ateneo, UST, Mapúa</li>
+                </ul>
+                
+                <p><strong>2. ABM (Accountancy, Business, and Management)</strong> 
+                   <span class="track-badge abm">ABM</span>
+                </p>
+                <ul>
+                    <li>Business Math, Fundamentals of Accountancy</li>
+                    <li>Business Finance, Organization and Management</li>
+                    <li>Ideal for: Business, Accountancy, Economics, Entrepreneurship</li>
+                    <li>Partner Universities: UP Diliman, DLSU, FEU, UST, Ateneo</li>
+                </ul>
+                
+                <p><strong>3. HUMSS (Humanities and Social Sciences)</strong> 
+                   <span class="track-badge humss">HUMSS</span>
+                </p>
+                <ul>
+                    <li>Creative Writing, Philippine Politics and Governance</li>
+                    <li>World Religions, Introduction to Philosophy</li>
+                    <li>Ideal for: Education, Law, Mass Communication, Political Science</li>
+                    <li>Partner Universities: UP Diliman, UST, Ateneo, PUP, PLM</li>
+                </ul>
+                
+                <p><strong>4. GAS (General Academic Strand)</strong> 
+                   <span class="track-badge gas">GAS</span>
+                </p>
+                <ul>
+                    <li>Flexible curriculum, explore different fields</li>
+                    <li>Combination of subjects from all tracks</li>
+                    <li>Ideal for: Undecided students, multiple interests</li>
+                    <li>Can pursue any college degree</li>
+                </ul>
+                
+                <h4>Technical-Vocational-Livelihood (TVL) Track</h4>
+                
+                <p><strong>5. TVL - ICT (Information and Communications Technology)</strong> 
+                   <span class="track-badge tvl">TVL</span>
+                </p>
+                <ul>
+                    <li>Computer Programming, Web Development</li>
+                    <li>Computer Systems Servicing (TESDA NC II)</li>
+                    <li>Ideal for: IT careers, web development, tech support</li>
+                    <li>Certifications: TESDA NC II upon completion</li>
+                </ul>
+                
+                <h3>Scholarship Programs</h3>
+                <ul>
+                    <li><strong>Free Public Education</strong> - No tuition fees for all students</li>
+                    <li><strong>DOST-SEI Scholarship</strong> - For STEM students pursuing science/engineering</li>
+                    <li><strong>CHED Scholarship</strong> - For qualified college-bound students</li>
+                    <li><strong>Private Scholarships</strong> - SM Foundation, Jollibee Group Foundation</li>
+                    <li><strong>Academic Excellence Award</strong> - Top students receive medals and certificates</li>
+                </ul>
+                
+                <h3>Co-Curricular Activities</h3>
+                <ul>
+                    <li><strong>Academic Clubs</strong> - Math Club, Science Club, English Club, Writers Guild</li>
+                    <li><strong>Competitive Teams</strong> - Quiz Bee, Science Olympiad, Math Olympiad, Debate</li>
+                    <li><strong>Arts & Culture</strong> - Choir, Dance Troupe, Drama Club, School Publication</li>
+                    <li><strong>Sports</strong> - Basketball, Volleyball, Track and Field, Badminton</li>
+                    <li><strong>Student Organizations</strong> - Supreme Student Government, YES-O, Boy/Girl Scouts</li>
+                    <li><strong>Community Service</strong> - Brigada Eskwela, Clean and Green Program, Outreach</li>
+                </ul>
+            </section>
+            
+            <!-- Teachers Section -->
+            <section id="teachers">
+                <h2>Our Faculty</h2>
+                <p>
+                    Our dedicated team of 45 professional teachers brings years of experience and passion 
+                    for education. All faculty members are licensed professional teachers (LPT) and many 
+                    hold master's degrees in their specializations.
+                </p>
+                
+                <img src="https://via.placeholder.com/800x300/f8f9fa/2c3e50?text=SMNHS+Faculty+and+Staff" 
+                     alt="School faculty and staff" 
+                     class="hero-image">
+                
+                <h3>School Administration</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>School Principal</td>
+                            <td>Dr. Roberto C. Santos</td>
+                            <td><a href="mailto:principal@smnhs.edu.ph">principal@smnhs.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>Assistant Principal (JHS)</td>
+                            <td>Mrs. Maria Teresa Cruz, LPT</td>
+                            <td><a href="mailto:ap.jhs@smnhs.edu.ph">ap.jhs@smnhs.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>Assistant Principal (SHS)</td>
+                            <td>Mr. Jose P. Reyes, LPT</td>
+                            <td><a href="mailto:ap.shs@smnhs.edu.ph">ap.shs@smnhs.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>Guidance Counselor</td>
+                            <td>Ms. Elena R. Garcia, RPm</td>
+                            <td><a href="mailto:guidance@smnhs.edu.ph">guidance@smnhs.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>School Nurse</td>
+                            <td>Nurse Sarah M. Lopez, RN</td>
+                            <td><a href="mailto:clinic@smnhs.edu.ph">clinic@smnhs.edu.ph</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Department Heads</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Head Teacher</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mathematics</td>
+                            <td>Mrs. Rosa A. Fernandez, LPT, MAEd</td>
+                            <td><a href="mailto:math@smnhs.edu.ph">math@smnhs.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>Science</td>
+                            <td>Mr. Pedro L. Ramos, LPT, MAEd</td>
+                            <td><a href="mailto:science@smnhs.edu.ph">science@smnhs.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>English</td>
+                            <td>Ms. Ana Marie Villanueva, LPT, MA</td>
+                            <td><a href="mailto:english@smnhs.edu.ph">english@smnhs.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>Filipino</td>
+                            <td>Mrs. Luisa D. Aquino, LPT, MAEd</td>
+                            <td><a href="mailto:filipino@smnhs.edu.ph">filipino@smnhs.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>Social Studies</td>
+                            <td>Mr. Carlos M. Torres, LPT, MA History</td>
+                            <td><a href="mailto:socialstudies@smnhs.edu.ph">socialstudies@smnhs.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>TLE / ICT</td>
+                            <td>Mr. Mark Anthony Diaz, LPT, MIT</td>
+                            <td><a href="mailto:tle@smnhs.edu.ph">tle@smnhs.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>MAPEH</td>
+                            <td>Ms. Grace B. Santos, LPT</td>
+                            <td><a href="mailto:mapeh@smnhs.edu.ph">mapeh@smnhs.edu.ph</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Senior High School Track Coordinators</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Track</th>
+                            <th>Coordinator</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>STEM</td>
+                            <td>Engr. Michael A. Cruz, LPT, MAEd</td>
+                            <td><a href="mailto:stem@smnhs.edu.ph">stem@smnhs.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>ABM</td>
+                            <td>Mrs. Jennifer L. Mendoza, CPA, LPT</td>
+                            <td><a href="mailto:abm@smnhs.edu.ph">abm@smnhs.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>HUMSS</td>
+                            <td>Mr. Anthony F. Rivera, LPT, MA Lit</td>
+                            <td><a href="mailto:humss@smnhs.edu.ph">humss@smnhs.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>GAS</td>
+                            <td>Ms. Linda P. Castillo, LPT, MAEd</td>
+                            <td><a href="mailto:gas@smnhs.edu.ph">gas@smnhs.edu.ph</a></td>
+                        </tr>
+                        <tr>
+                            <td>TVL-ICT</td>
+                            <td>Mr. Raymond S. Gomez, LPT, MIT</td>
+                            <td><a href="mailto:tvl@smnhs.edu.ph">tvl@smnhs.edu.ph</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            <!-- Inquiry Form Section -->
+            <section id="inquiry">
+                <h2>Enrollment Inquiry</h2>
+                <p>
+                    Interested in enrolling at San Miguel National High School? Fill out this inquiry form 
+                    and our admissions team will contact you with enrollment procedures and requirements.
+                </p>
+                <p><strong>Enrollment Period:</strong> April 1 - May 31, 2025 (SY 2025-2026)</p>
+                
+                <form action="/submit-inquiry" method="POST">
+                    <h3>Student Information</h3>
+                    
+                    <label for="student-name">Student's Complete Name: <span class="required">*</span></label>
+                    <input type="text" 
+                           id="student-name" 
+                           name="student_name" 
+                           placeholder="Juan Dela Cruz" 
+                           required>
+                    
+                    <label for="birthdate">Date of Birth: <span class="required">*</span></label>
+                    <input type="date" 
+                           id="birthdate" 
+                           name="birthdate" 
+                           required>
+                    
+                    <label for="current-grade">Current Grade Level:</label>
+                    <select id="current-grade" name="current_grade">
+                        <option value="">-- Select --</option>
+                        <option value="grade6">Grade 6 (Incoming Grade 7)</option>
+                        <option value="grade7">Grade 7 (Incoming Grade 8)</option>
+                        <option value="grade8">Grade 8 (Incoming Grade 9)</option>
+                        <option value="grade9">Grade 9 (Incoming Grade 10)</option>
+                        <option value="grade10">Grade 10 (Incoming Grade 11)</option>
+                        <option value="grade11">Grade 11 (Incoming Grade 12)</option>
+                        <option value="transferee">Transferee</option>
+                    </select>
+                    
+                    <label for="track">Senior High School Track (Grade 11-12 only):</label>
+                    <select id="track" name="track">
+                        <option value="">-- Select Track --</option>
+                        <option value="stem">STEM - Science, Technology, Engineering, Math</option>
+                        <option value="abm">ABM - Accountancy, Business, Management</option>
+                        <option value="humss">HUMSS - Humanities and Social Sciences</option>
+                        <option value="gas">GAS - General Academic Strand</option>
+                        <option value="tvl-ict">TVL-ICT - Technical-Vocational (ICT)</option>
+                    </select>
+                    
+                    <label for="lrn">Learner Reference Number (LRN):</label>
+                    <input type="text" 
+                           id="lrn" 
+                           name="lrn" 
+                           placeholder="123456789012" 
+                           maxlength="12">
+                    
+                    <label for="current-school">Current/Last School Attended:</label>
+                    <input type="text" 
+                           id="current-school" 
+                           name="current_school" 
+                           placeholder="Name of school">
+                    
+                    <h3>Parent/Guardian Information</h3>
+                    
+                    <label for="parent-name">Parent/Guardian Name: <span class="required">*</span></label>
+                    <input type="text" 
+                           id="parent-name" 
+                           name="parent_name" 
+                           placeholder="Maria Dela Cruz" 
+                           required>
+                    
+                    <label for="relationship">Relationship to Student:</label>
+                    <select id="relationship" name="relationship">
+                        <option value="">-- Select --</option>
+                        <option value="mother">Mother</option>
+                        <option value="father">Father</option>
+                        <option value="guardian">Legal Guardian</option>
+                        <option value="other">Other</option>
+                    </select>
+                    
+                    <label for="email">Email Address: <span class="required">*</span></label>
+                    <input type="email" 
+                           id="email" 
+                           name="email" 
+                           placeholder="parent@email.com" 
+                           required>
+                    
+                    <label for="phone">Contact Number: <span class="required">*</span></label>
+                    <input type="tel" 
+                           id="phone" 
+                           name="phone" 
+                           placeholder="0912 345 6789" 
+                           required>
+                    
+                    <label for="address">Complete Home Address: <span class="required">*</span></label>
+                    <textarea id="address" 
+                              name="address" 
+                              rows="3" 
+                              placeholder="House No., Street, Barangay, City/Municipality, Province" 
+                              required></textarea>
+                    
+                    <h3>Additional Information</h3>
+                    
+                    <label for="questions">Questions or Special Concerns:</label>
+                    <textarea id="questions" 
+                              name="questions" 
+                              rows="4" 
+                              placeholder="Any questions about enrollment, requirements, or special needs?"></textarea>
+                    
+                    <label for="referral">How did you hear about SMNHS?</label>
+                    <select id="referral" name="referral">
+                        <option value="">-- Select --</option>
+                        <option value="current-student">Current student/parent recommendation</option>
+                        <option value="facebook">Facebook</option>
+                        <option value="deped">DepEd website</option>
+                        <option value="community">Community/barangay</option>
+                        <option value="other">Other</option>
+                    </select>
+                    
+                    <label>
+                        <input type="checkbox" name="newsletter" value="yes">
+                        Send me updates about enrollment, school events, and important announcements
+                    </label>
+                    
+                    <label>
+                        <input type="checkbox" name="data_privacy" required>
+                        I agree to the Data Privacy Policy and allow SMNHS to process my information 
+                        for enrollment purposes. <span class="required">*</span>
+                    </label>
+                    
+                    <button type="submit">Submit Inquiry</button>
+                    <button type="reset">Clear Form</button>
+                </form>
+            </section>
+        </main>
+        
+        <!-- Sidebar -->
+        <aside>
+            <h3>📢 Announcements</h3>
+            <p><strong>Enrollment for SY 2025-2026 is OPEN!</strong></p>
+            <p>April 1 - May 31, 2025<br>Online and walk-in enrollment available</p>
+            
+            <p><strong>Grade 10 Career Orientation</strong></p>
+            <p>March 15, 2025 | 2:00 PM<br>For incoming Grade 11 students</p>
+            
+            <p><strong>Brigada Eskwela 2025</strong></p>
+            <p>May 20-24, 2025<br>Volunteers welcome!</p>
+            
+            <hr style="margin: 20px 0; border-color: #bdc3c7;">
+            
+            <h3>📅 School Calendar</h3>
+            <p><strong>School Year:</strong><br>June 3, 2025 - March 28, 2026</p>
+            
+            <p><strong>Class Hours:</strong><br>
+            Morning: 7:00 AM - 12:00 PM<br>
+            Afternoon: 12:00 PM - 5:00 PM</p>
+            
+            <hr style="margin: 20px 0; border-color: #bdc3c7;">
+            
+            <h3>📞 Quick Contacts</h3>
+            <p><strong>Main Office:</strong><br>(02) 8765-4321</p>
+            
+            <p><strong>Registrar:</strong><br>(02) 8765-4322</p>
+            
+            <p><strong>Guidance Office:</strong><br>(02) 8765-4323</p>
+            
+            <p><strong>Emergency:</strong><br>0917 123 4567</p>
+        </aside>
+    </div>
+    
+    <footer>
+        <h3>San Miguel National High School</h3>
+        <p><strong>Department of Education - Division of Manila</strong></p>
+        <p>DepEd School ID: 123456</p>
+        <hr style="margin: 20px 0; border-color: #34495e;">
+        <p>📍 456 Rizal Avenue, Barangay San Miguel, Manila, Philippines 1005</p>
+        <p>📞 Phone: <a href="tel:+6328765432">(02) 8765-4321</a></p>
+        <p>📱 Mobile: <a href="tel:+639171234567">0917 123 4567</a></p>
+        <p>📧 Email: <a href="mailto:info@smnhs.edu.ph">info@smnhs.edu.ph</a></p>
+        <p>🌐 Website: <a href="https://www.smnhs.edu.ph">www.smnhs.edu.ph</a></p>
+        <p>📘 Facebook: <a href="https://facebook.com/SMNHSOfficial" target="_blank">@SMNHSOfficial</a></p>
+        <hr style="margin: 20px 0; border-color: #34495e;">
+        <p>&copy; 2025 San Miguel National High School. All rights reserved.</p>
+        <p>Accredited by DepEd | Member of PTCA Federation</p>
+        <p><em>Excellence in Education, Character, and Service</em></p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barangay Directory</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Barangay Officials Directory</h1>
+      <p class="subtitle">Term: 2023-2026</p>
+
+      <div class="columns is-multiline">
+        <% officials.forEach(official => { %>
+          <div class="column is-one-third">
+            <div class="card">
+              <div class="card-content">
+                <div class="media">
+                  <div class="media-left">
+                    <figure class="image is-48x48">
+                      <div class="has-background-primary has-text-white is-flex is-justify-content-center is-align-items-center" 
+                           style="width: 48px; height: 48px; border-radius: 50%; font-size: 1.5em; font-weight: bold;">
+                        <%= official.name.charAt(0) %>
+                      </div>
+                    </figure>
+                  </div>
+                  <div class="media-content">
+                    <p class="title is-5"><%= official.name %></p>
+                    <p class="subtitle is-6"><%= official.position %></p>
+                  </div>
+                </div>
+
+                <div class="content">
+                  <p>
+                    <strong>Contact:</strong> <%= official.contact %><br>
+                    <strong>Term:</strong> <%= official.term %>
+                  </p>
+                  
+                  <% if (official.position === 'Barangay Captain') { %>
+                    <span class="tag is-primary">Captain</span>
+                  <% } else if (official.position.includes('Kagawad')) { %>
+                    <span class="tag is-info">Kagawad</span>
+                  <% } else if (official.position.includes('SK')) { %>
+                    <span class="tag is-warning">SK</span>
+                  <% } else { %>
+                    <span class="tag is-link">Staff</span>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

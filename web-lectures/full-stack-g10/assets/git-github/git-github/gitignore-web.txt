@@ -1,0 +1,161 @@
+# .gitignore for Web Projects (HTML/CSS/JavaScript)
+# For Grade 9 Filipino Students
+
+# ==========================================
+# NODE MODULES (if using npm)
+# ==========================================
+# Don't upload dependencies - too big!
+node_modules/
+package-lock.json  # (optional - depends on team)
+
+# ==========================================
+# ENVIRONMENT VARIABLES (IMPORTANT!)
+# ==========================================
+# Never upload API keys, passwords, secrets!
+.env
+.env.local
+.env.production
+config.js  # (if it contains secrets)
+
+# ==========================================
+# BUILD/COMPILED FILES
+# ==========================================
+# Don't upload generated files
+dist/
+build/
+*.min.js  # (unless you're not using a build tool)
+*.min.css
+
+# ==========================================
+# TEMPORARY FILES
+# ==========================================
+*.tmp
+*.temp
+.cache/
+.parcel-cache/
+
+# ==========================================
+# OS FILES
+# ==========================================
+# macOS
+.DS_Store
+.AppleDouble
+
+# Windows
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# Linux
+*~
+.directory
+
+# ==========================================
+# IDE/EDITOR FILES
+# ==========================================
+# VS Code (optional - keep if team uses same extensions)
+.vscode/
+# Or keep some, ignore others:
+# !.vscode/extensions.json
+# !.vscode/settings.json
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# WebStorm
+.idea/
+
+# ==========================================
+# LOG FILES
+# ==========================================
+*.log
+logs/
+
+# ==========================================
+# TESTING
+# ==========================================
+coverage/
+.nyc_output/
+
+# ==========================================
+# COMMON WEB DEV FILES
+# ==========================================
+# Source maps (optional - needed for debugging)
+# *.map
+
+# Sass cache
+.sass-cache/
+
+# ==========================================
+# BACKUP FILES
+# ==========================================
+*.bak
+*.backup
+*-old.*
+
+# ==========================================
+# EXAMPLE: Sari-Sari Store Website
+# ==========================================
+# Keep these private (if they contain real data):
+# data/products.json
+# data/sales-report.json
+# images/receipts/
+
+# Keep these in Git (safe to share):
+# ✓ index.html
+# ✓ styles.css
+# ✓ app.js
+# ✓ images/logo.png
+# ✓ data/sample-products.json (fake data for demo)
+
+# ==========================================
+# LARGE FILES
+# ==========================================
+# Don't commit very large files (use Git LFS or host elsewhere)
+# High-res videos
+*.mp4
+*.mov
+*.avi
+
+# High-res images (if very large)
+# *.psd (Photoshop files)
+
+# ==========================================
+# HOW TO USE THIS FILE
+# ==========================================
+# 1. Copy this file to your project root
+# 2. Rename it to: .gitignore (with the dot!)
+# 3. Customize based on your project
+# 4. Add to Git:
+#    git add .gitignore
+#    git commit -m "Add .gitignore for web project"
+#
+# WHAT TO COMMIT (Keep in Git):
+# ✓ HTML files (index.html, about.html)
+# ✓ CSS files (styles.css)
+# ✓ JavaScript files (app.js, script.js)
+# ✓ Images (logos, icons - reasonable size)
+# ✓ README.md (project documentation)
+# ✓ package.json (dependencies list)
+#
+# WHAT NOT TO COMMIT (Add to .gitignore):
+# ✗ node_modules/ (dependencies - download with npm install)
+# ✗ .env (secrets, API keys, passwords)
+# ✗ Large files (videos, high-res PSDs)
+# ✗ OS files (.DS_Store, Thumbs.db)
+# ✗ Build output (dist/, *.min.js)
+#
+# PHILIPPINE CONTEXT:
+# - node_modules = 50-200 MB typically
+# - Without .gitignore = ₱50-200 to upload
+# - With .gitignore = ₱5 to upload (10-40x savings!)
+# - Faster for classmates to clone your repo
+# - Works better on slow 3G/4G connections
+#
+# EXAMPLE: Grade 9 Class Project
+# Teacher wants to see your code, not node_modules!
+# - Upload: HTML, CSS, JS files
+# - Include: README.md with setup instructions
+# - Ignore: node_modules, .env, OS files
+# - Result: Small repo, easy to review, fast to clone

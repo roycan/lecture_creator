@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Refactor Exercise (Messy!)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f5f5f5; color: #222; padding: 16px; max-width: 480px; margin: 0 auto; }
+    h1 { font-size: 1.3rem; margin-bottom: 6px; }
+    .box { background: #fff; padding: 14px; border-radius: 8px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    td, th { padding: 5px 4px; text-align: left; }
+    .num { text-align: right; }
+    .right { text-align: right; }
+    .muted { color: #777; }
+    .total { font-weight: bold; border-top: 2px solid #333; }
+    pre { background: #1e1e1e; color: #d4d4d4; padding: 12px; border-radius: 6px; font-size: .8rem; overflow:auto; }
+    .task { background: #fff9c4; padding: 10px; border-radius: 6px; font-size: .88rem; border-left: 4px solid #fbc02d; }
+  </style>
+</head>
+<body>
+  <h1>🍝 Sari-Sari Receipt — Refactor Me!</h1>
+  <div class="task">
+    <b>Your job:</b> This page WORKS — the receipt is correct. But the JavaScript below uses
+    terrible names and one giant function. <b>Rename everything</b> so the code reads like English,
+    and <b>split</b> the big function into small ones (getItems, calcSubtotal, calcVat, renderReceipt).
+    The output on the page must NOT change.
+  </div>
+
+  <div class="box" id="out"></div>
+
+  <pre id="src"></pre>
+
+  <script>
+    // ============================================
+    //  🍝 SPAGHETTI VERSION — working, but ugly.
+    //  Rename + split me!
+    // ============================================
+    const a = [
+      { n: 'Sardinas', q: 2, p: 25 },
+      { n: 'Rice 1kg', q: 1, p: 55 },
+      { n: 'Softdrinks', q: 3, p: 18 }
+    ];
+    const r = 0.12;          // VAT rate
+
+    function doStuff(x) {
+      let t = 0;
+      for (let i = 0; i < x.length; i++) {
+        t += x[i].q * x[i].p;
+      }
+      const v = t * r;
+      const g = t + v;
+      let h = '<table>';
+      h += '<tr><th>Item</th><th class="num">Qty</th><th class="num">Price</th><th class="num">Total</th></tr>';
+      for (let i = 0; i < x.length; i++) {
+        h += '<tr><td>' + x[i].n + '</td><td class="num">' + x[i].q + '</td><td class="num">₱' + x[i].p + '</td><td class="num">₱' + (x[i].q * x[i].p).toFixed(2) + '</td></tr>';
+      }
+      h += '<tr class="muted"><td colspan="3" class="right">Subtotal</td><td class="num">₱' + t.toFixed(2) + '</td></tr>';
+      h += '<tr class="muted"><td colspan="3" class="right">VAT (12%)</td><td class="num">₱' + v.toFixed(2) + '</td></tr>';
+      h += '<tr class="total"><td colspan="3" class="right">Grand Total</td><td class="num">₱' + g.toFixed(2) + '</td></tr>';
+      h += '</table>';
+      return h;
+    }
+
+    // Render it
+    document.getElementById('out').innerHTML = doStuff(a);
+
+    // Show the source so you can read/copy it for refactoring
+    document.getElementById('src').textContent = doStuff.toString() + '\n\n// data:\n' + JSON.stringify(a, null, 2);
+  </script>
+</body>
+</html>

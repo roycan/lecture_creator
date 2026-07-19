@@ -324,7 +324,7 @@ Let columns wrap to multiple rows:
 </div>
 ```
 
-**🎯 Try It:** Open `assets/bulma-grid-demo.html` to see all these column patterns in action!
+**🎯 Try It:** Open [`assets/bulma-grid-demo.html`](assets/bulma-grid-demo.html) to see all these column patterns in action!
 
 ---
 
@@ -451,7 +451,7 @@ Sometimes you want to show different content on mobile vs desktop. Bulma provide
 </table>
 ```
 
-**🎯 Try It:** Open `assets/bulma-responsive-helpers.html` and resize your browser to see content appear/disappear!
+**🎯 Try It:** Open [`assets/bulma-responsive-helpers.html`](assets/bulma-responsive-helpers.html) and resize your browser to see content appear/disappear!
 
 ---
 
@@ -663,7 +663,7 @@ Use HTML5 validation attributes:
 - ✅ Clear labels and placeholders
 - ✅ Validation with `required`
 
-**🎯 Try It:** Open `assets/mobile-form.html` on your phone and see how the keyboard changes for each input!
+**🎯 Try It:** Open [`assets/mobile-form.html`](assets/mobile-form.html) on your phone and see how the keyboard changes for each input!
 
 ---
 
@@ -1013,7 +1013,7 @@ The **easiest way** to test responsive designs without owning multiple devices.
 - **Desktop:** Responsive (drag to resize)
 
 **🎯 Try It Now:**
-1. Open `assets/bulma-grid-demo.html`
+1. Open [`assets/bulma-grid-demo.html`](assets/bulma-grid-demo.html)
 2. Press F12, click device toolbar
 3. Select "iPhone SE"
 4. See how columns stack to 1 per row!
@@ -1157,7 +1157,7 @@ If you don't have a smartphone:
 ---
 
 **🎯 Try It:** Test Your Sites
-1. Open `assets/mobile-form.html` in Chrome
+1. Open [`assets/mobile-form.html`](assets/mobile-form.html) in Chrome
 2. Open DevTools (F12) and click device toolbar
 3. Test on these devices:
    - iPhone SE (small phone)
@@ -2199,7 +2199,7 @@ Ready for real-world projects? Try these:
 - No buttons/search when printing
 
 **Files:**
-- Start: `assets/store-catalog-starter.html`
+- Start: [`assets/store-catalog-starter.html`](assets/store-catalog-starter.html)
 - Solution: `assets/store-catalog-solution.html`
 
 ---
@@ -2215,7 +2215,7 @@ Ready for real-world projects? Try these:
 - Fits on 1 A4 page
 
 **Files:**
-- Start: `assets/barangay-clearance-starter.html`
+- Start: [`assets/barangay-clearance-starter.html`](assets/barangay-clearance-starter.html)
 - Solution: `assets/barangay-clearance-solution.html`
 
 ---
@@ -2230,7 +2230,7 @@ Ready for real-world projects? Try these:
 - On desktop: Cards in row (4 columns), table full width
 
 **Files:**
-- Start: `assets/dashboard-starter.html`
+- Start: [`assets/dashboard-starter.html`](assets/dashboard-starter.html)
 - Solution: `assets/dashboard-solution.html`
 
 ---
@@ -2261,7 +2261,7 @@ Create a complete government document submission system!
 - Mobile-friendly form inputs
 
 **Files:**
-- Starter: `assets/gov-doc-starter.html`
+- Starter: [`assets/gov-doc-starter.html`](assets/gov-doc-starter.html)
 - Solution 1: Business Permit
 - Solution 2: Barangay Certificate
 - Solution 3: School Enrollment

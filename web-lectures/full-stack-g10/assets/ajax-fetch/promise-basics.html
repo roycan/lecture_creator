@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Promise Basics Practice</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>Promise Basics</h2>
+      <p>Open the console (F12) to see the results.</p>
+      <button id="resolveBtn" class="btn">Create Resolving Promise</button>
+      <button id="rejectBtn" class="btn secondary">Create Rejecting Promise</button>
+      <button id="chainBtn" class="btn">Promise Chain</button>
+      <div id="output" class="card small" style="margin-top:10px;">Results will appear in console and here.</div>
+    </div>
+  </div>
+
+  <script>
+    const output = document.getElementById('output');
+
+    // Example 1: Promise that resolves
+    document.getElementById('resolveBtn').addEventListener('click', function(){
+      const promise = new Promise(function(resolve, reject){
+        setTimeout(function(){
+          resolve('✅ Order complete! Here is your Chickenjoy!');
+        }, 2000);
+      });
+
+      output.textContent = 'Waiting for promise...';
+      output.classList.remove('success', 'error');
+
+      promise.then(function(message){
+        console.log(message);
+        output.textContent = message;
+        output.classList.add('success');
+      });
+    });
+
+    // Example 2: Promise that rejects
+    document.getElementById('rejectBtn').addEventListener('click', function(){
+      const promise = new Promise(function(resolve, reject){
+        setTimeout(function(){
+          reject('❌ Sorry, kitchen ran out of chicken!');
+        }, 2000);
+      });
+
+      output.textContent = 'Waiting for promise...';
+      output.classList.remove('success', 'error');
+
+      promise
+        .then(function(message){
+          console.log(message);
+        })
+        .catch(function(error){
+          console.error(error);
+          output.textContent = error;
+          output.classList.add('error');
+        });
+    });
+
+    // Example 3: Promise chaining
+    document.getElementById('chainBtn').addEventListener('click', function(){
+      output.textContent = 'Step 1: Taking order...';
+      output.classList.remove('success', 'error');
+
+      new Promise(resolve => {
+        setTimeout(() => resolve('Order received'), 1000);
+      })
+      .then(msg => {
+        console.log(msg);
+        output.textContent = 'Step 2: Cooking...';
+        return new Promise(resolve => {
+          setTimeout(() => resolve('Food cooked'), 1000);
+        });
+      })
+      .then(msg => {
+        console.log(msg);
+        output.textContent = 'Step 3: Serving...';
+        return new Promise(resolve => {
+          setTimeout(() => resolve('Enjoy your meal!'), 1000);
+        });
+      })
+      .then(msg => {
+        console.log(msg);
+        output.textContent = '✅ ' + msg;
+        output.classList.add('success');
+      })
+      .catch(error => {
+        console.error(error);
+        output.textContent = '❌ ' + error;
+        output.classList.add('error');
+      });
+    });
+  </script>
+</body>
+</html>

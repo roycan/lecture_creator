@@ -12,6 +12,13 @@ mkdir -p "$STAGE"
 cp "$SRC"/*.html "$STAGE"/
 cp "$SRC/full-stack-g10-curriculum.md" "$STAGE"/
 
+# Include starter/practice code so in-deck "Try It" links resolve OFFLINE too
+# (Option A). The assets/ tree is produced by scripts/stage-student-assets.mjs
+# and already excludes *-solution* and quiz.md.
+if [ -d "$SRC/assets" ]; then
+  cp -r "$SRC/assets" "$STAGE"/
+fi
+
 # Produce the zip so the top-level folder is named nicely
 OUT="dist/full-stack-g10-v${VERSION}.zip"
 mkdir -p dist

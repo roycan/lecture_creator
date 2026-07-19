@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Links and Images Practice</title>
+</head>
+<body>
+    <h1>Links and Images Practice</h1>
+    
+    <nav>
+        <a href="#links">Links Section</a> |
+        <a href="#images">Images Section</a> |
+        <a href="#figures">Figures Section</a>
+    </nav>
+    
+    <hr>
+    
+    <section id="links">
+        <h2>Different Types of Links</h2>
+        
+        <h3>External Links</h3>
+        <ul>
+            <li><a href="https://www.google.com" target="_blank">Google (opens in new tab)</a></li>
+            <li><a href="https://www.deped.gov.ph" target="_blank">DepEd Website</a></li>
+            <li><a href="https://www.facebook.com" target="_blank">Facebook</a></li>
+        </ul>
+        
+        <h3>Email Links</h3>
+        <ul>
+            <li><a href="mailto:captain@barangay.ph">Email the Barangay Captain</a></li>
+            <li><a href="mailto:info@school.edu.ph?subject=Inquiry">Email School (with subject)</a></li>
+        </ul>
+        
+        <h3>Phone Links</h3>
+        <ul>
+            <li><a href="tel:+6391234567890">Call: 0912 345 6789</a></li>
+            <li><a href="tel:911">Emergency: 911</a></li>
+        </ul>
+        
+        <h3>Anchor Links (Jump to section)</h3>
+        <ul>
+            <li><a href="#images">Jump to Images Section</a></li>
+            <li><a href="#figures">Jump to Figures Section</a></li>
+            <li><a href="#top">Back to Top</a></li>
+        </ul>
+    </section>
+    
+    <hr>
+    
+    <section id="images">
+        <h2>Image Examples</h2>
+        
+        <h3>Placeholder Images</h3>
+        <p>Since we don't have actual images, we're using placeholder services:</p>
+        
+        <h4>Example 1: Square Image</h4>
+        <img src="https://via.placeholder.com/300x300/0066cc/ffffff?text=Barangay+Logo" 
+             alt="Barangay Logo Placeholder" 
+             width="300" 
+             height="300">
+        
+        <h4>Example 2: Wide Image</h4>
+        <img src="https://via.placeholder.com/600x300/009933/ffffff?text=Barangay+Hall" 
+             alt="Barangay Hall Placeholder" 
+             width="600" 
+             height="300">
+        
+        <h4>Example 3: Responsive Image</h4>
+        <p>This image adjusts to screen size:</p>
+        <img src="https://via.placeholder.com/800x400/cc0000/ffffff?text=Community+Event" 
+             alt="Community Event Placeholder" 
+             style="max-width: 100%; height: auto;">
+        
+        <h4>Example 4: Image as Link</h4>
+        <p>Click the logo to go to homepage:</p>
+        <a href="#top">
+            <img src="https://via.placeholder.com/150x150/ffcc00/000000?text=Click+Me" 
+                 alt="Clickable Logo">
+        </a>
+    </section>
+    
+    <hr>
+    
+    <section id="figures">
+        <h2>Figures with Captions</h2>
+        
+        <figure>
+            <img src="https://via.placeholder.com/500x300/663399/ffffff?text=Barangay+Captain" 
+                 alt="Barangay Captain Juan Santos" 
+                 style="max-width: 100%; height: auto;">
+            <figcaption>Barangay Captain Juan Santos - Serving since 2018</figcaption>
+        </figure>
+        
+        <figure>
+            <img src="https://via.placeholder.com/500x300/ff6600/ffffff?text=Community+Center" 
+                 alt="San Juan Community Center" 
+                 style="max-width: 100%; height: auto;">
+            <figcaption>San Juan Community Center - Built in 1985, renovated in 2020</figcaption>
+        </figure>
+        
+        <figure>
+            <img src="https://via.placeholder.com/500x300/009999/ffffff?text=Health+Workers" 
+                 alt="Barangay Health Workers" 
+                 style="max-width: 100%; height: auto;">
+            <figcaption>Our dedicated barangay health workers during a vaccination drive</figcaption>
+        </figure>
+    </section>
+    
+    <hr>
+    
+    <section>
+        <h2>Image Best Practices</h2>
+        <ul>
+            <li><strong>Always use alt text</strong> - Describes image for screen readers</li>
+            <li><strong>Use descriptive filenames</strong> - barangay-hall.jpg not img001.jpg</li>
+            <li><strong>Optimize file size</strong> - Large images slow down websites</li>
+            <li><strong>Use appropriate formats</strong> - JPG for photos, PNG for logos</li>
+            <li><strong>Make images responsive</strong> - Use max-width: 100% for mobile</li>
+        </ul>
+    </section>
+    
+    <hr>
+    
+    <footer>
+        <p><a href="#top">Back to Top</a></p>
+        <p>&copy; 2025 Links and Images Practice</p>
+    </footer>
+</body>
+</html>

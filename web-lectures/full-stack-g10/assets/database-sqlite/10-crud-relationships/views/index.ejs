@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Management - Relationships</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+  <nav class="navbar is-primary" role="navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">
+        <strong>🎓 School Management System</strong>
+      </a>
+    </div>
+    <div class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item" href="/">Students</a>
+        <a class="navbar-item" href="/sections">Sections</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="container">
+      <!-- Flash Messages -->
+      <% if (success && success.length > 0) { %>
+        <div class="notification is-success is-light">
+          <button class="delete"></button>
+          <%= success[0] %>
+        </div>
+      <% } %>
+      
+      <% if (error && error.length > 0) { %>
+        <div class="notification is-danger is-light">
+          <button class="delete"></button>
+          <ul>
+            <% error.forEach(err => { %>
+              <li><%= err %></li>
+            <% }); %>
+          </ul>
+        </div>
+      <% } %>
+
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <div>
+              <h1 class="title">👨‍🎓 Student Directory</h1>
+              <p class="subtitle">Database Relationships Demo (One-to-Many)</p>
+            </div>
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+            <a href="/add" class="button is-primary is-medium">
+              <strong>+ Add Student</strong>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="columns">
+        <div class="column">
+          <div class="box has-background-info-light">
+            <p class="heading">Total Students</p>
+            <p class="title"><%= stats.totalStudents %></p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-background-primary-light">
+            <p class="heading">Total Sections</p>
+            <p class="title"><%= stats.totalSections %></p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box has-background-success-light">
+            <p class="heading">Average per Section</p>
+            <p class="title"><%= stats.totalSections > 0 ? Math.round(stats.totalStudents / stats.totalSections) : 0 %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Students per Section -->
+      <div class="box">
+        <p class="heading">📊 Students per Section</p>
+        <div class="tags">
+          <% Object.entries(stats.studentsPerSection).forEach(([section, count]) => { %>
+            <span class="tag is-medium is-info">
+              <%= section %>: <strong><%= count %></strong>
+            </span>
+          <% }); %>
+        </div>
+      </div>
+
+      <!-- Students Table with JOIN data -->
+      <div class="box">
+        <table class="table is-fullwidth is-striped is-hoverable">
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>Name</th>
+              <th>Section</th>
+              <th>Adviser</th>
+              <th>Room</th>
+              <th>Email</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (students.length === 0) { %>
+              <tr>
+                <td colspan="7" class="has-text-centered has-text-grey">
+                  No students enrolled. Add your first student!
+                </td>
+              </tr>
+            <% } %>
+            
+            <% students.forEach(student => { %>
+              <tr>
+                <td class="is-family-monospace"><%= student.student_id %></td>
+                <td><strong><%= student.last_name %>, <%= student.first_name %></strong></td>
+                <td><span class="tag is-info"><%= student.section_name %></span></td>
+                <td><%= student.adviser %></td>
+                <td><%= student.room %></td>
+                <td><%= student.email || '—' %></td>
+                <td>
+                  <div class="buttons">
+                    <a href="/edit/<%= student.id %>" class="button is-small is-info">
+                      ✏️ Edit
+                    </a>
+                    <form method="POST" action="/delete/<%= student.id %>" style="display: inline;" 
+                          onsubmit="return confirm('Delete <%= student.first_name %> <%= student.last_name %>?')">
+                      <button type="submit" class="button is-small is-danger">
+                        🗑️ Delete
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="notification is-info is-light">
+        <p class="heading">🔗 Relationship Features</p>
+        <ul>
+          <li><strong>One-to-Many:</strong> Each section can have many students</li>
+          <li><strong>Foreign Key:</strong> Students reference sections via section_id</li>
+          <li><strong>JOIN Query:</strong> Display combines data from both tables</li>
+          <li><strong>Cascade Delete:</strong> Deleting a section removes its students</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Auto-dismiss notifications
+    document.addEventListener('DOMContentLoaded', () => {
+      const deleteButtons = document.querySelectorAll('.notification .delete');
+      deleteButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          button.parentElement.remove();
+        });
+      });
+      
+      setTimeout(() => {
+        document.querySelectorAll('.notification').forEach(notif => {
+          notif.style.display = 'none';
+        });
+      }, 5000);
+    });
+  </script>
+</body>
+</html>

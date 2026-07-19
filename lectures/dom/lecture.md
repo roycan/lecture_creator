@@ -31,7 +31,7 @@ Why is this cool?
 - You can respond to user actions (clicks, typing, form submission).
 - You can build interactive apps: calculators, games, to-do lists, small business tools.
 
-Quick demo idea: click a button and the heading changes. We'll build that exact demo in `assets/practice1.html`.
+Quick demo idea: click a button and the heading changes. We'll build that exact demo in [`assets/practice1.html`](assets/practice1.html).
 
 ### 📁 Shared Stylesheet Reference
 
@@ -77,7 +77,7 @@ When you want to change something on the page, the first step is to find the ele
 3) `document.querySelectorAll('css-selector')`
 - Returns a NodeList of matching elements (like an array). Useful for loops.
 
-Practice: open `assets/practice1.html` and complete the TODOs to find elements and change the heading.
+Practice: open [`assets/practice1.html`](assets/practice1.html) and complete the TODOs to find elements and change the heading.
 
 Tip: Always check `console.log(element)` to confirm you found the right node.
 
@@ -91,7 +91,7 @@ This flowchart helps you pick the right method. Start with `getElementById` when
 
 ### 🎯 Try it yourself — Practice 1 (Selecting Elements)
 
-- Open: `assets/practice1.html`
+- Open: [`assets/practice1.html`](assets/practice1.html)
 - How: Double-click the file to open in your browser (or right-click → Open with Live Server)
 
 What to do:
@@ -126,13 +126,13 @@ Examples you'll practice:
 - Build a name tag generator that reads an input value and writes a greeting
 - Replace innerHTML to show rich content (but we warn about XSS)
 
-Activity: `assets/practice2.html` contains a small form — make the Submit button put a formatted message in a result card using `.textContent` and `.value`.
+Activity: [`assets/practice2.html`](assets/practice2.html) contains a small form — make the Submit button put a formatted message in a result card using `.textContent` and `.value`.
 
 ---
 
 ### 🎯 Try it yourself — Practice 2 (Reading & Changing Content)
 
-- Open: `assets/practice2.html`
+- Open: [`assets/practice2.html`](assets/practice2.html)
 - How: Double-click to open in your browser
 
 Tasks:
@@ -173,7 +173,7 @@ You can change how elements look in two ways.
 
 We'll provide a small `styles.css` with utility classes like `.hidden`, `.highlight`, `.error`, `.success`, `.card`, `.btn`.
 
-Practice: `assets/practice3.html` — clicking a button toggles a `highlight` class on a paragraph.
+Practice: [`assets/practice3.html`](assets/practice3.html) — clicking a button toggles a `highlight` class on a paragraph.
 
 **Visual: Inline Styles vs CSS Classes**
 
@@ -187,7 +187,7 @@ This comparison shows why toggling classes is better than writing inline styles.
 
 ### 🎯 Try it yourself — Practice 3 (Styling via classList)
 
-- Open: `assets/practice3.html`
+- Open: [`assets/practice3.html`](assets/practice3.html)
 - How: Double-click to open in your browser
 
 Tasks:
@@ -222,7 +222,7 @@ Use cases:
 - Build product cards dynamically from an inventory array
 - Remove items when they are completed/sold
 
-Practice: We'll build the add/remove part of the To-Do project step-by-step in `assets/todo.html`.
+Practice: We'll build the add/remove part of the To-Do project step-by-step in [`assets/todo.html`](assets/todo.html).
 
 **Visual: Element Creation Lifecycle**
 
@@ -234,7 +234,7 @@ This diagram shows the correct order for creating elements. First `createElement
 
 ### 🎯 Try it yourself — Mini Project: To‑Do (Create & Remove)
 
-- Open: `assets/todo.html`
+- Open: [`assets/todo.html`](assets/todo.html)
 - How: Double-click to open in your browser
 
 Goals:
@@ -297,7 +297,7 @@ Here's a real example from our store project. When you click "Add to Cart" butto
 
 ### 🎯 Try it yourself — Events (Click Counter)
 
-- Open: `assets/practice1.html` and add a simple counter.
+- Open: [`assets/practice1.html`](assets/practice1.html) and add a simple counter.
 - How: Double-click to open in your browser
 
 Add this under the existing code:
@@ -324,7 +324,7 @@ Goal: Create a simple Grade Calculator that:
 **Download:** [`calculator.html`](assets/calculator.html)
 
 Files:
-- `assets/calculator.html` — starter HTML & CSS
+- [`assets/calculator.html`](assets/calculator.html) — starter HTML & CSS
 - `assets/styles.css` — shared styles
 
 Steps we will provide in the lecture:
@@ -357,7 +357,7 @@ Goal: Build a small to-do list app with:
 **Download:** [`todo.html`](assets/todo.html)
 
 Files:
-- `assets/todo.html` (starter + guided steps)
+- [`assets/todo.html`](assets/todo.html) (starter + guided steps)
 
 Key concepts: createElement, appendChild, event listeners for buttons, array of tasks in memory
 
@@ -372,7 +372,7 @@ Goal: Show a simple product grid built from an array of product objects. Each ca
 **Download:** [`store.html`](assets/store.html)
 
 Files:
-- `assets/store.html`
+- [`assets/store.html`](assets/store.html)
 
 Key JS concepts: arrays of objects, mapping to DOM nodes, updating totals, disabling Add button when out-of-stock
 
@@ -394,11 +394,10 @@ Compare these two approaches. On the left: attaching a listener to each button i
 
 ## Final Challenge — Student Management Dashboard (starter + hints)
 
-Students pick a theme (Student roster, Store inventory, Game leaderboard). Starter `assets/dashboard-starter.html` will include the HTML scaffold and comments with tasks. We'll also provide a full `assets/dashboard-solution.html` for teachers.
+Students pick a theme (Student roster, Store inventory, Game leaderboard). Starter [`assets/dashboard-starter.html`](assets/dashboard-starter.html) will include the HTML scaffold and comments with tasks. We'll also provide a full `assets/dashboard-solution.html` for teachers.
 
 **Downloads:**
 - [`dashboard-starter.html`](assets/dashboard-starter.html) — For students (scaffold with TODOs)
-- [`dashboard-solution.html`](assets/dashboard-solution.html) — For teachers (full working version)
 
 Requirements (minimum):
 - Add item with form

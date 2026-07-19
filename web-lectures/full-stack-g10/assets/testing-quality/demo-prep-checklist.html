@@ -1,0 +1,438 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>🎬 Demo Preparation Checklist</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>🎬 Client Demo Preparation Checklist</h2>
+      <p>Never fail a demo again. Prepare systematically.</p>
+      
+      <div style="margin-top: 20px;">
+        <h3>⚠️ Why Demo Prep Matters</h3>
+        <div style="background: #f8d7da; padding: 15px; border-left: 4px solid #dc3545; border-radius: 5px;">
+          <p><strong>One bug during demo = Lost trust</strong></p>
+          <p>You have 15-20 minutes to prove your system works.</p>
+          <p>This checklist ensures professional delivery every time.</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 30px;">
+        <h3>📋 Select Project Type</h3>
+        <select id="projectType" class="input" onchange="loadChecklist()">
+          <option value="">-- Select Project --</option>
+          <option value="sari-sari">Sari-sari Store Inventory</option>
+          <option value="barangay">Barangay Directory</option>
+          <option value="appointment">Appointment Booking</option>
+          <option value="school">School Records</option>
+          <option value="custom">Custom Project</option>
+        </select>
+
+        <div id="customProject" style="display: none; margin-top: 15px;">
+          <input type="text" id="customName" class="input" placeholder="Enter your project name">
+        </div>
+      </div>
+
+      <div id="checklistContainer" style="display: none; margin-top: 30px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3>✅ Demo Prep Checklist</h3>
+          <div>
+            <span id="progressText" style="margin-right: 15px; font-weight: bold; color: #007bff;"></span>
+            <button onclick="resetChecklist()" class="btn" style="background: #6c757d; padding: 8px 15px;">🔄 Reset</button>
+          </div>
+        </div>
+
+        <div style="background: #fff3cd; padding: 15px; border-left: 4px solid #856404; border-radius: 5px; margin-bottom: 20px;">
+          <strong>⏰ Timeline:</strong>
+          <ul style="margin: 10px 0 0 20px;">
+            <li><strong>3 days before:</strong> Complete E2E tests + UAT</li>
+            <li><strong>1 day before:</strong> Prepare environment + demo script</li>
+            <li><strong>30 min before:</strong> Final smoke test</li>
+          </ul>
+        </div>
+
+        <!-- 3 DAYS BEFORE -->
+        <div class="checklist-section">
+          <h4 style="background: #dc3545; color: white; padding: 10px; border-radius: 5px; margin: 0;">
+            🚨 3 DAYS BEFORE DEMO
+          </h4>
+          <div style="padding: 15px; background: #f8f9fa; border: 2px solid #dc3545; border-top: none; border-radius: 0 0 5px 5px;">
+            <div id="threeDaysTasks"></div>
+          </div>
+        </div>
+
+        <!-- 1 DAY BEFORE -->
+        <div class="checklist-section" style="margin-top: 20px;">
+          <h4 style="background: #ffc107; color: #000; padding: 10px; border-radius: 5px; margin: 0;">
+            ⚠️ 1 DAY BEFORE DEMO
+          </h4>
+          <div style="padding: 15px; background: #f8f9fa; border: 2px solid #ffc107; border-top: none; border-radius: 0 0 5px 5px;">
+            <div id="oneDayTasks"></div>
+          </div>
+        </div>
+
+        <!-- 30 MINUTES BEFORE -->
+        <div class="checklist-section" style="margin-top: 20px;">
+          <h4 style="background: #28a745; color: white; padding: 10px; border-radius: 5px; margin: 0;">
+            ✅ 30 MINUTES BEFORE DEMO
+          </h4>
+          <div style="padding: 15px; background: #f8f9fa; border: 2px solid #28a745; border-top: none; border-radius: 0 0 5px 5px;">
+            <div id="thirtyMinTasks"></div>
+          </div>
+        </div>
+
+        <!-- DURING DEMO -->
+        <div style="margin-top: 20px; padding: 20px; background: #d1ecf1; border-left: 4px solid #0c5460; border-radius: 5px;">
+          <h4>🎤 During the Demo</h4>
+          <p><strong>DO:</strong></p>
+          <ul>
+            <li>✅ Speak clearly and slowly</li>
+            <li>✅ Show REAL use cases (not "test test")</li>
+            <li>✅ Highlight benefits ("Saves 2 hours/day")</li>
+            <li>✅ Stay calm if minor issues appear</li>
+          </ul>
+          <p style="margin-top: 10px;"><strong>DON'T:</strong></p>
+          <ul>
+            <li>❌ Apologize for minor UI issues</li>
+            <li>❌ Say "This part doesn't work yet"</li>
+            <li>❌ Make excuses</li>
+            <li>❌ Demo untested features</li>
+          </ul>
+        </div>
+
+        <div style="margin-top: 30px;">
+          <button onclick="exportChecklist()" class="btn">📋 Export Checklist</button>
+          <button onclick="generateDemoScript()" class="btn" style="background: #17a2b8;">📝 Generate Demo Script</button>
+        </div>
+      </div>
+
+      <div id="demoScriptSection" style="display: none; margin-top: 30px;">
+        <h3>📝 Demo Script Template</h3>
+        <div style="background: #d4edda; padding: 20px; border-left: 4px solid #28a745; border-radius: 5px;">
+          <pre id="demoScript" style="white-space: pre-wrap; font-family: 'Courier New', monospace; line-height: 1.6;"></pre>
+        </div>
+        <button onclick="copyScript()" class="btn" style="margin-top: 15px;">📋 Copy Script</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const checklists = {
+      'sari-sari': {
+        name: 'Sari-sari Store Inventory',
+        threeDays: [
+          'Run full E2E test: Complete sale workflow (login to receipt)',
+          'Run E2E test: Product management (add, edit, delete)',
+          'Run E2E test: View sales reports',
+          'Document any bugs found',
+          'Fix all critical bugs',
+          'Re-test after fixes',
+          'Schedule UAT session with client (if possible)'
+        ],
+        oneDay: [
+          'Load realistic demo data (20+ products, not "test test")',
+          'Remove all debug code and console.logs',
+          'Test on device you\'ll use for demo',
+          'Prepare backup screenshots/video',
+          'Write demo script (15 minutes max)',
+          'Practice demo 3 times',
+          'Prepare answers for common questions'
+        ],
+        thirtyMin: [
+          'Run 2-minute smoke test',
+          'Login works?',
+          'Can view products?',
+          'Can record sale?',
+          'Can view reports?',
+          'No error messages in console?',
+          'Professional appearance (no placeholders)?'
+        ]
+      },
+      'barangay': {
+        name: 'Barangay Directory System',
+        threeDays: [
+          'Run E2E test: Add new resident workflow',
+          'Run E2E test: Search and view resident details',
+          'Run E2E test: Update resident information',
+          'Run E2E test: Generate reports',
+          'Document bugs, fix critical issues',
+          'Re-test all workflows',
+          'UAT session with barangay official (if possible)'
+        ],
+        oneDay: [
+          'Load 50+ realistic residents (not test data)',
+          'Remove debug code',
+          'Test on demo device',
+          'Prepare backup materials',
+          'Write 15-minute demo script',
+          'Practice demo',
+          'Prepare Q&A responses'
+        ],
+        thirtyMin: [
+          'Smoke test: Login works?',
+          'Can view resident list?',
+          'Can search residents?',
+          'Can add new resident?',
+          'Can update resident?',
+          'Reports generate correctly?',
+          'No errors visible?'
+        ]
+      },
+      'appointment': {
+        name: 'Appointment Booking System',
+        threeDays: [
+          'E2E test: Book appointment workflow',
+          'E2E test: View and manage appointments',
+          'E2E test: Cancel/reschedule appointment',
+          'E2E test: Calendar view',
+          'Fix bugs, re-test',
+          'UAT with client'
+        ],
+        oneDay: [
+          'Load demo appointments (realistic dates/times)',
+          'Clean up code',
+          'Test on demo device',
+          'Backup materials ready',
+          'Demo script prepared',
+          'Practice presentation'
+        ],
+        thirtyMin: [
+          'Login works?',
+          'Calendar displays?',
+          'Can book appointment?',
+          'Can view bookings?',
+          'Can cancel booking?',
+          'No conflicts?',
+          'Looks professional?'
+        ]
+      },
+      'school': {
+        name: 'School Records System',
+        threeDays: [
+          'E2E test: Student enrollment',
+          'E2E test: Grade entry and calculation',
+          'E2E test: Report card generation',
+          'E2E test: Search students',
+          'Bug fixes and re-testing',
+          'UAT with teacher'
+        ],
+        oneDay: [
+          'Load demo students (20-30 records)',
+          'Remove test/debug code',
+          'Device testing',
+          'Backup ready',
+          'Demo script',
+          'Practice'
+        ],
+        thirtyMin: [
+          'Login?',
+          'View students?',
+          'Add student?',
+          'Enter grades?',
+          'Generate report?',
+          'Search works?',
+          'Professional?'
+        ]
+      }
+    };
+
+    let currentChecklist = null;
+
+    function loadChecklist() {
+      const type = document.getElementById('projectType').value;
+      
+      if (type === 'custom') {
+        document.getElementById('customProject').style.display = 'block';
+        document.getElementById('checklistContainer').style.display = 'none';
+        return;
+      }
+
+      document.getElementById('customProject').style.display = 'none';
+
+      if (!type) {
+        document.getElementById('checklistContainer').style.display = 'none';
+        return;
+      }
+
+      currentChecklist = checklists[type];
+      renderChecklist();
+      document.getElementById('checklistContainer').style.display = 'block';
+    }
+
+    function renderChecklist() {
+      if (!currentChecklist) return;
+
+      renderSection('threeDaysTasks', currentChecklist.threeDays);
+      renderSection('oneDayTasks', currentChecklist.oneDay);
+      renderSection('thirtyMinTasks', currentChecklist.thirtyMin);
+      
+      updateProgress();
+    }
+
+    function renderSection(containerId, tasks) {
+      const container = document.getElementById(containerId);
+      let html = '';
+      tasks.forEach((task, index) => {
+        html += `
+          <div style="margin-bottom: 10px; padding: 10px; background: white; border-radius: 3px;">
+            <label style="display: flex; align-items: start; cursor: pointer;">
+              <input type="checkbox" onchange="updateProgress()" style="margin-right: 10px; margin-top: 3px;">
+              <span>${task}</span>
+            </label>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function updateProgress() {
+      const total = document.querySelectorAll('input[type="checkbox"]').length;
+      const checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
+      const percent = total > 0 ? Math.round((checked / total) * 100) : 0;
+      
+      document.getElementById('progressText').textContent = `${checked}/${total} (${percent}%)`;
+      
+      if (percent === 100) {
+        document.getElementById('progressText').textContent = '🎉 READY FOR DEMO!';
+        document.getElementById('progressText').style.color = '#28a745';
+      } else if (percent >= 70) {
+        document.getElementById('progressText').style.color = '#ffc107';
+      } else {
+        document.getElementById('progressText').style.color = '#dc3545';
+      }
+    }
+
+    function resetChecklist() {
+      if (confirm('Reset all checkboxes?')) {
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        updateProgress();
+      }
+    }
+
+    function exportChecklist() {
+      if (!currentChecklist) return;
+
+      let text = '═'.repeat(60) + '\n';
+      text += 'DEMO PREPARATION CHECKLIST\n';
+      text += '═'.repeat(60) + '\n\n';
+      text += `PROJECT: ${currentChecklist.name}\n`;
+      text += `DEMO DATE: ______________\n\n`;
+      
+      text += '🚨 3 DAYS BEFORE DEMO\n';
+      text += '─'.repeat(60) + '\n';
+      currentChecklist.threeDays.forEach(task => text += `[ ] ${task}\n`);
+      text += '\n';
+
+      text += '⚠️ 1 DAY BEFORE DEMO\n';
+      text += '─'.repeat(60) + '\n';
+      currentChecklist.oneDay.forEach(task => text += `[ ] ${task}\n`);
+      text += '\n';
+
+      text += '✅ 30 MINUTES BEFORE DEMO\n';
+      text += '─'.repeat(60) + '\n';
+      currentChecklist.thirtyMin.forEach(task => text += `[ ] ${task}\n`);
+      text += '\n';
+
+      text += '═'.repeat(60) + '\n';
+      text += 'READY FOR DEMO? [ ] YES  [ ] NO\n';
+      
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ Checklist copied to clipboard!');
+      });
+    }
+
+    function generateDemoScript() {
+      if (!currentChecklist) return;
+
+      const scripts = {
+        'Sari-sari Store Inventory': `DEMO SCRIPT: Sari-sari Store Inventory System
+Duration: 15 minutes
+═════════════════════════════════════════════════
+
+[0:00-2:00] INTRODUCTION
+"Good morning! Today I'll demonstrate the inventory system
+for sari-sari stores. It has 3 main features: product 
+management, sales recording, and reports. Let me show you..."
+
+[2:00-5:00] FEATURE 1: Product Management
+- Show product list (20+ realistic items)
+- Add new product: "Tide 24g - ₱8 - Stock: 50"
+- Edit product: Update Lucky Me price
+- "Easy to manage your entire inventory"
+
+[5:00-10:00] FEATURE 2: Record Sales (MAIN FEATURE)
+- "Now let me show a typical sale"
+- Search "Lucky Me"
+- Add 5 units
+- Show total: ₱60
+- Record sale
+- Show: Stock decreased automatically
+- Show: Sale in today's sales list
+
+[10:00-13:00] FEATURE 3: Reports
+- View daily sales report
+- Show total sales today
+- Show top selling products
+- "See which products are most profitable"
+
+[13:00-15:00] CLOSING
+- "This system prevents stock-outs"
+- "Saves 2+ hours per day vs manual tracking"
+- "Ready to use today"
+- Q&A
+
+═════════════════════════════════════════════════`,
+        'Barangay Directory System': `DEMO SCRIPT: Barangay Directory System
+Duration: 15 minutes
+═════════════════════════════════════════════════
+
+[0:00-2:00] INTRODUCTION
+"Good day! This barangay directory system helps manage
+resident records efficiently. Main features: resident
+management, search, and reports."
+
+[2:00-6:00] FEATURE 1: Resident Management
+- Show resident list (50+ records)
+- Add new resident: "Santos, Maria"
+- Enter complete details
+- Save and verify in list
+
+[6:00-10:00] FEATURE 2: Search & View
+- Search by last name: "Santos"
+- View resident details
+- Update resident information
+- Show search is fast and accurate
+
+[10:00-13:00] FEATURE 3: Reports
+- Generate resident report
+- Filter by purok/zone
+- Export data
+
+[13:00-15:00] CLOSING
+- "Faster than paper records"
+- "Easy to find residents"
+- "Secure and organized"
+- Q&A
+
+═════════════════════════════════════════════════`
+      };
+
+      const script = scripts[currentChecklist.name] || 'Generate custom script for your project...';
+      document.getElementById('demoScript').textContent = script;
+      document.getElementById('demoScriptSection').style.display = 'block';
+      document.getElementById('demoScriptSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function copyScript() {
+      const text = document.getElementById('demoScript').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ Demo script copied!');
+      });
+    }
+  </script>
+</body>
+</html>

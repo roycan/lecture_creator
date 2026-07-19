@@ -1,0 +1,45 @@
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.section {
+  flex: 1;
+}
+
+.footer {
+  margin-top: auto;
+  background-color: #f5f5f5;
+}
+
+/* Form styling */
+.box {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Table styling */
+.table-container {
+  background: white;
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+/* Statistics */
+.box .heading {
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #7a7a7a;
+}
+
+/* Code blocks in about page */
+pre {
+  background-color: #f5f5f5;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+pre code {
+  background: none;
+}

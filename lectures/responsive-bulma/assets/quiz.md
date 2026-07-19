@@ -48,8 +48,3 @@
 * [ ] `class="alert is-error"`
 * [ ] `class="message is-warning-red"`
 
-## Responsive design means building pages that ___ so they look good on phones, tablets, and desktop computers.
-Answer: adapt to different screen sizes
-Answer: adapt to the screen size
-Answer: respond to screen size
-Answer: adjust to different screen sizes

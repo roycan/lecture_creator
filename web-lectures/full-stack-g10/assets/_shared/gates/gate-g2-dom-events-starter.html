@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gate G2 — Barangay Complaint Box (STARTER)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container" style="max-width: 640px;">
+      <h1 class="title is-4">📣 Barangay Complaint Box</h1>
+      <p class="subtitle is-6">
+        <strong>GATE G2 · DOM & Events</strong> · 30 minutes · NO AI · individual
+      </p>
+
+      <div class="message is-info is-light">
+        <div class="message-body">
+          Wire up the form in the script tag below. On submit, the entry must
+          appear at the <strong>top</strong> of the list, the form must clear, and the page
+          must <strong>not reload</strong>.
+        </div>
+      </div>
+
+      <!-- TODO: this form already has the id and input ids you need -->
+      <form id="complaint-form" class="box">
+        <div class="field">
+          <label class="label">Name</label>
+          <div class="control">
+            <input id="name" class="input" type="text" placeholder="Juan dela Cruz">
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Complaint / Request</label>
+          <div class="control">
+            <textarea id="complaint" class="textarea" placeholder="Pothole on Sampaguita Street"></textarea>
+          </div>
+        </div>
+        <button type="submit" class="button is-primary">Submit</button>
+      </form>
+
+      <p class="mt-4">Total complaints logged: <strong id="count">0</strong></p>
+      <ul id="list" class="content"></ul>
+    </div>
+  </section>
+
+  <script>
+    // ============================================================
+    // TODO 1: Select the form, the list, and the count span by id.
+    // Hint: const form = document.getElementById('complaint-form');
+    // ============================================================
+    const form = null; // TODO 1: document.getElementById('complaint-form')
+    const list = null; // TODO 1: document.getElementById('list')
+    const countSpan = document.getElementById('count');
+    let count = 0;
+
+    // ============================================================
+    // TODO 2: Listen for the form's 'submit' event and STOP the reload.
+    // Hint:
+    //   form.addEventListener('submit', function (e) {
+    //     e.preventDefault();
+    //     ... TODO 3 goes inside here ...
+    //   });
+    // ============================================================
+    // YOUR CODE HERE
+
+    // ============================================================
+    // TODO 3 (inside the handler above):
+    //   - read the #name and #complaint values
+    //   - create an <li>, set its textContent to  "Name: complaint"
+    //   - PREPEND it to #list so newest is first
+    //       Hint: list.prepend(li)
+    //   - clear the form with  form.reset()
+    //   - increase count by 1 and update #count's textContent
+    // ============================================================
+
+    // HELPER (given): use this to update the counter (reuses Gate G1 functions)
+    function bumpCount() {
+      count = count + 1;
+      countSpan.textContent = count;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🐛 Debugging Practice — Sari-Sari Sale Calculator</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 20px; color: #1f2933; }
+  .card { max-width: 560px; margin: 0 auto; background: #fff; border-radius: 10px; padding: 22px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+  h2 { margin: 0 0 6px; }
+  .muted { color: #6b7280; margin: 0 0 16px; }
+  label { display: block; font-weight: 600; margin: 12px 0 4px; }
+  input[type=number] { width: 100%; padding: 9px; border: 1px solid #cbd2d9; border-radius: 6px; font-size: 15px; }
+  .row { display: flex; gap: 10px; }
+  .row > div { flex: 1; }
+  button { padding: 10px 16px; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; margin-right: 8px; margin-top: 14px; }
+  .btn-primary { background: #2563eb; color: #fff; }
+  .btn-ghost { background: #e4e7eb; color: #1f2933; }
+  #result { margin-top: 18px; padding: 14px; border-radius: 8px; background: #f0f4ff; border: 1px dashed #93a4c8; min-height: 20px; }
+  .total { font-size: 20px; font-weight: 700; color: #0b7285; }
+  .tip { background: #fff7ed; border-left: 4px solid #f97316; border-radius: 6px; padding: 10px 12px; margin-top: 18px; font-size: 14px; }
+  details { margin-top: 18px; background: #f9fafb; border: 1px solid #e4e7eb; border-radius: 8px; padding: 10px 14px; }
+  summary { cursor: pointer; font-weight: 700; color: #b91c1c; }
+  details ol { font-size: 14px; }
+  code { background: #0b1b2b; color: #7fd1ff; padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+  .bug code { background: #fee2e2; color: #b91c1c; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h2>🐛 Sari-Sari Sale Calculator</h2>
+  <p class="muted">A simple calculator… with <strong>5 bugs</strong>. Open DevTools (F12) and use the <strong>Console</strong> + <strong>Elements</strong> to find and fix them.</p>
+
+  <div class="row">
+    <div>
+      <label for="price">Item price (₱)</label>
+      <input type="number" id="price" value="50">
+    </div>
+    <div>
+      <label for="quantity">Quantity</label>
+      <input type="number" id="quantity" value="2">
+    </div>
+  </div>
+
+  <button class="btn-primary" onclick="calculateTotal()">Calculate</button>
+  <button class="btn-ghost" onclick="clearForm()">Clear</button>
+
+  <div id="result">Result will appear here…</div>
+
+  <div class="tip">
+    💡 <strong>How to debug:</strong> click <em>Calculate</em>, read the red error in the Console, click the file:line to jump to the code, then inspect the <em>Elements</em> tab to check the real <code>id</code> names.
+  </div>
+
+  <!-- TEACHER ANSWER KEY (students: try first!) -->
+  <details>
+    <summary>🔓 Show the 5 bugs (teacher / check-yourself)</summary>
+    <ol>
+      <li class="bug"><strong>Wrong element id:</strong> <code>getElementById('prce')</code> should be <code>'price'</code>. Causes <em>TypeError: Cannot read properties of null</em>.</li>
+      <li class="bug"><strong>String math:</strong> <code>price + qty</code> joins text ("502") instead of multiplying numbers. Use <code>parseFloat()</code>.</li>
+      <li class="bug"><strong>Discount threshold:</strong> <code>subtotal > 500</code> skips a subtotal of exactly 500. Should be <code>>= 500</code>.</li>
+      <li class="bug"><strong>Result written to wrong id:</strong> <code>getElementById('totl')</code> should be <code>'result'</code>.</li>
+      <li class="bug"><strong>Clear button:</strong> <code>onclick="clearForm()"</code> but the function is <code>resetForm()</code>. Causes <em>clearForm is not defined</em>.</li>
+    </ol>
+  </details>
+</div>
+
+<script>
+  // NOTE TO STUDENTS: there are 5 intentional bugs below. Find them all!
+  function calculateTotal() {
+    const price = document.getElementById('prce').value;          // Bug 1
+    const qty = document.getElementById('quantity').value;
+    const subtotal = price + qty;                                  // Bug 2
+    const discount = subtotal > 500 ? subtotal * 0.1 : 0;          // Bug 3
+    const total = subtotal - discount;
+    document.getElementById('totl').innerText =                     // Bug 4
+      'Subtotal: ₱' + subtotal + '  |  Discount: ₱' + discount + '  |  TOTAL: ₱' + total;
+  }
+
+  function resetForm() {                                           // Bug 5 (Clear button calls clearForm)
+    document.getElementById('price').value = '';
+    document.getElementById('quantity').value = '';
+    document.getElementById('result').innerText = 'Result will appear here…';
+  }
+</script>
+</body>
+</html>

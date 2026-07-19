@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Student - School Management</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+  <nav class="navbar is-primary" role="navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">
+        <strong>🎓 School Management System</strong>
+      </a>
+    </div>
+    <div class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item" href="/">Students</a>
+        <a class="navbar-item" href="/sections">Sections</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="section">
+    <div class="container" style="max-width: 600px;">
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <h1 class="title">👨‍🎓 Add New Student</h1>
+          </div>
+        </div>
+        <div class="level-right">
+          <div class="level-item">
+            <a href="/" class="button">← Back to List</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Validation Errors -->
+      <% if (error && error.length > 0) { %>
+        <div class="notification is-danger is-light">
+          <button class="delete"></button>
+          <p class="heading">⚠️ Please fix the following errors:</p>
+          <ul>
+            <% error.forEach(err => { %>
+              <li><%= err %></li>
+            <% }); %>
+          </ul>
+        </div>
+      <% } %>
+
+      <div class="box">
+        <form method="POST" action="/add">
+          <div class="field">
+            <label class="label">Student ID *</label>
+            <div class="control">
+              <input 
+                class="input is-family-monospace <%= error && error.some(e => e.includes('Student ID')) ? 'is-danger' : '' %>" 
+                type="text" 
+                name="student_id" 
+                placeholder="2024-0001"
+                pattern="\d{4}-\d{4}"
+                value="<%= typeof formData !== 'undefined' ? formData.student_id || '' : '' %>"
+                required>
+            </div>
+            <p class="help">Format: YYYY-NNNN (e.g., 2024-0001)</p>
+          </div>
+
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <label class="label">First Name *</label>
+                <div class="control">
+                  <input 
+                    class="input <%= error && error.some(e => e.includes('First name')) ? 'is-danger' : '' %>" 
+                    type="text" 
+                    name="first_name" 
+                    placeholder="Juan"
+                    value="<%= typeof formData !== 'undefined' ? formData.first_name || '' : '' %>"
+                    required>
+                </div>
+              </div>
+            </div>
+
+            <div class="column">
+              <div class="field">
+                <label class="label">Last Name *</label>
+                <div class="control">
+                  <input 
+                    class="input <%= error && error.some(e => e.includes('Last name')) ? 'is-danger' : '' %>" 
+                    type="text" 
+                    name="last_name" 
+                    placeholder="Dela Cruz"
+                    value="<%= typeof formData !== 'undefined' ? formData.last_name || '' : '' %>"
+                    required>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Section * (Foreign Key)</label>
+            <div class="control">
+              <div class="select is-fullwidth <%= error && error.some(e => e.includes('section')) ? 'is-danger' : '' %>">
+                <select name="section_id" required>
+                  <option value="">-- Select Section --</option>
+                  <% sections.forEach(section => { %>
+                    <option 
+                      value="<%= section.id %>" 
+                      <%= typeof formData !== 'undefined' && formData.section_id == section.id ? 'selected' : '' %>>
+                      <%= section.name %> (Adviser: <%= section.adviser %>, Room: <%= section.room %>)
+                    </option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+            <p class="help">This creates a relationship: Student → Section (many-to-one)</p>
+          </div>
+
+          <div class="field">
+            <label class="label">Email (Optional)</label>
+            <div class="control">
+              <input 
+                class="input <%= error && error.some(e => e.includes('email')) ? 'is-danger' : '' %>" 
+                type="email" 
+                name="email" 
+                placeholder="juan.delacruz@example.com"
+                value="<%= typeof formData !== 'undefined' ? formData.email || '' : '' %>">
+            </div>
+            <p class="help">Optional contact email</p>
+          </div>
+
+          <div class="field is-grouped">
+            <div class="control">
+              <button type="submit" class="button is-primary">
+                <strong>💾 Save Student</strong>
+              </button>
+            </div>
+            <div class="control">
+              <a href="/" class="button is-light">Cancel</a>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="notification is-info is-light">
+        <p class="heading">🔗 How Relationships Work</p>
+        <ul>
+          <li><strong>Foreign Key:</strong> section_id column references sections.id</li>
+          <li><strong>One-to-Many:</strong> One section has many students</li>
+          <li><strong>JOIN Query:</strong> We'll use this to display section details</li>
+          <li><strong>Referential Integrity:</strong> Can't assign to non-existent section</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Auto-dismiss notifications
+    document.addEventListener('DOMContentLoaded', () => {
+      const deleteButtons = document.querySelectorAll('.notification .delete');
+      deleteButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          button.parentElement.remove();
+        });
+      });
+    });
+  </script>
+</body>
+</html>

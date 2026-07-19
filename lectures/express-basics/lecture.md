@@ -377,7 +377,7 @@ npm start
    cd ..
    ```
 
-**Download:** [Command Line Cheat Sheet](assets/command-line-cheat-sheet.pdf) - Print this and keep it handy!
+**Open:** [Command Line Cheat Sheet](assets/command-line-cheat-sheet.html) - Print this and keep it handy!
 
 ---
 
@@ -1299,7 +1299,7 @@ It's time to put your app online so others can see it!
 
 **🎯 Try It: Deploy Your App**
 
-See detailed guide: `assets/railway-deployment-guide.md`
+See detailed guide: [`assets/railway-deployment-guide.md`](assets/railway-deployment-guide.md)
 
 **Quick Steps:**
 
@@ -1356,7 +1356,7 @@ See detailed guide: `assets/railway-deployment-guide.md`
 **Problem:** npm install fails
 - **Solution:** Check `package.json` has all dependencies
 
-**See full guide:** `assets/railway-deployment-guide.md` with screenshots
+**See full guide:** [`assets/railway-deployment-guide.md`](assets/railway-deployment-guide.md) with screenshots
 
 ![Deployment Flow](diagrams/deployment-flow.png)
 
@@ -1825,7 +1825,7 @@ In **Part 2: Databases, Authentication, and Advanced Features**, you'll learn:
 - Build a simple e-commerce catalog
 
 ### Command Line
-- Download: [Command Line Cheat Sheet](assets/command-line-cheat-sheet.pdf)
+- Open: [Command Line Cheat Sheet](assets/command-line-cheat-sheet.html)
 
 ### Deployment
 - Read: [Railway Deployment Guide](assets/railway-deployment-guide.md)

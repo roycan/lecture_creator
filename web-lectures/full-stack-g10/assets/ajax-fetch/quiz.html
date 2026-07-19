@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quiz App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>📝 Philippine History Quiz</h2>
+      
+      <div id="loading" class="small">Loading questions... ⏳</div>
+      
+      <div id="quiz" class="hidden">
+        <div id="progress" class="small"></div>
+        <div id="question" style="margin:20px 0;font-size:1.1rem;"></div>
+        <div id="options" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+      
+      <div id="results" class="hidden">
+        <h3>Quiz Complete! 🎉</h3>
+        <div id="score" style="font-size:2rem;margin:20px 0;"></div>
+        <button id="retryBtn" class="btn">Try Again</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const loading = document.getElementById('loading');
+    const quiz = document.getElementById('quiz');
+    const progress = document.getElementById('progress');
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const results = document.getElementById('results');
+    const scoreEl = document.getElementById('score');
+    const retryBtn = document.getElementById('retryBtn');
+    
+    let questions = [];
+    let currentIndex = 0;
+    let score = 0;
+
+    async function loadQuestions() {
+      try {
+        const response = await fetch('questions.json');
+        questions = await response.json();
+        loading.classList.add('hidden');
+        quiz.classList.remove('hidden');
+        showQuestion();
+      } catch (error) {
+        loading.textContent = `Error: ${error.message}`;
+        loading.classList.add('error');
+      }
+    }
+
+    function showQuestion() {
+      const q = questions[currentIndex];
+      progress.textContent = `Question ${currentIndex + 1} of ${questions.length}`;
+      questionEl.textContent = q.question;
+      
+      optionsEl.innerHTML = '';
+      q.options.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn secondary';
+        btn.textContent = option;
+        btn.addEventListener('click', () => handleAnswer(index));
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(selected) {
+      const q = questions[currentIndex];
+      
+      if (selected === q.correct) {
+        score++;
+      }
+      
+      currentIndex++;
+      
+      if (currentIndex < questions.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      quiz.classList.add('hidden');
+      results.classList.remove('hidden');
+      
+      const percentage = Math.round((score / questions.length) * 100);
+      scoreEl.textContent = `${score} / ${questions.length} (${percentage}%)`;
+      
+      if (percentage >= 80) {
+        scoreEl.innerHTML += '<br><span class="success">Excellent! 🌟</span>';
+      } else if (percentage >= 60) {
+        scoreEl.innerHTML += '<br><span>Good job! 👍</span>';
+      } else {
+        scoreEl.innerHTML += '<br><span class="error">Keep studying! 📚</span>';
+      }
+    }
+
+    retryBtn.addEventListener('click', () => {
+      currentIndex = 0;
+      score = 0;
+      results.classList.add('hidden');
+      quiz.classList.remove('hidden');
+      showQuestion();
+    });
+
+    loadQuestions();
+  </script>
+</body>
+</html>

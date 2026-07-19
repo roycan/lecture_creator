@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sari-Sari Store Analytics</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>🏪 Sari-Sari Store Analytics</h2>
+      
+      <div class="form-row">
+        <button id="loadBtn" class="btn">Load Data</button>
+        <button id="refreshBtn" class="btn secondary">↻ Refresh</button>
+      </div>
+      
+      <div id="stats" class="card hidden" style="margin-top:12px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;">
+          <div style="text-align:center;padding:12px;background:#f0f0f0;border-radius:8px;">
+            <div class="small">Total Products</div>
+            <div style="font-size:2rem;font-weight:700;" id="totalProducts">-</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:#f0f0f0;border-radius:8px;">
+            <div class="small">Total Revenue</div>
+            <div style="font-size:2rem;font-weight:700;" id="totalRevenue">-</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:#f0f0f0;border-radius:8px;">
+            <div class="small">Items Sold</div>
+            <div style="font-size:2rem;font-weight:700;" id="itemsSold">-</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:#f0f0f0;border-radius:8px;">
+            <div class="small">Top Product</div>
+            <div style="font-size:1.2rem;font-weight:700;" id="topProduct">-</div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="details" class="card hidden" style="margin-top:12px;">
+        <h3>Sales Report</h3>
+        <div id="salesTable"></div>
+      </div>
+      
+      <div id="loading" class="small hidden">Loading... ⏳</div>
+      <div id="error" class="error hidden"></div>
+    </div>
+  </div>
+
+  <script>
+    const loadBtn = document.getElementById('loadBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const stats = document.getElementById('stats');
+    const details = document.getElementById('details');
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    
+    async function loadData() {
+      loading.classList.remove('hidden');
+      error.classList.add('hidden');
+      stats.classList.add('hidden');
+      details.classList.add('hidden');
+      
+      try {
+        const response = await fetch('store-sales.json');
+        if (!response.ok) throw new Error('Failed to load data');
+        
+        const sales = await response.json();
+        
+        // Calculate statistics
+        const totalProducts = sales.length;
+        const totalRevenue = sales.reduce((sum, s) => sum + s.revenue, 0);
+        const itemsSold = sales.reduce((sum, s) => sum + s.sold, 0);
+        const topProduct = sales.reduce((max, s) => s.revenue > max.revenue ? s : max, sales[0]);
+        
+        // Display stats
+        document.getElementById('totalProducts').textContent = totalProducts;
+        document.getElementById('totalRevenue').textContent = '₱' + totalRevenue.toLocaleString();
+        document.getElementById('itemsSold').textContent = itemsSold;
+        document.getElementById('topProduct').textContent = topProduct.product;
+        
+        // Build table (sorted by revenue)
+        const sortedSales = [...sales].sort((a, b) => b.revenue - a.revenue);
+        const table = document.createElement('table');
+        table.className = 'table';
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Sold</th>
+              <th>Revenue</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sortedSales.map(s => `
+              <tr>
+                <td>${s.product}</td>
+                <td>${s.sold}</td>
+                <td>₱${s.revenue.toLocaleString()}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        `;
+        
+        document.getElementById('salesTable').innerHTML = '';
+        document.getElementById('salesTable').appendChild(table);
+        
+        loading.classList.add('hidden');
+        stats.classList.remove('hidden');
+        details.classList.remove('hidden');
+        
+      } catch (err) {
+        loading.classList.add('hidden');
+        error.classList.remove('hidden');
+        error.textContent = `Error: ${err.message}`;
+      }
+    }
+    
+    loadBtn.addEventListener('click', loadData);
+    refreshBtn.addEventListener('click', loadData);
+    
+    loadData();
+  </script>
+</body>
+</html>

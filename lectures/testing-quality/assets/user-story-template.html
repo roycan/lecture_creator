@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Story Template</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f0f4f8; color: #222; padding: 16px; max-width: 760px; margin: 0 auto; line-height: 1.5; }
+    h1 { font-size: 1.4rem; margin-bottom: 4px; }
+    .sub { color: #555; margin-bottom: 6px; font-size: .9rem; }
+    .project { background: #fff; border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+    .project input { font-size: 1rem; width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 6px; margin-top: 4px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 520px) { .row { grid-template-columns: 1fr; } }
+    label { font-size: .8rem; font-weight: bold; color: #444; }
+    h2 { font-size: 1.05rem; margin: 14px 0 8px; }
+    .story { background: #fff; border-radius: 8px; padding: 12px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,.1); border-left: 5px solid #1565c0; }
+    .story select { font-size: .85rem; padding: 4px 8px; border-radius: 6px; border: 1px solid #ccc; float: right; }
+    .prio-must { border-left-color: #c62828; } .prio-should { border-left-color: #f9a825; } .prio-could { border-left-color: #2e7d32; }
+    .line { font-size: .95rem; margin: 6px 0; }
+    .line .kw { font-weight: bold; }
+    .line .k-as { color: #1565c0; } .line .k-iw { color: #2e7d32; } .line .k-st { color: #ef6c00; }
+    .story input { width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 6px; font-size: .9rem; margin-top: 2px; }
+    .add-btn, button { margin-top: 4px; padding: 8px 14px; background: #1565c0; color: #fff; border: none; border-radius: 6px; font-size: .9rem; cursor: pointer; }
+    .add-btn:hover { background: #0d47a1; }
+    .legend { font-size: .82rem; color: #555; margin: 6px 0 12px; }
+    .legend span { margin-right: 14px; }
+    .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+    .wireframe { background: #fff; border-radius: 8px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+    .canvas { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 50px; gap: 6px; border: 2px dashed #aaa; padding: 8px; border-radius: 6px; min-height: 200px; background: #fafafa; }
+    .wbox { background: #e3f2fd; border: 1px solid #90caf9; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: .75rem; color: #1565c0; text-align: center; padding: 4px; }
+    .note { font-size: .82rem; color: #666; font-style: italic; margin-top: 6px; }
+    .mvp-line { border-top: 2px dashed #c62828; margin: 8px 0; position: relative; }
+    .mvp-line span { position: absolute; top: -10px; left: 0; background: #fff; color: #c62828; font-size: .75rem; font-weight: bold; padding: 0 6px; }
+  </style>
+</head>
+<body>
+  <h1>📋 User Story Template</h1>
+  <p class="sub">Plan your app before you code. Fill in your project, write stories, prioritize, and sketch the main screen.</p>
+
+  <!-- PROJECT HEADER -->
+  <div class="project">
+    <div class="row">
+      <div><label>Project name</label><input id="pname" placeholder="e.g., Sari-Sari Sales Tracker"></div>
+      <div><label>Who is the user?</label><input id="puser" placeholder="e.g., A sari-sari store owner"></div>
+    </div>
+    <div style="margin-top:8px"><label>What problem does it solve?</label><input id="pprob" placeholder="e.g., Hard to track daily sales and stock by hand"></div>
+  </div>
+
+  <!-- USER STORIES -->
+  <h2>2. User Stories</h2>
+  <p class="legend">
+    <span><span class="dot" style="background:#c62828"></span>🔴 Must</span>
+    <span><span class="dot" style="background:#f9a825"></span>🟡 Should</span>
+    <span><span class="dot" style="background:#2e7d32"></span>🟢 Could</span>
+  </p>
+  <div id="stories"></div>
+  <button class="add-btn" onclick="addStory()">+ Add a user story</button>
+  <div class="mvp-line"><span>EVERYTHING ABOVE THIS LINE = YOUR MVP (build the Musts first)</span></div>
+  <p class="note">Tip: a real MVP usually has only 3–4 Musts. If you have more, demote some to Should/Could.</p>
+
+  <!-- WIREFRAME -->
+  <h2>3. Main Screen Wireframe (rough!)</h2>
+  <div class="wireframe">
+    <div class="canvas" id="canvas">
+      <div class="wbox" style="grid-column: span 4">Page title</div>
+      <div class="wbox" style="grid-column: span 4">Total sales today: ₱____</div>
+      <div class="wbox" style="grid-column: span 3; grid-row: span 3">Product list</div>
+      <div class="wbox" style="grid-column: span 1">Add product</div>
+      <div class="wbox" style="grid-column: span 1">Record sale</div>
+      <div class="wbox" style="grid-column: span 1">See report</div>
+    </div>
+    <p class="note">Sketch your own on paper too — boxes and labels only, no colors. The goal is layout & flow, not decoration.</p>
+  </div>
+
+  <script>
+    // --- Story card template ---
+    const container = document.getElementById('stories');
+    function addStory(prefilled) {
+      const div = document.createElement('div');
+      div.className = 'story prio-must';
+      div.innerHTML = `
+        <select onchange="recolor(this)">
+          <option value="must">🔴 Must</option>
+          <option value="should">🟡 Should</option>
+          <option value="could">🟢 Could</option>
+        </select>
+        <div class="line"><span class="kw k-as">As a</span>
+          <input placeholder="role (e.g., store owner)"></div>
+        <div class="line"><span class="kw k-iw">I want to</span>
+          <input placeholder="action (e.g., record a sale)"></div>
+        <div class="line"><span class="kw k-st">so that</span>
+          <input placeholder="benefit (e.g., my inventory updates)"></div>
+      `;
+      container.appendChild(div);
+    }
+    function recolor(sel) {
+      const story = sel.closest('.story');
+      story.className = 'story prio-' + sel.value;
+    }
+    // Seed with two example stories
+    addStory();
+    addStory();
+  </script>
+</body>
+</html>

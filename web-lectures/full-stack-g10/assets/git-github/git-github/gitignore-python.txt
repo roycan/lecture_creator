@@ -1,0 +1,131 @@
+# .gitignore for Python Projects
+# For Grade 9 Filipino Students
+
+# ==========================================
+# PYTHON COMPILED FILES
+# ==========================================
+# Don't upload bytecode - Python generates these
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ==========================================
+# VIRTUAL ENVIRONMENTS
+# ==========================================
+# Don't upload venv/ - too big!
+# Anyone can create their own with: python -m venv venv
+venv/
+env/
+ENV/
+virtualenv/
+
+# ==========================================
+# ENVIRONMENT VARIABLES (IMPORTANT!)
+# ==========================================
+# Never upload passwords, API keys, database URLs!
+.env
+.env.local
+*.env
+
+# ==========================================
+# IDE/EDITOR FILES
+# ==========================================
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# ==========================================
+# OS FILES
+# ==========================================
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ==========================================
+# PYTHON PACKAGES
+# ==========================================
+# Built distributions
+dist/
+build/
+*.egg-info/
+*.egg
+
+# ==========================================
+# DATABASES
+# ==========================================
+# SQLite databases (keep structure, not data)
+*.db
+*.sqlite
+*.sqlite3
+
+# ==========================================
+# LOG FILES
+# ==========================================
+*.log
+
+# ==========================================
+# TESTING
+# ==========================================
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ==========================================
+# DJANGO SPECIFIC (if using Django)
+# ==========================================
+# Database
+db.sqlite3
+
+# Static files
+/static/
+/media/
+
+# Migrations (optional - depends on team)
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# ==========================================
+# FLASK SPECIFIC (if using Flask)
+# ==========================================
+instance/
+.webassets-cache
+
+# ==========================================
+# EXAMPLE: Barangay Directory App
+# ==========================================
+# Keep resident data private:
+# data/residents.json
+# data/officials.json
+
+# ==========================================
+# HOW TO USE THIS FILE
+# ==========================================
+# 1. Copy this file to your project root
+# 2. Rename it to: .gitignore (with the dot!)
+# 3. Customize for your project needs
+# 4. Add to Git:
+#    git add .gitignore
+#    git commit -m "Add Python .gitignore"
+#
+# WHY GITIGNORE?
+# - Keeps repo small (no compiled files)
+# - Protects sensitive data (passwords, keys)
+# - Avoids OS-specific file conflicts
+# - Makes sharing easier
+#
+# PHILIPPINE CONTEXT:
+# - Virtual environment = 50-100 MB
+# - With .gitignore = save ₱50-100 in upload data
+# - Collaborators create their own venv locally
+# - Faster git clone (less to download)

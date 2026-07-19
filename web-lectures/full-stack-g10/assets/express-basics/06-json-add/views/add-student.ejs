@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Student</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <section class="section">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-half">
+          <div class="box">
+            <h1 class="title">Add New Student</h1>
+            <p class="subtitle">Fill in the form below</p>
+
+            <form action="/add-student" method="POST">
+              <!-- Name Field -->
+              <div class="field">
+                <label class="label">Full Name</label>
+                <div class="control">
+                  <input class="input" type="text" name="name" placeholder="e.g. Maria Santos" required>
+                </div>
+              </div>
+
+              <!-- Course Field -->
+              <div class="field">
+                <label class="label">Course</label>
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <select name="course" required>
+                      <option value="">Select a course...</option>
+                      <option value="BSIT">BSIT - Information Technology</option>
+                      <option value="BSCS">BSCS - Computer Science</option>
+                      <option value="BSIS">BSIS - Information Systems</option>
+                      <option value="BSCpE">BSCpE - Computer Engineering</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Year Level Field -->
+              <div class="field">
+                <label class="label">Year Level</label>
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <select name="year" required>
+                      <option value="">Select year...</option>
+                      <option value="1">1st Year</option>
+                      <option value="2">2nd Year</option>
+                      <option value="3">3rd Year</option>
+                      <option value="4">4th Year</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Grade Field -->
+              <div class="field">
+                <label class="label">Grade</label>
+                <div class="control">
+                  <input class="input" type="number" name="grade" min="0" max="100" step="0.01" placeholder="e.g. 95" required>
+                </div>
+                <p class="help">Enter a number between 0 and 100</p>
+              </div>
+
+              <!-- Email Field -->
+              <div class="field">
+                <label class="label">Email</label>
+                <div class="control">
+                  <input class="input" type="email" name="email" placeholder="e.g. student@example.com" required>
+                </div>
+              </div>
+
+              <!-- Submit Buttons -->
+              <div class="field is-grouped">
+                <div class="control">
+                  <button type="submit" class="button is-primary">
+                    <strong>Add Student</strong>
+                  </button>
+                </div>
+                <div class="control">
+                  <a href="/" class="button is-light">Cancel</a>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Help Box -->
+          <div class="notification is-info is-light">
+            <p><strong>💡 How it works:</strong></p>
+            <ul>
+              <li>Fill in all fields in the form</li>
+              <li>Click "Add Student" to submit</li>
+              <li>Data is saved to <code>data/students.json</code></li>
+              <li>You'll be redirected to the student list</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

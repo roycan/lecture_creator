@@ -12,11 +12,6 @@
 * [x] "So that I know what I have in stock"
 * [ ] "As a store owner, I want to see a list of products"
 
-## A user story follows this format: "As a ___, I want ___, so that ___."
-Answer: type of user
-Answer: user role
-Answer: who
-
 ## Liza wants to build a barangay directory app. She lists 15 features but only has time to build 5 for her first version. What is this stripped-down first version called?
 * [ ] The prototype
 * [ ] The beta release

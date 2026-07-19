@@ -1,0 +1,12 @@
+[
+  {"id": 1, "name": "Manila", "capital": "Manila", "region": "NCR"},
+  {"id": 2, "name": "Cebu", "capital": "Cebu City", "region": "Central Visayas"},
+  {"id": 3, "name": "Davao del Sur", "capital": "Davao City", "region": "Davao Region"},
+  {"id": 4, "name": "Laguna", "capital": "Santa Cruz", "region": "CALABARZON"},
+  {"id": 5, "name": "Cavite", "capital": "Imus", "region": "CALABARZON"},
+  {"id": 6, "name": "Bulacan", "capital": "Malolos", "region": "Central Luzon"},
+  {"id": 7, "name": "Pampanga", "capital": "San Fernando", "region": "Central Luzon"},
+  {"id": 8, "name": "Iloilo", "capital": "Iloilo City", "region": "Western Visayas"},
+  {"id": 9, "name": "Negros Occidental", "capital": "Bacolod", "region": "Western Visayas"},
+  {"id": 10, "name": "Pangasinan", "capital": "Lingayen", "region": "Ilocos Region"}
+]

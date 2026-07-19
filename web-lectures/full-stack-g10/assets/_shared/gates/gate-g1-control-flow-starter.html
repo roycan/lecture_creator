@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gate G1 — Sari-sari Cart Calculator (STARTER)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container" style="max-width: 640px;">
+      <h1 class="title is-4">🛒 Sari-sari Cart Calculator</h1>
+      <p class="subtitle is-6">
+        <strong>GATE G1 · Control Flow & Data</strong> · 30 minutes · NO AI · individual
+      </p>
+
+      <div class="message is-info is-light">
+        <div class="message-body">
+          Complete the <strong>three functions</strong> in the script tag below.
+          Open the <strong>Console</strong> (F12) — it must show each item and the final total.
+          The page must ALSO render the receipt into the box below.
+        </div>
+      </div>
+
+      <!-- TODO (reuse G0): your receipt will render inside here -->
+      <div id="receipt" class="box content"></div>
+    </div>
+  </section>
+
+  <script>
+    // ============================================================
+    // THE CART DATA — already given. DO NOT change this array.
+    // Expected subtotal = 600, so the bulk discount SHOULD apply.
+    // Expected FINAL total = 540.
+    // ============================================================
+    const items = [
+      { name: 'Coke 500ml',        price: 25, qty: 8  },
+      { name: 'Lucky Me Pancit',   price: 12, qty: 15 },
+      { name: 'Skyflakes Crackers', price: 15, qty: 10 },
+      { name: 'Alaska Evap 370ml', price: 35, qty: 2  }
+    ];
+
+    // ============================================================
+    // TODO 1: computeSubtotal(items)
+    // Return the subtotal = the sum of (price * qty) for every item.
+    // Hint: declare  let total = 0;  loop over items with a for..of;
+    //       add  total += item.price * item.qty;  then  return total;
+    // ============================================================
+    function computeSubtotal(items) {
+      // YOUR CODE HERE
+    }
+
+    // ============================================================
+    // TODO 2: applyDiscount(total)
+    // Apply a 10% bulk discount ONLY when total is GREATER THAN 500.
+    // Otherwise return the total unchanged.
+    // Hint: use an if / else.  Discounted = total * 0.9.
+    // ============================================================
+    function applyDiscount(total) {
+      // YOUR CODE HERE
+    }
+
+    // ============================================================
+    // TODO 3: printReceipt(items)
+    //  - For each item,  console.log  it as:  "Coke 500ml x8 = 200"
+    //  - console.log the FINAL total (subtotal AFTER discount).
+    //  - ALSO build an HTML string and put it inside #receipt
+    //    (reuse your Gate G0 page-rendering skill).
+    //  - Use the two functions above; do NOT recompute by hand.
+    // ============================================================
+    function printReceipt(items) {
+      const subtotal = computeSubtotal(items);
+      const finalTotal = applyDiscount(subtotal);
+
+      // YOUR CODE HERE
+      // Hint:
+      //   let html = '<ul>';
+      //   for (...) { ... html += `<li>...</li>`; }
+      //   html += '</ul>';
+      //   html += `<p><strong>TOTAL: ...</strong></p>`;
+      //   document.getElementById('receipt').innerHTML = html;
+    }
+
+    // ============================================================
+    // RUN IT (given)
+    // ============================================================
+    printReceipt(items);
+  </script>
+</body>
+</html>

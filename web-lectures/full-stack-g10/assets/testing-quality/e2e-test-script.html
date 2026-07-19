@@ -1,0 +1,357 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>🌐 E2E Test Script Generator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>🌐 End-to-End (E2E) Test Script Generator</h2>
+      <p>Create complete user workflow test scripts.</p>
+      
+      <div style="margin-top: 20px;">
+        <h3>💡 What is E2E Testing?</h3>
+        <div class="info-box">
+          <p><strong>E2E = Complete user journey from start to finish</strong></p>
+          <p>Example: Login → Search product → Add to cart → Checkout → Receipt</p>
+          <p><strong>Time:</strong> 5-30 minutes per workflow</p>
+          <p><strong>When:</strong> Before demos, before deployment, weekly checks</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 30px;">
+        <h3>✍️ Create E2E Test Script</h3>
+        
+        <div class="form-group">
+          <label for="testName">Test Name:</label>
+          <input type="text" id="testName" class="input" placeholder="e.g., Complete Sale Workflow">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div class="form-group">
+            <label for="role">User Role:</label>
+            <select id="role" class="input">
+              <option value="">-- Select Role --</option>
+              <option value="Store Owner">Store Owner</option>
+              <option value="Cashier">Cashier</option>
+              <option value="Barangay Captain">Barangay Captain</option>
+              <option value="Barangay Secretary">Barangay Secretary</option>
+              <option value="Kagawad">Kagawad</option>
+              <option value="Teacher">Teacher</option>
+              <option value="Student">Student</option>
+              <option value="Admin">Admin</option>
+              <option value="Customer">Customer</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="duration">Expected Duration:</label>
+            <select id="duration" class="input">
+              <option value="5 minutes">5 minutes</option>
+              <option value="10 minutes">10 minutes</option>
+              <option value="15 minutes">15 minutes</option>
+              <option value="20 minutes">20 minutes</option>
+              <option value="30 minutes">30 minutes</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="goal">Goal (What user wants to accomplish):</label>
+          <input type="text" id="goal" class="input" placeholder="e.g., Record a product sale and print receipt">
+        </div>
+
+        <hr style="margin: 30px 0; border: none; border-top: 2px solid #dee2e6;">
+
+        <h4>📋 Test Steps</h4>
+        <p style="color: #666;">Add each step the user takes, and what should happen.</p>
+
+        <div id="stepsContainer"></div>
+
+        <button onclick="addStep()" class="btn" style="background: #28a745; margin-top: 15px;">➕ Add Step</button>
+
+        <hr style="margin: 30px 0; border: none; border-top: 2px solid #dee2e6;">
+
+        <h4>✅ Success Criteria</h4>
+        <p style="color: #666;">What must be true at the end for test to PASS?</p>
+
+        <div id="criteriaContainer"></div>
+
+        <button onclick="addCriterion()" class="btn" style="background: #28a745; margin-top: 15px;">➕ Add Criterion</button>
+
+        <div style="margin-top: 30px;">
+          <button onclick="generateScript()" class="btn">✨ Generate Test Script</button>
+          <button onclick="clearForm()" class="btn" style="background: #6c757d;">🔄 Clear</button>
+        </div>
+      </div>
+
+      <div id="result" style="margin-top: 30px; display: none;">
+        <h3>✅ Generated E2E Test Script</h3>
+        <div class="result-box">
+          <pre id="scriptOutput" style="white-space: pre-wrap; font-family: 'Courier New', monospace; line-height: 1.6;"></pre>
+        </div>
+        
+        <div style="margin-top: 15px;">
+          <button onclick="copyScript()" class="btn">📋 Copy</button>
+          <button onclick="addToLibrary()" class="btn" style="background: #28a745;">💾 Add to Library</button>
+        </div>
+      </div>
+
+      <div id="library" style="margin-top: 30px; display: none;">
+        <h3>📚 Your E2E Test Library</h3>
+        <div id="libraryContent"></div>
+        <button onclick="exportLibrary()" class="btn" style="margin-top: 15px;">💾 Export All</button>
+      </div>
+
+      <div style="margin-top: 40px; padding: 20px; background: #d1ecf1; border-left: 4px solid #0c5460; border-radius: 5px;">
+        <h3>🎯 E2E Testing Best Practices</h3>
+        <ul>
+          <li><strong>Test real workflows</strong> - Not random clicks</li>
+          <li><strong>Use realistic data</strong> - Not "test test test"</li>
+          <li><strong>One workflow per test</strong> - Don't mix multiple goals</li>
+          <li><strong>Document expected results</strong> - Be specific</li>
+          <li><strong>Run before demos</strong> - Never demo untested workflows</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let stepCount = 0;
+    let criterionCount = 0;
+    let testLibrary = [];
+
+    // Initialize with 2 steps
+    window.onload = function() {
+      addStep();
+      addStep();
+      addCriterion();
+      addCriterion();
+    };
+
+    function addStep() {
+      stepCount++;
+      const container = document.getElementById('stepsContainer');
+      const stepDiv = document.createElement('div');
+      stepDiv.className = 'step-item';
+      stepDiv.style.cssText = 'margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px;';
+      stepDiv.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <strong>Step ${stepCount}</strong>
+          <button onclick="removeStep(this)" style="padding: 5px 10px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer;">Remove</button>
+        </div>
+        <input type="text" class="input step-action" placeholder="Action (e.g., Click 'Record Sale' button)" style="margin-bottom: 10px;">
+        <input type="text" class="input step-expected" placeholder="Expected result (e.g., Sale recorded, stock decreased)">
+      `;
+      container.appendChild(stepDiv);
+    }
+
+    function removeStep(btn) {
+      btn.closest('.step-item').remove();
+      renumberSteps();
+    }
+
+    function renumberSteps() {
+      const steps = document.querySelectorAll('.step-item');
+      steps.forEach((step, index) => {
+        step.querySelector('strong').textContent = `Step ${index + 1}`;
+      });
+      stepCount = steps.length;
+    }
+
+    function addCriterion() {
+      criterionCount++;
+      const container = document.getElementById('criteriaContainer');
+      const critDiv = document.createElement('div');
+      critDiv.className = 'criterion-item';
+      critDiv.style.cssText = 'margin-bottom: 10px; display: flex; gap: 10px;';
+      critDiv.innerHTML = `
+        <input type="text" class="input criterion-text" placeholder="e.g., Sale total is correct" style="flex: 1;">
+        <button onclick="removeCriterion(this)" style="padding: 5px 10px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer;">✕</button>
+      `;
+      container.appendChild(critDiv);
+    }
+
+    function removeCriterion(btn) {
+      btn.closest('.criterion-item').remove();
+    }
+
+    function generateScript() {
+      const testName = document.getElementById('testName').value.trim();
+      const role = document.getElementById('role').value;
+      const duration = document.getElementById('duration').value;
+      const goal = document.getElementById('goal').value.trim();
+
+      if (!testName || !role || !goal) {
+        alert('⚠️ Please fill in test name, role, and goal');
+        return;
+      }
+
+      const steps = Array.from(document.querySelectorAll('.step-item')).map((item, index) => {
+        return {
+          action: item.querySelector('.step-action').value.trim(),
+          expected: item.querySelector('.step-expected').value.trim()
+        };
+      }).filter(step => step.action);
+
+      if (steps.length === 0) {
+        alert('⚠️ Please add at least one test step');
+        return;
+      }
+
+      const criteria = Array.from(document.querySelectorAll('.criterion-text'))
+        .map(input => input.value.trim())
+        .filter(text => text);
+
+      // Generate script
+      let script = '';
+      script += '═'.repeat(60) + '\n';
+      script += 'E2E TEST SCRIPT\n';
+      script += '═'.repeat(60) + '\n\n';
+      script += `TEST: ${testName}\n`;
+      script += `ROLE: ${role}\n`;
+      script += `GOAL: ${goal}\n`;
+      script += `DURATION: ${duration}\n\n`;
+      script += '─'.repeat(60) + '\n';
+      script += 'STEPS:\n';
+      script += '─'.repeat(60) + '\n\n';
+
+      steps.forEach((step, index) => {
+        script += `${index + 1}. ${step.action}\n`;
+        if (step.expected) {
+          script += `   Expected: ${step.expected}\n`;
+        }
+        script += '\n';
+      });
+
+      if (criteria.length > 0) {
+        script += '─'.repeat(60) + '\n';
+        script += 'SUCCESS CRITERIA:\n';
+        script += '─'.repeat(60) + '\n\n';
+        criteria.forEach(crit => {
+          script += `✅ ${crit}\n`;
+        });
+        script += '\n';
+      }
+
+      script += '─'.repeat(60) + '\n';
+      script += 'TEST RESULT: [ ] PASS  [ ] FAIL\n';
+      script += 'TESTED BY: _______________\n';
+      script += 'DATE: _______________\n';
+      script += 'NOTES: _______________________________________________\n';
+      script += '═'.repeat(60) + '\n';
+
+      document.getElementById('scriptOutput').textContent = script;
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function clearForm() {
+      document.getElementById('testName').value = '';
+      document.getElementById('role').value = '';
+      document.getElementById('duration').value = '10 minutes';
+      document.getElementById('goal').value = '';
+      document.getElementById('stepsContainer').innerHTML = '';
+      document.getElementById('criteriaContainer').innerHTML = '';
+      stepCount = 0;
+      criterionCount = 0;
+      addStep();
+      addStep();
+      addCriterion();
+      addCriterion();
+      document.getElementById('result').style.display = 'none';
+    }
+
+    function copyScript() {
+      const text = document.getElementById('scriptOutput').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ Test script copied to clipboard!');
+      });
+    }
+
+    function addToLibrary() {
+      const script = document.getElementById('scriptOutput').textContent;
+      const testName = document.getElementById('testName').value.trim();
+      testLibrary.push({ name: testName, script });
+      updateLibrary();
+      document.getElementById('library').style.display = 'block';
+      alert('✅ Added to library!');
+    }
+
+    function updateLibrary() {
+      const container = document.getElementById('libraryContent');
+      if (testLibrary.length === 0) {
+        container.innerHTML = '<p style="color: #666;">No tests in library yet.</p>';
+        return;
+      }
+
+      let html = '';
+      testLibrary.forEach((test, index) => {
+        html += `
+          <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-left: 3px solid #007bff; border-radius: 3px;">
+            <h4 style="margin-top: 0;">${test.name}</h4>
+            <pre style="font-size: 11px; max-height: 150px; overflow-y: auto; background: white; padding: 10px; border-radius: 3px;">${test.script}</pre>
+            <button onclick="removeFromLibrary(${index})" style="padding: 5px 10px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer;">Remove</button>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function removeFromLibrary(index) {
+      testLibrary.splice(index, 1);
+      updateLibrary();
+      if (testLibrary.length === 0) {
+        document.getElementById('library').style.display = 'none';
+      }
+    }
+
+    function exportLibrary() {
+      if (testLibrary.length === 0) {
+        alert('⚠️ No tests to export');
+        return;
+      }
+
+      let text = '═'.repeat(60) + '\n';
+      text += 'E2E TEST LIBRARY\n';
+      text += '═'.repeat(60) + '\n\n';
+      
+      testLibrary.forEach((test, index) => {
+        text += test.script + '\n\n';
+        if (index < testLibrary.length - 1) {
+          text += '\n';
+        }
+      });
+      
+      text += `\nTotal Tests: ${testLibrary.length}\n`;
+      text += `Exported: ${new Date().toLocaleString()}\n`;
+      
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ All test scripts copied to clipboard!');
+      });
+    }
+  </script>
+
+  <style>
+    .info-box {
+      background: #d1ecf1;
+      padding: 15px;
+      border-left: 4px solid #0c5460;
+      border-radius: 5px;
+    }
+    .info-box p {
+      margin: 5px 0;
+      color: #0c5460;
+    }
+    .result-box {
+      background: #d4edda;
+      padding: 20px;
+      border-left: 4px solid #28a745;
+      border-radius: 5px;
+    }
+  </style>
+</body>
+</html>

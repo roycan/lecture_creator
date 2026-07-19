@@ -269,7 +269,7 @@ Each user story becomes:
 
 ### 🎯 Try It: User Story Template
 
-**Open:** `assets/user-story-template.html`
+**Open:** [`assets/user-story-template.html`](assets/user-story-template.html)
 
 This interactive tool helps you write user stories:
 1. Select role (Admin, Cashier, Customer, etc.)
@@ -407,7 +407,7 @@ Each acceptance criteria scenario becomes a manual test:
 
 ### 🎯 Try It: Acceptance Criteria Generator
 
-**Open:** `assets/acceptance-criteria-generator.html`
+**Open:** [`assets/acceptance-criteria-generator.html`](assets/acceptance-criteria-generator.html)
 
 This tool helps you write acceptance criteria:
 1. Enter user story
@@ -537,7 +537,7 @@ Tester: _____________
 
 ### 🎯 Try It: Interactive Smoke Test Checklist
 
-**Open:** `assets/smoke-test-checklist.html`
+**Open:** [`assets/smoke-test-checklist.html`](assets/smoke-test-checklist.html)
 
 Interactive tool for smoke testing:
 1. Select project type (Sari-sari store, Barangay directory, Appointment booking)
@@ -773,7 +773,7 @@ When something doesn't work:
 
 ### 🎯 Try It: Debugging Practice
 
-**Open:** `assets/debugging-practice.html`
+**Open:** [`assets/debugging-practice.html`](assets/debugging-practice.html)
 
 This file has **5 intentional bugs**. Your job:
 1. Open in browser
@@ -1057,7 +1057,7 @@ Thank you!
 
 ### 🎯 Try It: Bug Report Form
 
-**Open:** `assets/bug-report-form.html`
+**Open:** [`assets/bug-report-form.html`](assets/bug-report-form.html)
 
 Interactive bug report tool:
 1. Fill in bug details (description, steps, severity)
@@ -1263,7 +1263,7 @@ SUCCESS CRITERIA:
 
 ### 🎯 Try It: E2E Test Script Generator
 
-**Open:** `assets/e2e-test-script.html`
+**Open:** [`assets/e2e-test-script.html`](assets/e2e-test-script.html)
 
 Create E2E test scripts:
 1. Select workflow type (Sale, Registration, Booking, etc.)
@@ -1380,7 +1380,7 @@ What would be NICE to have? ____________
 
 ### 🎯 Try It: UAT Form Generator
 
-**Open:** `assets/uat-form.html`
+**Open:** [`assets/uat-form.html`](assets/uat-form.html)
 
 Create UAT forms:
 1. Select project type
@@ -1564,7 +1564,7 @@ test-cases/
 
 ### 🎯 Try It: Test Case Template Generator
 
-**Open:** `assets/test-case-template.html`
+**Open:** [`assets/test-case-template.html`](assets/test-case-template.html)
 
 Create reusable test cases:
 1. Select feature type (Login, CRUD, Search)
@@ -1855,7 +1855,7 @@ Duration: 15 minutes
 
 ### 🎯 Try It: Demo Prep Checklist
 
-**Open:** `assets/demo-prep-checklist.html`
+**Open:** [`assets/demo-prep-checklist.html`](assets/demo-prep-checklist.html)
 
 Prepare for demos:
 1. Select project type

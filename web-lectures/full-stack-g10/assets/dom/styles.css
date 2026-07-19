@@ -1,0 +1,29 @@
+/* Minimal styles for practice files and lecture demos */
+:root{
+  --bg: #f7f7fb;
+  --card: #ffffff;
+  --accent: #0b60ff;
+  --muted: #6b7280;
+  --success: #16a34a;
+  --danger: #dc2626;
+}
+
+*{box-sizing:border-box}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;line-height:1.4;background:var(--bg);color:#111;padding:18px}
+.container{max-width:900px;margin:18px auto}
+.card{background:var(--card);padding:14px;border-radius:8px;box-shadow:0 1px 3px rgba(16,24,40,.04);margin-bottom:12px}
+.btn{display:inline-block;padding:8px 12px;border-radius:6px;background:var(--accent);color:white;text-decoration:none;border:none;cursor:pointer}
+.btn.secondary{background:#e5e7eb;color:#111}
+.hidden{display:none}
+.highlight{background:linear-gradient(90deg,#fff7cc,#fff);padding:6px;border-radius:6px}
+.form-row{display:flex;gap:8px;align-items:center}
+.input{padding:8px;border-radius:6px;border:1px solid #e5e7eb}
+.small{font-size:0.9rem;color:var(--muted)}
+.success{color:var(--success);font-weight:600}
+.error{color:var(--danger);font-weight:600}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.counter{font-weight:700}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{padding:8px;border-bottom:1px solid #f1f5f9;text-align:left}
+.note{font-size:0.9rem;color:var(--muted)}
+.toast{position:fixed;right:18px;bottom:18px;background:#111;color:white;padding:8px 12px;border-radius:8px;opacity:0.95}

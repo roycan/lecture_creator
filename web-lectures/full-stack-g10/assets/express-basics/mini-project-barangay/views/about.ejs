@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - Barangay Directory</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <section class="section">
+    <div class="container">
+      <div class="box">
+        <h1 class="title is-1">🏘️ Barangay Officials Directory</h1>
+        <p class="subtitle is-3">Digital Record Management System</p>
+        
+        <hr>
+
+        <div class="content">
+          <h2 class="title is-3">About This System</h2>
+          <p class="is-size-5">
+            This web application serves as a digital directory for Barangay San Jose officials. 
+            It provides an easy way to view contact information and manage records of elected 
+            and appointed barangay officials.
+          </p>
+
+          <h3 class="title is-4">🎯 Features</h3>
+          <div class="columns">
+            <div class="column">
+              <div class="box has-background-primary-light">
+                <h4 class="subtitle is-5">✅ View Officials</h4>
+                <p>Browse all registered barangay officials with their complete information including position, contact details, and address.</p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="box has-background-info-light">
+                <h4 class="subtitle is-5">➕ Add Officials</h4>
+                <p>Register new barangay officials through an easy-to-use form with validation to ensure data accuracy.</p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="box has-background-success-light">
+                <h4 class="subtitle is-5">📊 Statistics</h4>
+                <p>View summary statistics showing the distribution of officials by position and role.</p>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="title is-4">🛠️ Technologies Used</h3>
+          <div class="columns">
+            <div class="column">
+              <strong>Backend:</strong>
+              <ul>
+                <li>Node.js - JavaScript runtime</li>
+                <li>Express.js - Web framework</li>
+                <li>File System (fs) - JSON data storage</li>
+              </ul>
+            </div>
+            <div class="column">
+              <strong>Frontend:</strong>
+              <ul>
+                <li>EJS - Template engine</li>
+                <li>Bulma CSS - UI framework</li>
+                <li>HTML5 - Form validation</li>
+              </ul>
+            </div>
+            <div class="column">
+              <strong>Data:</strong>
+              <ul>
+                <li>JSON Files - Data persistence</li>
+                <li>Structured records</li>
+                <li>File-based storage</li>
+              </ul>
+            </div>
+          </div>
+
+          <h3 class="title is-4">📋 Barangay Positions</h3>
+          <table class="table is-fullwidth is-striped">
+            <thead>
+              <tr>
+                <th>Position</th>
+                <th>Role</th>
+                <th>Term</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Barangay Captain</strong></td>
+                <td>Head of the barangay, presides over meetings</td>
+                <td>3 years</td>
+              </tr>
+              <tr>
+                <td><strong>Barangay Kagawad</strong></td>
+                <td>Council member, assists in governance</td>
+                <td>3 years</td>
+              </tr>
+              <tr>
+                <td><strong>SK Chairperson</strong></td>
+                <td>Leads Sangguniang Kabataan (youth council)</td>
+                <td>3 years</td>
+              </tr>
+              <tr>
+                <td><strong>Barangay Secretary</strong></td>
+                <td>Maintains records and documents</td>
+                <td>Appointed</td>
+              </tr>
+              <tr>
+                <td><strong>Barangay Treasurer</strong></td>
+                <td>Manages barangay funds</td>
+                <td>Appointed</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 class="title is-4">🎓 Learning Objectives</h3>
+          <p>This mini-project demonstrates:</p>
+          <ul>
+            <li><strong>CRUD Operations</strong> - Create (Add) and Read (View) functionality</li>
+            <li><strong>Form Handling</strong> - HTML forms with validation and POST requests</li>
+            <li><strong>JSON Data Management</strong> - Reading and writing structured data</li>
+            <li><strong>EJS Templates</strong> - Dynamic HTML generation with loops and conditionals</li>
+            <li><strong>Bulma CSS</strong> - Responsive design and modern UI components</li>
+            <li><strong>Philippine Context</strong> - Real-world barangay governance system</li>
+          </ul>
+
+          <div class="notification is-warning is-light mt-5">
+            <p><strong>⚠️ Note:</strong> This is a learning project using JSON files for data storage. 
+            In a production environment, a proper database (like SQLite or PostgreSQL) would be used 
+            for better performance, security, and scalability.</p>
+          </div>
+
+          <div class="buttons mt-5">
+            <a href="/" class="button is-primary is-medium">
+              <strong>View Officials Directory</strong>
+            </a>
+            <a href="/add" class="button is-info is-medium">
+              <strong>Add New Official</strong>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

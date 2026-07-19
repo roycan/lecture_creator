@@ -398,7 +398,7 @@ SESSION_SECRET=dj38fh2n9f8h23nf92h3f9h23f9h23f92h3f
 
 ### 🎯 Try It: Setup Environment Variables
 
-**Practice File:** `assets/env-setup-demo/`
+**Practice File:** [`assets/setup-checklist.html`](assets/setup-checklist.html)
 
 **Create these files:**
 
