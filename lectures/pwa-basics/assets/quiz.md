@@ -10,6 +10,7 @@
 Answer: Progressive Web App
 Answer: progressive web app
 Answer: Progressive Web Application
+Answer: progressive web application
 
 ## Carlo wants to add a "manifest" file to his web app so users can install it on their phone's home screen like a native app. What file format is a web app manifest?
 * [ ] HTML
@@ -39,7 +40,7 @@ Answer: Progressive Web Application
 * [ ] PWAs require less code than a website
 * [ ] Native apps are banned in schools
 
-## What does "responsive" mean in the context of building a PWA?
-Answer: The app's layout adapts to different screen sizes (phone, tablet, desktop) so it looks good on any device
-Answer: adapting to screen size
-Answer: works on all screen sizes
+## The app's layout adapts to different screen sizes (phone, tablet, desktop) so it looks good on any device. What's the term for that? 
+Answer: responsive
+Answer: Responsive
+

@@ -25,11 +25,15 @@ But the server responds with `400 Bad Request`. What is the most likely cause?
 * [ ] The URL has too many characters
 * [ ] The price is too low
 
-## When testing an API, what is the purpose of checking the HTTP status code in the response?
-Answer: To know if the request succeeded, failed, or had an error
-Answer: to verify the request was handled correctly
-Answer: to check if it worked
-Answer: to know if the request was successful
+## When testing an API, what do I use to know if the request succeeded, failed, or had an error? is the purpose of checking the HTTP status code in the response?
+Answer: HTTP status code
+Answer: HTTP status codes
+Answer: http status code
+Answer: http status codes
+Answer: status codes
+Answer: status code
+Answer: HTTP status
+Answer: http status
 
 ## Liza wants to test what happens when she sends invalid data to her `POST /api/students` endpoint (e.g., an empty name). What type of testing is this?
 * [ ] Unit testing

@@ -10,6 +10,7 @@
 Answer: Comma-Separated Values
 Answer: comma-separated values
 Answer: Comma Separated Values
+Answer: comma separated values
 
 ## Carlo has a CSV file with this content. How many data rows (excluding the header) does it contain?
 ```csv

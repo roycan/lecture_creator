@@ -18,10 +18,14 @@
 * [ ] Use a larger server
 * [ ] Restart the server every hour
 
-## What does "backing up your database" mean and why is it important?
-Answer: Making a copy of your data regularly so you can restore it if something is lost or corrupted
-Answer: saving a copy of data in case of loss or corruption
-Answer: creating a recoverable copy of your database
+## Making a copy of your data regularly so you can restore it if something is lost or corrupted What does "backing up your database" mean and why is it important?
+Answer: Backup
+Answer: backup
+Answer: backing up
+Answer: backups
+Answer: back up
+Answer: Back up
+Answer: Back Up
 
 ## Liza notices her deployed app is slow because it loads 500 products from the database on every page load. What is a practical improvement?
 * [ ] Show fewer HTML elements

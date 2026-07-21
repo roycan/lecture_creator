@@ -18,10 +18,10 @@
 * [ ] Encryption
 * [ ] Validation
 
-## What is the difference between authentication and authorization?
-Answer: Authentication verifies who you are (login), authorization checks what you're allowed to do (permissions)
-Answer: authentication is login/identity, authorization is permissions/access control
-Answer: authN is identity, authZ is permissions
+## What verifies who you are (login), and not the one that checks what you're allowed to do (permissions)?
+Answer: Authentication
+Answer: authentication 
+Answer: authN 
 
 ## Liza logs in to a website, then closes her browser and opens it again the next day. She is still logged in. What is most likely keeping her session alive?
 * [ ] The server never forgets

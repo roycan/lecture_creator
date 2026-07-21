@@ -58,10 +58,9 @@ app.post("/add", (req, res) => {
 * [ ] Changing `app.post` to `app.get`
 * [ ] Adding `express.json()` middleware
 
-## What is the difference between `app.get()` and `app.post()`?
-Answer: GET retrieves/shows data, POST submits/creates data
-Answer: GET is for reading, POST is for writing
-Answer: GET reads, POST writes
+## In web server routes, ___ retrieves/shows data, unlike the other method which submits/creates data
+Answer: GET
+Answer: get
 
 ## In Express, the three parameters in a route handler are `req`, `res`, and sometimes `___` (for middleware chaining).
 Answer: next

@@ -28,10 +28,10 @@
 * [ ] Her teacher's email address
 * [ ] A payment
 
-## What is a "hallucination" when using an AI coding assistant?
-Answer: When the AI confidently generates code that looks correct but uses non-existent functions, APIs, or libraries that don't actually work
-Answer: when AI makes up fake functions or libraries
-Answer: when the AI invents things that don't exist
+## When the AI confidently generates code that looks correct but uses non-existent functions, APIs, or libraries that don't actually work or when the AI invents things that don't exist? (one word)
+Answer: hallucination
+Answer: Hallucination
+Answer: hallucinations
 
 ## Juan pastes his entire 500-line file and asks the AI "what's wrong?" The AI gives a vague answer. How can Juan get a better result?
 * [ ] Paste even more code

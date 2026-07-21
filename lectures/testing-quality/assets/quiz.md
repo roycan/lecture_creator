@@ -23,10 +23,9 @@ test("add() returns the sum of two numbers", () => {
 * [ ] CSS test
 * [ ] Load test
 
-## What is a "regression" in software development?
-Answer: A bug that returns after previously working correctly, usually because a new change broke something
-Answer: a previously fixed bug that comes back
-Answer: when a new change breaks existing functionality
+## What is a bug that returns after previously working correctly, usually because a new change broke something,  in software development?
+Answer: regression
+Answer: Regression
 
 ## Liza writes a function called `calculateTotal(items)`. She wants to test edge cases. Which of these is the BEST set of test inputs?
 * [ ] Test only with `[100, 200, 300]`
@@ -38,10 +37,11 @@ Answer: when a new change breaks existing functionality
 * [x] True
 * [ ] False
 
-## What is the difference between manual testing and automated testing?
-Answer: Manual testing is done by a person clicking through the app; automated testing uses code to check behavior automatically and repeatedly
-Answer: manual is by hand, automated is code that runs checks
-Answer: manual is human, automated is scripts
+##  Manual testing is done by a person clicking through the app; _________ uses code or scripts to check behavior and run repeatedly?
+Answer: automated testing
+Answer: Automated Testing
+Answer: Automated testing
+Answer: automated tests
 
 ## Juan's app has a login form. Which test scenario would catch the MOST potential bugs?
 * [ ] Test login with correct credentials only

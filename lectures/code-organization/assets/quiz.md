@@ -12,11 +12,12 @@
 * [ ] The route handlers
 * [ ] The CSS styling
 
-## What does "separation of concerns" mean?
-Answer: Each part of the code should have one clear responsibility
-Answer: splitting code into separate files by responsibility
-Answer: each module does one thing
-Answer: each file/function has one job
+## "Each part of the code should have one clear responsibility". What principle is this? 
+Answer: separation of concerns
+Answer: SOC
+Answer: Separation of Concerns
+Answer: Separation Of Concerns
+Answer: soc
 
 ## Liza has a function called `doStuff()` that handles form validation, database saves, and sends the email — all in one function. What should she do to improve it?
 * [ ] Rename it to `doMoreStuff()`
