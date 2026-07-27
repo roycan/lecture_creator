@@ -1,0 +1,20 @@
+<% if (officials.length === 0) { %>
+  <tr>
+    <td colspan="4" class="has-text-centered has-text-grey">
+      No officials found.
+    </td>
+  </tr>
+<% } %>
+<% officials.forEach(o => { %>
+  <tr>
+    <td><%= o.name %></td>
+    <td><%= o.position %></td>
+    <td>
+      <button class="button is-small is-info" onclick="loadDetail(<%= o.id %>)">
+        View
+      </button>
+      <!-- Mini-Project C: Replace View with hx-get hx-target="#detail-pane" -->
+      <!-- Mini-Project C: Add Edit button with hx-get="/official/<%= o.id %>/edit" -->
+    </td>
+  </tr>
+<% }) %>

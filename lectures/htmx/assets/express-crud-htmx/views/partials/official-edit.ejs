@@ -1,0 +1,13 @@
+<div hx-target="this" hx-swap="outerHTML">
+  <% if (locals.error) { %>
+    <p class="has-text-danger is-size-7 mb-1"><%= error %></p>
+  <% } %>
+  <input class="input is-small"
+         type="text"
+         name="name"
+         value="<%= official.name %>"
+         hx-post="/official/<%= official.id %>/update"
+         hx-trigger="blur"
+         autofocus>
+  <p class="has-text-grey is-size-7 mt-1">Press Tab or click away to save</p>
+</div>

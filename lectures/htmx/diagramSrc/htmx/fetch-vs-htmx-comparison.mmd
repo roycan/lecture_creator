@@ -1,0 +1,31 @@
+sequenceDiagram
+    participant U as User Browser
+    participant S as Server
+
+    rect rgb(255, 243, 224)
+        Note over U,S: Manual fetch() approach -- ~25 lines of JS
+
+        U->>+S: GET /api/provinces
+        Note right of S: Express route returns JSON array
+        S-->>-U: [{id:1, name:"Bohol"}, ...]
+
+        Note over U: JSON.parse(response)
+        Note over U: Loop: document.createElement for each province
+        Note over U: Build option/li elements in memory
+        Note over U: select.appendChild(fragment)
+
+        Note over U: Must also handle errors, loading spinner, empty state
+    end
+
+    rect rgb(232, 245, 233)
+        Note over U,S: htmx approach -- 0 lines of JS
+
+        U->>+S: hx-get="/provinces"
+        Note right of S: Express route returns HTML partial
+        S-->>-U: <option value="1">Bohol</option>...
+
+        Note over U: htmx auto-swaps response into target element
+        Note over U: No manual parsing, no loop, no appendChild
+    end
+
+    Note over U,S: htmx eliminates boilerplate: no fetch, no JSON.parse, no DOM manipulation

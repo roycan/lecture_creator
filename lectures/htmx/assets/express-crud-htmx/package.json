@@ -1,0 +1,13 @@
+{
+  "name": "barangay-directory-htmx",
+  "version": "1.0.0",
+  "description": "Barangay Directory — htmx CRUD demo for Grade 10",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "ejs": "^3.1.10"
+  }
+}

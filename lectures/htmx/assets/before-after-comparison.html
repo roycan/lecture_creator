@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>fetch() vs htmx — Loading Province Data</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <style>
+    .comparison-column {
+      min-height: 380px;
+    }
+    .code-badge-red {
+      display: inline-block;
+      background: #feecf0;
+      color: #cc0f35;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .code-badge-green {
+      display: inline-block;
+      background: #effaf5;
+      color: #257953;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .inspect-box {
+      background: #f5f5f5;
+      border: 1px solid #dbdbdb;
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .reminder-bar {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+    .result-area {
+      min-height: 120px;
+      border: 1px dashed #dbdbdb;
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+    .result-area ul {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+  </style>
+</head>
+<body>
+
+<section class="section">
+  <div class="container">
+
+    <!-- Header -->
+    <div class="has-text-centered mb-5">
+      <h1 class="title is-2">fetch() vs htmx — Loading Province Data</h1>
+      <p class="subtitle is-5 has-text-grey">Same task. Same result. Dramatically different code.</p>
+    </div>
+
+    <!-- DevTools Reminder -->
+    <div class="reminder-bar has-text-centered">
+      💡 <strong>Open DevTools Network Tab</strong> (F12 → Network) before clicking any button to see what each approach sends and receives.
+    </div>
+
+    <!-- Two-Column Comparison -->
+    <div class="columns is-desktop">
+
+      <!-- LEFT: Manual fetch() -->
+      <div class="column is-half">
+        <div class="box comparison-column">
+          <h2 class="title is-4 has-text-danger">🔧 Manual <code>fetch()</code></h2>
+          <p class="mb-3">
+            <span class="code-badge-red">~25 lines of JavaScript</span>
+          </p>
+
+          <button id="fetch-btn" class="button is-danger is-medium mb-3">
+            Load Provinces (fetch)
+          </button>
+
+          <div id="fetch-result" class="result-area">
+            <p class="has-text-grey-light is-italic">Click the button to load provinces…</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: htmx -->
+      <div class="column is-half">
+        <div class="box comparison-column">
+          <h2 class="title is-4 has-text-success">⚡ htmx</h2>
+          <p class="mb-3">
+            <span class="code-badge-green">0 lines of JavaScript</span>
+          </p>
+
+          <button class="button is-success is-medium mb-3"
+                  hx-get="/provinces"
+                  hx-target="#htmx-result"
+                  hx-swap="innerHTML">
+            Load Provinces (htmx)
+          </button>
+
+          <div id="htmx-result" class="result-area">
+            <p class="has-text-grey-light is-italic">Click the button to load provinces…</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Inspect Section -->
+    <div class="box mt-5">
+      <h3 class="title is-5 mb-3">🔍 Inspect: What Each Approach Sent / Received</h3>
+      <div class="columns">
+
+        <!-- Left Inspect -->
+        <div class="column is-half">
+          <p class="has-text-weight-semibold mb-2 has-text-danger">Manual <code>fetch()</code> — Sent & Received:</p>
+          <div class="inspect-box" id="inspect-fetch">
+            <span class="has-text-grey-light is-italic">Click "Load Provinces (fetch)" to see the raw JSON…</span>
+          </div>
+        </div>
+
+        <!-- Right Inspect -->
+        <div class="column is-half">
+          <p class="has-text-weight-semibold mb-2 has-text-success">htmx — Received (HTML fragment):</p>
+          <div class="inspect-box" id="inspect-htmx">
+            <span class="has-text-grey-light is-italic">Click "Load Provinces (htmx)" to see the raw HTML fragment…</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Key Takeaway -->
+    <div class="notification is-info is-light mt-4">
+      <p class="mb-2"><strong>🧠 Key Insight:</strong> Both approaches produce the same visible result. The difference?</p>
+      <ul style="list-style-type: disc; padding-left: 1.5rem;">
+        <li><strong>Manual fetch():</strong> You write ~25 lines of imperative JavaScript — <code>fetch()</code>, <code>.json()</code>, <code>forEach</code>, <code>createElement</code>, <code>appendChild</code>.</li>
+        <li><strong>htmx:</strong> You add <em>one HTML attribute</em> to a button. The server (or in this demo, an intercept handler) returns HTML, and htmx swaps it into the DOM.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================================================================
+     DATA — hidden from view
+     ================================================================ -->
+
+<!-- Mock data as JSON (used by the fetch() side) -->
+<script type="application/json" id="mock-data">
+[
+  { "name": "Batangas", "capital": "Batangas City", "region": "IV-A" },
+  { "name": "Cebu", "capital": "Cebu City", "region": "VII" },
+  { "name": "Davao del Sur", "capital": "Digos", "region": "XI" },
+  { "name": "Pampanga", "capital": "San Fernando", "region": "III" },
+  { "name": "Ilocos Norte", "capital": "Laoag", "region": "I" }
+]
+</script>
+
+<!-- Pre-rendered HTML fragment (used by the htmx side via intercept) -->
+<div id="province-fragment" style="display:none">
+  <ul>
+    <li>Batangas — Batangas City (IV-A)</li>
+    <li>Cebu — Cebu City (VII)</li>
+    <li>Davao del Sur — Digos (XI)</li>
+    <li>Pampanga — San Fernando (III)</li>
+    <li>Ilocos Norte — Laoag (I)</li>
+  </ul>
+</div>
+
+<!-- ================================================================
+     SCRIPTS
+     ================================================================ -->
+
+<!-- Manual fetch() logic (~25 lines) -->
+<script>
+  document.getElementById('fetch-btn').addEventListener('click', function () {
+    // 1. Get the mock data element
+    var dataEl = document.getElementById('mock-data');                // line 1
+    // 2. Parse its JSON content
+    var provinces = JSON.parse(dataEl.textContent);                   // line 2
+    // 3. Build the HTML string from the data
+    var html = '<ul>';                                                // line 3
+    provinces.forEach(function (p) {                                  // line 4
+      html += '<li>' + p.name + ' — ' + p.capital + ' (' + p.region + ')</li>'; // line 5
+    });                                                               // line 6
+    html += '</ul>';                                                  // line 7
+    // 4. Insert into the result div
+    document.getElementById('fetch-result').innerHTML = html;         // line 8
+
+    // Show the raw JSON in the inspect panel
+    document.getElementById('inspect-fetch').textContent =
+      JSON.stringify(provinces, null, 2);                             // line 9
+  });
+</script>
+
+<!-- htmx intercept — short-circuits hx-get="/provinces" to serve from hidden div -->
+<script>
+  document.body.addEventListener('htmx:beforeRequest', function (evt) {
+    if (evt.detail.requestConfig.path === '/provinces') {
+      // Prevent the actual network request (we're offline / no server)
+      evt.preventDefault();
+
+      // Get the pre-rendered HTML from the hidden div
+      var fragment = document.getElementById('province-fragment').innerHTML;
+
+      // Swap it into the target
+      var target = document.getElementById('htmx-result');
+      target.innerHTML = fragment;
+
+      // Show the raw HTML fragment in the inspect panel
+      document.getElementById('inspect-htmx').textContent = fragment.trim();
+
+      // Let htmx know the request lifecycle is complete
+      target.dispatchEvent(new Event('htmx:afterRequest', { bubbles: true }));
+    }
+  });
+</script>
+
+</body>
+</html>

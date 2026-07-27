@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instant Search with htmx</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <style>
+    .attr-panel {
+      background: #f0f9ff;
+      border-left: 4px solid #3e8ed0;
+      border-radius: 4px;
+      padding: 16px;
+      font-size: 0.85rem;
+    }
+    .attr-panel code {
+      background: #e8f0fe;
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: #296fa8;
+    }
+    .comparison-box {
+      border: 2px solid #dbdbdb;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 2rem;
+    }
+    .count-badge {
+      display: inline-block;
+      background: #3e8ed0;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 2px 10px;
+      border-radius: 4px;
+      min-width: 32px;
+      text-align: center;
+    }
+    .search-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .code-badge-red {
+      display: inline-block;
+      background: #feecf0;
+      color: #cc0f35;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .code-badge-green {
+      display: inline-block;
+      background: #effaf5;
+      color: #257953;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<section class="section">
+  <div class="container">
+
+    <!-- Header -->
+    <div class="has-text-centered mb-5">
+      <h1 class="title is-2">🔍 Instant Search with htmx</h1>
+      <p class="subtitle is-5 has-text-grey">
+        <code>hx-trigger="keyup changed delay:300ms"</code> — zero JavaScript
+      </p>
+    </div>
+
+    <div class="columns is-desktop">
+
+      <!-- Main Search Area -->
+      <div class="column is-two-thirds">
+
+        <!-- Search Input -->
+        <div class="field">
+          <label class="label is-medium">Search Barangay Officials</label>
+          <div class="control has-icons-left has-icons-right">
+            <input
+              class="input is-medium"
+              type="search"
+              name="q"
+              placeholder="Type a name or position (e.g. 'Captain' or 'Maria')…"
+              hx-get="/search"
+              hx-trigger="keyup changed delay:300ms"
+              hx-target="#results"
+              hx-swap="innerHTML"
+              hx-indicator="#spinner"
+              autofocus
+            >
+            <span class="icon is-left">🔍</span>
+            <span class="icon is-right" id="spinner" style="display:none;">
+              <span class="htmx-indicator">⏳</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Search Stats -->
+        <div class="mb-3">
+          <div class="search-stat">
+            <span class="has-text-weight-semibold">Results found:</span>
+            <span class="count-badge" id="result-count">0</span>
+          </div>
+          <div class="search-stat">
+            <span class="has-text-weight-semibold">Search calls made:</span>
+            <span class="count-badge" id="search-count">0</span>
+          </div>
+        </div>
+
+        <!-- Results Table -->
+        <div class="table-container">
+          <table class="table is-fullwidth is-striped is-hoverable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Barangay</th>
+              </tr>
+            </thead>
+            <tbody id="results">
+              <tr>
+                <td colspan="3" class="has-text-grey-light is-italic">
+                  Start typing to search all officials…
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- Side Panel: htmx Attributes Explained -->
+      <div class="column is-one-third">
+        <div class="attr-panel mb-4">
+          <h3 class="title is-6 mb-3">🧩 htmx Attributes Used</h3>
+
+          <p class="mb-2"><strong><code>hx-get="/search"</code></strong></p>
+          <p class="mb-3" style="margin-left: 0.5rem; font-size: 0.82rem;">
+            Sends a GET request to <code>/search?q=…</code> whenever triggered.
+          </p>
+
+          <p class="mb-2"><strong><code>hx-trigger="keyup changed delay:300ms"</code></strong></p>
+          <p class="mb-3" style="margin-left: 0.5rem; font-size: 0.82rem;">
+            Fires after the user stops typing for <strong>300ms</strong> (debounce). Only fires when the value actually <em>changed</em>.
+          </p>
+
+          <p class="mb-2"><strong><code>hx-target="#results"</code></strong></p>
+          <p class="mb-3" style="margin-left: 0.5rem; font-size: 0.82rem;">
+            The HTML response from the server replaces the <code><tbody id="results"></code> element.
+          </p>
+
+          <p class="mb-2"><strong><code>hx-swap="innerHTML"</code></strong></p>
+          <p class="mb-3" style="margin-left: 0.5rem; font-size: 0.82rem;">
+            Replaces the <em>inner</em> content of the target (keeps the target element itself).
+          </p>
+
+          <p class="mb-2"><strong><code>hx-indicator="#spinner"</code></strong></p>
+          <p style="margin-left: 0.5rem; font-size: 0.82rem;">
+            Shows the ⏳ spinner element while a request is in flight.
+          </p>
+        </div>
+
+        <div class="notification is-success is-light">
+          <p class="mb-1"><strong>✅ Zero JavaScript</strong></p>
+          <p style="font-size: 0.82rem;">Everything you see — debounced input, table updates, counters — is driven entirely by htmx attributes in the HTML.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Before / After Comparison Box -->
+    <div class="comparison-box">
+      <h3 class="title is-5 mb-3">📊 Before (ajax-fetch) vs Now (htmx)</h3>
+      <div class="columns">
+        <div class="column is-half">
+          <div class="box has-background-danger-light">
+            <h4 class="title is-6 has-text-danger">Before: <code>ajax-fetch</code></h4>
+            <p class="mb-2"><span class="code-badge-red">~12 lines of JavaScript</span></p>
+            <pre style="background: #fff; padding: 12px; border-radius: 4px; font-size: 0.78rem; overflow-x: auto;"><code>// Manual debounce
+let timer;
+input.addEventListener('input', () => {
+  clearTimeout(timer);
+  timer = setTimeout(async () => {
+    const res = await fetch('/search?q=' + input.value);
+    const data = await res.json();
+    // Build HTML manually
+    let html = '';
+    data.forEach(o => {
+      html += `<tr><td>${o.name}</td>…</tr>`;
+    });
+    tbody.innerHTML = html;
+  }, 300);
+});</code></pre>
+          </div>
+        </div>
+        <div class="column is-half">
+          <div class="box has-background-success-light">
+            <h4 class="title is-6 has-text-success">Now: <code>htmx</code></h4>
+            <p class="mb-2"><span class="code-badge-green">0 lines of JavaScript</span></p>
+            <pre style="background: #fff; padding: 12px; border-radius: 4px; font-size: 0.78rem; overflow-x: auto;"><code><input
+  type="search"
+  name="q"
+  hx-get="/search"
+  hx-trigger="keyup changed delay:300ms"
+  hx-target="#results"
+  hx-swap="innerHTML"
+  hx-indicator="#spinner"
+></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================================================================
+     DATA — hidden from view
+     ================================================================ -->
+
+<script type="application/json" id="official-data">
+[
+  { "name": "Maria Teresa Santos", "position": "Barangay Captain", "barangay": "San Isidro" },
+  { "name": "Juan dela Cruz", "position": "Barangay Kagawad", "barangay": "San Isidro" },
+  { "name": "Elena Reyes", "position": "Barangay Treasurer", "barangay": "Mabuhay" },
+  { "name": "Rodrigo Mendoza", "position": "Barangay Captain", "barangay": "Mabuhay" },
+  { "name": "Luzviminda Abella", "position": "Barangay Secretary", "barangay": "Bagong Silang" },
+  { "name": "Antonio Villanueva", "position": "Barangay Kagawad", "barangay": "Bagong Silang" },
+  { "name": "Corazon Aquino-Javier", "position": "SK Chairperson", "barangay": "San Isidro" },
+  { "name": "Francisco de Guzman", "position": "Barangay Captain", "barangay": "Bagong Silang" },
+  { "name": "Rosario Flores", "position": "Barangay Tanod Chief", "barangay": "Mabuhay" },
+  { "name": "Benigno Salvador", "position": "Barangay Health Worker", "barangay": "San Isidro" }
+]
+</script>
+
+<!-- ================================================================
+     htmx intercept — serves filtered results from inline JSON
+     ================================================================ -->
+<script>
+  document.body.addEventListener('htmx:beforeRequest', function (evt) {
+    if (evt.detail.requestConfig.path.startsWith('/search')) {
+      // Prevent the actual network request (this demo runs without a server)
+      evt.preventDefault();
+
+      // Parse the query parameter
+      var searchPath = evt.detail.requestConfig.path;
+      var url = new URL(searchPath, 'http://localhost');
+      var q = (url.searchParams.get('q') || '').trim().toLowerCase();
+
+      // Get and filter the dataset
+      var officials = JSON.parse(document.getElementById('official-data').textContent);
+      var filtered = officials.filter(function (o) {
+        return o.name.toLowerCase().indexOf(q) !== -1 ||
+               o.position.toLowerCase().indexOf(q) !== -1 ||
+               o.barangay.toLowerCase().indexOf(q) !== -1;
+      });
+
+      // Build HTML table rows
+      var html = filtered.length === 0
+        ? '<tr><td colspan="3" class="has-text-centered has-text-grey">No results found.</td></tr>'
+        : filtered.map(function (o) {
+            return '<tr><td>' + o.name + '</td><td>' + o.position + '</td><td>' + o.barangay + '</td></tr>';
+          }).join('');
+
+      // Swap into the results
+      var target = document.getElementById('results');
+      target.innerHTML = html;
+
+      // Update counters
+      document.getElementById('result-count').textContent = filtered.length;
+      var searchCountEl = document.getElementById('search-count');
+      searchCountEl.textContent = parseInt(searchCountEl.textContent) + 1;
+
+      // Let htmx know the request lifecycle is complete
+      target.dispatchEvent(new Event('htmx:afterRequest', { bubbles: true }));
+    }
+  });
+</script>
+
+</body>
+</html>

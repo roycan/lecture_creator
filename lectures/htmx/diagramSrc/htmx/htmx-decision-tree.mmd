@@ -1,0 +1,57 @@
+graph TD
+    START([What am I building?])
+
+    Q1{Is this a new page
+    or full navigation?}
+
+    FULL["Full Page Load
+    Regular a href or form submit
+    Server returns complete HTML page
+    Examples: login page, landing page,
+    navigation between sections"]
+
+    Q2{Can the server
+    render the response
+    as an HTML fragment?}
+
+    FETCH_EXT["Manual fetch to external API
+    Third-party APIs return JSON only
+    Examples: Google Maps API,
+    payment gateway PayMongo,
+    weather data from PAGASA"]
+
+    Q3{Do I need complex
+    client-side state?
+    sorting, filtering,
+    charts/graphs?}
+
+    FETCH_STATE["Manual fetch with state
+    Client manages sort order, filters,
+    or renders charts from data
+    Examples: dashboard with Chart.js,
+    sortable/filterable data table,
+    real-time search with debounce"]
+
+    HTMX["htmx: hx-get / hx-post
+    Server renders HTML, client swaps it
+    Examples: province dropdown loads cities,
+    barangay list click to view profile,
+    inline form submit and re-render,
+    load more pagination button"]
+
+    START --> Q1
+    Q1 -->|Yes| FULL
+    Q1 -->|No| Q2
+    Q2 -->|No| FETCH_EXT
+    Q2 -->|Yes| Q3
+    Q3 -->|Yes| FETCH_STATE
+    Q3 -->|No| HTMX
+
+    style FULL fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
+    style HTMX fill:#c8e6c9,stroke:#2e7d32,color:#1b5e20
+    style FETCH_EXT fill:#fff9c4,stroke:#f9a825,color:#e65100
+    style FETCH_STATE fill:#fff9c4,stroke:#f9a825,color:#e65100
+    style START fill:#f3e5f5,stroke:#7b1fa2
+    style Q1 fill:#ffffff,stroke:#616161
+    style Q2 fill:#ffffff,stroke:#616161
+    style Q3 fill:#ffffff,stroke:#616161

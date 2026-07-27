@@ -1,0 +1,44 @@
+graph TD
+    subgraph Browser
+        A["Trigger: hx-trigger
+        What event fires the request?
+        click, change, submit, keyup, load, revealed, every 2s"]
+
+        B["Request: hx-get / hx-post
+        Which URL do we hit?
+        hx-get=/provinces
+        hx-post=/barangay/update"]
+
+        E["Target: hx-target
+        Which element gets updated?
+        CSS selector, this, next, closest"]
+
+        F["Swap: hx-swap
+        How does new content replace old?
+        innerHTML (default), outerHTML,
+        beforeend, afterbegin, delete, none"]
+    end
+
+    subgraph Server
+        C["Server: Express Route
+        app.get or app.post handler
+        Queries database, prepares data"]
+
+        D["Response: HTML Fragment
+        res.render partial template
+        NO html, head, or body tags
+        Just the snippet the target needs"]
+    end
+
+    A --> B
+    B -->|HTTP request| C
+    C --> D
+    D -->|HTTP response| E
+    E --> F
+
+    style A fill:#fff9c4,stroke:#f9a825
+    style B fill:#fff9c4,stroke:#f9a825
+    style C fill:#e1f5fe,stroke:#0288d1
+    style D fill:#e1f5fe,stroke:#0288d1
+    style E fill:#c8e6c9,stroke:#388e3c
+    style F fill:#c8e6c9,stroke:#388e3c
