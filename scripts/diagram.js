@@ -85,6 +85,10 @@ function inferLectureDir(p, lecturesDir) {
   const abs = path.resolve(p);
   const lecturesAbs = path.resolve(lecturesDir);
 
+  // If the input itself is a direct child of lectures/, it IS the
+  // lecture directory (e.g. `npm run diagram -- lectures/htmx`).
+  if (path.dirname(abs) === lecturesAbs) return abs;
+
   if (path.basename(abs) === 'diagramSrc') return path.dirname(abs);
 
   let cur = path.dirname(abs);

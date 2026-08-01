@@ -1,0 +1,7 @@
+[
+  { "id": 1, "name": "Juan dela Cruz", "position": "Barangay Captain" },
+  { "id": 2, "name": "Maria Santos", "position": "Barangay Secretary" },
+  { "id": 3, "name": "Pedro Reyes", "position": "Barangay Treasurer" },
+  { "id": 4, "name": "Ana Gonzales", "position": "Kagawad" },
+  { "id": 5, "name": "Jose Garcia", "position": "Kagawad" }
+]

@@ -1,0 +1,18 @@
+<form hx-post="/officials" hx-target="#form-area" hx-swap="outerHTML">
+  <% if (locals.error) { %>
+    <div class="notification is-danger is-light py-2">
+      <%= error %>
+    </div>
+  <% } %>
+  <div class="field has-addons">
+    <div class="control is-expanded">
+      <input class="input" type="text" name="name" placeholder="Full Name" required>
+    </div>
+    <div class="control is-expanded">
+      <input class="input" type="text" name="position" placeholder="Position" required>
+    </div>
+    <div class="control">
+      <button class="button is-primary" type="submit">Add Official</button>
+    </div>
+  </div>
+</form>

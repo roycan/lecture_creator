@@ -1,0 +1,9 @@
+<div hx-target="this" hx-swap="outerHTML">
+  <h4 class="title is-5"><%= official.name %></h4>
+  <p class="subtitle is-6"><%= official.position %></p>
+  <p class="has-text-grey is-size-7">ID: <%= official.id %></p>
+  <button class="button is-small is-warning mt-2"
+          hx-get="/official/<%= official.id %>/edit">
+    ✏️ Edit
+  </button>
+</div>

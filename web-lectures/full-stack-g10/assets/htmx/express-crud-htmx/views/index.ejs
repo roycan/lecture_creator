@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barangay Directory — htmx Mini-Projects</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+</head>
+<body>
+
+  <!-- ============================================================ -->
+  <!-- PAGE HEADER                                                  -->
+  <!-- ============================================================ -->
+  <section class="section pb-4">
+    <div class="container">
+      <h1 class="title is-2">🏛️ Barangay Directory</h1>
+      <p class="subtitle is-5 has-text-grey">Grade 10 — htmx Mini-Projects</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- TWO-COLUMN LAYOUT: Table + Sidebar                           -->
+  <!-- ============================================================ -->
+  <section class="section pt-2">
+    <div class="container">
+      <div class="columns">
+
+        <!-- ==================================================== -->
+        <!-- LEFT COLUMN: Directory Table + Search + Add Form     -->
+        <!-- ==================================================== -->
+        <div class="column is-two-thirds">
+
+          <!-- ==================================================== -->
+          <!-- MINI-PROJECT A: Replace fetch() with htmx             -->
+          <!--   1. Replace onclick="loadDirectory()" with           -->
+          <!--      hx-get="/directory/rows"                         -->
+          <!--      hx-target="#directory-body"                      -->
+          <!--      hx-trigger="load"                                -->
+          <!--   2. Replace onsubmit="addOfficial(event)" with       -->
+          <!--      hx-post="/officials" hx-target="#form-area"      -->
+          <!--      hx-swap="outerHTML"                              -->
+          <!--   3. Add hx-trigger="officialAdded from:body" to the  -->
+          <!--      table to auto-refresh after adding               -->
+          <!--   4. Delete the <script> block below (or comment it   -->
+          <!--      out)                                             -->
+          <!-- ==================================================== -->
+
+          <!-- ----- Directory Table ----- -->
+          <div class="box">
+            <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
+              <h2 class="title is-4 mb-0">📋 Directory Table</h2>
+              <button class="button is-primary" onclick="loadDirectory()">
+                Load Directory
+              </button>
+              <!-- Mini-Project A: Replace the onclick handler with hx-get -->
+            </div>
+
+            <table class="table is-striped is-fullwidth">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Position</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="directory-body">
+                <!-- Rows loaded via fetch() or hx-get -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- ----- Search Bar (placeholder for Mini-Project B) ----- -->
+          <!-- Uncomment for Mini-Project B -->
+          <!--
+          <div class="box">
+            <div class="field">
+              <label class="label">🔍 Search Officials</label>
+              <div class="control">
+                <input class="input" type="text" name="q" placeholder="Type a name or position..."
+                       hx-get="/directory/search"
+                       hx-trigger="keyup changed delay:300ms"
+                       hx-target="#directory-body">
+              </div>
+            </div>
+          </div>
+          -->
+          <!-- Mini-Project B: Add hx-get search with hx-trigger="keyup changed delay:300ms" -->
+
+          <!-- ----- Add Official Form ----- -->
+          <div class="box">
+            <h2 class="title is-4 mb-3">➕ Add Official</h2>
+            <div id="form-area">
+              <form onsubmit="addOfficial(event)">
+                <div id="form-error"></div>
+                <div class="field has-addons">
+                  <div class="control is-expanded">
+                    <input class="input" type="text" name="name" placeholder="Full Name" required>
+                  </div>
+                  <div class="control is-expanded">
+                    <input class="input" type="text" name="position" placeholder="Position" required>
+                  </div>
+                  <div class="control">
+                    <button class="button is-primary" type="submit">Add Official</button>
+                  </div>
+                </div>
+              </form>
+              <!-- Mini-Project A: Replace the form handler with hx-post -->
+            </div>
+          </div>
+
+          <!-- ==================================================== -->
+          <!-- MINI-PROJECT C: Inline Edit                           -->
+          <!--   - Replace View button with hx-get on each row       -->
+          <!--   - Add Edit button with                              -->
+          <!--     hx-get="/official/<id>/edit"                      -->
+          <!--     hx-target="closest tr"                            -->
+          <!--   - Inline edit input uses hx-post for updates        -->
+          <!--   - hx-target="this" hx-swap="outerHTML" pattern      -->
+          <!-- ==================================================== -->
+
+        </div>
+
+        <!-- ==================================================== -->
+        <!-- RIGHT COLUMN: Master-Detail Pane (Mini-Project B)    -->
+        <!-- ==================================================== -->
+        <div class="column is-one-third">
+          <div class="box">
+            <h2 class="title is-4 mb-3">👤 Official Details</h2>
+            <div id="detail-pane">
+              <p class="has-text-grey">Click an official to see details</p>
+            </div>
+            <!-- Mini-Project B: Replace the View button with hx-get + hx-target -->
+          </div>
+        </div>
+
+      </div><!-- /columns -->
+    </div><!-- /container -->
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- MANUAL JAVASCRIPT (students replace with htmx attributes)    -->
+  <!-- ============================================================ -->
+  <script>
+    async function loadDirectory() {
+      try {
+        const res = await fetch('/directory/rows');
+        const html = await res.text();
+        document.getElementById('directory-body').innerHTML = html;
+      } catch (err) {
+        console.error('Failed to load directory:', err);
+      }
+    }
+
+    async function addOfficial(event) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+      try {
+        const res = await fetch('/officials', { method: 'POST', body: formData });
+        const html = await res.text();
+        document.getElementById('form-area').innerHTML = html;
+        // Refresh the directory
+        loadDirectory();
+      } catch (err) {
+        console.error('Failed to add official:', err);
+      }
+    }
+
+    async function loadDetail(id) {
+      try {
+        const res = await fetch('/official/' + id);
+        const html = await res.text();
+        document.getElementById('detail-pane').innerHTML = html;
+      } catch (err) {
+        console.error('Failed to load detail:', err);
+      }
+    }
+
+    // Load directory on page load
+    loadDirectory();
+  </script>
+
+</body>
+</html>

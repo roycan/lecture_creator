@@ -52,9 +52,13 @@ Then share `dist/git-github.html` with students — they just double-click it. N
 | [`npm start`](package.json#L11) | Run the **editor** on `localhost` (author / live-preview / export). |
 | [`npm run build -- <slug>`](package.json#L12) | **CLI build** one lecture → `dist/<slug>.html`. Auto-renders any diagrams first. |
 | [`npm run build:all`](package.json#L13) | Build **every** lecture (per-lecture error isolation). |
+| [`npm run build:kroki -- <slug>`](package.json#L17) | Like `build` but uses **local Kroki** at `http://localhost:8000` for offline diagram rendering. |
+| [`npm run stage`](package.json#L18) | **Stage student site** — runs `build:all` then copies decks + assets to `web-lectures/full-stack-g10/` for GitHub Pages and offline ZIP. |
 | [`npm run check`](package.json#L14) | **Integrity linter** — ERRORs on broken image refs; WARNs on stale renders & diagram collisions. The ship gate. |
 | [`npm run diagram -- <file-or-dir>`](package.json#L15) | **Render diagram sources** (`.mmd`/`.puml`/… ) to PNG via Kroki, and print the `![](diagrams/…)` lines to paste. |
 | [`npm test`](package.json#L16) | Run the test suite (`node --test`, 134 tests). |
+| `./scripts/pack-student-zip.sh <version>` | Pack `web-lectures/full-stack-g10/` into a **versioned offline ZIP** for students (`dist/full-stack-g10-v<version>.zip`). |
+| `./scripts/pack-starters-zip.sh <version>` | Pack a **starters-only ZIP** (`dist/starters-v<version>.zip`) — practice files only, no lecture decks. |
 
 ---
 
@@ -273,6 +277,67 @@ Three commands must be green before shipping:
 
 The test suite also proves the core guarantee: a built lecture contains **zero external `http(s)://`
 URLs** (the offline proof). See [`scripts/test/`](scripts/test).
+
+---
+
+## Deploy to GitHub Pages & Offline ZIP
+
+The pipeline produces a **student-facing site** (live on GitHub Pages + downloadable ZIP) from a
+single command. For the full rationale and step-by-step setup, see
+[`inceptions/deploy-full-stack-g10-lectures.md`](inceptions/deploy-full-stack-g10-lectures.md).
+
+### The pipeline
+
+```
+lecture.md → npm run build → dist/*.html → npm run stage → web-lectures/full-stack-g10/ → GitHub Pages
+                                          ↓                                  ↓
+                                   (one .html per lecture)           assets/<slug>/ (practice files,
+                                                                     no solutions, no quizzes)
+```
+
+### Quick commands
+
+```bash
+npm run build:kroki -- htmx          # build one lecture (use :kroki for local Kroki)
+npm run stage                        # stage ALL decks + assets → web-lectures/full-stack-g10/
+
+# Copy the staged tree to the public repo
+cp web-lectures/full-stack-g10/*.html ../g10-fullstack-lectures/
+cp -r web-lectures/full-stack-g10/assets ../g10-fullstack-lectures/
+( cd ../g10-fullstack-lectures && git add -A && git commit -m "Update lectures" && git push )
+
+# Create the offline ZIP
+./scripts/pack-student-zip.sh 1.0.0   # → dist/full-stack-g10-v1.0.0.zip
+./scripts/pack-starters-zip.sh 1.0.0  # → dist/starters-v1.0.0.zip  (practice files only)
+```
+
+### What `npm run stage` does
+
+The staging script ([`scripts/stage-student-assets.mjs`](scripts/stage-student-assets.mjs)) runs
+`build:all` then:
+
+1. **Rewrites links** — `assets/foo.html` → `assets/<slug>/foo.html` so practice files resolve
+   correctly in the flat published tree, and `../ajax-fetch/lecture.md` → `ajax-fetch.html`.
+2. **Copies student assets** — `lectures/<slug>/assets/` → `web-lectures/full-stack-g10/assets/<slug>/`,
+   **excluding** solutions, quizzes (`quiz.md`), tests, dotfiles, and `node_modules/` (anti-cheat).
+3. **Provisions shared resources** — `shared/styles.css` where a deck references it, and
+   `shared/gates/` + `shared/challenges/` into `assets/_shared/`.
+4. **Resolves shared fallbacks** — unanswered `assets/<slug>/<file>` links redirect to
+   `assets/_shared/challenges/<file>` when that shared starter exists.
+
+The result is a clean `web-lectures/full-stack-g10/` tree ready to copy into the
+`g10-fullstack-lectures` public repo for GitHub Pages, or to zip for offline use.
+
+### GitHub Pages setup (one-time)
+
+1. Create a **separate public repo** `g10-fullstack-lectures` on GitHub.
+2. Copy `web-lectures/full-stack-g10/*` into it (decks + `assets/`).
+3. Add a **`.nojekyll`** file (so Pages serves verbatim).
+4. Enable Pages: **Settings → Pages → Source: Deploy from branch → main, root**.
+5. Site is live at `https://<user>.github.io/g10-fullstack-lectures/`.
+
+The public repo is a **publish target only** — never hand-edit it. All source lives in
+`lecture_creator`. Full details: [`inceptions/deploy-full-stack-g10-lectures.md`](inceptions/deploy-full-stack-g10-lectures.md).
 
 ---
 
