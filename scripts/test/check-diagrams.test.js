@@ -361,13 +361,13 @@ test('checkAll: totalMisses counts broken refs; totalWarnings counts stale only 
       // fallback feature, so it contributes ZERO warnings.
       collide: {
         'lecture.md': '# C\n\n![x](diagrams/foo.png)\n',
-        'diagramSrc/foo.mmd': 'g',
+        'diagramSrc/foo.mmd': 'graph TD; A-->B',
         'diagramSrc/foo.puml': '@startuml\nA-->B\n@enduml',
         'diagrams/foo.png': PNG,
       },
       staleLec: {
         'lecture.md': '# S\n\n![y](diagrams/bar.png)\n',
-        'diagramSrc/bar.mmd': 'g',
+        'diagramSrc/bar.mmd': 'graph TD; A-->B',
         'diagrams/bar.png': PNG,
       },
       broken: {
@@ -394,7 +394,7 @@ test('check main: multi-format is SILENT and NON-FATAL (exit 0, no collision lin
     {
       warn: {
         'lecture.md': '# W\n\n![x](diagrams/foo.png)\n',
-        'diagramSrc/foo.mmd': 'g',
+        'diagramSrc/foo.mmd': 'graph TD; A-->B',
         'diagramSrc/foo.puml': '@startuml\nA-->B\n@enduml',
         'diagrams/foo.png': PNG,
       },

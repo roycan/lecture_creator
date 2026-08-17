@@ -111,6 +111,7 @@ kroki-up                       # start Kroki for this session
 # ... edit diagram sources ...
 npm run diagram -- lectures/htmx   # render one lecture's diagrams
 # or:  npm run build:kroki -- htmx  # render + build the deck in one step
+npm run check:mermaid              # full mermaid syntax validation (all fences + .mmd)
 kroki-down                     # done — free the RAM
 ```
 
@@ -136,6 +137,7 @@ rendered `.png`. Unchanged diagrams are skipped. This is why on-demand works so 
 | Render + build one lecture (uses local Kroki) | `npm run build:kroki -- htmx` |
 | Render + build **all** lectures | `npm run build:kroki -- --all` |
 | Build **without** Kroki (reads existing PNGs) | `npm run build -- htmx` |
+| Validate all mermaid syntax (fences + `.mmd`) | `npm run check:mermaid` |
 | Override the Kroki URL for one command | `KROKI_BASE_URL=http://localhost:8000 npm run build -- htmx` |
 
 > `npm run build:kroki` is just a convenience wrapper that sets

@@ -1,6 +1,8 @@
 # Mermaid Syntax Hardening — Pipeline Plan
 
-> **Status:** Draft for discussion · **Trigger:** the oop-classes incident (2026-08-16) — an
+> **Status: IMPLEMENTED (2026-08-17)** — all 10 tasks shipped; T5 dropped per owner decision (on-demand doctrine). Ship gates: `npm run check` 0 errors · `npm test` 184 tests / 0 fail · `npm run build:all` 30/30 decks.
+>
+> **Trigger:** the oop-classes incident (2026-08-16) — an
 > unquoted pipe label `|new Product(...)|` parsed fine nowhere but failed only in the browser;
 > `npm run check`, `npm test`, and `npm run build:all` were all green while the deck was broken.
 >
@@ -108,10 +110,27 @@ owner's 92% test bar.
   real HTTP differs). Mitigated by keeping the stub at the `fetch`-signature level (not the
   module level) and by the live demo in T10 exercising the real path once.
 
-## 7. Open decisions for the owner
+## 7. Open decisions for the owner (all resolved)
 
-1. **R3 severity:** ERROR (blocks ship — my recommendation, it's the class that bit us) or
-   WARNING (advisory only)?
-2. **T5 auto-upgrade:** keep (convenience when Kroki is up) or drop (simplicity, explicit-only)?
-3. **Scope:** also lint `diagramSrc/*.mmd` (recommended — same failure class) or fences only?
-4. **Command name:** `npm run check:mermaid` (recommended) — or `check:diagrams`, `lint:mermaid`?
+1. **R3 severity:** ERROR ✅ — blocks ship (it's the class that bit us).
+2. **T5 auto-upgrade:** DROPPED ✅ — Layer 2 stays behind explicit `npm run check:mermaid`; plan floor rises 92→93%.
+3. **Scope:** fences + `diagramSrc/*.mmd` ✅ — both linted.
+4. **Command name:** `npm run check:mermaid` ✅.
+
+## 8. As-Built Record
+
+### Files created
+- [`scripts/lib/mermaid-lint.mjs`](scripts/lib/mermaid-lint.mjs) — Layer 1 structural lint (R1–R3), shared collector
+- [`scripts/check-mermaid.mjs`](scripts/check-mermaid.mjs) — Layer 2 CLI (`npm run check:mermaid`), injectable transport
+- [`scripts/test/mermaid-lint.test.js`](scripts/test/mermaid-lint.test.js) — 9 test groups: incident regression, no-false-positive fixtures, stubbed transport (200/400/SKIP), real-file gate
+
+### Files modified
+- [`scripts/check.js`](scripts/check.js) — import + `scanLecture` returns a `mermaid` block + `checkAll`/`formatReport`/`main` aggregate mermaid errors/warnings
+- [`package.json`](package.json) — added the `"check:mermaid"` script
+- [`scripts/test/check-diagrams.test.js`](scripts/test/check-diagrams.test.js) — 3 fixture `.mmd` files changed from `'g'` to `'graph TD; A-->B'` (R2 now flags unrecognized keywords; those fixtures test diagram integrity, not mermaid syntax)
+
+### Verification
+- **Zero false positives** across all 93 real mermaid sources (53 fences + 40 `.mmd` files) — confirmed before wiring into the gate
+- **Incident regression demo:** the exact `|new Product(...)|` label fails `npm run check` with `lecture.md:5 [R3]` + the quoting fix hint
+- **Layer 2 SKIP path:** `npm run check:mermaid` exits 0 with the `kroki-up` hint when Kroki is down
+- **Ship gates:** `npm run check` 0 errors · `npm test` 184 tests / 0 fail · `npm run build:all` 30/30 decks

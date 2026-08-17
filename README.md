@@ -5,7 +5,7 @@
 > highlighting bundled in. Built for a public high-school Computer Science classroom where student
 > internet is often unreliable or expensive.
 
-[![tests](https://img.shields.io/badge/tests-134%20pass%20%2F%200%20fail-brightgreen)](#quality-gates)
+[![tests](https://img.shields.io/badge/tests-182%20pass%20%2F%200%20fail-brightgreen)](#quality-gates)
 [![check](https://img.shields.io/badge/npm%20run%20check-0%20errors-brightgreen)](#quality-gates)
 [![node](https://img.shields.io/badge/node-%E2%89%A520-green)](#requirements)
 
@@ -54,9 +54,10 @@ Then share `dist/git-github.html` with students — they just double-click it. N
 | [`npm run build:all`](package.json#L13) | Build **every** lecture (per-lecture error isolation). |
 | [`npm run build:kroki -- <slug>`](package.json#L17) | Like `build` but uses **local Kroki** at `http://localhost:8000` for offline diagram rendering. |
 | [`npm run stage`](package.json#L18) | **Stage student site** — runs `build:all` then copies decks + assets to `web-lectures/full-stack-g10/` for GitHub Pages and offline ZIP. |
-| [`npm run check`](package.json#L14) | **Integrity linter** — ERRORs on broken image refs; WARNs on stale renders & diagram collisions. The ship gate. |
+| [`npm run check`](package.json#L14) | **Integrity linter** — ERRORs on broken image refs **and mermaid syntax** (unterminated fences, unquoted special chars in edge labels); WARNs on stale renders & unknown diagram keywords. The ship gate. |
+| [`npm run check:mermaid`](package.json#L15) | **Full mermaid parse** via Kroki (on-demand). SKIPs gracefully when Kroki is down. Run while authoring diagrams: `kroki-up && npm run check:mermaid; kroki-down`. |
 | [`npm run diagram -- <file-or-dir>`](package.json#L15) | **Render diagram sources** (`.mmd`/`.puml`/… ) to PNG via Kroki, and print the `![](diagrams/…)` lines to paste. |
-| [`npm test`](package.json#L16) | Run the test suite (`node --test`, 134 tests). |
+| [`npm test`](package.json#L16) | Run the test suite (`node --test`, 182 tests). |
 | `./scripts/pack-student-zip.sh <version>` | Pack `web-lectures/full-stack-g10/` into a **versioned offline ZIP** for students (`dist/full-stack-g10-v<version>.zip`). |
 | `./scripts/pack-starters-zip.sh <version>` | Pack a **starters-only ZIP** (`dist/starters-v<version>.zip`) — practice files only, no lecture decks. |
 
@@ -262,18 +263,12 @@ Three commands must be green before shipping:
 
 | Gate | Command | Expected |
 |---|---|---|
-| Regression | `npm test` | **134 pass / 0 fail** (2 skipped; unit + integration + supertest routes) |
-| Integrity | `npm run check` | **0 errors** (collisions & stale renders WARN, never fail the gate) |
-| Build | `npm run build:all` | **23 ok / 2 failed** — see note below |
+| Regression | `npm test` | **182 pass / 0 fail** (2 skipped; unit + integration + supertest routes) |
+| Integrity | `npm run check` | **0 errors** (collisions, stale renders, & unknown mermaid keywords WARN, never fail the gate) |
+| Build | `npm run build:all` | **30 ok / 0 failed** |
 
-> **About the 2 build:all failures (`ajax-fetch`, `dom`):** these are **pre-existing content wiring
-> issues, not code regressions.** Both lectures keep their diagram *sources* in a subfolder whose
-> mirrored PNG paths were never pre-rendered, so the build has to fetch the public Kroki service to
-> produce them — and a couple of those calls fail with transient HTTP 400s. (`dom` also contains
-> unsupported `.bob`/`.diag` extensions that are ignored.) The simplest fixes are content-only:
-> either pre-render the mirrored PNGs (`npm run diagram -- lectures/<slug>/diagramSrc`) once on a
-> connected machine, or align each `diagramSrc/` layout with its referenced `diagrams/` paths.
-> `npm run check` still reports **0 errors** because the referenced (flat) PNGs already exist.
+> **Previously (2026-06-22):** `ajax-fetch` and `dom` had pre-existing content wiring issues that
+> caused 2 build:all failures. Those are now resolved — `npm run build:all` is **30/30** green.
 
 The test suite also proves the core guarantee: a built lecture contains **zero external `http(s)://`
 URLs** (the offline proof). See [`scripts/test/`](scripts/test).

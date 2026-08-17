@@ -40,6 +40,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { splitSlides, scanMissingImages } from './lib/index.mjs';
+import { lintMermaidLecture } from './lib/mermaid-lint.mjs';
 // Single source of truth for diagram discovery + collision policy. We only need
 // the read-only scan here (it returns the winning jobs + collision warnings);
 // the per-file render helpers stay in render-diagram.mjs.
@@ -180,9 +181,17 @@ export function scanLecture(slug, { lecturesDir = LECTURES_DIR, splitDepth = 2 }
     }
   }
 
+  // --- Mermaid structural lint (mermaid-check-hardening-plan.md Layer 1) ----
+  // Hermetic, always-on: R1 unterminated fences + R3 unquoted-special-char
+  // edge labels are ERRORS (the 2026-08-16 incident class); R2 unknown
+  // diagram keywords are warnings. Lints lecture.md fences AND every
+  // diagramSrc/**/*.mmd. Full syntax validation stays on-demand:
+  // `kroki-up && npm run check:mermaid`.
+  const mermaid = lintMermaidLecture(lectureDir);
+
   return {
     slug,
-    ok: missing.length === 0,
+    ok: missing.length === 0 && mermaid.errors.length === 0,
     missing,
     diagrams: {
       hasDiagramSrc: !!diagramScan,
@@ -191,6 +200,7 @@ export function scanLecture(slug, { lecturesDir = LECTURES_DIR, splitDepth = 2 }
       collisions: [],
       stale,
     },
+    mermaid,
   };
 }
 
@@ -206,25 +216,31 @@ export function checkAll({ lecturesDir = LECTURES_DIR } = {}) {
     scanLecture(slug, { lecturesDir }),
   );
   const totalMisses = results.reduce((n, r) => n + r.missing.length, 0);
+  const totalMermaidErrors = results.reduce((n, r) => n + r.mermaid.errors.length, 0);
   const totalWarnings = results.reduce(
-    (n, r) => n + r.diagrams.collisions.length + r.diagrams.stale.length,
+    (n, r) =>
+      n +
+      r.diagrams.collisions.length +
+      r.diagrams.stale.length +
+      r.mermaid.warnings.length,
     0,
   );
-  return { results, totalMisses, totalWarnings };
+  return { results, totalMisses, totalMermaidErrors, totalWarnings };
 }
 
 /** Format the aggregate report to a readable, structured string: a one-line
  *  summary, then an ERRORS block (broken refs) and a WARNINGS block (stale
  *  renders). Multi-format sources are intentional fallbacks (render-fallback),
  *  not collisions, so they no longer appear here. Teacher-readable. */
-function formatReport({ results, totalMisses, totalWarnings }) {
-  const errNoun = totalMisses === 1 ? 'error' : 'errors';
+function formatReport({ results, totalMisses, totalMermaidErrors, totalWarnings }) {
+  const errTotal = totalMisses + totalMermaidErrors;
+  const errNoun = errTotal === 1 ? 'error' : 'errors';
   const warnNoun = totalWarnings === 1 ? 'warning' : 'warnings';
   const lines = [
-    `check: scanned ${results.length} lecture(s) — ${totalMisses} ${errNoun}, ${totalWarnings} ${warnNoun}.`,
+    `check: scanned ${results.length} lecture(s) — ${errTotal} ${errNoun}, ${totalWarnings} ${warnNoun}.`,
   ];
 
-  if (totalMisses === 0 && totalWarnings === 0) {
+  if (errTotal === 0 && totalWarnings === 0) {
     lines.push('check: clean — no broken refs and no diagram warnings.');
     return lines.join('\n');
   }
@@ -248,8 +264,22 @@ function formatReport({ results, totalMisses, totalWarnings }) {
     }
   }
 
-  // WARNINGS — non-fatal (stale renders). Multi-format sources are intentional
-  // fallbacks now, so they do NOT appear here (render-fallback feature).
+  // ERRORS — mermaid structural lint (R1 unterminated fences, R3 unquoted
+  // special chars in edge labels — the class that shipped broken on 2026-08-16).
+  if (totalMermaidErrors > 0) {
+    lines.push('');
+    lines.push('ERRORS (mermaid syntax — these diagrams will not render):');
+    for (const r of results) {
+      if (r.mermaid.errors.length === 0) continue;
+      lines.push(`  ✗ ${r.slug} — ${r.mermaid.errors.length} mermaid error(s):`);
+      for (const e of r.mermaid.errors) {
+        lines.push(`      ${e.file}:${e.line} [${e.rule}] ${e.message}`);
+        if (e.hint) lines.push(`          fix: ${e.hint}`);
+      }
+    }
+  }
+
+  // WARNINGS — non-fatal (stale renders + unknown mermaid keywords).
   if (totalWarnings > 0) {
     lines.push('');
     lines.push(
@@ -257,13 +287,20 @@ function formatReport({ results, totalMisses, totalWarnings }) {
     );
     for (const r of results) {
       const d = r.diagrams;
-      if (d.stale.length === 0) continue;
-      lines.push(`  ⚠ ${r.slug} — ${d.stale.length} stale diagram(s):`);
-      for (const s of d.stale) {
-        lines.push(
-          `      stale: ${s.pngRel} is older than its source ${s.srcRel} ` +
-            `(re-render with: npm run diagram)`,
-        );
+      if (d.stale.length > 0) {
+        lines.push(`  ⚠ ${r.slug} — ${d.stale.length} stale diagram(s):`);
+        for (const s of d.stale) {
+          lines.push(
+            `      stale: ${s.pngRel} is older than its source ${s.srcRel} ` +
+              `(re-render with: npm run diagram)`,
+          );
+        }
+      }
+      if (r.mermaid.warnings.length > 0) {
+        lines.push(`  ⚠ ${r.slug} — ${r.mermaid.warnings.length} mermaid warning(s):`);
+        for (const w of r.mermaid.warnings) {
+          lines.push(`      ${w.file}:${w.line} [${w.rule}] ${w.message}`);
+        }
       }
     }
   }
@@ -280,18 +317,18 @@ function formatReport({ results, totalMisses, totalWarnings }) {
  * @returns {number}
  */
 export function main({ lecturesDir = LECTURES_DIR } = {}) {
-  const { results, totalMisses, totalWarnings } = checkAll({ lecturesDir });
+  const { results, totalMisses, totalMermaidErrors, totalWarnings } = checkAll({ lecturesDir });
   if (!results.length) {
     console.error('check: no lectures found in lectures/');
     return 1;
   }
-  const report = formatReport({ results, totalMisses, totalWarnings });
-  if (totalMisses > 0) {
+  const report = formatReport({ results, totalMisses, totalMermaidErrors, totalWarnings });
+  if (totalMisses + totalMermaidErrors > 0) {
     console.error(report);
   } else {
     console.log(report);
   }
-  return totalMisses === 0 ? 0 : 1;
+  return totalMisses + totalMermaidErrors === 0 ? 0 : 1;
 }
 
 // Run only when invoked directly (not when imported by tests / `node -e`). The

@@ -76,7 +76,8 @@ lecture_creator/
 | `npm start` | Run Express editor on localhost (author / live-preview / export) |
 | `npm run build -- <slug>` | CLI build one lecture → `dist/<slug>.html` |
 | `npm run build:all` | Build every lecture |
-| `npm run check` | Integrity linter — fail if any image/asset ref is missing |
+| `npm run check` | Integrity linter — fails on missing refs **and** mermaid syntax (R1/R3) |
+| `npm run check:mermaid` | Full mermaid parse via Kroki (on-demand; skips gracefully when Kroki is down) |
 | `npm test` | Unit + integration + route tests |
 
 ## 5. How We Know It's Correct (test strategy + acceptance)
@@ -84,7 +85,9 @@ lecture_creator/
 - **Unit (`npm test`):** `splitSlides`, `inlineImages` (MIME png/svg/jpg + missing-file error), `bundleLibs` (zero cdnjs/jsdelivr URLs left), `assemblePresentation`.
 - **Integration:** build a fixture lecture → assert output is one file, image embedded, libs bundled, **zero external `http(s)://` URLs** (the offline proof).
 - **Routes (supertest):** `GET /` lists lectures; `GET /lectures/:slug` serves markdown; assets `200`; `POST /export` returns attachment.
-- **Linter (`npm run check`):** scans all lectures, fails on any missing `![]()`/Try-It asset — CI gate.
+- **Linter (`npm run check`):** scans all lectures, fails on any missing `![]()`/Try-It asset **and**
+  on structural mermaid syntax errors (unterminated fences, unquoted special chars in edge labels) —
+  CI gate. `npm run check:mermaid` adds a full Kroki parse on demand.
 - **Acceptance (Definition of Done):** `npm test` green · `npm run check` clean · built file has **zero external URLs** · offline open shows images/highlight/mermaid/voice · `npm start` round-trip works.
 
 ## 6. Locked Decisions (with rationale)
@@ -213,6 +216,9 @@ docker network (the frontend alone HTTP-503s Mermaid). Verified 2026-06-22 on Do
 `docker stop` is still respected. Once a PNG is on disk, the build's mtime-skip makes
 `npm run build -- <slug>` fully offline (zero Kroki, zero internet).
 
-**Final verified state (2026-06-22):** `npm test` → **155 pass / 0 fail / 2 skipped** (the 2 skipped
-are opt-in live-Kroki tests). `npm run check` → **0 errors / 0 warnings** (the former 21 collision
-warnings are gone under the fallback model). `npm run build:all` → **25/25** lectures built.
+**Final verified state (2026-08-17):** `npm test` → **182 pass / 0 fail / 2 skipped** (the 2 skipped
+are opt-in live-Kroki tests). `npm run check` → **0 errors / 0 warnings** across 30 lectures (the
+former 21 collision warnings are gone under the fallback model, and `check` now also lints mermaid
+syntax — the 2026-08-16 unquoted-edge-label incident class — via `scripts/lib/mermaid-lint.mjs`).
+`npm run build:all` → **30/30** lectures built. `npm run check:mermaid` (Kroki-backed full parse,
+`scripts/check-mermaid.mjs`) is available on demand and exits 0 (SKIP) when Kroki is down.
