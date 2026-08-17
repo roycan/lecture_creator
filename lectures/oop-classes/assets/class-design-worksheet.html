@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOP I — Class Design Worksheet (Barangay Services)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f5f3ef; color: #2d2a26; padding: 20px; line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; margin-bottom: 4px; }
+  .sub { color: #7a736a; margin-bottom: 18px; font-size: 0.95rem; }
+  .card { background: #fff; border: 1px solid #e3ddd4; border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
+  h2 { font-size: 1.1rem; margin-bottom: 10px; }
+  h3 { font-size: 0.98rem; margin: 14px 0 6px; }
+  p, li { font-size: 0.95rem; }
+  textarea { width: 100%; font: inherit; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.88rem; padding: 10px 12px; border: 1px solid #c9c0b2; border-radius: 8px; background: #fdfcf9; min-height: 90px; resize: vertical; }
+  .brief { background: #fff8e6; border: 1px solid #f0dfae; border-radius: 8px; padding: 12px 14px; font-size: 0.92rem; margin-bottom: 8px; }
+  .hint { color: #7a736a; font-size: 0.88rem; margin-top: 6px; }
+  .noun { background: #e9f4ee; border-radius: 4px; padding: 0 4px; }
+  .verb { background: #eef1fa; border-radius: 4px; padding: 0 4px; }
+  table.tmp { width: 100%; border-collapse: collapse; margin-top: 6px; }
+  table.tmp th, table.tmp td { border: 1px solid #d8d0c2; padding: 7px 9px; font-size: 0.9rem; text-align: left; }
+  th { background: #faf7f2; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📋 Class Design Worksheet — Barangay Services</h1>
+  <p class="sub">OOP I · Transfer practice: same design moves, new domain. Answers go in the boxes — this worksheet is yours, no grading.</p>
+
+  <div class="card">
+    <h2>The Brief</h2>
+    <div class="brief">
+      The barangay secretary wants a small system to track <strong>residents</strong> who request <strong>services</strong>
+      (barangay clearance, certificate of indigency, letter of endorsement). Each resident has a name, purok, and senior-citizen flag.
+      Each request is made by ONE resident, has a type, a date, and a status. The secretary should be able to record a new request,
+      mark one <em>claimed</em> (only from <em>ready</em>), and list a resident's requests. Seniors get priority numbering.
+    </div>
+    <p class="hint">📌 Method reminder: <span class="noun">nouns in the brief</span> are class candidates · <span class="verb">verbs the secretary does</span> are method candidates · "has-a / made-by" phrases are relationships.</p>
+  </div>
+
+  <div class="card">
+    <h2>1 — Find the classes</h2>
+    <p>List the nouns from the brief that deserve to be classes (hint: not every noun does — "date" is a field, not a class). For each, say why.</p>
+    <textarea placeholder="Class: Resident      — why: has own data (name, purok, senior flag) and its own behavior (…)
+Class: …            — why: …"></textarea>
+  </div>
+
+  <div class="card">
+    <h2>2 — Fields or methods?</h2>
+    <p>Sort each item into the right column of your classes:</p>
+    <table class="tmp">
+      <tr><th>Item from the brief</th><th>Field or method?</th><th>Which class owns it?</th></tr>
+      <tr><td>name, purok</td><td><textarea style="min-height:34px;"></textarea></td><td><textarea style="min-height:34px;"></textarea></td></tr>
+      <tr><td>"mark one claimed (only from ready)"</td><td><textarea style="min-height:34px;"></textarea></td><td><textarea style="min-height:34px;"></textarea></td></tr>
+      <tr><td>status</td><td><textarea style="min-height:34px;"></textarea></td><td><textarea style="min-height:34px;"></textarea></td></tr>
+      <tr><td>"list a resident's requests"</td><td><textarea style="min-height:34px;"></textarea></td><td><textarea style="min-height:34px;"></textarea></td></tr>
+      <tr><td>senior-citizen flag</td><td><textarea style="min-height:34px;"></textarea></td><td><textarea style="min-height:34px;"></textarea></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>3 — Spot the invariant</h2>
+    <p>The brief says a request can be marked claimed <strong>only from ready</strong>. That is an invariant — a rule that must always hold.</p>
+    <h3>3a. Which class should guard it, and in which method?</h3>
+    <textarea placeholder="Class: …  Method: …  What it checks before changing status: …"></textarea>
+    <h3>3b. Where should it be checked at creation time?</h3>
+    <textarea placeholder="Constructor rule: a new request always starts as status ___ because …"></textarea>
+  </div>
+
+  <div class="card">
+    <h2>4 — Sketch the class boxes</h2>
+    <p>Draw each class as a box — name on top, fields in the middle, methods at the bottom — then draw the relationship arrows between them and label each: <strong>has-a</strong> (composition) or <strong>references</strong> (association).</p>
+    <textarea style="min-height:180px;" placeholder="┌─────────────────────────────┐        ┌──────────────────────────┐
+│ ServiceRequest              │        │ Resident                 │
+│─────────────────────────────│        │──────────────────────────│
+│ type, dateStr, status       │        │ name, purok, isSenior    │
+│─────────────────────────────│        │──────────────────────────│
+│ markClaimed()  priorityNo() │        │ addRequest()  listMine() │
+└─────────────────────────────┘        └──────────────────────────┘
+        │ references (made-by)                ▲
+        └─────────────────────────────────────┘
+(…draw yours — is there also a has-a here? where do requests live?)"></textarea>
+  </div>
+
+  <div class="card">
+    <h2>5 — Stretch: one guard, in code</h2>
+    <p>Write <code>markClaimed()</code> for <code>ServiceRequest</code> so the invariant can't be broken. Bonus: give it a useful return value.</p>
+    <textarea placeholder="markClaimed() {
+  // only from "ready" — otherwise refuse
+}"></textarea>
+    <p class="hint">Self-check against lecture Section 3's sell(qty) — same shape: check the rule, refuse or update, return a signal.</p>
+  </div>
+</div>
+</body>
+</html>

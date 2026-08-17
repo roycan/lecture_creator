@@ -1,0 +1,45 @@
+classDiagram
+    class Store {
+        -String name
+        -String owner
+        -List inventory
+        -List salesHistory
+        +addProduct(p)
+        +findProduct(id) Product
+        +sell(id, qty) boolean
+        +restock(id, qty)
+        +recordSale(s)
+        +printInventory()
+        +totalInventoryValue() number
+        +lowStockReport() List
+        +utangReport() List
+    }
+    class Product {
+        -int id
+        -String name
+        -number price
+        -number stock
+        +sell(qty) boolean
+        +restock(qty)
+        +isLowStock(threshold) boolean
+        +stockValue() number
+        +describe() String
+    }
+    class PerishableProduct {
+        -String expiryDate
+        +isExpired() boolean
+        +describe() String
+    }
+    class Sale {
+        -String buyerName
+        -boolean isUtang
+        -List items
+        -String dateStr
+        +addItem(p, qty) boolean
+        +total() number
+        +settle()
+    }
+    PerishableProduct --|> Product : is-a extends
+    Store "1" *-- "0..*" Product : inventory has-a
+    Store "1" *-- "0..*" Sale : salesHistory has-a
+    Sale "1" --> "1..*" Product : line items references

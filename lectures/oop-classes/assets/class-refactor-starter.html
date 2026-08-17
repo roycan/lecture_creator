@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOP I — Refactor Starter (TODOs)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f5f3ef; color: #2d2a26; padding: 20px; line-height: 1.55; }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; margin-bottom: 4px; }
+  .sub { color: #7a736a; margin-bottom: 18px; font-size: 0.95rem; }
+  .card { background: #fff; border: 1px solid #e3ddd4; border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
+  h2 { font-size: 1.05rem; margin-bottom: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+  th, td { text-align: left; padding: 7px 9px; border-bottom: 1px solid #eee7de; }
+  th { background: #faf7f2; font-weight: 600; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  button { font: inherit; padding: 7px 13px; border-radius: 7px; border: 1px solid #c9c0b2; background: #fff; cursor: pointer; }
+  button.primary { background: #2f6f4f; border-color: #2f6f4f; color: #fff; }
+  input { font: inherit; width: 70px; padding: 6px 8px; border: 1px solid #c9c0b2; border-radius: 6px; }
+  .log { background: #1e1b18; color: #d8e6d8; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.85rem; border-radius: 8px; padding: 12px 14px; min-height: 110px; max-height: 240px; overflow-y: auto; white-space: pre-wrap; }
+  .log .warn { color: #f2c14e; } .log .err { color: #ff8f85; } .log .ok { color: #8fd694; }
+  .todo { background: #fff8e6; border: 1px solid #f0dfae; border-radius: 8px; padding: 10px 14px; font-size: 0.9rem; margin-bottom: 16px; }
+  .row-controls { display: flex; gap: 6px; align-items: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🛠️ Refactor Starter — Procedural ➜ Classes</h1>
+  <p class="sub">OOP I · Section 5 Try It. Convert Aling Nena's procedural store into <code>Product</code> + <code>Store</code> classes. Solve every TODO below, then compare with the solution file.</p>
+
+  <div class="todo">
+    ✅ <strong>Refactor rules:</strong> 1) Do not change what the buttons do — change how the work is organized.
+    2) The <em>test script</em> at the bottom must print the same results as before you started.
+    3) No <code>function sellProduct</code>-style helpers may remain — that behavior moves into classes.
+  </div>
+
+  <div class="card">
+    <h2>Inventory (UI)</h2>
+    <table>
+      <thead><tr><th>Product</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="controls">
+      <button class="primary" onclick="printUI()">🖨️ Print inventory</button>
+      <button onclick="totalUI()">₱ Total value</button>
+      <button onclick="lowUI()">⚠️ Low stock</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Log</h2>
+    <div class="log" id="log"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// 🛠️ YOUR REFACTOR STARTS HERE
+// The procedural code below works. Your job: replace it with
+// class Product + class Store, then rewire the UI functions.
+// ============================================================
+
+// ---------- STEP 1: class Product ----------
+// TODO 1: Write `class Product` with a constructor that takes
+//         (id, name, price, stock) and GUARDS bad data
+//         (negative stock, price <= 0 → throw).
+// TODO 2: Give Product these methods:
+//         sell(qty) → true/false (refuse overdraws)
+//         restock(qty)
+//         isLowStock(threshold = 5)
+//         stockValue()
+//         describe() → "₱20 · Sardinas 155g — 24 left"
+class Product {
+  // TODO: constructor + methods (see lecture Section 3)
+}
+
+// ---------- STEP 2: class Store ----------
+// TODO 3: Write `class Store` with (name, owner) and an EMPTY
+//         this.inventory array in the constructor.
+// TODO 4: Give Store these methods (delegate to Product!):
+//         addProduct(p), findProduct(id),
+//         sell(id, qty), restock(id, qty),
+//         printInventory(), totalInventoryValue(), lowStockReport()
+class Store {
+  // TODO: constructor + methods (see lecture Section 5)
+}
+
+// ---------- STEP 3: build the store ----------
+// TODO 5: Create `store` (name: "Aling Nena's Sari-Sari Store",
+//         owner: "Aling Nena") and addProduct(...) the 3 products
+//         below — using new Product(...), not literals.
+const products = [
+  { id: 1, name: "Sardinas 155g", price: 20, stock: 24 },
+  { id: 2, name: "Instant Noodles", price: 15, stock: 6 },
+  { id: 3, name: "Softdrinks 8oz", price: 18, stock: 12 },
+];
+// TODO: replace the literal array above with a Store instance.
+const store = null; // ← until you finish, the UI below will not work
+
+// ---------- STEP 4: rewire the UI ----------
+// TODO 6: These should call STORE methods, not procedural helpers.
+const logEl = document.getElementById("log");
+function log(msg, cls) {
+  const span = document.createElement("span");
+  if (cls) span.className = cls;
+  span.textContent = msg + "\n";
+  logEl.appendChild(span);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+function render() {
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = "";
+  // TODO 7: loop over store.inventory instead of `products`
+  products.forEach(p => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${p.name}</td><td>₱${p.price}</td><td>${p.stock}</td>
+      <td><div class="row-controls">
+        <input type="number" min="1" value="1" id="qty-${p.id}">
+        <button onclick="sellUI(${p.id})">Sell</button>
+        <button onclick="restockUI(${p.id})">Restock</button>
+      </div></td>`;
+    tbody.appendChild(tr);
+  });
+}
+function qtyOf(id) { return Math.max(1, parseInt(document.getElementById("qty-" + id).value, 10) || 1); }
+function sellUI(id) {
+  // TODO 8: const ok = store.sell(id, qtyOf(id)); then log + render
+}
+function restockUI(id) {
+  // TODO 9: store.restock(id, qtyOf(id)); then log + render
+}
+function printUI()  { /* TODO 10: store.printInventory() */ }
+function totalUI()  { /* TODO 11: log(`₱${store.totalInventoryValue()}`) */ }
+function lowUI()    { /* TODO 12: log lowStockReport() names */ }
+
+// ---------- STEP 5: the test script (must match the "before" app) ----------
+function runTestScript() {
+  log("— running the behavior test script —", "warn");
+  // TODO 13: uncomment once your classes are ready:
+  // log(store.sell(1, 2) === true  ? "sell(1,2) → true ✅" : "sell(1,2) FAILED ❌", "ok");
+  // log(store.sell(2, 100) === false ? "sell(2,100) refused ✅" : "sell(2,100) FAILED ❌", "ok");
+  // store.restock(2, 10);
+  // store.printInventory();
+  // log(`Total value: ₱${store.totalInventoryValue()}`);
+}
+runTestScript();
+render();
+</script>
+</body>
+</html>

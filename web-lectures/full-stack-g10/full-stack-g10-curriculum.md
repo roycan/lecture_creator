@@ -158,6 +158,8 @@ flowchart TD
 | 4–6 | production-best-practices *(full)*: error handling, logging, monitoring, backups, performance, clean deploy |
 | 7–8 | git-github collaboration *(full)*: PR reviews, conflict resolution, team workflow |
 | 9–10 | [`pwa-basics`](lectures/pwa-basics/lecture.md) — offline (high value given PH internet!) |
+| woven | **NEW `oop-classes`** — OOP I: Classes & Objects (self-paced extension; refactors the Q2 sari-sari store app into `Product` + `Store` classes) |
+| woven | `htmx` — server-sent HTML (self-paced extension; after G3+G4) |
 
 🏁 **Artifact:** harden the Q4 capstone — add tests, logging, **offline support**, and a clean deploy pipeline.
 
@@ -168,6 +170,7 @@ flowchart TD
 |---|---|
 | 1–4 | **Data track:** deeper SQLite/CSV/JSON-APIs → a data dashboard **— or —** **Frontend-polish track:** responsive-bulma deep, accessibility, performance |
 | 3–5 | **`ai-assisted-development` (deep):** refactoring with AI, AI code review, agents |
+| woven | **NEW `oop-inheritance-diagrams`** + **NEW `oop-prototypes`** — OOP II & III (self-paced extension: UML class diagrams, inheritance vs composition, prototypes under the hood) |
 | 6–10 | **Second, bigger capstone:** multi-user, deployed, real stakeholder, full Q5 practices |
 
 🏁 **Artifact:** portfolio-grade advanced project + a presentation/demo.
@@ -262,3 +265,7 @@ Building *with* AI — your explicit goal. **Objectives:** write effective promp
 | testing-quality | Q4/Q5 | ✅ | light→full |
 | **ai-assisted-development** | Q4/Q6 | 🆕 | — |
 | pwa-basics | Q5 | ✅ | full |
+| htmx | Q5 | ✅ | — |
+| **oop-classes** | Q5 | 🆕 | — |
+| **oop-inheritance-diagrams** | Q6 | 🆕 | — |
+| **oop-prototypes** | Q6 | 🆕 | — |

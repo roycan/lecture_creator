@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOP I — Refactor Solution (self-check)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f5f3ef; color: #2d2a26; padding: 20px; line-height: 1.55; }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; margin-bottom: 4px; }
+  .sub { color: #7a736a; margin-bottom: 18px; font-size: 0.95rem; }
+  .card { background: #fff; border: 1px solid #e3ddd4; border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
+  h2 { font-size: 1.05rem; margin-bottom: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+  th, td { text-align: left; padding: 7px 9px; border-bottom: 1px solid #eee7de; }
+  th { background: #faf7f2; font-weight: 600; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  button { font: inherit; padding: 7px 13px; border-radius: 7px; border: 1px solid #c9c0b2; background: #fff; cursor: pointer; }
+  button.primary { background: #2f6f4f; border-color: #2f6f4f; color: #fff; }
+  input { font: inherit; width: 70px; padding: 6px 8px; border: 1px solid #c9c0b2; border-radius: 6px; }
+  .log { background: #1e1b18; color: #d8e6d8; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.85rem; border-radius: 8px; padding: 12px 14px; min-height: 110px; max-height: 240px; overflow-y: auto; white-space: pre-wrap; }
+  .log .warn { color: #f2c14e; } .log .err { color: #ff8f85; } .log .ok { color: #8fd694; }
+  .note { background: #e9f4ee; border: 1px solid #bcd9c8; border-radius: 8px; padding: 10px 14px; font-size: 0.9rem; margin-bottom: 16px; }
+  .row-controls { display: flex; gap: 6px; align-items: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>✅ Refactor Solution — the Class-Powered Store</h1>
+  <p class="sub">OOP I · Self-check only (this file is excluded from student staging). Compare against YOUR refactor, not copy it.</p>
+
+  <div class="note">
+    📌 Check yourself against the mapping: literals → <code>constructor</code> · <code>findProduct(list,id)</code> →
+    <code>store.findProduct(id)</code> · <code>sellProduct(list,...)</code> → <code>store.sell()</code> delegating to <code>product.sell()</code>.
+    The test script output at the bottom must match the procedural "before" app exactly.
+  </div>
+
+  <div class="card">
+    <h2>Inventory (now rendered from <code>store.inventory</code>)</h2>
+    <table>
+      <thead><tr><th>Product</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="controls">
+      <button class="primary" onclick="printUI()">🖨️ Print inventory</button>
+      <button onclick="totalUI()">₱ Total value</button>
+      <button onclick="lowUI()">⚠️ Low stock</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Log</h2>
+    <div class="log" id="log"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// ✅ SOLUTION — the same app, class-powered.
+// Behavior identical to procedural-store.html. Structure changed.
+// ============================================================
+
+class Product {
+  constructor(id, name, price, stock) {
+    if (stock < 0) throw new Error(`Stock can't be negative (got ${stock})`);
+    if (price <= 0) throw new Error(`Price must be above zero (got ${price})`);
+    this.id = id;
+    this.name = name;
+    this.price = price;
+    this.stock = stock;
+  }
+  sell(qty) {
+    if (qty > this.stock) {
+      log(`⚠️ Not enough ${this.name}: ${this.stock} left, asked for ${qty}`, "warn");
+      return false;
+    }
+    this.stock -= qty;
+    return true;
+  }
+  restock(qty) { this.stock += qty; }
+  isLowStock(threshold = 5) { return this.stock <= threshold; }
+  stockValue() { return this.price * this.stock; }
+  describe() { return `₱${this.price} · ${this.name} — ${this.stock} left`; }
+}
+
+class Store {
+  constructor(name, owner) {
+    this.name = name;
+    this.owner = owner;
+    this.inventory = [];                 // fresh array per store — second branch is ONE line away
+  }
+  addProduct(product) { this.inventory.push(product); }
+  findProduct(id) { return this.inventory.find(p => p.id === id); }
+  sell(id, qty) {
+    const p = this.findProduct(id);
+    if (!p) return false;
+    return p.sell(qty);                  // ← delegation: Store finds, Product sells
+  }
+  restock(id, qty) {
+    const p = this.findProduct(id);
+    if (p) p.restock(qty);
+  }
+  printInventory() {
+    log(`— ${this.name} (Tindera: ${this.owner}) —`);
+    this.inventory.forEach(p => log("  " + p.describe()));
+  }
+  totalInventoryValue() {
+    return this.inventory.reduce((sum, p) => sum + p.stockValue(), 0);
+  }
+  lowStockReport() {
+    return this.inventory.filter(p => p.isLowStock()).map(p => p.name);
+  }
+}
+
+const store = new Store("Aling Nena's Sari-Sari Store", "Aling Nena");
+store.addProduct(new Product(1, "Sardinas 155g", 20, 24));
+store.addProduct(new Product(2, "Instant Noodles", 15, 6));
+store.addProduct(new Product(3, "Softdrinks 8oz", 18, 12));
+
+// ---------- UI wiring (thin — all logic lives in the classes) ----------
+const logEl = document.getElementById("log");
+function log(msg, cls) {
+  const span = document.createElement("span");
+  if (cls) span.className = cls;
+  span.textContent = msg + "\n";
+  logEl.appendChild(span);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+function render() {
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = "";
+  store.inventory.forEach(p => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${p.name}</td><td>₱${p.price}</td><td>${p.stock}</td>
+      <td><div class="row-controls">
+        <input type="number" min="1" value="1" id="qty-${p.id}">
+        <button onclick="sellUI(${p.id})">Sell</button>
+        <button onclick="restockUI(${p.id})">Restock</button>
+      </div></td>`;
+    tbody.appendChild(tr);
+  });
+}
+function qtyOf(id) { return Math.max(1, parseInt(document.getElementById("qty-" + id).value, 10) || 1); }
+function sellUI(id) {
+  const ok = store.sell(id, qtyOf(id));
+  log(ok ? `✅ Sold ${qtyOf(id)} × ${store.findProduct(id).name}` : `❌ Sale refused`, ok ? "ok" : "err");
+  render();
+}
+function restockUI(id) {
+  store.restock(id, qtyOf(id));
+  log(`📦 Restocked ${qtyOf(id)} × ${store.findProduct(id).name}`, "ok");
+  render();
+}
+function printUI() { store.printInventory(); }
+function totalUI() { log(`💰 Total inventory value: ₱${store.totalInventoryValue()}`, "ok"); }
+function lowUI() {
+  const low = store.lowStockReport();
+  log(low.length ? `⚠️ Low stock: ${low.join(", ")}` : "✅ Nothing below 5 units", low.length ? "warn" : "ok");
+}
+
+// ---------- the test script — identical output to the "before" app ----------
+log("— running the behavior test script —", "warn");
+log(store.sell(1, 2) === true   ? "sell(1,2) → true ✅" : "sell(1,2) FAILED ❌", "ok");
+log(store.sell(2, 100) === false ? "sell(2,100) refused ✅" : "sell(2,100) FAILED ❌", "ok");
+store.restock(2, 10);
+store.printInventory();
+log(`Total value: ₱${store.totalInventoryValue()}`);
+render();
+</script>
+</body>
+</html>

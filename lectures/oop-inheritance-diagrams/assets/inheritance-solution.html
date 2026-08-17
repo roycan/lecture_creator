@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOP II — Inheritance Solution (self-check)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f5f3ef; color: #2d2a26; padding: 20px; line-height: 1.55; }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; margin-bottom: 4px; }
+  .sub { color: #7a736a; margin-bottom: 18px; font-size: 0.95rem; }
+  .card { background: #fff; border: 1px solid #e3ddd4; border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
+  h2 { font-size: 1.05rem; margin-bottom: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+  th, td { text-align: left; padding: 7px 9px; border-bottom: 1px solid #eee7de; }
+  th { background: #faf7f2; font-weight: 600; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  button { font: inherit; padding: 7px 13px; border-radius: 7px; border: 1px solid #c9c0b2; background: #fff; cursor: pointer; }
+  button.primary { background: #2f6f4f; border-color: #2f6f4f; color: #fff; }
+  .log { background: #1e1b18; color: #d8e6d8; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.85rem; border-radius: 8px; padding: 12px 14px; min-height: 110px; max-height: 280px; overflow-y: auto; white-space: pre-wrap; }
+  .log .warn { color: #f2c14e; } .log .err { color: #ff8f85; } .log .ok { color: #8fd694; }
+  .note { background: #e9f4ee; border: 1px solid #bcd9c8; border-radius: 8px; padding: 10px 14px; font-size: 0.9rem; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>✅ Inheritance Solution — the Grown Store</h1>
+  <p class="sub">OOP II · Self-check only (excluded from student staging). Your override must produce the same strings as this one.</p>
+
+  <div class="note">
+    📌 Compare: <code>super(...)</code> first line? · <code>isExpired()</code> compares two <code>Date</code>s? ·
+    your override calls <code>super.describe()</code> instead of re-formatting the base string?
+  </div>
+
+  <div class="card">
+    <h2>Inventory</h2>
+    <table>
+      <thead><tr><th>Product</th><th>Price</th><th>Stock</th><th>Extra</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="controls">
+      <button class="primary" onclick="runTests()">▶️ Run the test script</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Log</h2>
+    <div class="log" id="log"></div>
+  </div>
+</div>
+
+<script>
+// ---------- Lecture 1 classes, unchanged ----------
+class Product {
+  constructor(id, name, price, stock) {
+    if (stock < 0) throw new Error(`Stock can't be negative (got ${stock})`);
+    if (price <= 0) throw new Error(`Price must be above zero (got ${price})`);
+    this.id = id; this.name = name; this.price = price; this.stock = stock;
+  }
+  sell(qty) {
+    if (qty > this.stock) { log(`⚠️ Not enough ${this.name}: ${this.stock} left`, "warn"); return false; }
+    this.stock -= qty; return true;
+  }
+  restock(qty) { this.stock += qty; }
+  isLowStock(threshold = 5) { return this.stock <= threshold; }
+  stockValue() { return this.price * this.stock; }
+  describe() { return `₱${this.price} · ${this.name} — ${this.stock} left`; }
+}
+
+class Store {
+  constructor(name, owner) { this.name = name; this.owner = owner; this.inventory = []; }
+  addProduct(p) { this.inventory.push(p); }
+  findProduct(id) { return this.inventory.find(p => p.id === id); }
+  sell(id, qty) { const p = this.findProduct(id); return p ? p.sell(qty) : false; }
+  restock(id, qty) { const p = this.findProduct(id); if (p) p.restock(qty); }
+  printInventory() {
+    log(`— ${this.name} (Tindera: ${this.owner}) —`);
+    this.inventory.forEach(p => log("  " + p.describe()));
+  }
+  totalInventoryValue() { return this.inventory.reduce((s, p) => s + p.stockValue(), 0); }
+  lowStockReport() { return this.inventory.filter(p => p.isLowStock()).map(p => p.name); }
+}
+
+// ---------- ✅ the finished feature ----------
+class PerishableProduct extends Product {
+  constructor(id, name, price, stock, expiryDate) {
+    super(id, name, price, stock);        // 1st line — build the Product part
+    this.expiryDate = expiryDate;         // then the child's own field
+  }
+
+  isExpired() {
+    return new Date(this.expiryDate) < new Date();
+  }
+
+  describe() {                            // override: same job, better answer
+    const badge = this.isExpired()
+      ? " ⚠️ EXPIRED — pull from shelf!"
+      : ` (expiry: ${this.expiryDate})`;
+    return super.describe() + badge;      // reuse the parent's version
+  }
+}
+
+const store = new Store("Aling Nena's Sari-Sari Store", "Aling Nena");
+store.addProduct(new Product(1, "Sardinas 155g", 20, 24));
+store.addProduct(new Product(2, "Instant Noodles", 15, 6));
+store.addProduct(new PerishableProduct(4, "Tasty Bread", 35, 10, "2026-08-20"));
+store.addProduct(new PerishableProduct(5, "Fresh Eggs (tray)", 140, 4, "2024-01-01"));
+
+// ---------- UI + tests ----------
+const logEl = document.getElementById("log");
+function log(msg, cls) {
+  const span = document.createElement("span");
+  if (cls) span.className = cls;
+  span.textContent = msg + "\n";
+  logEl.appendChild(span);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+function render() {
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = "";
+  store.inventory.forEach(p => {
+    const perishable = p instanceof PerishableProduct;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${p.name}</td><td>₱${p.price}</td><td>${p.stock}</td>
+      <td>${perishable ? p.expiryDate + (p.isExpired() ? " ⚠️" : "") : "—"}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+function runTests() {
+  log("— test script —", "warn");
+  const bread = store.findProduct(4), eggs = store.findProduct(5);
+  log(bread && bread.isExpired() === false ? "bread.isExpired() → false ✅" : "bread.isExpired() FAILED ❌", "ok");
+  log(eggs && eggs.isExpired() === true  ? "eggs.isExpired() → true ✅"  : "eggs.isExpired() FAILED ❌", "ok");
+  log(`bread.describe() → "${bread.describe()}"`, "ok");
+  log(`eggs.describe()  → "${eggs.describe()}"`, "ok");
+  log(bread.sell(3) === true ? "bread.sell(3) inherited → true ✅" : "bread.sell(3) FAILED ❌", "ok");
+  log(`store.totalInventoryValue() → ₱${store.totalInventoryValue()} (unchanged Store code!) ✅`, "ok");
+  store.printInventory();
+}
+render();
+runTests();
+</script>
+</body>
+</html>

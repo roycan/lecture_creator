@@ -1,0 +1,77 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+skinparam defaultFontSize 13
+hide circle
+
+title Aling Nena's Sari-Sari Store — The Whole System
+
+class Store {
+  **− fields**
+  .. ..
+  − name : String
+  − owner : String
+  − inventory : Product [0..*]
+  − salesHistory : Sale [0..*]
+  **+ methods**
+  .. ..
+  + addProduct(p : Product)
+  + findProduct(id) : Product
+  + sell(id, qty) : boolean
+  + restock(id, qty)
+  + recordSale(s : Sale)
+  + printInventory()
+  + totalInventoryValue() : number
+  + lowStockReport() : String[]
+  + utangReport() : String[]
+}
+
+class Product {
+  **− fields**
+  .. ..
+  − id : number
+  − name : String
+  − price : number
+  − stock : number
+  **+ methods**
+  .. ..
+  + sell(qty) : boolean
+  + restock(qty)
+  + isLowStock(threshold) : boolean
+  + stockValue() : number
+  + describe() : String
+}
+
+class PerishableProduct {
+  **− new fields**
+  .. ..
+  − expiryDate : String
+  **+ new methods**
+  .. ..
+  + isExpired() : boolean
+  **+ overridden**
+  .. ..
+  + describe() : String
+}
+
+class Sale {
+  **− fields**
+  .. ..
+  − buyerName : String
+  − isUtang : boolean
+  − items : {product, qty, subtotal} [1..*]
+  − dateStr : String
+  **+ methods**
+  .. ..
+  + addItem(p : Product, qty) : boolean
+  + total() : number
+  + settle()
+}
+
+PerishableProduct --|> Product : is-a (extends)
+
+Store "1" *-- "0..*" Product : inventory\n(has-a)
+Store "1" *-- "0..*" Sale : salesHistory\n(has-a)
+Sale "1" --> "1..*" Product : line items\n(references)
+@enduml

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOP III — Prototype Explorer Lab</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f5f3ef; color: #2d2a26; padding: 20px; line-height: 1.55; }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; margin-bottom: 4px; }
+  .sub { color: #7a736a; margin-bottom: 18px; font-size: 0.95rem; }
+  .card { background: #fff; border: 1px solid #e3ddd4; border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
+  h2 { font-size: 1.05rem; margin-bottom: 10px; }
+  .lab { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  button { font: inherit; padding: 8px 13px; border-radius: 7px; border: 1px solid #c9c0b2; background: #fff; cursor: pointer; }
+  button:hover { background: #faf7f2; }
+  .log { background: #1e1b18; color: #d8e6d8; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.84rem; border-radius: 8px; padding: 12px 14px; min-height: 140px; max-height: 320px; overflow-y: auto; white-space: pre-wrap; }
+  .log .warn { color: #f2c14e; } .log .err { color: #ff8f85; } .log .ok { color: #8fd694; } .log .dim { color: #8a9a8a; }
+  .note { background: #fff8e6; border: 1px solid #f0dfae; border-radius: 8px; padding: 10px 14px; font-size: 0.9rem; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🔬 Prototype Explorer — the Tricycle Fleet Lab</h1>
+  <p class="sub">OOP III · Every demo from the lecture, runnable with visible output. Press the buttons in order — predict first, click second.</p>
+
+  <div class="note">📌 Do this like a scientist: before each button, say the expected output out loud. Every surprise is a section of the lecture asking to be re-read.</div>
+
+  <div class="card">
+    <h2>Experiments</h2>
+    <div class="lab">
+      <button onclick="exp1()">1️⃣ Where do methods live?</button>
+      <button onclick="exp2()">2️⃣ Walk the chain</button>
+      <button onclick="exp3()">3️⃣ Identity check</button>
+      <button onclick="exp4()">4️⃣ class is sugar (side by side)</button>
+      <button onclick="exp5()">5️⃣ Object.create — no class</button>
+      <button onclick="exp6()">6️⃣ Shadowing</button>
+      <button onclick="exp7()">7️⃣ Live prototype patch 🤯</button>
+      <button onclick="exp8()">8️⃣ instanceof = chain walk</button>
+    </div>
+    <div class="log" id="log"></div>
+    <div class="lab" style="margin-top:12px;">
+      <button onclick="logEl.textContent=''; log('— log cleared —','dim')">🧹 Clear log</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------- the fleet ----------
+class Tricycle {
+  constructor(plate, driver, baseFare) {
+    this.plate = plate; this.driver = driver; this.baseFare = baseFare;
+  }
+  fare(km) { return this.baseFare + Math.ceil(km) * 8; }
+}
+const unit01 = new Tricycle("TSK-142", "Kuya Ronnie", 25);
+const unit02 = new Tricycle("TSK-201", "Kuya Benjie", 30);
+
+const logEl = document.getElementById("log");
+function log(msg, cls) {
+  const span = document.createElement("span");
+  if (cls) span.className = cls;
+  span.textContent = msg + "\n";
+  logEl.appendChild(span);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+// ---------- 1: the mystery ----------
+function exp1() {
+  log("— 1️⃣ Where do methods live? —", "warn");
+  log(`unit01.fare(3)    → ${unit01.fare(3)}`);
+  log(`unit02.fare(1.4)  → ${unit02.fare(1.4)}`);
+  log("unit01.fare === unit02.fare → ??? (predict!)", "dim");
+  log(`ANSWER: ${unit01.fare === unit02.fare}  ← ONE shared function, not copies`, "ok");
+}
+
+// ---------- 2: chain walk ----------
+function exp2() {
+  log("— 2️⃣ Walking unit01's chain —", "warn");
+  let node = unit01, hop = 0;
+  while (node !== null) {
+    const label = node === Tricycle.prototype ? "Tricycle.prototype (fare lives HERE)"
+                : node === Object.prototype ? "Object.prototype (toString, hasOwnProperty…)"
+                : node.constructor && node.constructor.name === "Tricycle" ? "the instance itself"
+                : "(plain object)";
+    log(`hop ${hop}: ${label}`);
+    node = Object.getPrototypeOf(node);
+    hop++;
+  }
+  log(`hop ${hop}: null — chain ends. Full stop.`, "ok");
+}
+
+// ---------- 3: identity ----------
+function exp3() {
+  log("— 3️⃣ The identity check (THE line of the lecture) —", "warn");
+  log(`Object.getPrototypeOf(unit01) === Tricycle.prototype → ${Object.getPrototypeOf(unit01) === Tricycle.prototype}`, "ok");
+  log(`unit01.__proto__ === Tricycle.prototype              → ${unit01.__proto__ === Tricycle.prototype}  (legacy spelling — READ only)`);
+  log(`typeof Tricycle → "${typeof Tricycle}"  ← a class IS a function underneath`, "dim");
+}
+
+// ---------- 4: sugar, side by side ----------
+function exp4() {
+  log("— 4️⃣ class is sugar — twin build —", "warn");
+  class TricycleC {
+    constructor(plate, driver, baseFare) { this.plate = plate; this.driver = driver; this.baseFare = baseFare; }
+    fare(km) { return this.baseFare + Math.ceil(km) * 8; }
+  }
+  function TricycleF(plate, driver, baseFare) { this.plate = plate; this.driver = driver; this.baseFare = baseFare; }
+  TricycleF.prototype.fare = function (km) { return this.baseFare + Math.ceil(km) * 8; };
+
+  const a = new TricycleC("TSK-C", "Kuya C", 25);
+  const b = new TricycleF("TSK-F", "Kuya F", 25);
+  log(`class fare(3)      → ${a.fare(3)}`);
+  log(`function fare(3)   → ${b.fare(3)}`);
+  log(`getPrototypeOf(a) === TricycleC.prototype → ${Object.getPrototypeOf(a) === TricycleC.prototype}`, "ok");
+  log(`getPrototypeOf(b) === TricycleF.prototype → ${Object.getPrototypeOf(b) === TricycleF.prototype}`, "ok");
+  log("Two spellings. One mechanism. 🍬", "dim");
+}
+
+// ---------- 5: Object.create ----------
+function exp5() {
+  log("— 5️⃣ Object.create — sharing with NO class —", "warn");
+  const routeProto = {
+    report() { return `${this.driver} (${this.plate}) — base ₱${this.baseFare}`; },
+    fare(km) { return this.baseFare + Math.ceil(km) * 8; },
+  };
+  const unitA = Object.create(routeProto);
+  unitA.plate = "TSK-142"; unitA.driver = "Kuya Ronnie"; unitA.baseFare = 25;
+  log(`unitA.fare(3)  → ${unitA.fare(3)}`);
+  log(`unitA.report() → ${unitA.report()}`);
+  log(`Object.getPrototypeOf(unitA) === routeProto → ${Object.getPrototypeOf(unitA) === routeProto}`, "ok");
+  log("unitA was never 'new'ed, and no class was declared. Just objects + a link.", "dim");
+}
+
+// ---------- 6: shadowing ----------
+function exp6() {
+  log("— 6️⃣ Shadowing: own beats chain —", "warn");
+  const routeProto = { fare(km) { return this.baseFare + Math.ceil(km) * 8; } };
+  const unitB = Object.create(routeProto); unitB.baseFare = 30;
+  const unitC = Object.create(routeProto); unitC.baseFare = 20;
+  unitC.fare = function () { return "Negotiated!"; };
+  log(`unitB.fare(5) → ${unitB.fare(5)}   (no own fare → chain consulted)`);
+  log(`unitC.fare(5) → ${unitC.fare(5)}   (own fare shadows the prototype)`, "ok");
+  log(`Object.keys(unitC) → [${Object.keys(unitC).join(", ")}]  ← own only, 'fare' included`, "dim");
+}
+
+// ---------- 7: live patch ----------
+function exp7() {
+  log("— 7️⃣ Live prototype patch (the wow-moment) —", "warn");
+  const unitX = new Tricycle("TSK-404", "Kuya Rey", 25);
+  log(`unitX created. can it honk? ${typeof unitX.honk}`, "dim");
+  Tricycle.prototype.honk = function () { return `${this.plate}: brrrrp! 🛺`; };
+  log(`patched Tricycle.prototype.honk AFTER creation…`);
+  log(`unitX.honk() → ${unitX.honk()}`, "ok");
+  log(`but hasOwnProperty('honk') → ${unitX.hasOwnProperty("honk")} — never an own property; the WALL updated`, "dim");
+}
+
+// ---------- 8: instanceof ----------
+function exp8() {
+  log("— 8️⃣ instanceof reads the chain —", "warn");
+  log(`unit01 instanceof Tricycle → ${unit01 instanceof Tricycle}  (Tricycle.prototype on the chain)`);
+  log(`unit01 instanceof Object   → ${unit01 instanceof Object}  (Object.prototype, further down)`);
+  log(`unit01 instanceof Array    → ${unit01 instanceof Array}  (Array.prototype — NOT on this chain)`, "ok");
+  log(`[].forEach instanceof Function → ${[].forEach instanceof Function}  ← functions have chains too!`, "dim");
+}
+
+log("— Prototype Explorer ready. Start with 1️⃣ — predict first, then click. —", "warn");
+</script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOP I — The Procedural Store (Before)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f5f3ef; color: #2d2a26; padding: 20px; line-height: 1.55; }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; margin-bottom: 4px; }
+  .sub { color: #7a736a; margin-bottom: 18px; font-size: 0.95rem; }
+  .card { background: #fff; border: 1px solid #e3ddd4; border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
+  h2 { font-size: 1.05rem; margin-bottom: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+  th, td { text-align: left; padding: 7px 9px; border-bottom: 1px solid #eee7de; }
+  th { background: #faf7f2; font-weight: 600; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  button { font: inherit; padding: 7px 13px; border-radius: 7px; border: 1px solid #c9c0b2; background: #fff; cursor: pointer; }
+  button:hover { background: #faf7f2; }
+  button.primary { background: #2f6f4f; border-color: #2f6f4f; color: #fff; }
+  button.primary:hover { background: #275e42; }
+  button.danger { background: #b3382f; border-color: #b3382f; color: #fff; }
+  button.danger:hover { background: #9c2f27; }
+  input { font: inherit; width: 70px; padding: 6px 8px; border: 1px solid #c9c0b2; border-radius: 6px; }
+  .log { background: #1e1b18; color: #d8e6d8; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.85rem; border-radius: 8px; padding: 12px 14px; min-height: 120px; max-height: 260px; overflow-y: auto; white-space: pre-wrap; }
+  .log .warn { color: #f2c14e; }
+  .log .err { color: #ff8f85; }
+  .log .ok { color: #8fd694; }
+  .row-controls { display: flex; gap: 6px; align-items: center; }
+  .note { background: #fff8e6; border: 1px solid #f0dfae; border-radius: 8px; padding: 10px 14px; font-size: 0.9rem; margin-bottom: 16px; }
+  .footer-note { font-size: 0.85rem; color: #8a8279; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>❌ The Procedural Store — "Before"</h1>
+  <p class="sub">OOP I · Aling Nena's tracker exactly as it was written in Q2: an array of object literals + functions that receive the array. Sell, restock — and try the <strong>Break the data 💥</strong> button.</p>
+
+  <div class="note">
+    📌 Watch the log while you click. Selling more than the stock is refused <em>when you go through the functions</em> —
+    but the <strong>Break the data</strong> button edits <code>products[0].stock</code> directly. Nothing stops it. That is Pain Point #2.
+  </div>
+
+  <div class="card">
+    <h2>Inventory</h2>
+    <table>
+      <thead>
+        <tr><th>Product</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="controls">
+      <button class="primary" onclick="printInventoryUI()">🖨️ Print inventory to log</button>
+      <button onclick="totalValueUI()">₱ Total inventory value</button>
+      <button onclick="lowStockUI()">⚠️ Low stock check</button>
+      <button class="danger" onclick="breakData()">💥 Break the data (stock = −999)</button>
+    </div>
+    <p class="footer-note">This page is the refactor target for the whole lecture. Behavior: selling beyond stock is refused; direct mutation is not.</p>
+  </div>
+
+  <div class="card">
+    <h2>Log <span style="font-weight:400;color:#8a8279">(the app's console)</span></h2>
+    <div class="log" id="log"></div>
+  </div>
+
+  <div class="card">
+    <h2>The code inside this page</h2>
+    <p style="font-size:0.9rem;">Same shape as the lecture's Section 1 — open DevTools and confirm:</p>
+<pre style="background:#1e1b18;color:#d8e6d8;padding:12px;border-radius:8px;font-size:0.8rem;overflow-x:auto;margin-top:8px;">const products = [
+  { id: 1, name: "Sardinas 155g", price: 20, stock: 24 },
+  { id: 2, name: "Instant Noodles", price: 15, stock: 6 },
+  { id: 3, name: "Softdrinks 8oz", price: 18, stock: 12 },
+];
+function findProduct(list, id) { ... }
+function sellProduct(list, id, qty) { ... }   // validates stock
+function restockProduct(list, id, qty) { ... }
+function printInventory(list) { ... }
+function totalInventoryValue(list) { ... }</pre>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// ❌ PROCEDURAL STYLE — the "before" app (Q2 style)
+// Data here, functions there, the array passed to everyone.
+// ============================================================
+const products = [
+  { id: 1, name: "Sardinas 155g", price: 20, stock: 24 },
+  { id: 2, name: "Instant Noodles", price: 15, stock: 6 },
+  { id: 3, name: "Softdrinks 8oz", price: 18, stock: 12 },
+];
+
+function findProduct(list, id) {
+  return list.find(p => p.id === id);
+}
+
+function sellProduct(list, id, qty) {
+  const p = findProduct(list, id);
+  if (!p) return false;
+  if (p.stock < qty) {
+    log(`⚠️ Not enough ${p.name}: ${p.stock} left, asked for ${qty}`, "warn");
+    return false;
+  }
+  p.stock -= qty;
+  return true;
+}
+
+function restockProduct(list, id, qty) {
+  const p = findProduct(list, id);
+  if (p) p.stock += qty;
+}
+
+function printInventory(list) {
+  list.forEach(p => log(`₱${p.price} · ${p.name} — ${p.stock} left`));
+}
+
+function totalInventoryValue(list) {
+  return list.reduce((sum, p) => sum + p.price * p.stock, 0);
+}
+
+// ---------- UI wiring (plain functions, as always) ----------
+const logEl = document.getElementById("log");
+function log(msg, cls) {
+  const span = document.createElement("span");
+  if (cls) span.className = cls;
+  span.textContent = msg + "\n";
+  logEl.appendChild(span);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+function render() {
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = "";
+  products.forEach(p => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${p.name}</td>
+      <td>₱${p.price}</td>
+      <td id="stock-${p.id}">${p.stock}</td>
+      <td>
+        <div class="row-controls">
+          <input type="number" min="1" value="1" id="qty-${p.id}">
+          <button onclick="sellUI(${p.id})">Sell</button>
+          <button onclick="restockUI(${p.id})">Restock</button>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+function qtyOf(id) { return Math.max(1, parseInt(document.getElementById("qty-" + id).value, 10) || 1); }
+function sellUI(id) {
+  const ok = sellProduct(products, id, qtyOf(id));   // ← the array, passed around again
+  log(ok ? `✅ Sold ${qtyOf(id)} × ${findProduct(products, id).name}` : `❌ Sale refused`, ok ? "ok" : "err");
+  render();
+}
+function restockUI(id) {
+  restockProduct(products, id, qtyOf(id));
+  log(`📦 Restocked ${qtyOf(id)} × ${findProduct(products, id).name}`, "ok");
+  render();
+}
+function printInventoryUI() { printInventory(products); }
+function totalValueUI() { log(`💰 Total inventory value: ₱${totalInventoryValue(products)}`, "ok"); }
+function lowStockUI() {
+  const low = products.filter(p => p.stock <= 5).map(p => p.name);
+  log(low.length ? `⚠️ Low stock: ${low.join(", ")}` : "✅ Nothing below 5 units", low.length ? "warn" : "ok");
+}
+function breakData() {
+  products[0].stock = -999;   // 💥 nothing stops this — Pain Point #2
+  log("💥 products[0].stock = -999 — set directly. Did anything complain? No.", "err");
+  render();
+}
+
+log("— Aling Nena's Sari-Sari Store (procedural) —");
+printInventory(products);
+render();
+</script>
+</body>
+</html>

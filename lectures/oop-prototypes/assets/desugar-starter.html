@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOP III — De-sugar Starter (TODOs)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f5f3ef; color: #2d2a26; padding: 20px; line-height: 1.55; }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; margin-bottom: 4px; }
+  .sub { color: #7a736a; margin-bottom: 18px; font-size: 0.95rem; }
+  .card { background: #fff; border: 1px solid #e3ddd4; border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
+  h2 { font-size: 1.05rem; margin-bottom: 10px; }
+  .controls { display: flex; gap: 8px; margin-bottom: 12px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 7px; border: 1px solid #c9c0b2; background: #fff; cursor: pointer; }
+  button.primary { background: #2f6f4f; border-color: #2f6f4f; color: #fff; }
+  .log { background: #1e1b18; color: #d8e6d8; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.84rem; border-radius: 8px; padding: 12px 14px; min-height: 130px; max-height: 300px; overflow-y: auto; white-space: pre-wrap; }
+  .log .warn { color: #f2c14e; } .log .err { color: #ff8f85; } .log .ok { color: #8fd694; } .log .dim { color: #8a9a8a; }
+  .todo { background: #fff8e6; border: 1px solid #f0dfae; border-radius: 8px; padding: 10px 14px; font-size: 0.9rem; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🛠️ De-sugar Starter — Class ➜ Constructor Function</h1>
+  <p class="sub">OOP III · Mini-Project A starter. Rewrite <code>Tricycle</code> without the <code>class</code> keyword. The test script is frozen — make it pass.</p>
+
+  <div class="todo">
+    ✅ <strong>Rules:</strong> 1) The test script below is FROZEN — do not edit it. 2) Zero occurrences of the token
+    <code>class</code> in your solution. 3) Behavior must match the class version exactly.
+  </div>
+
+  <div class="card">
+    <h2>Run</h2>
+    <div class="controls">
+      <button class="primary" onclick="runTests()">▶️ Run the frozen test script</button>
+    </div>
+    <div class="log" id="log"></div>
+  </div>
+</div>
+
+<script>
+// ---------- ✅ the class version (reference behavior — do not change) ----------
+class TricycleClass {
+  constructor(plate, driver, baseFare) {
+    this.plate = plate; this.driver = driver; this.baseFare = baseFare;
+  }
+  fare(km) { return this.baseFare + Math.ceil(km) * 8; }
+  report() { return `${this.driver} (${this.plate}) — base ₱${this.baseFare}`; }
+}
+
+// ============================================================
+// 🛠️ YOUR DE-SUGAR STARTS HERE
+// ============================================================
+
+// TODO 1: function Tricycle(plate, driver, baseFare) { ... }
+//         — same fields, assigned via this
+function Tricycle(plate, driver, baseFare) {
+  // TODO: this.plate = ..., this.driver = ..., this.baseFare = ...
+}
+
+// TODO 2: Tricycle.prototype.fare = function (km) { ... }
+//         — +₱8 per km, rounded up: this.baseFare + Math.ceil(km) * 8
+
+// TODO 3: Tricycle.prototype.report = function () { ... }
+//         — `${this.driver} (${this.plate}) — base ₱${this.baseFare}`
+
+// ---------- harness (do not change) ----------
+const logEl = document.getElementById("log");
+function log(msg, cls) {
+  const span = document.createElement("span");
+  if (cls) span.className = cls;
+  span.textContent = msg + "\n";
+  logEl.appendChild(span);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function runTests() {
+  log("— frozen test script —", "warn");
+  let pass = 0, total = 0;
+  const check = (name, cond) => {
+    total++;
+    if (cond) { pass++; log(`✅ ${name}`, "ok"); }
+    else log(`❌ ${name}`, "err");
+  };
+
+  const a = new Tricycle("TSK-142", "Kuya Ronnie", 25);
+  check("new Tricycle(...) creates an object", a && typeof a === "object");
+  check("a.plate === 'TSK-142'", a.plate === "TSK-142");
+  check("a.fare(3) === 49", a.fare(3) === 49);
+  check("a.fare(1.4) === 51 (ceil rounds up)", a.fare(1.4) === 51);
+  check("a.report() matches class version", a.report() === new TricycleClass("TSK-142", "Kuya Ronnie", 25).report());
+  check("identity: getPrototypeOf(a) === Tricycle.prototype", Object.getPrototypeOf(a) === Tricycle.prototype);
+  check("sharing: a.fare === new Tricycle('x','y',1).fare", a.fare === new Tricycle("x", "y", 1).fare);
+  check("hasOwnProperty('fare') === false (lives on prototype)", a.hasOwnProperty("fare") === false);
+  log(`— ${pass}/${total} passed ${pass === total ? "🎉 now try the same on your OWN class (Final Challenge)" : "— keep going!"} —`, pass === total ? "ok" : "warn");
+}
+log("— starter loaded: fill TODO 1–3, then run the script —", "dim");
+</script>
+</body>
+</html>

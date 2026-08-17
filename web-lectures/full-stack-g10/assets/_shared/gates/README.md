@@ -83,3 +83,5 @@ shared/gates/
 ├── gate-g5-sqlite-crud/               (Express + SQLite app)
 └── gate-g6-auth-sessions/             (Express + sessions app, + auth-helper.js)
 ```
+
+

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOP II — UML Worksheet (Deliveries)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f5f3ef; color: #2d2a26; padding: 20px; line-height: 1.6; }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; margin-bottom: 4px; }
+  .sub { color: #7a736a; margin-bottom: 18px; font-size: 0.95rem; }
+  .card { background: #fff; border: 1px solid #e3ddd4; border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
+  h2 { font-size: 1.1rem; margin-bottom: 10px; }
+  h3 { font-size: 0.98rem; margin: 14px 0 6px; }
+  p, li { font-size: 0.95rem; }
+  textarea { width: 100%; font: inherit; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.88rem; padding: 10px 12px; border: 1px solid #c9c0b2; border-radius: 8px; background: #fdfcf9; min-height: 90px; resize: vertical; }
+  .brief { background: #fff8e6; border: 1px solid #f0dfae; border-radius: 8px; padding: 12px 14px; font-size: 0.92rem; margin-bottom: 8px; }
+  .hint { color: #7a736a; font-size: 0.88rem; margin-top: 6px; }
+  .legend { background: #eef1fa; border: 1px solid #c6cfe8; border-radius: 8px; padding: 10px 14px; font-size: 0.88rem; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📋 UML Worksheet — Aling Nena Adds Deliveries</h1>
+  <p class="sub">OOP II · Section 8 Try It. A mutated domain: complete the UML, defend every edge, then reason about a change by tracing arrows.</p>
+
+  <div class="card">
+    <h2>The New Feature (the brief)</h2>
+    <div class="brief">
+      Customers are busy, so Aling Nena starts <strong>deliveries</strong>: a <strong>driver</strong> (name, motorcycle plate)
+      picks up a <strong>completed sale</strong> and bikes it home for a <strong>fee</strong>. Each delivery is for exactly one
+      sale; a sale gets delivered at most once. A driver can carry many deliveries over the week, and deliveries must be
+      tracked as <em>pending</em> or <em>delivered</em> — and only a pending delivery can be marked delivered.
+    </div>
+    <p class="hint">📌 Existing classes stay: <code>Store</code>, <code>Product</code>, <code>PerishableProduct</code>, <code>Sale</code>. Your job is to add the new pieces and redraw the whole picture.</p>
+  </div>
+
+  <div class="card">
+    <h2>Legend — the notation toolbox</h2>
+    <div class="legend">
+      <code>--▷</code> hollow triangle = inheritance (is-a) ·
+      <code>◆--</code> filled diamond on the <em>whole</em> = composition (has-a) ·
+      <code>--></code> plain arrow = association (references) ·
+      <code>1 / 0..* / 1..*</code> = multiplicities (numbers describe the <em>far</em> end)
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>1 — The new classes</h2>
+    <p>Which classes does the brief add? Fill each box: fields (with <code>−</code>), methods (with <code>+</code>). One box per class.</p>
+    <textarea style="min-height:150px;" placeholder="┌──────────────────────────┐   ┌──────────────────────────┐
+│ Delivery                 │   │ Driver                   │
+│──────────────────────────│   │──────────────────────────│
+│ − …                      │   │ − …                      │
+│──────────────────────────│   │──────────────────────────│
+│ + …   (which invariant   │   │ + …                      │
+│        guards the        │   │                          │
+│        pending rule?)    │   │                          │
+└──────────────────────────┘   └──────────────────────────┘"></textarea>
+    <p class="hint">Where does "only pending → delivered" live? That's an invariant — a rule with a home.</p>
+  </div>
+
+  <div class="card">
+    <h2>2 — The new edges</h2>
+    <p>For each pair, choose the relationship, draw the symbol, and set multiplicities on BOTH ends. Write your defense sentence under each.</p>
+    <textarea placeholder="Delivery … Sale:        symbol: ____   multiplicities: Delivery __ _ Sale __
+  Defense: "a delivery ___ a sale, because …"
+Delivery … Driver:      symbol: ____   multiplicities: …
+  Defense: "…"
+Sale … Product:         (existing — redraw it: symbol + multiplicities)
+Driver … Motorcycle:    is a motorcycle plate a FIELD or a CLASS? defend your call in one sentence"></textarea>
+    <p class="hint">Ask the Section 6 test questions in order: kind-of? owned-by/contained? merely-references?</p>
+  </div>
+
+  <div class="card">
+    <h2>3 — The whole diagram</h2>
+    <p>Now draw the complete system — six boxes if you added two classes — with every edge from the lecture's centerpiece plus yours.</p>
+    <textarea style="min-height:200px;" placeholder="Store ◆-- Product (1 / 0..*)
+Store ◆-- Sale (1 / 0..*)
+PerishableProduct --▷ Product
+Sale --> Product (line items)
+… your new edges here …
+(sketch boxes as text or on paper — what matters is every class, every edge, every multiplicity)"></textarea>
+  </div>
+
+  <div class="card">
+    <h2>4 — Reason about change (trace, don't code)</h2>
+    <p>Trace on YOUR diagram, arrow by arrow. Which classes change? Which provably don't?</p>
+    <h3>4a. "COD deliveries: driver collects the payment and the sale's utang is settled on hand-over."</h3>
+    <textarea placeholder="Touches: … (which classes/methods?)
+Untouched: … (provably — why?)"></textarea>
+    <h3>4b. "Free delivery fee for senior buyers."</h3>
+    <textarea placeholder="Field or subclass? (remember Section 7's spiral…)
+Ripples: …"></textarea>
+    <p class="hint">Self-check: every answer should be a list of boxes and arrows from YOUR diagram — if you're naming methods that live in classes your diagram can't reach, the diagram and the reasoning disagree.</p>
+  </div>
+</div>
+</body>
+</html>
