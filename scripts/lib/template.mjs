@@ -17,10 +17,13 @@
 //     via .sheet.disabled (no CDN href swap). Omitting `bundle` keeps the
 //     original CDN tags verbatim (2a backward-compat path).
 
+import { createNarrator } from './narration-controller.mjs';
+import { safeInlineJs } from './bundle-libs.mjs';
+
 /**
  * Render slides into a standalone presentation HTML document.
  *
- * @param {{ html: string }[]} slides - output of splitSlides() (each item is
+ * @param {{ html: string, sentences?: string[] }[]} slides - output of splitSlides() (each item is
  *   `{ html }` where html is the rendered slide markup).
  * @param {{ title?: string, bundle?: object }} [opts] - `title`: document
  *   <title>. `bundle`: inline-ready lib strings from bundleLibs() (Phase 2c);
@@ -146,6 +149,17 @@ ${headLibs}
         #slide-container h3 { font-size: 1.5em; margin: 0.5em 0; }
         #slide-container p { font-size: 1.2em; line-height: 1.6; max-width: 800px; margin: 0.5em auto; }
         #slide-container img { max-width: 100%; height: auto; border-radius: 8px; margin: 1.5rem 0; }
+        #slide-container figure { margin: 1.5rem auto; width: fit-content; max-width: 100%; }
+        /* Figure surfaces: theme-stable backdrops for contrast (figure patch).
+           .light-surface: white panel behind dark-on-transparent figures.
+           .dark-surface: neutral dark panel behind light-content figures. */
+        #slide-container .light-surface { background: #fff; padding: 1rem; border-radius: 8px; }
+        #slide-container .dark-surface {
+            background: #2d2d2d;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
         #slide-container ul, #slide-container ol { text-align: left; max-width: 600px; margin: 1em auto; font-size: 1.1em; }
         #slide-container code { background: var(--code-bg); padding: 0.2em 0.4em; border-radius: 3px; }
         #slide-container pre { 
@@ -360,7 +374,19 @@ ${headLibs}
         #pause-button.paused {
             background: rgba(76, 175, 80, 0.9);
         }
-        
+
+        #narration-status {
+            max-width: 260px;
+            min-height: 1em;
+            font-size: 0.9em;
+            line-height: 1.35;
+            text-align: right;
+        }
+
+        #narration-status.error {
+            color: #f44336;
+            font-weight: bold;
+        }
         #pause-button.paused:hover {
             background: rgba(69, 160, 73, 1);
         }
@@ -596,8 +622,8 @@ ${headLibs}
                     </label>
                     <label>
                         Rate
-                        <input id="rate" type="range" min="0.6" max="1.3" step="0.05" value="0.95">
-                        <span id="rate-value">0.95x</span>
+                        <input id="rate" type="range" min="0.6" max="1.3" step="0.05" value="1">
+                        <span id="rate-value">1.00x</span>
                     </label>
                     <label>
                         Pitch
@@ -610,7 +636,7 @@ ${headLibs}
             <button id="start-button" disabled>Initializing...</button>
             
             <div class="keyboard-hint">
-                <strong>Tip:</strong> Press <kbd>,</kbd> or <kbd>.</kbd> during playback to adjust speed
+                <strong>Tip:</strong> Press <kbd>,</kbd> or <kbd>.</kbd> during playback to adjust speed (automatic mode only)
             </div>
         </div>
     </main>
@@ -620,19 +646,29 @@ ${headLibs}
         <div id="speed-control" class="speed-control hidden">
             <label>
                 Speed:
-                <input id="speed-slider" type="range" min="0.6" max="1.3" step="0.05" value="0.95">
-                <span id="speed-value">0.95x</span>
+                <input id="speed-slider" type="range" min="0.6" max="1.3" step="0.05" value="1">
+                <span id="speed-value">1.00x</span>
             </label>
         </div>
+        <button id="play-button" class="nav-button">▶ Play</button>
         <button id="pause-button" class="nav-button hidden">⏸ Pause</button>
+        <button id="stop-button" class="nav-button">⏹ Stop</button>
+        <button id="replay-button" class="nav-button">↻ Replay</button>
         <button id="prev-button" class="nav-button">⬅ Previous</button>
         <button id="next-button" class="nav-button">Next ➡</button>
+        <div id="narration-status" role="status" aria-live="polite"></div>
     </div>
     
     <script id="slides-data" type="application/json">${safeSlidesJson}</script>
     <script>
 (function() {
     'use strict';
+    
+    // Phase A: narration lifecycle extracted to createNarrator
+    // (scripts/lib/narration-controller.mjs), serialized here at render time
+    // so the export stays a single self-contained offline document with no
+    // browser-side module import.
+    var createNarrator = ${safeInlineJs(createNarrator.toString())};
     
     // Theme Toggle Functionality
     (function initTheme() {
@@ -682,11 +718,16 @@ ${headLibs}
     var slides = [];
     var currentSlide = 0;
     var isPlaying = false;
-    var autoAdvance = true;
-    var manualMode = false;
-    var isPaused = false;
+    var playbackMode = 'auto'; // 'auto' = narrate + advance once | 'manual' = narrate only
+    var emptyDwellTimer = null; // Phase D: single player-owned empty-slide dwell
+    var dwellPaused = false; // Phase D: dwell paused while waiting on an empty slide
+    var emptyDwellGeneration = 0; // Phase D corrective: identity guard vs stale callbacks
+    var EMPTY_DWELL_MS = 1800; // provisional: auto-advance delay on empty slides
+    var voiceDiscoveryState = 'pending'; // 'pending' | 'ready' | 'empty'
+    var errorLatched = false; // keeps an unread narration error visible
     var availableVoices = [];
     var selectedVoice = null;
+    var userPreferredVoiceURI = null; // last voice the learner explicitly chose
     
     // DOM Elements
     var container = document.getElementById('slide-container');
@@ -703,11 +744,44 @@ ${headLibs}
     var prevButton = document.getElementById('prev-button');
     var nextButton = document.getElementById('next-button');
     var pauseButton = document.getElementById('pause-button');
+    var playButton = document.getElementById('play-button');
+    var stopButton = document.getElementById('stop-button');
+    var replayButton = document.getElementById('replay-button');
+    var narrationStatus = document.getElementById('narration-status');
     var spinner = document.querySelector('.spinner');
     var voiceControlsContainer = document.getElementById('voice-controls-container');
     var speedControl = document.getElementById('speed-control');
     var speedSlider = document.getElementById('speed-slider');
     var speedValue = document.getElementById('speed-value');
+    
+    // Phase A: the narrator owns the speech chain. The getters below preserve
+    // the legacy construction-time reads of the DOM controls.
+    var narrator = createNarrator({
+        synth: window.speechSynthesis,
+        Utterance: window.SpeechSynthesisUtterance,
+        timers: { setTimeout: setTimeout.bind(window), clearTimeout: clearTimeout.bind(window) },
+        log: log,
+        getVoice: function() {
+            var voiceIndex = parseInt(voiceSelect.value, 10);
+            if (!isNaN(voiceIndex) && availableVoices[voiceIndex]) {
+                return availableVoices[voiceIndex];
+            }
+            if (selectedVoice) {
+                return selectedVoice;
+            }
+            return null;
+        },
+        getRate: function() {
+            // Phase C: the nav speed slider is the single source of truth for
+            // utterance rate; NaN-safe with a default of exactly 1.0.
+            var v = parseFloat(speedSlider ? speedSlider.value : (rateInput ? rateInput.value : ''));
+            return v > 0 ? v : 1.0;
+        },
+        getPitch: function() {
+            return parseFloat(pitchInput.value) || 1.0;
+        },
+        onStateChange: handleNarratorState
+    });
     
     // Update rate/pitch displays
     rateInput.addEventListener('input', function() {
@@ -716,10 +790,23 @@ ${headLibs}
     pitchInput.addEventListener('input', function() {
         pitchValue.textContent = parseFloat(pitchInput.value).toFixed(1);
     });
+
+    // Remember an explicit learner choice by voice identity, so populateVoices
+    // refreshes can restore it. getVoice() still reads the live index on every
+    // utterance, so a change during playback applies to the NEXT sentence.
+    voiceSelect.addEventListener('change', function() {
+        var idx = parseInt(voiceSelect.value, 10);
+        var voice = !isNaN(idx) ? availableVoices[idx] : null;
+        if (voice) {
+            userPreferredVoiceURI = voiceIdentity(voice);
+            selectedVoice = voice;
+        }
+    });
     
     // Update speed display (nav controls)
     speedSlider.addEventListener('input', function() {
         speedValue.textContent = parseFloat(speedSlider.value).toFixed(2) + 'x';
+        showSpeedToast(parseFloat(speedSlider.value)); // Phase C: say when it applies
     });
     
     // Setup mode selection
@@ -728,40 +815,37 @@ ${headLibs}
         
         for (var i = 0; i < modeRadios.length; i++) {
             modeRadios[i].addEventListener('change', function(e) {
-                manualMode = (e.target.value === 'manual');
-                
-                if (manualMode) {
-                    // Hide voice controls
-                    voiceControlsContainer.classList.add('hidden');
-                    
-                    // Update status and button
-                    updateStatus('Manual mode selected - ready to start', 'success');
+                playbackMode = (e.target.value === 'manual') ? 'manual' : 'auto';
+
+                // Voice/pitch controls remain in the startup overlay for BOTH
+                // modes (D4): manual mode narrates too (D1), so voices matter.
+                voiceControlsContainer.classList.remove('hidden');
+
+                if (playbackMode === 'manual') {
+                    updateStatus('Manual narration selected - slides will not advance automatically', 'success');
                     startButton.textContent = 'Start (Manual Navigation)';
                     startButton.disabled = false;
-                    
-                    // Hide spinner
                     spinner.style.display = 'none';
-                    
                     log('Manual mode selected by user');
+                } else if (voiceDiscoveryState === 'ready') {
+                    updateStatus('Auto-play mode - ' + availableVoices.length + ' voices available', 'success');
+                    startButton.textContent = 'Start Presentation';
+                    startButton.disabled = false;
+                    spinner.style.display = 'none';
+                    log('Auto-play mode selected by user');
+                } else if (voiceDiscoveryState === 'empty') {
+                    updateStatus('Continuing with system default voice', 'warning');
+                    startButton.textContent = 'Start Anyway';
+                    startButton.disabled = false;
+                    spinner.style.display = 'none';
+                    log('Auto-play mode selected by user');
                 } else {
-                    // Show voice controls
-                    voiceControlsContainer.classList.remove('hidden');
-                    
-                    // Check voice status
-                    if (availableVoices.length > 0) {
-                        updateStatus('Auto-play mode - ' + availableVoices.length + ' voices available', 'success');
-                        startButton.textContent = 'Start Presentation';
-                        startButton.disabled = false;
-                        spinner.style.display = 'none';
-                    } else {
-                        updateStatus('Loading voices...', '');
-                        startButton.textContent = 'Initializing...';
-                        startButton.disabled = true;
-                        spinner.style.display = 'block';
-                        // Re-trigger voice loading
-                        initializeVoiceLoading();
-                    }
-                    
+                    // Discovery still pending: hold the button — an empty
+                    // first getVoices() is NOT evidence of "no voice".
+                    updateStatus('Loading voices...', '');
+                    startButton.textContent = 'Initializing...';
+                    startButton.disabled = true;
+                    spinner.style.display = 'block';
                     log('Auto-play mode selected by user');
                 }
             });
@@ -872,9 +956,25 @@ ${headLibs}
         return voices[0];
     }
     
+    // Stable identity for a voice across getVoices() calls: voiceURI per spec,
+    // name as the fallback for hosts and test doubles without voiceURI.
+    function voiceIdentity(voice) {
+        return voice ? (voice.voiceURI || voice.name) : null;
+    }
+
     // Populate voice select
     function populateVoices() {
         try {
+            // Remember the current choice by VOICE IDENTITY, not by dropdown
+            // index: indexes shift whenever a different getVoices() list comes
+            // back (late loading, voiceschanged refreshes).
+            var previousIdentity = null;
+            var previousIndex = parseInt(voiceSelect.value, 10);
+            if (!isNaN(previousIndex) && availableVoices[previousIndex]) {
+                previousIdentity = voiceIdentity(availableVoices[previousIndex]);
+            }
+            var wantedIdentity = userPreferredVoiceURI || previousIdentity;
+
             availableVoices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
             voiceSelect.innerHTML = '';
             
@@ -895,13 +995,29 @@ ${headLibs}
                 voiceSelect.appendChild(option);
             }
             
-            // Select best voice
-            selectedVoice = selectBestVoice(availableVoices);
-            if (selectedVoice) {
-                for (var k = 0; k < availableVoices.length; k++) {
-                    if (availableVoices[k] === selectedVoice) {
-                        voiceSelect.selectedIndex = k;
+            // Restore the learner's voice when it is still in Chrome's list;
+            // otherwise (first run, or the voice vanished) fall back to the
+            // preferred default — first en-US, then any English, then the first.
+            var restored = -1;
+            if (wantedIdentity) {
+                for (var r = 0; r < availableVoices.length; r++) {
+                    if (voiceIdentity(availableVoices[r]) === wantedIdentity) {
+                        restored = r;
                         break;
+                    }
+                }
+            }
+            if (restored >= 0) {
+                voiceSelect.selectedIndex = restored;
+                selectedVoice = availableVoices[restored];
+            } else {
+                selectedVoice = selectBestVoice(availableVoices);
+                if (selectedVoice) {
+                    for (var k = 0; k < availableVoices.length; k++) {
+                        if (availableVoices[k] === selectedVoice) {
+                            voiceSelect.selectedIndex = k;
+                            break;
+                        }
                     }
                 }
             }
@@ -939,76 +1055,14 @@ ${headLibs}
         check();
     }
     
-    // Speak text with error handling
-    function speakText(text, onComplete) {
-        if (!text || !text.trim()) {
-            log('Empty text, skipping speech');
-            setTimeout(onComplete, 500);
-            return;
-        }
-        
-        if (!window.speechSynthesis) {
-            log('Speech synthesis not available', 'warn');
-            setTimeout(onComplete, 1000);
-            return;
-        }
-        
-        try {
-            var sentences = splitIntoSentences(text);
-            var index = 0;
-            
-            function speakNext() {
-                if (index >= sentences.length) {
-                    onComplete();
-                    return;
-                }
-                
-                var sentence = sentences[index++];
-                if (!sentence.trim()) {
-                    setTimeout(speakNext, 200);
-                    return;
-                }
-                
-                var utterance = new SpeechSynthesisUtterance(sentence);
-                
-                // Apply voice if available
-                var voiceIndex = parseInt(voiceSelect.value, 10);
-                if (!isNaN(voiceIndex) && availableVoices[voiceIndex]) {
-                    utterance.voice = availableVoices[voiceIndex];
-                } else if (selectedVoice) {
-                    utterance.voice = selectedVoice;
-                }
-                
-                // Use speed slider if available (nav controls), otherwise use rate from overlay
-                utterance.rate = parseFloat(speedSlider ? speedSlider.value : (rateInput ? rateInput.value : 0.95));
-                utterance.pitch = parseFloat(pitchInput.value) || 1.0;
-                
-                utterance.onend = function() {
-                    setTimeout(speakNext, 220);
-                };
-                
-                utterance.onerror = function(e) {
-                    log('Speech error: ' + e.error, 'warn');
-                    setTimeout(speakNext, 250);
-                };
-                
-                window.speechSynthesis.speak(utterance);
-            }
-            
-            speakNext();
-        } catch (e) {
-            log('Error in speakText: ' + e.message, 'error');
-            setTimeout(onComplete, 500);
-        }
-    }
-    
     // Display slide
     function displaySlide(index) {
         if (index < 0 || index >= slides.length) {
             log('Invalid slide index: ' + index, 'error');
             return;
         }
-        
+        clearEmptyDwell(); // slide replacement never inherits a pending dwell
+
         currentSlide = index;
         var slide = slides[index];
         
@@ -1049,81 +1103,148 @@ ${headLibs}
         }
     }
     
-    // Play slide with speech
-    function playSlide(index) {
-        if (index >= slides.length) {
-            container.innerHTML = '<h1>End of Presentation</h1><p>Press Previous to review slides</p>';
-            isPlaying = false;
+    // Extract speakable sentences for a slide. Phase D: prefer the build-time
+    // narration (slide.sentences, extracted from Markdown tokens); fall back
+    // to legacy HTML textContent extraction when the field is absent so
+    // older fixtures/decks remain functional.
+    function getSlideSentences(index) {
+        var slide = slides[index];
+        if (!slide) return [];
+        if (Array.isArray(slide.sentences)) return slide.sentences;
+        var tempDiv = document.createElement('div');
+        tempDiv.innerHTML = slide.html;
+        var text = tempDiv.textContent || tempDiv.innerText || '';
+        return splitIntoSentences(text);
+    }
+
+    // Single presentation-side narration helper — BOTH modes speak (D1);
+    // only the completion policy differs.
+    function narrateCurrentSlide() {
+        if (!isPlaying) return;
+        clearEmptyDwell(); // new narration supersedes any pending empty dwell
+        if (!window.speechSynthesis) {
+            showNarrationStatus('Narration is not supported in this browser. Read the slide manually and use Next/Previous to continue.', true);
+            return; // never start (and never complete) without synthesis
+        }
+        narrator.speak({
+            token: currentSlide,
+            sentences: getSlideSentences(currentSlide),
+            onComplete: handleNarrationComplete
+        });
+    }
+
+    // Defense in depth: the controller already gates stale completions;
+    // verify token/session/mode here before the presentation may advance.
+    // Phase D: player-owned empty-slide dwell. Ownership mirrors the
+    // controller's session discipline: ONE timer variable, cleared at every
+    // narration/navigation/pause entry point, and every fire re-checks a
+    // generation identity guard FIRST, then playback mode, presentation
+    // state, pause state, slide token and narration session before advancing
+    // exactly once.
+    function clearEmptyDwell() {
+        emptyDwellGeneration++; // invalidate every previously scheduled callback
+        if (emptyDwellTimer !== null) {
+            clearTimeout(emptyDwellTimer);
+            emptyDwellTimer = null;
+        }
+        dwellPaused = false;
+    }
+
+    function startEmptyDwell(payload) {
+        emptyDwellGeneration++; // replacement invalidates previous-generation callbacks
+        if (emptyDwellTimer !== null) clearTimeout(emptyDwellTimer); // never two dwells
+        emptyDwellTimer = null;
+        dwellPaused = false;
+        var token = payload.token;
+        var session = payload.session;
+        var generation = emptyDwellGeneration; // ownership captured at schedule time
+        emptyDwellTimer = setTimeout(function() {
+            // Identity guard FIRST — before nulling or touching the handle:
+            // a stale callback may neither advance the slide nor orphan the
+            // live timer (Phase D corrective; do not rely on clearTimeout
+            // semantics alone).
+            if (generation !== emptyDwellGeneration) return;
+            emptyDwellTimer = null;
+            if (playbackMode !== 'auto') return; // mode guard
+            if (!isPlaying) return; // presentation-state guard
+            if (dwellPaused) return; // never advance a paused presentation
+            if (token !== currentSlide) return; // slide-token guard
+            if (session !== narrator.getState().session) return; // session guard
+            if (currentSlide >= slides.length - 1) {
+                showNarrationStatus('End of presentation.', false);
+                log('Presentation complete');
+                return;
+            }
+            displaySlide(currentSlide + 1); // advance exactly once
+            narrateCurrentSlide();
+        }, EMPTY_DWELL_MS);
+    }
+
+    function handleNarrationComplete(payload) {
+        if (!payload) return;
+        if (payload.token !== currentSlide) return; // completion for another slide
+        if (payload.session !== narrator.getState().session) return; // stale session
+        if (payload.empty) {
+            // Phase D: empty slide — visible message, never a speech failure.
+            log('Nothing narratable on slide ' + (currentSlide + 1));
+            showNarrationStatus('No narration text on this slide — review the content manually.', false);
+            if (playbackMode !== 'auto') return; // manual: remain on this slide (D1)
+            if (currentSlide >= slides.length - 1) {
+                showNarrationStatus('End of presentation.', false); // final slide: existing end state
+                log('Presentation complete');
+                return;
+            }
+            startEmptyDwell(payload); // auto: dwell, then advance exactly once
+            return;
+        }
+        if (playbackMode !== 'auto') return; // manual: narrate, then stop (D1)
+        if (currentSlide >= slides.length - 1) {
+            showNarrationStatus('End of presentation.', false);
             log('Presentation complete');
             return;
         }
-        
-        displaySlide(index);
-        
-        // In manual mode, just display slide and wait for user navigation
-        if (manualMode) {
-            log('Manual mode - waiting for user navigation (slide ' + (index + 1) + ')');
-            return;
-        }
-        
-        // Check if paused - wait for resume
-        if (isPaused) {
-            log('Paused - waiting for resume (slide ' + (index + 1) + ')');
-            return;
-        }
-        
-        // Extract text for speech (auto mode only)
-        var tempDiv = document.createElement('div');
-        tempDiv.innerHTML = slides[index].html;
-        var text = tempDiv.textContent || tempDiv.innerText || '';
-        
-        if (autoAdvance) {
-            speakText(text, function() {
-                if (isPlaying && !isPaused) {
-                    playSlide(index + 1);
-                }
-            });
-        }
+        displaySlide(currentSlide + 1); // advance exactly once
+        narrateCurrentSlide();
     }
     
-    // Navigation handlers
+    // Navigation handlers — manual navigation cancels narration IMMEDIATELY
+    // (both modes narrate now) and never touches the selected mode, so
+    // future narration keeps working exactly as chosen.
     function nextSlide() {
         if (currentSlide < slides.length - 1) {
-            if (!manualMode) {
-                // In auto mode, disable auto-advance when manually overriding
-                autoAdvance = false;
-                window.speechSynthesis.cancel();
-            }
-            playSlide(currentSlide + 1);
+            clearEmptyDwell(); // navigation cancels any pending empty dwell
+            narrator.stop();
+            displaySlide(currentSlide + 1);
         }
     }
-    
+
     function prevSlide() {
         if (currentSlide > 0) {
-            if (!manualMode) {
-                // In auto mode, disable auto-advance when manually overriding
-                autoAdvance = false;
-                window.speechSynthesis.cancel();
-            }
-            playSlide(currentSlide - 1);
+            clearEmptyDwell(); // navigation cancels any pending empty dwell
+            narrator.stop();
+            displaySlide(currentSlide - 1);
         }
     }
     
-    // Adjust speed with keyboard shortcuts
+    // Adjust speed with keyboard shortcuts (Phase C: steps snap to the 0.05
+    // slider grid so 1.00 is reachable from ANY starting value, and the
+    // displayed value is exactly what getRate() hands the next utterance).
     function adjustSpeed(delta) {
-        if (manualMode) return; // No speed control in manual mode
-        
+        if (playbackMode === 'manual') return; // No speed control in manual mode
+
         var currentSpeed = parseFloat(speedSlider.value);
-        var newSpeed = Math.max(0.6, Math.min(1.3, currentSpeed + delta));
-        
+        if (isNaN(currentSpeed)) currentSpeed = 1.0;
+        var newSpeed = Math.max(0.6, Math.min(1.3, Math.round((currentSpeed + delta) * 20) / 20));
+
         speedSlider.value = newSpeed.toFixed(2);
         speedValue.textContent = newSpeed.toFixed(2) + 'x';
-        
+
         log('Speed adjusted to ' + newSpeed.toFixed(2) + 'x');
         showSpeedToast(newSpeed);
     }
-    
-    // Show speed toast notification
+
+    // Show speed toast notification (Phase C: state exactly WHEN it applies —
+    // a speed change never interrupts the sentence currently being spoken).
     function showSpeedToast(speed) {
         var toast = document.getElementById('speed-toast');
         if (!toast) {
@@ -1131,8 +1252,11 @@ ${headLibs}
             toast.id = 'speed-toast';
             document.body.appendChild(toast);
         }
-        
-        toast.textContent = 'Speed: ' + speed.toFixed(2) + 'x';
+
+        var st = narrator ? narrator.getState().status : 'idle';
+        var narrating = st === 'starting' || st === 'playing' || st === 'awaiting-next';
+        toast.textContent =
+            'Speed: ' + speed.toFixed(2) + 'x' + (narrating ? ' — applies from the next sentence' : '');
         toast.style.opacity = '1';
         
         // Fade out after 800ms
@@ -1153,7 +1277,7 @@ ${headLibs}
         
         if (e.key === ' ') {
             e.preventDefault();
-            if (manualMode) {
+            if (playbackMode === 'manual') {
                 // In manual mode, spacebar advances slide
                 nextSlide();
             } else {
@@ -1168,113 +1292,210 @@ ${headLibs}
             prevSlide();
         }
         // Speed shortcuts (only in auto mode)
-        else if (!manualMode) {
+        else if (playbackMode === 'auto') {
             if (e.key === '.' || e.key === '>') {
                 e.preventDefault();
-                adjustSpeed(0.1);
+                adjustSpeed(0.05); // Phase C: slider-grid step so 1.00 stays reachable
             } else if (e.key === ',' || e.key === '<') {
                 e.preventDefault();
-                adjustSpeed(-0.1);
+                adjustSpeed(-0.05);
             }
         }
     });
     
-    // Start presentation
+    // Start presentation — BOTH modes narrate (D1); the completion policy
+    // (advance once vs stop after the slide) lives in handleNarrationComplete.
     function startPresentation() {
-        log('Starting presentation in ' + (manualMode ? 'manual' : 'auto') + ' mode');
+        log('Starting presentation in ' + playbackMode + ' mode');
         startOverlay.style.display = 'none';
         navControls.classList.add('visible');
         isPlaying = true;
-        isPaused = false;
-        
-        if (!manualMode) {
-            // Auto mode: enable auto-advance and try voice one more time
-            autoAdvance = true;
-            populateVoices();
-            
-            // Sync speed slider to start overlay value
-            if (rateInput && speedSlider) {
-                speedSlider.value = rateInput.value;
-                speedValue.textContent = parseFloat(rateInput.value).toFixed(2) + 'x';
-                log('Synced speed: ' + rateInput.value + 'x');
-            }
-            
-            // Show pause button and speed control in auto mode
-            pauseButton.classList.remove('hidden');
+
+        populateVoices(); // refresh discovery (manual mode narrates too now)
+
+        // Phase C: import the overlay's chosen rate into the slider (the
+        // controller's rate source) in BOTH modes — manual narrates too.
+        if (rateInput && speedSlider && rateInput.value) {
+            speedSlider.value = rateInput.value;
+            speedValue.textContent = parseFloat(rateInput.value).toFixed(2) + 'x';
+            log('Synced speed: ' + parseFloat(rateInput.value).toFixed(2) + 'x');
+        }
+
+        if (playbackMode === 'auto') {
             speedControl.classList.remove('hidden');
         } else {
-            // Manual mode: no auto-advance, no voice needed
-            autoAdvance = false;
-            // Hide pause button and speed control in manual mode
-            pauseButton.classList.add('hidden');
-            speedControl.classList.add('hidden');
+            speedControl.classList.add('hidden'); // legacy visibility, unchanged
         }
-        
-        playSlide(0);
+        // Narration controls are available in BOTH modes now:
+        pauseButton.classList.remove('hidden');
+
+        displaySlide(0);
+        narrateCurrentSlide();
     }
     
-    // Toggle pause/resume
+    // Toggle pause/resume — delegates to the controller; button label and
+    // status text sync through handleNarratorState (controller state only).
     function togglePause() {
-        if (manualMode) return; // No pause in manual mode
-        
-        isPaused = !isPaused;
-        
-        if (isPaused) {
-            // Paused state
-            window.speechSynthesis.cancel();
+        var st = narrator.getState().status;
+        if (st === 'paused') {
+            narrator.resume();
+            log('Narration resumed');
+        } else if (st === 'starting' || st === 'playing' || st === 'awaiting-next') {
+            narrator.pause();
+            log('Narration paused');
+        } else if (emptyDwellTimer !== null) {
+            // Phase D: the controller is idle during an empty-slide dwell —
+            // pause the DWELL itself (clearing the timer means it can never
+            // advance a paused presentation).
+            clearEmptyDwell();
+            dwellPaused = true;
             pauseButton.textContent = '▶ Resume';
             pauseButton.classList.add('paused');
-            log('Presentation paused');
-        } else {
-            // Resumed state
-            pauseButton.textContent = '⏸ Pause';
-            pauseButton.classList.remove('paused');
-            log('Presentation resumed');
-            // Resume playing current slide
-            if (autoAdvance && currentSlide < slides.length) {
-                playSlide(currentSlide);
+            showNarrationStatus('Narration paused', false);
+            log('Empty-slide dwell paused');
+        } else if (dwellPaused) {
+            // Resume on the same empty slide restarts the FULL dwell period.
+            if (playbackMode === 'auto' && isPlaying && getSlideSentences(currentSlide).length === 0) {
+                startEmptyDwell({ token: currentSlide, session: narrator.getState().session });
+                pauseButton.textContent = '⏸ Pause';
+                pauseButton.classList.remove('paused');
+                showNarrationStatus('No narration text on this slide — review the content manually.', false);
+                log('Empty-slide dwell resumed');
+            } else {
+                dwellPaused = false; // stale pause state; mode/slide moved on
             }
         }
+        // idle / error: pause is a no-op — Play retries instead.
     }
-    
+
+    function onPlayPressed() {
+        clearEmptyDwell(); // Play clears any pending empty dwell
+        var st = narrator.getState().status;
+        if (st === 'paused') {
+            narrator.resume();
+        } else if (st === 'idle' || st === 'error') {
+            narrateCurrentSlide(); // from sentence zero; also the error retry
+        }
+        // already narrating: no-op
+    }
+
+    function onStopPressed() {
+        clearEmptyDwell(); // Stop clears any pending empty dwell
+        narrator.stop();
+        if (!errorLatched) {
+            showNarrationStatus('Narration stopped.', false);
+        }
+    }
+
+    function onReplayPressed() {
+        clearEmptyDwell(); // Replay clears any pending empty dwell
+        narrateCurrentSlide(); // always from sentence zero; speak() replaces
+    }
+
+    // Player-initiated status messages (controller-driven updates use
+    // handleNarratorState below).
+    function showNarrationStatus(msg, isError) {
+        if (!narrationStatus) return;
+        narrationStatus.textContent = msg;
+        if (isError) {
+            narrationStatus.classList.add('error');
+            errorLatched = true;
+        } else {
+            narrationStatus.classList.remove('error');
+            errorLatched = false;
+        }
+    }
+
+    // Controller state → status area + pause button. Errors latch until the
+    // next narration attempt so they are never immediately overwritten by an
+    // idle message.
+    function handleNarratorState(s) {
+        if (s.status === 'paused') {
+            clearEmptyDwell(); // a paused presentation never keeps a dwell alive
+            pauseButton.textContent = '▶ Resume';
+            pauseButton.classList.add('paused');
+        } else {
+            pauseButton.textContent = '⏸ Pause';
+            pauseButton.classList.remove('paused');
+        }
+        if (!narrationStatus) return;
+        if (s.status === 'error') {
+            errorLatched = true;
+            narrationStatus.classList.add('error');
+            narrationStatus.textContent = s.errorMessage || 'Narration failed.';
+            return;
+        }
+        if (s.status === 'starting') {
+            errorLatched = false;
+            narrationStatus.classList.remove('error');
+            narrationStatus.textContent = 'Starting narration...';
+            return;
+        }
+        if (s.status === 'playing' || s.status === 'awaiting-next') {
+            errorLatched = false;
+            narrationStatus.classList.remove('error');
+            narrationStatus.textContent = 'Narrating slide ' + (currentSlide + 1) + ' of ' + slides.length + '...';
+            return;
+        }
+        if (s.status === 'paused') {
+            errorLatched = false;
+            narrationStatus.classList.remove('error');
+            narrationStatus.textContent = 'Narration paused' +
+                (typeof s.resumeIndex === 'number' ? ' at sentence ' + (s.resumeIndex + 1) : '') + '.';
+            return;
+        }
+        // idle: keep an unread error visible; otherwise clear the area.
+        if (errorLatched) return;
+        narrationStatus.classList.remove('error');
+        narrationStatus.textContent = '';
+    }
+
     // Button handlers
     startButton.addEventListener('click', startPresentation);
+    playButton.addEventListener('click', onPlayPressed);
+    pauseButton.addEventListener('click', togglePause);
+    stopButton.addEventListener('click', onStopPressed);
+    replayButton.addEventListener('click', onReplayPressed);
     nextButton.addEventListener('click', nextSlide);
     prevButton.addEventListener('click', prevSlide);
-    pauseButton.addEventListener('click', togglePause);
     
     // Voice loading wrapper
     function initializeVoiceLoading() {
-        if (manualMode) {
-            log('Manual mode - skipping voice initialization');
-            return;
-        }
-        
+        // Voice discovery runs for BOTH modes (D1: manual narrates too).
         if (!window.speechSynthesis) {
             log('Speech synthesis not supported', 'error');
             updateStatus('Text-to-speech not supported in this browser', 'warning');
+            voiceDiscoveryState = 'empty';
             startButton.disabled = false;
             startButton.textContent = 'Start (Manual Mode)';
             spinner.style.display = 'none';
+            showNarrationStatus('Narration is not supported in this browser. Read each slide manually and use Next/Previous to continue.', true);
             return;
         }
-        
-        // Setup voice change listener
+
+        // Late voice arrivals flip a pending/empty discovery to 'ready'.
         if (window.speechSynthesis.onvoiceschanged !== undefined) {
-            window.speechSynthesis.onvoiceschanged = populateVoices;
+            window.speechSynthesis.onvoiceschanged = function() {
+                if (populateVoices()) {
+                    voiceDiscoveryState = 'ready';
+                }
+            };
         }
-        
-        // Wait for voices
+
+        // Wait for voices: an initially EMPTY getVoices() is not treated as
+        // "no usable voice" — that verdict only lands on discovery timeout.
         waitForVoices(function(success) {
-            if (manualMode) return; // User switched to manual while loading
-            
+            voiceDiscoveryState = success ? 'ready' : 'empty';
             spinner.style.display = 'none';
             if (success) {
                 updateStatus('Ready! ' + availableVoices.length + ' voices available', 'success');
-                startButton.textContent = 'Start Presentation';
+                startButton.textContent = (playbackMode === 'manual')
+                    ? 'Start (Manual Navigation)'
+                    : 'Start Presentation';
             } else {
                 updateStatus('Continuing with system default voice', 'warning');
                 startButton.textContent = 'Start Anyway';
+                showNarrationStatus('No usable voice list was found. Narration will try the browser default voice - if you hear nothing, read the slide manually.', false);
             }
             startButton.disabled = false;
         });

@@ -100,7 +100,7 @@ flowchart TB
 <a name="section-3"></a>
 ## 3. MVC-Lite: Routes, Views, Data
 
-Full **MVC** (Model–View–Controller) is a professional pattern. For Grade 10, we use **MVC-lite** — the same idea, simpler names. (You've seen this diagram before in [`express-basics`](../express-basics/diagramSrc/web-server-basics/09-mvc-pattern.md) — now we *practice* it.)
+Full **MVC** (Model–View–Controller) is a professional pattern. For Grade 10, we use **MVC-lite** — the same idea, simpler names. (You've seen this diagram before in [`express-basics`](../express-basics/lecture.md) — now we *practice* it.)
 
 ### **The Three Layers**
 

@@ -21,7 +21,11 @@ The word "cascading" means styles flow down like a waterfall.
 
 If you style a parent element, the children inherit those styles automatically!
 
+<figure class="light-surface">
+
 ![CSS Cascade Flow](diagrams/css-cascade-flow.png)
+
+</figure>
 
 **Example:**
 - If you make a `<div>` blue, everything inside it becomes blue too

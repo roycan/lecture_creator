@@ -2,7 +2,11 @@
 
 > Roy Vincent L. Canseco, MSEE, PhD Cand. CS
 
-![](diagrams/full-stack/full-stack.png)
+<figure class="dark-surface">
+
+![Course poster for the Grade 10 Full Stack Web Development elective: the mission, the frontend and backend curriculum, and what students will ship](diagrams/full-stack/full-stack.png)
+
+</figure>
 
 # Full Stack Web Development Analogy
 
@@ -15,7 +19,7 @@ APIs are the invisible messengers that make websites work.
 
 Here's that exchange as a sequence diagram:
 
-![](diagrams/analogy.png)
+![Restaurant analogy for a web request and response cycle: the browser is the customer, the API the waiter, and the server the kitchen](diagrams/analogy.png)
 
 # 🌐 What is Full Stack Development?
 

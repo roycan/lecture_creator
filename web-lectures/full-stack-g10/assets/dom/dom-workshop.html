@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mission 02 — The Living Mission Board</title>
+  <!-- INTERACTIVE TERMINAL ONLY — read-only for students. All instructions,
+       predictions, evidence, reflection, rescue cards and the completion
+       checklist live in dom-workshop-scroll.md. Students edit only dom-workshop.js. -->
+  <link rel="stylesheet" href="dom-workshop.css">
+</head>
+<body>
+
+<!-- ============================================================
+     MISSION IDENTITY + POINTER TO THE SCROLL (the one instruction source)
+     ============================================================ -->
+<main class="sheet">
+
+  <header class="sheet-head">
+    <div class="crest" aria-hidden="true">◈</div>
+    <div class="titles">
+      <p class="academy">SHINOBI ACADEMY — THE DEVELOPER'S PATH</p>
+      <h1>MISSION 02: The Living Mission Board</h1>
+      <p class="sub">DOM Workshop · individual · teacher-guided · training, not a test</p>
+    </div>
+  </header>
+
+  <section class="block laws">
+    <p><strong>Follow <code>dom-workshop-scroll.md</code> for the mission steps.</strong>
+    Predictions, evidence and reflection are written there. This page is your
+    interactive mission terminal — the only file you edit is
+    <code>dom-workshop.js</code>.</p>
+  </section>
+
+</main>
+
+<!-- ============================================================
+     THE LIVING MISSION BOARD (the terminal artifact)
+     Students never edit this markup — only dom-workshop.js.
+     ============================================================ -->
+<section class="terminal-frame" id="terminal-frame">
+  <!-- [IMAGE INSERTION POINT 1 — see teacher guide §18]:
+       insert <img class="terminal-art" src="intelligence-scroll.png" alt="">
+       as the first child of this section. Artwork exists in this folder
+       already; placement here is still a future decision. -->
+
+  <header class="terminal-head">
+    <span class="t-dot" aria-hidden="true">●</span>
+    <span class="t-name">ACADEMY MISSION TERMINAL</span>
+    <span class="t-status">System: <span id="status">OFFLINE</span></span>
+    <button id="power-btn" class="btn power" type="button">◈ Restore Power</button>
+  </header>
+
+  <div class="briefing-bar">
+    <span class="b-label">BRIEFING</span>
+    <p id="briefing">No mission selected.</p>
+  </div>
+
+  <div class="cards">
+
+    <!-- MISSION 1 -->
+    <article class="card">
+      <div class="card-head">
+        <h3 id="mission-1-title">Silent Pagoda Patrol</h3>
+        <span id="mission-1-badge" class="badge stby">STANDBY</span>
+      </div>
+      <p class="card-sub">Rank: Genin · Sector: East Wall</p>
+      <div id="mission-1-intel" class="intel shuttered">
+        <p class="intel-tag">CLASSIFIED INTEL</p>
+        <p>Route: east wall, behind the archive. Guard change at midnight.
+           Observe only — do not engage.</p>
+      </div>
+      <button id="mission-1-open" class="btn open" type="button">Open Intel</button>
+    </article>
+
+    <!-- MISSION 2 -->
+    <article class="card">
+      <div class="card-head">
+        <h3 id="mission-2-title">Midnight Lantern Escort</h3>
+        <span id="mission-2-badge" class="badge stby">STANDBY</span>
+      </div>
+      <p class="card-sub">Rank: Genin · Sector: River Gate</p>
+      <div id="mission-2-intel" class="intel shuttered">
+        <p class="intel-tag">CLASSIFIED INTEL</p>
+        <p>Escort the lantern keeper across the river gate. Move quietly,
+           keep the light low, report at dawn.</p>
+      </div>
+      <button id="mission-2-open" class="btn open" type="button">Open Intel</button>
+    </article>
+
+    <!-- MISSION 3 (stretch) -->
+    <article class="card">
+      <div class="card-head">
+        <h3 id="mission-3-title">Whispering Reed Recon</h3>
+        <span id="mission-3-badge" class="badge stby">STANDBY</span>
+      </div>
+      <p class="card-sub">Rank: Genin · Sector: Reed Marsh</p>
+      <div id="mission-3-intel" class="intel shuttered">
+        <p class="intel-tag">CLASSIFIED INTEL</p>
+        <p>Count the supply carts crossing the marsh road. Report numbers only —
+           stay hidden in the reeds.</p>
+      </div>
+      <button id="mission-3-open" class="btn open" type="button">Open Intel</button>
+    </article>
+
+  </div>
+
+  <footer class="terminal-foot">SHINOBI ACADEMY · training terminal · offline · individual use</footer>
+</section>
+
+<!-- Circuit 1 is demonstrated live; this classic (non-module) script is the ONLY file students edit. -->
+<script src="dom-workshop.js"></script>
+</body>
+</html>

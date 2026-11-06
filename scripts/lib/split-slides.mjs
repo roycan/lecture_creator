@@ -18,6 +18,7 @@
 //     re-parse the subset with marked.parser.
 
 import { marked } from 'marked';
+import { extractNarration, segmentSentences } from './narration-text.mjs';
 
 /**
  * Split Markdown into an array of slides.
@@ -25,7 +26,8 @@ import { marked } from 'marked';
  * @param {string} markdown - Raw lecture Markdown.
  * @param {{ splitDepth?: number }} [opts] - `splitDepth` (default 2): headings
  *   with depth <= splitDepth start a new slide. 1 = H1 only, 2 = H1/H2, …
- * @returns {{ html: string }[]} One `{ html }` per slide (rendered HTML).
+ * @returns {{ html: string, sentences: string }[]} One `{ html, sentences }`
+ *   per slide: rendered HTML plus build-time narration sentences (Phase D).
  */
 export function splitSlides(markdown, { splitDepth = 2 } = {}) {
   const text = (markdown ?? '').trim();
@@ -56,7 +58,13 @@ export function splitSlides(markdown, { splitDepth = 2 } = {}) {
     const groupTokens = g.slice();
     // marked.parser reads `.links` off the token array it is given.
     groupTokens.links = links;
-    return { html: marked.parser(groupTokens).trim() };
+    // Phase D: build-time narration — extraction from the SAME tokens the
+    // renderer sees, segmented per block (paragraph/list boundaries are
+    // guaranteed sentence boundaries).
+    const sentences = extractNarration(groupTokens).flatMap((block) =>
+      segmentSentences(block),
+    );
+    return { html: marked.parser(groupTokens).trim(), sentences };
   });
 }
 

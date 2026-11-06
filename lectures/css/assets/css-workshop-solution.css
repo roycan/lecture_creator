@@ -1,0 +1,160 @@
+/* ============================================================
+   css-workshop-solution.css — TEACHER ANSWER SHEET (pilot 01)
+   ------------------------------------------------------------
+   NEVER reaches students:
+   - filename contains "solution" -> scripts/stage-student-assets.mjs
+     EXCLUDE_RE drops it from the published site and the student ZIP;
+   - verify with:  node -e "..." shouldExcludeAsset('css-workshop-solution.css') -> true
+
+   Shows the card AFTER a student completes the 30-minute core lab
+   (suggested values), with the WHY explained in comments. This file —
+   plus css-workshop-guide.md — is where all teacher answers live.
+   Students' own values may differ; grade the OBSERVATIONS, not the hex codes.
+   ============================================================ */
+
+/* ---- the card: finished core-lab state ---- */
+.card {
+  width: 460px;               /* C1 done (was 360) */
+  padding: 44px;              /* C2 done (was 24) */
+  border: 8px solid #2b3a67;  /* C3 done (was 3px) */
+  border-radius: 14px;
+  margin: 16px auto;          /* optional probe changed this to 60px — see note C below */
+  background: #ffffff;
+  color: #0a4c8a;             /* B done: parent text color changed */
+  font-family: Georgia, serif; /* B done: parent font changed */
+}
+
+/* ============================================================
+   ANSWER — EXPERIENCE A: competing rules
+   ------------------------------------------------------------
+   In the starter, .name carried color:#6b7280, yet the displayed name
+   stayed #111827 no matter what the student typed there — because
+   #profile-name (ID selector) outranks .name (class selector) for the
+   `color` property. The completed fix: edit the WINNING rule (deleting
+   rules is discouraged; finding and editing the rule that currently
+   controls the line is the move).
+   OBSERVATION students should report: "my edit in .name did nothing;
+   editing #profile-name worked."
+   MECHANISM deliberately NOT explained here — the CSS lecture
+   (Selectors - Part 1, Mistakes: # vs ., and Roy's optional
+   specificity diagram) answers "why did the ID rule win?".
+   Bonus observation: only the contested property (color) lost the
+   fight — font-size from .name still applied. Conflicts resolve
+   property-by-property, not rule-by-rule. Pure teacher knowledge;
+   do not pre-empt it in the workshop.
+   ============================================================ */
+.name {
+  color: #d92027;
+  font-size: 24px;
+  margin-bottom: 2px;
+}
+#profile-name {
+  color: #d92027;
+}
+
+/* ============================================================
+   ANSWER — EXPERIENCE B: inheritance
+   ------------------------------------------------------------
+   .card now declares color + font-family. What happened to each line:
+   CHANGED (no declaration of their own -> followed the parent):
+     - .bio
+     - .tags li  (the three chips)
+     - .footnote
+   DID NOT CHANGE (each already declares its own):
+     - #profile-name  (color, via the ID rule)
+     - .role          (color: #b45309)
+     - .handle        (color AND font-family: "Courier New" — the only
+                       line that kept the old typeface when the card
+                       switched to Georgia)
+     - .avatar        (color: #ffffff keeps the initials readable)
+   font-family check: every text element followed the parent EXCEPT
+   .handle — initials included.
+   Line of reasoning to elicit, not to state: "the ones that refused
+   already had their own instruction for that exact property."
+   The lecture's "Why Cascading?" slide formalizes this.
+   ============================================================ */
+.avatar {
+  width: 72px;
+  height: 72px;
+  line-height: 72px;
+  text-align: center;
+  border-radius: 50%;
+  background: #2b3a67;          /* Step 2 demo value — students pick their own */
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.name { }                       /* see block above — kept for rule inventory completeness */
+.role {
+  color: #b45309;
+  font-size: 15px;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+.bio { margin-top: 0; }
+.handle {
+  color: #7c3aed;
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+.tags li {
+  border-left: 4px solid #2b3a67;
+  padding-left: 8px;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+.footnote {
+  font-size: 12px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 8px;
+  margin-bottom: 0;
+}
+
+/* ============================================================
+   ANSWER — EXPERIENCE C: the box model (content-box arithmetic)
+   ------------------------------------------------------------
+   width = CONTENT-box width. Edge-to-edge total = width + padding*2 + border*2.
+   With the suggested values:
+     start : 360 + 48 + 6  = 414 px  (== the START BAR, by construction)
+     after C1: 460 + 48 + 6  = 514 px  (+100; also widened the text column,
+                                        so the bio re-wrapped)
+     after C2: 460 + 88 + 6  = 554 px  (+40 MORE although width still says 460;
+                                        padding thickened the white area
+                                        OUTSIDE the text, inside the frame)
+     after C3: 460 + 88 + 16 = 564 px  (+10 MORE; the blue frame thickened)
+   So the card is 564 px wide while the width rule says 460 — the gap is
+   88 px of padding + 16 px of border. Students need the QUALITATIVE
+   answer ("padding and border add to the size"); the arithmetic is
+   confirmed by the lecture's Box Model slide (width 200 + padding 20 +
+   border 2 example).
+   Margin probe (margin: 16px -> 60px): the card did NOT grow. margin is
+   space OUTSIDE the border. Inside the fit-content worksheet slot the
+   auto side-margins collapse to 0, so only the vertical gap (card vs
+   start bar) visibly moved — "moved, not bigger" is the correct call.
+   OUT OF SCOPE: box-sizing / border-box. The CSS lecture does not teach
+   it; if a student asks, park the question — do not demo it here or the
+   workshop will create a question the theory slides never answer.
+   ============================================================ */
+
+/* ============================================================
+   ANSWER — Step 6 personalization: no canonical answer. Accept any
+   deliberate, coherent palette. Ask the student to name ONE choice
+   they made and why ("I picked X because Y") — that justification is
+   the completion criterion, not the specific values.
+   ============================================================ */
+
+/* ============================================================
+   ANSWER — Extensions (45-minute version)
+   E1 hover:  .tags li:hover { background: #ffe9c7; }
+     (any visible hover feedback counts; the nav-bar slide's
+      a:hover example is the theory anchor)
+   E2 gradient: background: linear-gradient(to right, #ffffff, #eef4ff);
+     observed: flat white becomes a smooth left-to-right color fade.
+   E3 (teacher-led inspector measuring): confirms the arithmetic above
+   live — 564 px total vs the 460 px width rule. Flag honestly: the
+   inspector is a Q2 debugging-devtools tool; if the class hasn't
+   reached it, skip E3 and let the slides close Experience C instead.
+   ============================================================ */
+.tags li:hover { background: #ffe9c7; }

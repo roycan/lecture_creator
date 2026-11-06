@@ -1,4 +1,4 @@
-# Full-Stack Web Development
+# Course Introduction
 
 **Grade 10 - ICT (Full-Stack Elective)**
 **Day 1 · Course Orientation**

@@ -3210,6 +3210,8 @@ Grade 10 student learning web development
 - 📝 [Student Portal](https://github.com/juan/student-portal) - Grade tracking app
 ```
 
+> **About the badges and stats card above:** These URLs are part of the README example. This presentation displays them as code and does not request the images. When a README containing them is viewed online, the images are fetched from external services. They are not stored in the README itself, so they will not appear offline. A GitHub profile can still show your repositories and developer activity when viewed online.
+
 ### **Creating Great Project READMEs**
 
 **Every project should have README.md:**

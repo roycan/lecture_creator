@@ -824,7 +824,11 @@ app.use('/residents', browseLimiter);
 
 **Solution:** CSRF tokens
 
+<figure class="light-surface">
+
 ![CSRF Protection Guide](diagrams/production-best-practices/csrf-protection-guide.png)
+
+</figure>
 
 **Install:**
 ```bash
@@ -1069,7 +1073,11 @@ app.post('/residents/add', validateResident, (req, res) => {
 
 **Sari-Sari Store with ALL Security Features**
 
+<figure class="light-surface">
+
 ![Security Packages Guide](diagrams/production-best-practices/security-packages-guide.png)
+
+</figure>
 
 **File: `app.js`**
 ```javascript

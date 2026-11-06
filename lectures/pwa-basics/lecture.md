@@ -108,7 +108,11 @@ By the end of this lecture, you will be able to:
 - Works full-screen
 - No browser UI clutter
 
+<figure class="light-surface">
+
 ![PWA Architecture Overview](diagrams/pwa-basics/pwa-architecture.png)
+
+</figure>
 
 ### **PWA vs Native App vs Regular Website**
 

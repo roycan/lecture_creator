@@ -84,7 +84,7 @@ export function inlineImages(slides, { lectureDir, onMissing = 'throw' } = {}) {
 
   return input.map((slide, slideIndex) => {
     const html = slide && typeof slide.html === 'string' ? slide.html : '';
-    if (!html) return { html };
+    if (!html) return { ...slide, html }; // Phase D: preserve extra fields (sentences)
 
     const next = html.replace(IMG_TAG_RE, (tag) =>
       tag.replace(SRC_ATTR_RE, (m, lead, prefix, _tok, dq, sq, unq) => {
@@ -123,7 +123,7 @@ export function inlineImages(slides, { lectureDir, onMissing = 'throw' } = {}) {
       }),
     );
 
-    return { html: next };
+    return { ...slide, html: next }; // Phase D: preserve extra fields (sentences)
   });
 }
 

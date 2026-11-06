@@ -7,14 +7,18 @@
 //   1. rewrites its in-deck `assets/...` links to `assets/<slug>/...` (never
 //      touching `assets/_shared/...`);
 //   2. (P1 / T4) rewrites cross-lecture prerequisite links `../<slug>/lecture.md`
-//      to the published deck `<slug>.html`;
+//      to the collection's numbered canonical deck `NN-<slug>.html` (numbers
+//      come from scripts/deck-manifest.json — collection-scoped, never global);
 //   3. copies that lecture's assets/ (minus solutions/quizzes/tests/dotfiles)
 //      to assets/<slug>/;
 //   4. (P2) provisions shared/styles.css into assets/<slug>/ where the deck
 //      references styles.css (context D7/D8 copy-on-build);
 //   5. (P3) redirects any still-unresolved `assets/<slug>/<file>` link to
 //      assets/_shared/challenges/<file> when that shared starter exists;
-//   then writes the deck to web-lectures/full-stack-g10/<slug>.html.
+//   then writes the deck to web-lectures/full-stack-g10/NN-<slug>.html (the
+//   canonical numbered publication URL) plus a lightweight redirect stub at
+//   <slug>.html so already-shared unnumbered student URLs keep working. The
+//   hand-authored index.html and curriculum files are never touched.
 //
 // Why a SEPARATE script (not woven into scripts/build.js): build.js and its test
 // suite stay untouched (single concern, no regression risk). See
@@ -28,6 +32,9 @@ const REPO_ROOT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   '..',
 );
+
+// Collection-scoped numbering manifest (this collection's teaching sequence).
+const MANIFEST_PATH = new URL('./deck-manifest.json', import.meta.url);
 
 // Excluded from every student bundle:
 //   - `solution` anywhere in the name (answer keys / app.solution.js — anti-cheat)
@@ -46,6 +53,9 @@ const EXCLUDE_RE = /solution|quiz\.md$|\.test\.js$/i;
 export function shouldExcludeAsset(name) {
   if (name.startsWith('.')) return true;
   if (name === 'node_modules') return true;
+  // Windows Mark-of-the-Web transfer metadata (…png:Zone.Identifier) — never
+  // a teaching asset, regardless of which directory it rides in.
+  if (name.endsWith(':Zone.Identifier')) return true;
   return EXCLUDE_RE.test(name);
 }
 
@@ -66,16 +76,19 @@ export function rewriteAssetsLinks(html, slug) {
 
 /**
  * (P1 / T4) Rewrite cross-lecture prerequisite links `../<slug>/lecture.md` to
- * the published deck `<slug>.html`, so "Prerequisite: [html]" resolves on the
- * student site instead of 404'ing to source markdown.
+ * the published deck. With the collection manifest's slug->numbered map the
+ * target is the canonical `NN-<slug>.html`; a slug not in the map (e.g.
+ * excluded from this collection) falls back to the unnumbered `<slug>.html`,
+ * which resolves to a redirect stub when one is published.
  *
  * @param {string} html
+ * @param {Record<string, string>} [slugToNumbered] - e.g. { html: '03-html.html' }
  * @returns {string}
  */
-export function rewritePrereqLinks(html) {
+export function rewritePrereqLinks(html, slugToNumbered = {}) {
   return html.replace(
     /(href=\\?")\.\.\/([a-z0-9-]+)\/lecture\.md(\\?")/g,
-    `$1$2.html$3`,
+    (m, pre, slug, post) => `${pre}${slugToNumbered[slug] ?? `${slug}.html`}${post}`,
   );
 }
 
@@ -104,6 +117,117 @@ export function resolveSharedFallback(html, stageDir) {
       return m;
     },
   );
+}
+
+/** Load a collection numbering manifest (defaults to this collection's). */
+export function loadManifest(manifestPath = MANIFEST_PATH) {
+  return JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+}
+
+/** Canonical publication filename: zero-padded `NN-<slug>.html`. */
+export function buildNumberedName(number, slug) {
+  return `${String(number).padStart(2, '0')}-${slug}.html`;
+}
+
+/**
+ * Validate a manifest against the decks actually present in dist/.
+ * Collects every problem into one thrown Error; returns decks sorted by number.
+ *
+ * Rules: decks[] non-empty; unique slugs; unique numbers forming contiguous
+ * 1..N; slug format; every manifest slug has a built dist/ deck; every dist/
+ * deck is either in decks[] or explicitly listed in excluded[] (typo guard);
+ * no slug both included and excluded.
+ *
+ * @param {{ decks?: Array<{number: number, slug: string}>, excluded?: string[] }} manifest
+ * @param {string[]} distSlugs
+ * @returns {Array<{number: number, slug: string}>} sorted by number
+ * @throws {Error} listing every violation
+ */
+export function validateManifest(manifest, distSlugs) {
+  const problems = [];
+  const decks = Array.isArray(manifest?.decks) ? manifest.decks : [];
+  const excluded = Array.isArray(manifest?.excluded) ? manifest.excluded : [];
+  const SLUG_RE = /^[a-z0-9][a-z0-9-]*$/;
+
+  if (!decks.length) problems.push('decks[] is empty');
+  const seenSlugs = new Set();
+  const seenNumbers = new Set();
+  for (const d of decks) {
+    if (!Number.isInteger(d?.number) || d.number < 1) {
+      problems.push(`invalid number for slug "${d?.slug}"`);
+    } else if (seenNumbers.has(d.number)) {
+      problems.push(`duplicate number ${d.number}`);
+    } else {
+      seenNumbers.add(d.number);
+    }
+    if (!SLUG_RE.test(d?.slug ?? '')) {
+      problems.push(`invalid slug "${d?.slug}"`);
+    } else if (seenSlugs.has(d.slug)) {
+      problems.push(`duplicate slug "${d.slug}"`);
+    } else {
+      seenSlugs.add(d.slug);
+    }
+  }
+  const numbers = [...seenNumbers].sort((a, b) => a - b);
+  if (numbers.length && numbers[numbers.length - 1] !== numbers.length) {
+    problems.push(`numbers must be contiguous 1..N — got ${numbers.join(', ')}`);
+  }
+
+  const distSet = new Set(distSlugs);
+  const excludedSet = new Set(excluded);
+  for (const slug of seenSlugs) {
+    if (!distSet.has(slug)) {
+      problems.push(`manifest slug "${slug}" has no dist/${slug}.html (build not run?)`);
+    }
+  }
+  for (const slug of distSet) {
+    if (!seenSlugs.has(slug) && !excludedSet.has(slug)) {
+      problems.push(
+        `dist/${slug}.html is neither in decks[] nor in excluded[] — add it to deck-manifest.json`,
+      );
+    }
+  }
+  for (const slug of excluded) {
+    if (!SLUG_RE.test(slug)) problems.push(`invalid excluded slug "${slug}"`);
+    if (seenSlugs.has(slug)) problems.push(`"${slug}" is both in decks[] and excluded[]`);
+  }
+
+  if (problems.length) {
+    throw new Error(`deck-manifest invalid:\n  - ${problems.join('\n  - ')}`);
+  }
+  return decks.slice().sort((a, b) => a.number - b.number);
+}
+
+/** { slug: 'NN-slug.html' } lookup consumed by rewritePrereqLinks. */
+export function buildSlugToNumbered(decks) {
+  const map = {};
+  for (const { number, slug } of decks) map[slug] = buildNumberedName(number, slug);
+  return map;
+}
+
+/**
+ * Lightweight legacy-URL stub for `<slug>.html`: meta refresh to the numbered
+ * canonical deck plus a visible fallback link. No JavaScript, relative URL —
+ * works on GitHub Pages and via file:// alike. Contains no presentation HTML.
+ *
+ * @param {string} numberedName - e.g. '03-html.html'
+ * @returns {string}
+ */
+export function redirectPage(numberedName) {
+  return [
+    '<!doctype html>',
+    '<html lang="en">',
+    '<head>',
+    '<meta charset="utf-8">',
+    `<meta http-equiv="refresh" content="0; url=${numberedName}">`,
+    '<title>Redirecting…</title>',
+    '</head>',
+    '<body>',
+    `<p><a href="${numberedName}">Continue to ${numberedName}</a></p>`,
+    '</body>',
+    '</html>',
+    '',
+  ].join('\n');
 }
 
 function listDecks(distDir) {
@@ -138,18 +262,20 @@ function copyFiltered(src, dest) {
 
 /**
  * Stage the student tree. Idempotent: safe to re-run. Leaves the hand-authored
- * index.html and curriculum .md in stageDir untouched (only writes <slug>.html
- * and assets/).
+ * index.html and curriculum .md in stageDir untouched (only writes
+ * NN-<slug>.html canonical decks, <slug>.html redirect stubs, and assets/).
+ * Decks not listed in the manifest (and not excluded by it) are never staged.
  *
- * @param {{ distDir?: string, lecturesDir?: string, sharedDir?: string, stageDir?: string }} [opts]
- * @returns {{ decks: number, assetFiles: number, slugs: string[], shared: number, stylesProvisioned: number }}
- * @throws if dist/ contains no *.html (build not run yet)
+ * @param {{ distDir?: string, lecturesDir?: string, sharedDir?: string, stageDir?: string, manifest?: object }} [opts]
+ * @returns {{ decks: number, redirects: number, assetFiles: number, slugs: string[], shared: number, stylesProvisioned: number }}
+ * @throws if dist/ contains no *.html (build not run yet) or the manifest is invalid
  */
 export function stageStudentAssets({
   distDir = path.join(REPO_ROOT, 'dist'),
   lecturesDir = path.join(REPO_ROOT, 'lectures'),
   sharedDir = path.join(REPO_ROOT, 'shared'),
   stageDir = path.join(REPO_ROOT, 'web-lectures', 'full-stack-g10'),
+  manifest = loadManifest(),
 } = {}) {
   const decks = listDecks(distDir);
   if (!decks.length) {
@@ -157,6 +283,9 @@ export function stageStudentAssets({
       `no *.html found in ${path.relative(REPO_ROOT, distDir) || 'dist'} — run "npm run build:all" first.`,
     );
   }
+  const distSlugs = decks.map((f) => f.replace(/\.html$/, ''));
+  const planned = validateManifest(manifest, distSlugs);
+  const slugToNumbered = buildSlugToNumbered(planned);
 
   fs.mkdirSync(stageDir, { recursive: true });
   const assetsRoot = path.join(stageDir, 'assets');
@@ -176,11 +305,11 @@ export function stageStudentAssets({
   let stylesProvisioned = 0;
   const slugs = [];
 
-  for (const file of decks) {
-    const slug = file.replace(/\.html$/, '');
+  for (const { number, slug } of planned) {
+    const file = `${slug}.html`;
     let html = fs.readFileSync(path.join(distDir, file), 'utf8');
     html = rewriteAssetsLinks(html, slug);
-    html = rewritePrereqLinks(html);
+    html = rewritePrereqLinks(html, slugToNumbered);
 
     const slugAssets = path.join(assetsRoot, slug);
     const lectureAssets = path.join(lecturesDir, slug, 'assets');
@@ -199,22 +328,33 @@ export function stageStudentAssets({
     // (P3) Redirect unresolved assets/<slug>/<file> to assets/_shared/challenges.
     html = resolveSharedFallback(html, stageDir);
 
-    fs.writeFileSync(path.join(stageDir, file), html);
+    const numberedName = buildNumberedName(number, slug);
+    fs.writeFileSync(path.join(stageDir, numberedName), html);
+    // Legacy unnumbered URL -> lightweight redirect to the canonical deck.
+    fs.writeFileSync(path.join(stageDir, file), redirectPage(numberedName));
     slugs.push(slug);
   }
 
-  return { decks: slugs.length, assetFiles, slugs, shared, stylesProvisioned };
+  return {
+    decks: slugs.length,
+    redirects: slugs.length,
+    assetFiles,
+    slugs,
+    shared,
+    stylesProvisioned,
+  };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
     const res = stageStudentAssets();
     console.log(
-      `stage: wrote ${res.decks} decks + ${res.assetFiles} asset files ` +
+      `stage: wrote ${res.decks} numbered decks + ${res.redirects} redirects ` +
+        `+ ${res.assetFiles} asset files ` +
         `(${res.slugs.length} lectures) + ${res.shared} shared starters ` +
         `+ ${res.stylesProvisioned} styles.css`,
     );
-    console.log('  -> web-lectures/full-stack-g10/  (and .../assets/<slug>/)');
+    console.log('  -> web-lectures/full-stack-g10/NN-<slug>.html (+ <slug>.html stubs)');
   } catch (err) {
     console.error(`stage: ${err.message}`);
     process.exit(1);

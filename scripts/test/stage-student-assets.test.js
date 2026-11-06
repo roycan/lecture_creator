@@ -47,6 +47,10 @@ test('rewritePrereqLinks leaves non-prereq links alone', () => {
   assert.equal(rewritePrereqLinks(html), html);
 });
 
+test('rewritePrereqLinks with no manifest map keeps the legacy unnumbered target', () => {
+  assert.equal(rewritePrereqLinks(`<a href="../css/lecture.md">p</a>`), `<a href="css.html">p</a>`);
+});
+
 test('resolveSharedFallback redirects an unresolved local ref to _shared/challenges', () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'fallback-'));
   const stageDir = tmp;
@@ -79,7 +83,7 @@ test('resolveSharedFallback leaves a genuinely-missing link unchanged', () => {
   assert.equal(resolveSharedFallback(html, tmp), html);
 });
 
-test('shouldExcludeAsset drops solutions, quizzes, tests, dotfiles, node_modules', () => {
+test('shouldExcludeAsset drops solutions, quizzes, tests, dotfiles, node_modules, Zone.Identifier sidecars', () => {
   for (const yes of [
     'broken-sari-sari-solution.html',
     'app.solution.js',
@@ -90,6 +94,9 @@ test('shouldExcludeAsset drops solutions, quizzes, tests, dotfiles, node_modules
     '.gitkeep',
     '.DS_Store',
     'node_modules',
+    'intelligence-scroll.png:Zone.Identifier',
+    'mission-terminal.png:Zone.Identifier',
+    'any-file.bin:Zone.Identifier',
   ]) {
     assert.equal(shouldExcludeAsset(yes), true, `${yes} should be excluded`);
   }
@@ -99,17 +106,28 @@ test('shouldExcludeAsset drops solutions, quizzes, tests, dotfiles, node_modules
     'README.md',
     'manifest-store.json',
     'sw-cache-first.js',
+    'shinobi-crest.png',
+    'css-workshop.html',
+    'dom-workshop.js',
   ]) {
     assert.equal(shouldExcludeAsset(no), false, `${no} should be kept`);
   }
 });
 
-test('stageStudentAssets: rewrites links, provisions styles.css, resolves shared, excludes solutions', () => {
+test('stageStudentAssets: numbered canonical deck + redirect stub, rewrites links, provisions styles.css, resolves shared, excludes solutions', () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'stage-'));
   const distDir = path.join(tmp, 'dist');
   const lecturesDir = path.join(tmp, 'lectures');
   const sharedDir = path.join(tmp, 'shared');
   const stageDir = path.join(tmp, 'web');
+  const manifest = {
+    collection: 'fixture',
+    decks: [
+      { number: 1, slug: 'requirements-user-stories' },
+      { number: 2, slug: 'data-modeling' },
+    ],
+    excluded: [],
+  };
 
   // Lecture: deck references a local starter, styles.css, a shared dashboard
   // starter (as if local), and a prereq lecture.
@@ -124,6 +142,7 @@ test('stageStudentAssets: rewrites links, provisions styles.css, resolves shared
       String.raw`<a href=\"assets/dashboard-starter.html\">shared</a>`,
     ].join(' '),
   );
+  fs.writeFileSync(path.join(distDir, 'requirements-user-stories.html'), '<html>req</html>');
   fs.writeFileSync(
     path.join(lecturesDir, 'data-modeling', 'assets', 'schema-worksheet.html'),
     'starter',
@@ -141,15 +160,17 @@ test('stageStudentAssets: rewrites links, provisions styles.css, resolves shared
     'shared-solution',
   );
 
-  const res = stageStudentAssets({ distDir, lecturesDir, sharedDir, stageDir });
+  const res = stageStudentAssets({ distDir, lecturesDir, sharedDir, stageDir, manifest });
 
-  assert.equal(res.decks, 1);
+  assert.equal(res.decks, 2);
+  assert.equal(res.redirects, 2);
   assert.equal(res.stylesProvisioned, 1);
 
-  const out = fs.readFileSync(path.join(stageDir, 'data-modeling.html'), 'utf8');
+  // Canonical output is the numbered file; <slug>.html is the redirect stub.
+  const out = fs.readFileSync(path.join(stageDir, '02-data-modeling.html'), 'utf8');
 
-  // P1: prereq -> deck.
-  assert.ok(out.includes(String.raw`href=\"requirements-user-stories.html\"`), 'prereq rewritten');
+  // P1: prereq -> numbered canonical deck.
+  assert.ok(out.includes(String.raw`href=\"01-requirements-user-stories.html\"`), 'prereq rewritten');
   // Local starter -> assets/<slug>/.
   assert.ok(out.includes(String.raw`href=\"assets/data-modeling/schema-worksheet.html\"`), 'local rewritten');
   // styles.css -> assets/<slug>/styles.css and file present (P2).
@@ -169,6 +190,109 @@ test('stageStudentAssets: rewrites links, provisions styles.css, resolves shared
   assert.ok(
     !fs.existsSync(path.join(stageDir, 'assets', '_shared', 'challenges', 'dashboard-solution.html')),
     'solution excluded',
+  );
+
+  // Redirect stubs: tiny meta-refresh pages for both legacy unnumbered URLs.
+  const stub = fs.readFileSync(path.join(stageDir, 'data-modeling.html'), 'utf8');
+  assert.ok(stub.includes('url=02-data-modeling.html'), 'stub refreshes to numbered deck');
+  assert.ok(stub.includes('<a href="02-data-modeling.html">'), 'stub has visible fallback link');
+  assert.ok(!stub.includes('slides-data'), 'stub carries no presentation HTML');
+  assert.ok(
+    fs.existsSync(path.join(stageDir, 'requirements-user-stories.html')),
+    'second legacy URL also stubbed',
+  );
+});
+
+test('stageStudentAssets skips explicitly excluded decks (no numbered file, no stub)', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'stage-excl-'));
+  const distDir = path.join(tmp, 'dist');
+  fs.mkdirSync(distDir, { recursive: true });
+  fs.writeFileSync(path.join(distDir, 'included.html'), '<html>i</html>');
+  fs.writeFileSync(path.join(distDir, 'out-of-scope.html'), '<html>o</html>');
+  const manifest = {
+    collection: 'fixture',
+    decks: [{ number: 1, slug: 'included' }],
+    excluded: ['out-of-scope'],
+  };
+  const res = stageStudentAssets({
+    distDir,
+    lecturesDir: path.join(tmp, 'lectures'),
+    sharedDir: path.join(tmp, 'shared'),
+    stageDir: path.join(tmp, 'web'),
+    manifest,
+  });
+  assert.equal(res.decks, 1);
+  assert.equal(res.redirects, 1);
+  assert.ok(fs.existsSync(path.join(tmp, 'web', '01-included.html')));
+  assert.ok(fs.existsSync(path.join(tmp, 'web', 'included.html')));
+  assert.ok(!fs.existsSync(path.join(tmp, 'web', 'out-of-scope.html')), 'excluded deck not staged');
+  assert.ok(
+    !fs.existsSync(path.join(tmp, 'web', 'out-of-scope.html')) &&
+      !fs.existsSync(path.join(tmp, 'web', '01-out-of-scope.html')),
+    'excluded deck gets no redirect either',
+  );
+});
+
+test('stageStudentAssets rejects a dist deck that the manifest neither includes nor excludes', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'stage-unlisted-'));
+  const distDir = path.join(tmp, 'dist');
+  fs.mkdirSync(distDir, { recursive: true });
+  fs.writeFileSync(path.join(distDir, 'listed.html'), '<html>l</html>');
+  fs.writeFileSync(path.join(distDir, 'mystery.html'), '<html>m</html>');
+  assert.throws(
+    () =>
+      stageStudentAssets({
+        distDir,
+        lecturesDir: path.join(tmp, 'lectures'),
+        sharedDir: path.join(tmp, 'shared'),
+        stageDir: path.join(tmp, 'web'),
+        manifest: { collection: 'fixture', decks: [{ number: 1, slug: 'listed' }], excluded: [] },
+      }),
+    /mystery\.html is neither in decks\[\] nor in excluded\[\]/,
+  );
+});
+
+test('stageStudentAssets rejects a manifest whose slug has no built deck', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'stage-ghost-'));
+  const distDir = path.join(tmp, 'dist');
+  fs.mkdirSync(distDir, { recursive: true });
+  fs.writeFileSync(path.join(distDir, 'real.html'), '<html>r</html>');
+  assert.throws(
+    () =>
+      stageStudentAssets({
+        distDir,
+        lecturesDir: path.join(tmp, 'lectures'),
+        sharedDir: path.join(tmp, 'shared'),
+        stageDir: path.join(tmp, 'web'),
+        manifest: { collection: 'fixture', decks: [{ number: 1, slug: 'ghost' }], excluded: [] },
+      }),
+    /manifest slug "ghost" has no dist\/ghost\.html/,
+  );
+});
+
+test('stageStudentAssets rejects an invalid manifest (duplicate numbers)', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'stage-dupnum-'));
+  const distDir = path.join(tmp, 'dist');
+  fs.mkdirSync(distDir, { recursive: true });
+  fs.writeFileSync(path.join(distDir, 'a.html'), '<html>a</html>');
+  fs.writeFileSync(path.join(distDir, 'b.html'), '<html>b</html>');
+  assert.throws(
+    () =>
+      stageStudentAssets({
+        distDir,
+        lecturesDir: path.join(tmp, 'lectures'),
+        sharedDir: path.join(tmp, 'shared'),
+        stageDir: path.join(tmp, 'web'),
+        manifest: {
+          collection: 'fixture',
+          decks: [
+            { number: 1, slug: 'a' },
+            { number: 1, slug: 'b' },
+          ],
+          excluded: [],
+        },
+      }),
+    /duplicate number 1/,
   );
 });
 

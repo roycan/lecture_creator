@@ -1,0 +1,392 @@
+/* ============================================================
+   MISSION 02 — THE LIVING MISSION BOARD
+   dom-workshop.css — complete workshop styling.
+   READ-ONLY for students: you never edit this file — but you DO
+   read it in Circuit 3: the state classes JavaScript switches are
+   defined right here.
+
+   Palette: dark navy · teal · warm amber (Shinobi Academy).
+   No external fonts, no CDN — system fonts only, works offline.
+   ============================================================ */
+
+:root {
+  --navy: #0e1726;
+  --navy-2: #14213a;
+  --navy-3: #1b2c4d;
+  --line: #2b3f66;
+  --teal: #2dd4bf;
+  --teal-dim: #14b8a6;
+  --amber: #f59e0b;
+  --amber-soft: #fbbf24;
+  --ink: #dbe4f3;
+  --ink-dim: #8fa3c4;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--navy);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  line-height: 1.55;
+}
+
+code {
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  background: #0a1220;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0 5px;
+  font-size: 0.92em;
+  color: var(--teal);
+}
+
+/* ------------------------------------------------------------
+   MISSION SCROLL (worksheet panel)
+   ------------------------------------------------------------ */
+.sheet {
+  max-width: 860px;
+  margin: 26px auto;
+  padding: 30px 34px 24px;
+  background: linear-gradient(180deg, var(--navy-2), var(--navy));
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--amber);
+  border-radius: 6px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+
+.sheet-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 14px;
+  margin-bottom: 12px;
+}
+
+.crest {
+  flex: 0 0 auto;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  font-size: 26px;
+  color: var(--amber);
+  border: 2px solid var(--amber);
+  border-radius: 50%;
+}
+
+.academy {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  color: var(--teal);
+  text-transform: uppercase;
+}
+
+.titles h1 {
+  margin: 2px 0 2px;
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+  color: #f3f7ff;
+}
+
+.sub { margin: 0; font-size: 0.85rem; color: var(--ink-dim); }
+
+.idline {
+  font-size: 0.95rem;
+  color: var(--ink-dim);
+  margin: 14px 0 4px;
+}
+
+.blank {
+  display: inline-block;
+  min-width: 150px;
+  border-bottom: 1px solid var(--amber);
+  margin: 0 10px;
+}
+.blank.short { min-width: 70px; }
+.blank.wide { display: block; width: 100%; margin: 8px 0; }
+
+.block { margin: 18px 0; }
+.block h2, .phase h2 {
+  font-size: 1.02rem;
+  color: var(--amber-soft);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+.block p { margin: 8px 0; font-size: 0.95rem; }
+
+.check { list-style: none; padding-left: 2px; margin: 6px 0; }
+.check li { margin: 6px 0; font-size: 0.95rem; }
+
+.box, .box-cell .box {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: 1.5px solid var(--teal);
+  border-radius: 3px;
+  vertical-align: -2px;
+  margin-right: 6px;
+}
+
+.laws {
+  background: rgba(45, 212, 191, 0.06);
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  border-radius: 6px;
+  padding: 12px 18px;
+}
+.laws ol { margin: 6px 0; padding-left: 20px; font-size: 0.95rem; }
+.laws li { margin: 5px 0; }
+
+/* --- phases (instruction cards) --- */
+.phase {
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--teal-dim);
+  border-radius: 0 6px 6px 0;
+  background: var(--navy-2);
+  padding: 14px 18px;
+  margin: 16px 0;
+}
+.phase.extension { border-left-color: var(--amber); }
+
+.phase-tag {
+  margin: 0 0 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+.extension .phase-tag { color: var(--amber); }
+
+.phase p, .phase li { font-size: 0.94rem; }
+.phase ol { padding-left: 20px; margin: 8px 0; }
+.phase ol li { margin: 5px 0; }
+
+.predict {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 10px 0;
+  font-size: 0.93rem;
+}
+
+.expect {
+  background: rgba(45, 212, 191, 0.07);
+  border: 1px solid rgba(45, 212, 191, 0.4);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 10px 0;
+  font-size: 0.93rem;
+}
+
+.evidence { margin: 4px 0 10px; font-size: 0.9rem; color: var(--ink-dim); }
+.evidence .blank.wide { margin-top: 2px; }
+
+.note { font-size: 0.88rem; color: var(--ink-dim); }
+
+.reflect li { margin: 10px 0; }
+
+.signoff {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin: 10px 0;
+}
+.signoff th, .signoff td {
+  border: 1px solid var(--line);
+  padding: 7px 10px;
+  text-align: left;
+}
+.signoff th { background: var(--navy-3); color: var(--teal); font-size: 0.8rem; letter-spacing: 0.08em; }
+.box-cell { text-align: center; width: 90px; }
+
+.rescue { padding-left: 20px; font-size: 0.92rem; }
+.rescue li { margin: 7px 0; }
+
+.closing {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+  color: var(--amber-soft);
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+}
+
+/* ------------------------------------------------------------
+   THE TERMINAL (artifact — looks finished, JS initially absent)
+   [CSS ready for Image Insertion Point 1: .terminal-art]
+   ------------------------------------------------------------ */
+.terminal-frame {
+  max-width: 860px;
+  margin: 10px auto 40px;
+  background: #0a1220;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+}
+
+.terminal-art {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-bottom: 1px solid var(--line);
+}
+
+.terminal-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  background: var(--navy-3);
+  border-bottom: 1px solid var(--line);
+}
+
+.t-dot { color: var(--amber); font-size: 0.8rem; }
+.t-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #eaf2ff;
+}
+.t-status {
+  margin-left: auto;
+  font-size: 0.9rem;
+  color: var(--ink-dim);
+}
+#status {
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--amber);
+}
+
+.briefing-bar {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 12px 18px;
+  background: rgba(45, 212, 191, 0.05);
+  border-bottom: 1px solid var(--line);
+}
+.b-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: var(--teal);
+  font-weight: 700;
+}
+.briefing-bar p { margin: 0; font-size: 1.02rem; color: #eaf2ff; }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+  padding: 16px;
+}
+
+.card {
+  background: var(--navy-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.card h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #f3f7ff;
+}
+.card-sub { margin: 0; font-size: 0.78rem; color: var(--ink-dim); }
+
+/* ---- badge states (Circuit 3 switches these via classList) ---- */
+.badge {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.badge.stby {
+  color: var(--amber);
+  border: 1px solid var(--amber);
+  background: transparent;
+}
+.badge.active {
+  color: #06251f;
+  border: 1px solid var(--teal);
+  background: var(--teal);
+  box-shadow: 0 0 10px rgba(45, 212, 191, 0.5);
+}
+
+/* ---- intel shutter states (Circuit 3 switches these via classList) ---- */
+.intel {
+  background: #0a1220;
+  border: 1px dashed var(--teal-dim);
+  border-radius: 5px;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+}
+.intel p { margin: 4px 0; }
+.intel-tag {
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  color: var(--teal);
+  font-weight: 700;
+}
+.intel.shuttered { display: none; }
+.intel.revealed {
+  display: block;
+  animation: reveal 0.25s ease-out;
+}
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.card .btn { margin-top: auto; }
+
+/* ---- buttons ---- */
+.btn {
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--teal);
+  border: 1.5px solid var(--teal-dim);
+}
+.btn:hover { background: rgba(45, 212, 191, 0.12); }
+.btn:active { transform: translateY(1px); }
+.btn.power {
+  color: var(--amber);
+  border-color: var(--amber);
+}
+.btn.power:hover { background: rgba(245, 158, 11, 0.12); }
+
+.terminal-foot {
+  padding: 10px 18px;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: var(--ink-dim);
+  border-top: 1px solid var(--line);
+  text-transform: uppercase;
+}

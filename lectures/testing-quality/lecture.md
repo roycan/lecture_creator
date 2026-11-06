@@ -185,7 +185,11 @@ So that [benefit]
 
 ### **Visual Guide: User Story Format**
 
+<figure class="light-surface">
+
 ![User Story Format](diagrams/testing-quality/user-story-format.png)
+
+</figure>
 *Figure 3: Anatomy of a user story showing role, action, and benefit components with examples*
 
 **Why this format?**
@@ -311,7 +315,11 @@ AND [additional expected results]
 
 ### **Visual Guide: Given-When-Then Structure**
 
+<figure class="light-surface">
+
 ![Given-When-Then](diagrams/testing-quality/given-when-then.png)
+
+</figure>
 *Figure 4: Given-When-Then acceptance criteria format with context, action, and expected outcome*
 
 **Why this format?**
@@ -445,7 +453,11 @@ This tool helps you write acceptance criteria:
 
 ### **Visual Guide: Smoke Test Checklist**
 
+<figure class="light-surface">
+
 ![Smoke Test Checklist](diagrams/testing-quality/smoke-test-checklist.png)
+
+</figure>
 *Figure 5: Complete smoke test checklist template for quick sanity checking before detailed testing*
 
 ### Sari-Sari Store Smoke Test Checklist
@@ -834,7 +846,11 @@ Steps to reproduce:
 
 ### **Visual Guide: Bug Severity Guide**
 
+<figure class="light-surface">
+
 ![Bug Severity Guide](diagrams/testing-quality/bug-severity-guide.png)
+
+</figure>
 *Figure 8: Bug severity classification from critical to low priority with examples and response times*
 
 ### Professional Bug Report Template
@@ -1400,7 +1416,11 @@ A **Test Case Library** is your collection of reusable test cases for common fea
 
 ### **Visual Guide: Test Case Library Structure**
 
+<figure class="light-surface">
+
 ![Test Case Library Structure](diagrams/testing-quality/test-case-library-structure.png)
+
+</figure>
 *Figure 11: Organizing your reusable test cases by feature categories for quick reuse across projects*
 
 **Why build one?**
@@ -1607,7 +1627,11 @@ Result: Database full of invalid names, no way to clean it up.
 
 ### **Visual Guide: Edge Cases Cheatsheet**
 
+<figure class="light-surface">
+
 ![Edge Cases Cheatsheet](diagrams/testing-quality/edge-cases-cheatsheet.png)
+
+</figure>
 *Figure 10: Comprehensive edge case testing guide for common input types and scenarios*
 
 ### Common Edge Cases to Test

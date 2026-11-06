@@ -1,0 +1,91 @@
+/* ============================================================
+   Profile Card Style Lab — STARTER stylesheet
+   ------------------------------------------------------------
+   Edit THIS file, save (Ctrl+S), then refresh the page (F5).
+   All your workshop work happens here. The HTML stays untouched.
+
+   EXPT markers point at the rules the activity sends you to.
+   Experiment freely — nothing here can break your computer.
+   ============================================================ */
+
+/* ---- the card: the big box holding everything ---- */
+.card {
+  width: 360px;               /* EXPT C1: change to 460px */
+  padding: 24px;              /* EXPT C2: change to 44px */
+  border: 3px solid #2b3a67;  /* EXPT C3: change 3px to 8px */
+  border-radius: 14px;
+  margin: 16px auto;          /* spacing AROUND the card (optional probe: 60px) */
+  background: #ffffff;
+  color: #1f2937;             /* EXPT B: text color for the whole card — try #0a4c8a */
+  font-family: Arial, sans-serif; /* EXPT B: try Georgia, serif */
+}
+
+/* ---- circular avatar (initials drawn with CSS, no image file) ---- */
+.avatar {
+  width: 72px;
+  height: 72px;
+  line-height: 72px;
+  text-align: center;
+  border-radius: 50%;
+  background: #2b3a67;        /* Step 2: change this color */
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* ---- the student's name ---- */
+.name {
+  color: #6b7280;             /* EXPT A: make the name red — set color to #d92027 */
+  font-size: 24px;
+  margin-bottom: 2px;
+}
+
+/* name heading */
+#profile-name {
+  color: #111827;
+}
+
+/* ---- one-line role under the name ---- */
+.role {
+  color: #b45309;
+  font-size: 15px;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+/* ---- short bio ---- */
+.bio {
+  margin-top: 0;
+}
+
+/* ---- social-media handle ---- */
+.handle {
+  color: #7c3aed;
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+/* ---- hobby chips (list items) ---- */
+.tags li {
+  border-left: 4px solid #2b3a67;
+  padding-left: 8px;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+/* ---- small note at the bottom ---- */
+.footnote {
+  font-size: 12px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 8px;
+  margin-bottom: 0;
+}
+
+/* ============================================================
+   EXTENSIONS — only when your teacher says go (45-minute version)
+   E1: new rule below .tags li →  .tags li:hover { ... }
+   E2: swap the card's flat background for:
+       linear-gradient(to right, #ffffff, #eef4ff)
+   ============================================================ */
